@@ -1,0 +1,32 @@
+.container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 16px;
+    background-color: var(--main-color-1);
+    min-width: 1000px;
+    position: relative;
+}
+
+.header {
+    background-color: var(--main-color-1);
+    padding-left: 8px;
+    padding-right: 8px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.footer {
+    background-color: var(--main-color-1);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.app-content {
+    padding-left: 8px;
+    padding-right: 8px;
+    /* height: 1000px; */
+    /* background-color: aqua; */
+}

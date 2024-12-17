@@ -17,6 +17,25 @@ spl_autoload_register(function ($class) {
 // Tạo router và nạp route
 $router = new Router();
 require_once './routes/web.php';
+?>
 
-// Xử lý request
-$router->dispatch();
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $title ?? 'Default Title' ?></title>
+
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/global.css?v=<?= rand() ?>">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/app.css?v=<?= rand() ?>">
+</head>
+
+<body>
+    <!-- // Xử lý request -->
+    <?php $router->dispatch(); ?>
+
+    <script src="<?= BASE_URL ?>/public/js/app.js"></script>
+</body>
+
+</html>
