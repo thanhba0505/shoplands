@@ -46,7 +46,7 @@ img {
 }
 
 .text-color-1 {
-    color: var(--main-color-1)!important;
+    color: var(--main-color-1) !important;
 }
 
 .text-ellipsis {
@@ -220,6 +220,10 @@ img {
 }
 
 /* Margin */
+.m-auto {
+    margin: auto;
+}
+
 .mx-auto {
     margin: 0 auto;
 }

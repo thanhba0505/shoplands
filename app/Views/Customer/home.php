@@ -1,7 +1,12 @@
-<div class="banner">
-    <h1>Banner</h1>
+<div class="row">
+    <div class="col-12">
+        <span class="banner-header mt-5">
+            <h1 class="text-center mb-3">Banner</h1>
+        </span>
+    </div>
 </div>
 
+<!-- Danh mục -->
 <div class="row">
     <div class="col-12">
         <h1 class="text-center pt-3 pb-3">Danh mục</h1>
@@ -117,6 +122,7 @@
 
 </div>
 
+<!-- Gợi ý sản phẩm -->
 <div class="row">
     <div class="col-12">
         <h1 class="text-center pt-3 pb-3 mt-5 bg-3 text-color-1">Gợi ý cho bạn</h1>
@@ -139,5 +145,53 @@
                 <span class="fs-6">Đã bán 10k</span>
             </div>
         </a>
+    </div>
+
+    <div class="col-12">
+        <div class="d-flex justify-content-center">
+            <a href="" class="btn">Xem thêm</a>
+        </div>
+    </div>
+</div>
+
+<!-- Đăng ký bán hàng -->
+<div class="row">
+    <div class="col-12">
+        <span class="banner-sell-with-us mt-5">
+            <h1 class="text-center mb-3">Bán hàng cùng chúng tôi</h1>
+            <a href="" class="btn">Tham gia ngay</a>
+        </span>
+    </div>
+</div>
+
+<!-- Bài viết -->
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center pt-3 pb-3 mt-5">Bài viết về sản phẩm mới nhất</h1>
+    </div>
+
+    <div class="col-3">
+        <a href="" class="product-item p-2">
+            <img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt="">
+            <span class="text-ellipsis-2 mt-2 fw-bold fs-4">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
+            <div class="">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <h4><del>3.000.000đ</del></h4>
+            <div class="d-flex justify-content-between">
+                <h3>200.000đ</h3>
+                <span class="fs-6">Đã bán 10k</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12">
+        <div class="d-flex justify-content-center">
+            <a href="" class="btn">Xem thêm</a>
+        </div>
     </div>
 </div>
