@@ -2,19 +2,23 @@
 
 class View
 {
-    // Phương thức để render view và truyền dữ liệu
-    public static function make($view, $data = [])
+    // Render view với layout
+    public static function make($view, $data = [], $layout = null)
     {
-        // Kiểm tra xem view có tồn tại không
-        $viewFile = './app/Views/' . $view . '.php';
+        // Giải nén biến để có thể sử dụng trực tiếp trong view
+        extract($data);
 
-        if (file_exists($viewFile)) {
-            // Chuyển các biến dữ liệu thành các biến riêng lẻ
-            extract($data);
-            // Bao gồm file view
-            require_once $viewFile;
+        // Lấy nội dung của view
+        ob_start();
+        require "./app/views/$view.php";
+        $content = ob_get_clean();
+
+        // Nếu có layout, render layout và chèn nội dung
+        if ($layout) {
+            require "./app/views/$layout.php";
         } else {
-            echo "View not found: $view";
+            // Nếu không có layout, chỉ render nội dung view
+            echo $content;
         }
     }
 }
