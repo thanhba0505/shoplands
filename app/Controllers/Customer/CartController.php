@@ -4,6 +4,10 @@ class CartController
 {
     public function index()
     {
-        View::make('Customer/cart');
+        $data = [
+            'title' => 'Cart Page',
+        ];
+
+        View::make('Customer/cart', $data, 'layout/layout-primary');
     }
 }
