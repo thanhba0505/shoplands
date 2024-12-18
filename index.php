@@ -37,7 +37,7 @@ require_once './routes/web.php';
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 
-    <script src="<?= BASE_URL ?>/public/js/app.js"></script>
+    <script src="<?= BASE_URL ?>/public/js/app.js?v=<?= rand() ?>"></script>
 </body>
 
 </html>

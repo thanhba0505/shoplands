@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col-12">
-        <table class="table table-borderless table-light table-align-middle table-cart">
+        <table class="table table-borderless table-light table-align-middle table-cart mt-3">
 
             <!-- Item 1 -->
-            <tr class="table-border-bottom">
+            <tr class="border-bottom">
                 <td width="100px">
                     <div class="d-flex" style="margin-left: 36px;">
                         <div class="checkbox">
@@ -60,7 +60,7 @@
                 </td>
 
                 <td width="150px" class="text-center">
-                    <input type="number" id="username" class="form-control" placeholder="Số lượng">
+                    <input type="number" value="1" id="username" class="form-control text-center" placeholder="Số lượng">
                 </td>
 
                 <td width="150px" class="text-center">
@@ -101,7 +101,7 @@
                 </td>
 
                 <td width="150px" class="text-center">
-                    <input type="number" id="username" class="form-control" placeholder="Số lượng">
+                    <input type="number" value="1" id="username" class="form-control text-center" placeholder="Số lượng">
                 </td>
 
                 <td width="150px" class="text-center">
@@ -114,7 +114,7 @@
 
             </tr>
 
-            <tr class="table-border-top">
+            <tr class="border-top">
                 <td>
                     <div class="text-color-3 fs-3" style="margin-left: 36px;">
                         <i class="fa-solid fa-ticket"></i>
@@ -124,7 +124,7 @@
                 <td colspan="7">Xem tất cả voucher của shop</td>
             </tr>
 
-            <tr class="table-border-top">
+            <tr class="border-top">
                 <td>
                     <div class="text-color-3 fs-3" style="margin-left: 36px;">
                         <i class="fa-solid fa-truck-fast"></i>
@@ -134,12 +134,12 @@
                 <td colspan="7">Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu ₫500.000</td>
             </tr>
 
-            <!-- Item 2 -->
             <tr class="table-color-1">
                 <td colspan="8"></td>
             </tr>
+            <!-- Item 2 -->
 
-            <tr class="table-border-bottom">
+            <tr class="border-bottom">
                 <td width="100px">
                     <div class="d-flex" style="margin-left: 36px;">
                         <div class="checkbox">
@@ -196,7 +196,7 @@
                 </td>
 
                 <td width="150px" class="text-center">
-                    <input type="number" id="username" class="form-control" placeholder="Số lượng">
+                    <input type="number" value="1" id="username" class="form-control text-center" placeholder="Số lượng">
                 </td>
 
                 <td width="150px" class="text-center">
@@ -237,7 +237,7 @@
                 </td>
 
                 <td width="150px" class="text-center">
-                    <input type="number" id="username" class="form-control" placeholder="Số lượng">
+                    <input type="number" value="1" id="username" class="form-control text-center" placeholder="Số lượng">
                 </td>
 
                 <td width="150px" class="text-center">
@@ -250,7 +250,7 @@
 
             </tr>
 
-            <tr class="table-border-top">
+            <tr class="border-top">
                 <td>
                     <div class="text-color-3 fs-3" style="margin-left: 36px;">
                         <i class="fa-solid fa-ticket"></i>
@@ -260,7 +260,7 @@
                 <td colspan="7">Xem tất cả voucher của shop</td>
             </tr>
 
-            <tr class="table-border-top">
+            <tr class="border-top">
                 <td>
                     <div class="text-color-3 fs-3" style="margin-left: 36px;">
                         <i class="fa-solid fa-truck-fast"></i>
@@ -269,6 +269,30 @@
 
                 <td colspan="7">Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu ₫500.000</td>
             </tr>
+
+            <tr class="table-color-1">
+                <td colspan="8"></td>
+            </tr>
         </table>
+
+        <div class="cart-payment bg-light border-top" style="border-width: 2px;">
+            <div class="row pr-3 pl-3 align-items-center">
+                <div class="col">
+                    <button class="btn btn-outline btn-small pr-4 pl-4">Xóa tất cả</button>
+                </div>
+
+                <div class="col-auto">
+                    <span>Tổng thanh toán (0 sản phẩm): 0 VNĐ</span>
+                </div>
+
+                <div class="col-auto">
+                    <a href="" class="btn pr-4 pl-4">Mua hàng</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <h2 class="text-center pt-3 pb-3 text-color-5">Có thể bạn cũng thích</h2>
     </div>
 </div>

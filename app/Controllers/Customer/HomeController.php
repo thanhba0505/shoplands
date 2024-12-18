@@ -2,7 +2,7 @@
 
 class HomeController
 {
-    public function index()
+    public function show()
     {
         $data = [
             'title' => 'Trang chủ',

@@ -2,7 +2,7 @@
 
 class PostController
 {
-    public function index()
+    public function show()
     {
         $data = [
             'title' => 'Post Page',

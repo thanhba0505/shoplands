@@ -2,7 +2,7 @@
 
 class CartController
 {
-    public function index()
+    public function show()
     {
         $data = [
             'title' => 'Cart Page',
