@@ -134,3 +134,15 @@
     justify-content: center;
     background-color: aliceblue;
 }
+
+/* Cart */
+.table-cart td {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.cart-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
