@@ -12,7 +12,7 @@
         </div>
 
         <div class="col">
-            <h2 class="text-color-5 pl-4 border-left border-color-5">Đăng ký bán hàng cùng Shopee</h2>
+            <h2 class="text-color-5 pl-4 border-left border-color-5"><?php echo $title_header; ?></h2>
         </div>
     </div>
 

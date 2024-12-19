@@ -1,6 +1,6 @@
-<div class="row">
+<div class="row mt-3">
     <div class="col-12">
-        <div class="bg-light box-shadow mt-3 w-100 d-flex justify-content-center py-5">
+        <div class="bg-light box-shadow w-100 d-flex justify-content-center py-5">
             <table class="table table-borderless table-light table-align-middle" style="width: 700px;">
                 <tr>
                     <td class="text-right" width="150px"><label>Chủ cửa hàng:</label></td>

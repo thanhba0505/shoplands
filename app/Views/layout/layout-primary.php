@@ -1,3 +1,5 @@
+<?php include './app/views/layout/index.php'; ?>
+
 <div class="container">
     <?php include './app/views/layout/header.php'; ?>
 

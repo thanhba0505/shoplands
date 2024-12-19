@@ -11,6 +11,15 @@
     position: relative;
 }
 
+.container-fluid {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 16px;
+    background-color: var(--main-color-1);
+    min-width: 1500px;
+    position: relative;
+}
+
 .header {
     background-color: var(--main-color-2);
     color: var(--dark-color);
@@ -36,6 +45,8 @@
 .app-content {
     padding-left: 8px;
     padding-right: 8px;
+    padding-top: var(--rem-3);
+    padding-bottom: var(--rem-3);
 }
 
 .nav {
@@ -222,4 +233,65 @@
     color: var(--text-color);
     white-space: nowrap;
     text-align: center;
+}
+
+/* Seller sidebar */
+.sidebar-seller > a {
+    padding-left: 16px;
+    font-weight: normal;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: var(--font-size-4);
+    border-radius: 5px;
+    color: var(--main-color-4);
+    margin-right: var(--rem-1);
+}
+
+.sidebar-seller .active,
+.sidebar-seller > a:hover {
+    background-color: var(--main-color-4);
+    color: var(--light-color);
+    transition: all 0.2s linear;
+    transform: translateX(var(--rem-1));
+}
+
+/* Nav-tab */
+.nav-tabs {
+    justify-content: space-between;
+    gap: 8x;
+    font-size: var(--font-size-4);
+    text-align: center;
+    border-bottom: 1px solid var(--main-color-5);
+    padding: 0 8px;
+}
+.nav-tabs a {
+    padding: 4px 8px;
+    border-top: 1px solid var(--main-color-4);
+    border-left: 1px solid var(--main-color-4);
+    border-right: 1px solid var(--main-color-4);
+    background-color: var(--main-color-1);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.nav-tabs .active {
+    scale: 1.06;
+    background-color: var(--light-color);
+    z-index: 1;
+}
+
+
+/* seller order all */
+.order-all-img {
+    width: 40px;
+    height: 40px;
+}
+
+.order-all-img img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.table-order-all > thead > tr > td {
+    font-size: var(--font-size-5);
 }

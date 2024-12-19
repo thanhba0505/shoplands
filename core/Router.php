@@ -41,7 +41,7 @@ class Router
 
         // Kiểm tra route và gọi action tương ứng
         foreach ($this->routes[$method] as $route => $action) {
-            $routePattern = preg_replace('/\{(\w+)\}/', '(?P<\1>\w+)', strtolower($route)); // Chuyển route thành chữ thường
+            $routePattern = preg_replace('/\{(\w+)\}/', '(?P<\1>[^/]+)', strtolower($route));
             if (preg_match('#^' . $routePattern . '$#', $uri, $matches)) {
                 // Middleware
                 if (!empty($this->middlewares[$method][$route])) {
@@ -62,7 +62,15 @@ class Router
                 if (file_exists($controllerPath)) {
                     require_once $controllerPath;
                     $controller = new $controllerName();
-                    $params = array_values(array_slice($matches, 1));
+
+                    // Lấy tham số từ route
+                    $params = [];
+                    foreach ($matches as $key => $value) {
+                        if (!is_int($key)) {
+                            $params[$key] = $value;
+                        }
+                    }
+
                     return call_user_func_array([$controller, $methodName], $params);
                 } else {
                     echo "Controller not found: $controllerName";

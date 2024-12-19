@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtns = document.querySelectorAll(".next-btn");
     const prevBtns = document.querySelectorAll(".prev-btn");
 
+    // Kiểm tra xem có phần tử cần thiết không
+    if (!steps.length || !formSteps.length || !progress) {
+        return; // Thoát nếu không tìm thấy phần tử nào liên quan
+    }
+
     let currentStep = 0;
 
     // Cập nhật giao diện thanh tiến trình
@@ -44,14 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
-    // Gửi form (Tùy chỉnh hành động)
-    // document
-    //     .getElementById("multi-step-form")
-    //     .addEventListener("submit", (e) => {
-    //         e.preventDefault();
-    //         alert("Form đã được gửi!");
-    //     });
 
     updateProgress();
 });

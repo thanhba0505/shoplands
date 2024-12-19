@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <span class="banner-header mt-5">
+        <span class="banner-header">
             <h1 class="text-center mb-3">Banner</h1>
         </span>
     </div>

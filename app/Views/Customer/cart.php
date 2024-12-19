@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <table class="table table-borderless table-light table-align-middle table-cart mt-3">
+        <table class="table table-borderless table-light table-align-middle table-cart">
 
             <!-- Item 1 -->
             <tr class="border-bottom">

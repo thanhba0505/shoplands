@@ -6,8 +6,9 @@ class SellerRegisterController
     {
         $data = [
             'title' => 'Seller Register Page',
+            'title_header' => 'Đăng ký bán hàng cùng Shopee',
         ];
 
-        View::make('Customer/seller-register', $data, 'layout/layout-header-simple');
+        View::make('Seller/seller-register', $data, 'layout/layout-header-simple');
     }
 }
