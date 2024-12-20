@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row ">
     <div class="col-3">
         <?php include './app/views/layout/sidebar-seller.php'; ?>
     </div>
@@ -26,6 +26,7 @@
                 <thead>
                     <tr>
                         <td>Sản phẩm</td>
+                        <td>Tổng tiền đơn hàng</td>
                         <td>Doanh thu đơn hàng</td>
                         <td>Đơn vị vận chuyển</td>
                         <td>Thời gian tạo đơn</td>
@@ -35,10 +36,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="6"></td>
+                        <td colspan="7"></td>
                     </tr>
                     <tr>
-                        <td colspan="2">Tên người mua</td>
+                        <td colspan="3">Tên người mua</td>
                         <td colspan="4">Mã đơn hàng: 01203453</td>
                     </tr>
                     <tr>
@@ -47,6 +48,15 @@
                                 <div class="order-all-img"><img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt=""></div>
                                 <div class="text-ellipsis-4 fs-5" style="width: 80%;">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</div>
                             </div>
+                        </td>
+                        <td>
+                            <h5>200.000đ</h5>
+                        </td>
+                        <td>
+                            <h5>180.000đ</h5>
+                        </td>
+                        <td>
+                            <div>Giao hàng nhanh</div>
                         </td>
                     </tr>
                 </tbody>

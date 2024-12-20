@@ -1,5 +1,5 @@
 <div class="bg-light p-3 rounded-2 box-shadow sidebar-seller">
-    <h3 class="mb-1">Quản lý đơn hàng</h3>
+    <span class="mb-1 font-size-5 fw-bold">Quản lý đơn hàng</span>
     <a href="<?= BASE_URL ?>/seller/orders/all" class="<?= $page == 'all' ? 'active' : ''; ?>">Tất cả</a>
     <a href="<?= BASE_URL ?>/seller/orders/pending" class="<?= $page == 'pending' ? 'active' : ''; ?>">Chờ xác nhận</a>
     <a href="<?= BASE_URL ?>/seller/orders/packing" class="<?= $page == 'packing' ? 'active' : ''; ?>">Đang đóng gói</a>

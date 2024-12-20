@@ -22,7 +22,7 @@
                 <a href="<?= BASE_URL?>/post">
                     <h3 class="nav-item">Bài viết</h3>
                 </a>
-                <a href="<?= BASE_URL?>/seller">
+                <a href="<?= BASE_URL?>/seller/orders/all">
                     <h3 class="nav-item">Kênh người bán</h3>
                 </a>
             </div>
