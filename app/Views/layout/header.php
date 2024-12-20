@@ -14,16 +14,16 @@
         <div class="col">
             <div class="nav">
                 <a href="<?= BASE_URL?>/product">
-                    <h3 class="nav-item">Sản phẩm</h3>
+                    <span class="nav-item font-size-3 fw-bold">Sản phẩm</span>
                 </a>
                 <a href="<?= BASE_URL?>/cart">
-                    <h3 class="nav-item">Giỏ hàng</h3>
+                    <span class="nav-item font-size-3 fw-bold">Giỏ hàng</span>
                 </a>
                 <a href="<?= BASE_URL?>/post">
-                    <h3 class="nav-item">Bài viết</h3>
+                    <span class="nav-item font-size-3 fw-bold">Bài viết</span>
                 </a>
                 <a href="<?= BASE_URL?>/seller/orders/all">
-                    <h3 class="nav-item">Kênh người bán</h3>
+                    <span class="nav-item font-size-3 fw-bold">Kênh người bán</span>
                 </a>
             </div>
         </div>

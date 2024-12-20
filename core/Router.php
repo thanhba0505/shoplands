@@ -79,7 +79,6 @@ class Router
         }
 
         // Nếu không tìm thấy route
-        http_response_code(404);
-        echo "404 - Not Found";
+        View::make('App/404');
     }
 }

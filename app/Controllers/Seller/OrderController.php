@@ -4,9 +4,15 @@ class OrderController
 {
     public function show($page = 'all')
     {
+        if (!in_array($page, ['all', 'pending', 'packing', 'packed', 'shipping', 'dilivered', 'completed', 'returned', 'cancelled'])) {
+            View::make('App/404');
+            return;
+        }
+
         $data = [
             'title' => 'Seller Page',
             'title_header' => 'Kênh người bán',
+            'group' => 'order',
             'page' => $page
         ];
 
@@ -25,10 +31,10 @@ class OrderController
 
             $data = array_merge($data, $to_do_list);
 
-            View::make('Seller/Order/all', $data, 'layout/layout-header-simple-fullwidth');
+            View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
             return;
         }
 
-        View::make('Seller/Order/all', $data, 'layout/layout-header-simple-fullwidth');
+        View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
     }
 }

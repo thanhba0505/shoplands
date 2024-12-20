@@ -19,7 +19,7 @@ $router->get('/seller/register', 'Seller/SellerRegisterController@show');
 $router->get('/seller/orders/{page}', 'Seller/OrderController@show');
 
 // // Quản lý sản phẩm
-// $router->get('/seller/products/all', 'Seller/ProductController@all');
+$router->get('/seller/products/{page}', 'Seller/ProductController@show');
 // $router->get('/seller/products/in-stock', 'Seller/ProductController@inStock');
 // $router->get('/seller/products/out-of-stock', 'Seller/ProductController@outOfStock');
 // $router->get('/seller/products/locked', 'Seller/ProductController@locked');

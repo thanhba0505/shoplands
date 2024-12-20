@@ -53,13 +53,12 @@ img {
 .table th,
 .table td {
     padding: var(--spacing-3);
-    border: 1px solid var(--main-color-2);
-    text-align: left;
-    color: var(--main-color-5);
 }
 
-.table thead {
-    background-color: var(--main-color-4);
+.table-border-1,
+.table-border-1 th,
+.table-border-1 td {
+    border: 1px solid var(--main-color-1);
 }
 
 .table-striped tbody tr:nth-child(odd) {
@@ -99,6 +98,12 @@ img {
     background-color: var(--main-color-1);
 }
 
+.table-color-1-opacity-3,
+.table-color-1-opacity-3 th,
+.table-color-1-opacity-3 td {
+    background-color: rgba(var(--main-color-1-rgb), 0.3);
+}
+
 .table-align-middle th,
 .table-align-middle td {
     vertical-align: middle;
@@ -106,19 +111,19 @@ img {
 
 /* link */
 .link {
-    color: var(--main-color-5);
+    color: var(--main-color-3);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .link:hover {
-    color: var(--main-color-4);
+    color: var(--main-color-5);
 }
 
 /* Button */
 .btn {
     display: block;
-    padding: 8px 16px;
+    padding: 6px 12px;
     font-weight: 400;
     line-height: 1.5;
     border-radius: var(--spacing-2);
@@ -146,13 +151,9 @@ img {
     border-color: var(--main-color-3) !important;
 }
 
-.btn-small {
-    padding: 6px 12px !important;
-}
-
 .btn-outline {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 6px 12px;
     font-weight: 400;
     line-height: 1.5;
     border-radius: var(--spacing-2);
