@@ -1,10 +1,1 @@
-<div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress" id="progress"></div>
-                        </div>
-                        <div class="progress-steps">
-                            <div class="step active" data-title="Thông tin cửa hàng"></div>
-                            <div class="step" data-title="C"></div>
-                            <div class="step" data-title="Hoàn tất"></div>
-                        </div>
-                    </div>
+Sửa .htaccess RewriteBase /congnghemoi/shopee/ thành path lưu dự án

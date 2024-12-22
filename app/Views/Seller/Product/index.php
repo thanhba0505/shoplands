@@ -6,42 +6,40 @@
     <div class="col-9">
         <div class="bg-light p-4 rounded-2 box-shadow">
             <h2>Quản lý sản phẩm</h2>
-            <div class="d-flex nav-tabs mt-3">
-                <a href="<?= BASE_URL ?>/seller/orders/all" class="<?= $page == 'all' ? 'active' : ''; ?>">Tất cả</a>
-                <a href="<?= BASE_URL ?>/seller/orders/pending" class="<?= $page == 'pending' ? 'active' : ''; ?>">Chờ xác nhận</a>
-                <a href="<?= BASE_URL ?>/seller/orders/packing" class="<?= $page == 'packing' ? 'active' : ''; ?>">Đang đóng gói</a>
-                <a href="<?= BASE_URL ?>/seller/orders/packed" class="<?= $page == 'packed' ? 'active' : ''; ?>">Đã đóng gói</a>
-                <a href="<?= BASE_URL ?>/seller/orders/shipping" class="<?= $page == 'shipping' ? 'active' : ''; ?>">Đang vận chuyển</a>
-                <a href="<?= BASE_URL ?>/seller/orders/dilivered" class="<?= $page == 'dilivered' ? 'active' : ''; ?>">Đã giao hàng</a>
-                <a href="<?= BASE_URL ?>/seller/orders/completed" class="<?= $page == 'completed' ? 'active' : ''; ?>">Đã hoàn thành</a>
-                <a href="<?= BASE_URL ?>/seller/orders/returned" class="<?= $page == 'returned' ? 'active' : ''; ?>">Đơn hoàn trả</a>
-                <a href="<?= BASE_URL ?>/seller/orders/cancelled" class="<?= $page == 'cancelled' ? 'active' : ''; ?>">Đã hủy</a>
+            <div class="nav-tabs mt-3">
+                <a href="<?= BASE_URL ?>/seller/products/all" class="<?= $page == 'all' ? 'active' : ''; ?>">Tất cả</a>
+                <a href="<?= BASE_URL ?>/seller/products/in-stock" class="<?= $page == 'in-stock' ? 'active' : ''; ?>">Chờ xác nhận</a>
+                <a href="<?= BASE_URL ?>/seller/products/out-of-stock" class="<?= $page == 'out-of-stock' ? 'active' : ''; ?>">Đang đóng gói</a>
+                <a href="<?= BASE_URL ?>/seller/products/locked" class="<?= $page == 'locked' ? 'active' : ''; ?>">Đã đóng gói</a>
+                <a href="<?= BASE_URL ?>/seller/products/hidden" class="<?= $page == 'hidden' ? 'active' : ''; ?>">Đang vận chuyển</a>
+                <a href="<?= BASE_URL ?>/seller/products/deleted" class="<?= $page == 'deleted' ? 'active' : ''; ?>">Đã giao hàng</a>
             </div>
 
             <div class="text-center bg-2 py-3 mt-5">
                 Lọc
             </div>
 
+            <div class="text-center bg-2 py-3 mt-5">
+                thanh công cụ các kiểu
+            </div>
+
             <table class="table position-relative table-align-middle mt-5 font-size-1 border-color-1 table-order-all">
                 <thead>
                     <tr class="table-color-1-opacity-3 text-center table-border-1 border-width-2 ">
                         <td>Sản phẩm</td>
-                        <td>Tổng tiền đơn hàng</td>
-                        <td>Doanh thu đơn hàng</td>
-                        <td>Đơn vị vận chuyển</td>
-                        <td>Thời gian tạo đơn</td>
-                        <td>Trạng thái</td>
+                        <td>Thuộc tính</td>
+                        <td>Giá trị thuộc tính</td>
+                        <td>Giá gốc</td>
+                        <td>Giá khuyến mãi</td>
+                        <td>Kho</td>
+                        <td>Đã bán</td>
                         <td>Thao tác</td>
                     </tr>
                 </thead>
                 <tbody>
 
-                    <!-- Lặp sản phẩm -->
+                    <!-- Lặp sản phẩm
                     <?php for ($i = 0; $i < 5; $i++): ?>
-
-                        <tr style="border-left: none; border-right: none">
-                            <td colspan="7" style="padding: 8px 0;"></td>
-                        </tr>
 
                         <tr class="table-color-1-opacity-3 table-border-1 border-width-2 font-size-2">
                             <td colspan="3" style="border-right: none;" class="fw-bold">Tên người mua</td>
@@ -105,10 +103,15 @@
                                 ?>
                             </td>
                         </tr>
-                    <?php endfor; ?>
+                    <?php endfor; ?> -->
 
                 </tbody>
             </table>
+
+            <?php echo $users; ?>
+            <?php echo BASE_URL; ?>
+            <?php echo BASE_PATH; ?>
+
         </div>
     </div>
 </div>
