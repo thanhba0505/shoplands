@@ -226,15 +226,15 @@ img {
     display: inline-block;
     width: 20px;
     height: 20px;
-    position: relative; /* Đảm bảo kiểm soát các thành phần con */
+    position: relative;
 }
 
 .custom-checkbox {
     width: 100%;
     height: 100%;
-    opacity: 0; /* Ẩn checkbox mặc định */
+    opacity: 0;
     position: absolute;
-    z-index: 2; /* Checkbox nằm trên label để nhận sự kiện click */
+    z-index: 2;
     cursor: pointer;
 }
 
@@ -246,19 +246,19 @@ img {
     height: 100%;
     background-color: var(--main-color-1);
     border: 1px solid var(--main-color-5);
-    border-radius: 4px; /* Tùy chỉnh góc bo */
+    border-radius: 4px;
     transition: background-color 0.3s ease, border-color 0.3s ease;
     position: absolute;
-    z-index: 1; /* Label làm nền */
+    z-index: 1;
 }
 
 .checkbox-label::after {
     content: "✔";
-    display: none; /* Ẩn dấu tick mặc định */
+    display: none;
     width: 10px;
     height: 10px;
     background-color: var(--main-color-4);
-    border-radius: 2px; /* Tùy chỉnh góc bo */
+    border-radius: 2px;
 }
 
 .custom-checkbox:checked + .checkbox-label {
@@ -267,7 +267,7 @@ img {
 }
 
 .custom-checkbox:checked + .checkbox-label::after {
-    display: block; /* Hiển thị dấu tick khi được chọn */
+    display: block;
 }
 
 /* Input data */
