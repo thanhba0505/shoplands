@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('flash_sale_times', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('time_start');
-            $table->dateTime('time_end');
+            $table->text('description')->nullable();
+            $table->time('time_start');
+            $table->time('time_end');
             $table->timestamps();
         });
     }
