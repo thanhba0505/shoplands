@@ -15,19 +15,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('avatar')->nullable();
-            $table->unsignedBigInteger('seller_id')->nullable(); // Foreign key
             $table->timestamps();
-
-            $table->foreign('seller_id')->references('id')->on('sellers');
         });
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['seller_id']);
-        });
-
         Schema::dropIfExists('users');
     }
 };

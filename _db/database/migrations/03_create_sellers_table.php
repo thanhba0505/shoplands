@@ -14,12 +14,19 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('background')->nullable();
             $table->string('logo')->nullable();
+            $table->unsignedBigInteger('user_id'); // Foreign key
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
     public function down(): void
     {
+        Schema::table('sellers', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+
         Schema::dropIfExists('sellers');
     }
 };
