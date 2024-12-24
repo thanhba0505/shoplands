@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([ShippingFeeSeeder::class]);
         $this->call([CategorySeeder::class]);
         $this->call([ProductSeeder::class]);
-        $this->call([ProductImageSeeder::class]);
+        // $this->call([ProductImageSeeder::class]);
+        // $this->call([ProductDetailSeeder::class]);
     }
 }
