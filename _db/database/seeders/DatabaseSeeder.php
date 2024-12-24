@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
         $this->call([ProductSeeder::class]);
         // $this->call([ProductImageSeeder::class]);
         // $this->call([ProductDetailSeeder::class]);
-        $this->call([ProductAttributeSeeder::class]);
-        $this->call([ProductAttributeValueSeeder::class]);
         $this->call([FlashSaleTimeSeeder::class]);
+        $this->call([ProductVariantSeeder::class]);
+
     }
 }

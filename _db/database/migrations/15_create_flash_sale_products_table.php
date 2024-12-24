@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('flash_sale_time_id'); // Foreign key
             $table->timestamps();
 
-            $table->foreign('product_variant_id')->references('id')->on('products');
+            $table->foreign('product_variant_id')->references('id')->on('product_variants');
             $table->foreign('flash_sale_time_id')->references('id')->on('flash_sale_times');
         });
     }
