@@ -17,7 +17,9 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'total_price' => $this->faker->randomFloat(2, 100, 10000),
+            'subtotal_price' => $this->faker->randomFloat(2, 100, 10000),
+            'discount_amount' => $this->faker->randomFloat(2, 100, 10000),
+            'final_price' => $this->faker->randomFloat(2, 100, 10000),
             'payment_method' => $this->faker->randomElement(['cod', 'online']),
             'cancel_reason' => null,
             'from_address_id' => Address::factory(), // Sẽ được cập nhật trong Seeder

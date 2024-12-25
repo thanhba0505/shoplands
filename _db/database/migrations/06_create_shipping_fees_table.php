@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('shipping_method');
             $table->boolean('same_province');
-            $table->decimal('shipping_fee');
+            $table->decimal('shipping_fee', 15, 2);
             $table->timestamps();
         });
     }

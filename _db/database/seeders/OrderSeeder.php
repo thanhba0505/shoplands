@@ -7,8 +7,8 @@ use App\Models\OrderItem;
 use App\Models\ProductVariant;
 use App\Models\User;
 use App\Models\Seller;
-use App\Models\Address;
 use App\Models\Coupon;
+use App\Models\OrderStatus;
 use App\Models\ShippingFee;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
@@ -19,31 +19,24 @@ class OrderSeeder extends Seeder
     {
         $shippingMethods = ['Giao hàng nhanh', 'Giao hàng tiết kiệm', 'Giao hàng hỏa tốc'];
 
-        // Lọc chỉ lấy user có ít nhất một địa chỉ
         $users = User::whereHas('addresses')->get();
 
         foreach ($users as $user) {
-            $orderCount = rand(1, 5); // Mỗi user có từ 1-5 đơn hàng
+            $orderCount = rand(1, 5);
 
             for ($i = 0; $i < $orderCount; $i++) {
                 $seller = Seller::inRandomOrder()->first();
 
-                // Lấy địa chỉ
                 $fromAddress = $seller->addresses()->inRandomOrder()->first();
                 $toAddress = $user->addresses()->inRandomOrder()->first();
 
-                // Xác định phương thức giao hàng
                 $shippingMethod = $shippingMethods[array_rand($shippingMethods)];
-
-                // Kiểm tra cùng tỉnh hay khác tỉnh
                 $sameProvince = $fromAddress->province == $toAddress->province;
 
-                // Tra cứu phí giao hàng
                 $shippingFee = ShippingFee::where('shipping_method', $shippingMethod)
                     ->where('same_province', $sameProvince)
                     ->first();
 
-                // Lấy coupon thuộc seller (nếu có)
                 $coupon = Coupon::where('seller_id', $seller->id)->inRandomOrder()->first();
 
                 if ($fromAddress && $toAddress && $shippingFee) {
@@ -53,20 +46,19 @@ class OrderSeeder extends Seeder
                         'seller_id' => $seller->id,
                         'from_address_id' => $fromAddress->id,
                         'to_address_id' => $toAddress->id,
-                        'coupon_id' => $coupon ? $coupon->id : null, // Sử dụng coupon nếu có
-                        'shipping_fee_id' => $shippingFee->id,       // Gán phí giao hàng
-                        'total_price' => 0,                          // Sẽ tính lại sau
+                        'coupon_id' => $coupon ? $coupon->id : null,
+                        'shipping_fee_id' => $shippingFee->id,
+                        'subtotal_price' => 0,
+                        'discount_amount' => 0,
+                        'final_price' => 0,
                     ]);
 
-                    $totalPrice = 0;
-
-                    // Tạo các OrderItem
-                    $productVariants = ProductVariant::inRandomOrder()->take(rand(1, 5))->get(); // Lấy 1-5 sản phẩm
+                    $subtotalPrice = 0;
+                    $productVariants = ProductVariant::inRandomOrder()->take(rand(1, 5))->get();
 
                     foreach ($productVariants as $productVariant) {
-                        Log::info($productVariant->id);
-                        $quantity = rand(1, 5); // Số lượng mỗi sản phẩm
-                        $price = $productVariant->price * (rand(80, 99) / 100); // Giá giảm nhẹ (80%-99%)
+                        $quantity = rand(1, 5);
+                        $price = $productVariant->price * (rand(80, 99) / 100);
 
                         OrderItem::create([
                             'order_id' => $order->id,
@@ -75,16 +67,48 @@ class OrderSeeder extends Seeder
                             'price' => $price,
                         ]);
 
-                        // Cộng dồn vào tổng giá trị
-                        $totalPrice += $price * $quantity;
+                        $subtotalPrice += $price * $quantity;
                     }
 
-                    // Cập nhật total_price cho order
+                    // Tính giảm giá từ coupon
+                    $discountAmount = 0;
+                    if ($coupon) {
+                        if ($coupon->discount_type === 'percentage') {
+                            $discountAmount = min($subtotalPrice * $coupon->discount_value / 100, $coupon->maximum_discount ?? PHP_INT_MAX);
+                        } elseif ($coupon->discount_type === 'fixed') {
+                            $discountAmount = min($coupon->discount_value, $coupon->maximum_discount ?? PHP_INT_MAX);
+                        }
+                    }
+
+                    // Tính tổng tiền cuối cùng
+                    $finalPrice = max($subtotalPrice - $discountAmount + $shippingFee->shipping_fee, 0);
+
+                    // Cập nhật các cột
                     $order->update([
-                        'total_price' => $totalPrice + $shippingFee->shipping_fee,
+                        'subtotal_price' => $subtotalPrice,
+                        'discount_amount' => $discountAmount,
+                        'final_price' => $finalPrice,
+                    ]);
+
+                    // Tạo trạng thái "pending" cho đơn hàng
+                    $pendingDate = now();
+                    if ($coupon) {
+                        $pendingDate = $this->getValidPendingDate($coupon->start_date, $coupon->end_date);
+                    }
+
+                    OrderStatus::create([
+                        'status' => 'pending',
+                        'date_time' => $pendingDate,
+                        'order_id' => $order->id,
                     ]);
                 }
             }
         }
+    }
+
+    private function getValidPendingDate($startDate, $endDate)
+    {
+        // Lấy ngày hợp lệ nằm trong khoảng thời gian hiệu lực của coupon
+        return now()->between($startDate, $endDate) ? now() : $startDate;
     }
 }

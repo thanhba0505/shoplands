@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
-            $table->decimal('price');
-            $table->decimal('promotion_price')->nullable();
+            $table->decimal('price', 15, 2);
+            $table->decimal('promotion_price', 15, 2)->nullable();
             $table->integer('quantity');
             $table->integer('sold_quantity');
             $table->unsignedBigInteger('product_attribute_value_id')->nullable(); // Foreign key

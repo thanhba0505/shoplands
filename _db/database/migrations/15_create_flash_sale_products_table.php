@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('flash_sale_products', function (Blueprint $table) {
             $table->id();
-            $table->decimal('price');
+            $table->decimal('price', 15, 2);
             $table->integer('quantity');
             $table->integer('sold_quantity');
             $table->date('date');

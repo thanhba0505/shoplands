@@ -12,7 +12,9 @@ class Order extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'total_price',
+        'subtotal_price',
+        'discount_amount',
+        'final_price',
         'payment_method',
         'cancel_reason',
         'from_address_id',

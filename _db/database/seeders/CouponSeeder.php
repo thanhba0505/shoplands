@@ -4,11 +4,23 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Coupon;
+use App\Models\Seller;
 
 class CouponSeeder extends Seeder
 {
     public function run()
     {
-        Coupon::factory()->count(10)->create(); // Tạo 10 coupon ngẫu nhiên
+        // Lấy danh sách tất cả các seller
+        $sellers = Seller::all();
+
+        foreach ($sellers as $seller) {
+            $couponCount = rand(-3, 5);
+
+            for ($i = 0; $i < $couponCount; $i++) {
+                Coupon::factory()->create([
+                    'seller_id' => $seller->id,
+                ]);
+            }
+        }
     }
 }

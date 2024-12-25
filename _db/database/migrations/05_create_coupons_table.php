@@ -13,9 +13,9 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->text('description')->nullable();
             $table->enum('discount_type', ['percentage', 'fixed']);
-            $table->decimal('discount_value');
-            $table->decimal('maximum_discount')->nullable();
-            $table->decimal('minimum_order_value')->nullable();
+            $table->decimal('discount_value', 15, 2);
+            $table->decimal('maximum_discount', 15, 2)->nullable();
+            $table->decimal('minimum_order_value', 15, 2)->nullable();
             $table->integer('usage_limit')->nullable();
             $table->integer('usage_count')->default(0);
             $table->date('start_date');
