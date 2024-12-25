@@ -24,8 +24,8 @@ class OrderFactory extends Factory
             'to_address_id' => Address::factory(),   // Sẽ được cập nhật trong Seeder
             'user_id' => User::factory(),            // Sẽ được cập nhật trong Seeder
             'seller_id' => Seller::factory(),        // Sẽ được cập nhật trong Seeder
-            'shipping_fee_id' => '1',
-            'coupon_id' => '1',
+            'shipping_fee_id' => '1', // Sẽ được cập nhật trong Seeder
+            'coupon_id' => '1', // Sẽ được cập nhật trong Seeder
         ];
     }
 }

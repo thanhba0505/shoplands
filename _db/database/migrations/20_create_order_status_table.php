@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id');
             $table->timestamp('updated_at');
 
-            $table->foreign('order_id')->references('order_id')->on('orders');
+            $table->foreign('order_id')->references('id')->on('orders');
         });
     }
 

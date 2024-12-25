@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id('order_id');
+            $table->id();
             $table->decimal('total_price');
             $table->enum('payment_method', ['cod', 'online']);
             $table->string('cancel_reason')->nullable();
