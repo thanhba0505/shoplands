@@ -20,46 +20,55 @@ class AddressFactory extends Factory
 
     public function definition(): array
     {
-        if ($this->faker->boolean()) { // Lấy danh sách tất cả các seller_id
-            $sellerIds = Seller::pluck('id')->toArray();
+        // if ($this->faker->boolean()) { // Lấy danh sách tất cả các seller_id
+        //     $sellerIds = Seller::pluck('id')->toArray();
 
-            // Lọc ra các seller_id chưa được sử dụng
-            $unusedSellerIds = array_diff($sellerIds, self::$usedSellerIds);
+        //     // Lọc ra các seller_id chưa được sử dụng
+        //     $unusedSellerIds = array_diff($sellerIds, self::$usedSellerIds);
 
-            // Nếu không còn seller_id nào để chọn, trả về null hoặc xử lý theo cách khác
-            if (empty($unusedSellerIds)) {
-                $sellerId = null; // Hoặc xử lý theo cách khác nếu hết seller
-            } else {
-                // Chọn seller_id ngẫu nhiên từ danh sách chưa sử dụng
-                $sellerId = $this->faker->randomElement($unusedSellerIds);
-                // Thêm seller_id này vào danh sách đã sử dụng
-                self::$usedSellerIds[] = $sellerId;
-            }
-        } else {
-            $sellerId = null;
-        }
+        //     // Nếu không còn seller_id nào để chọn, trả về null hoặc xử lý theo cách khác
+        //     if (empty($unusedSellerIds)) {
+        //         $sellerId = null; // Hoặc xử lý theo cách khác nếu hết seller
+        //     } else {
+        //         // Chọn seller_id ngẫu nhiên từ danh sách chưa sử dụng
+        //         $sellerId = $this->faker->randomElement($unusedSellerIds);
+        //         // Thêm seller_id này vào danh sách đã sử dụng
+        //         self::$usedSellerIds[] = $sellerId;
+        //     }
+        // } else {
+        //     $sellerId = null;
+        // }
 
-        // Lấy provinceId ngẫu nhiên
-        $provinceId = Province::inRandomOrder()->first()->id;
+        // // Lấy provinceId ngẫu nhiên
+        // $provinceId = Province::inRandomOrder()->first()->id;
 
-        // Lấy userId ngẫu nhiên
-        $userId = $sellerId ? null : User::inRandomOrder()->first()->id;
+        // // Lấy userId ngẫu nhiên
+        // $userId = $sellerId ? null : User::inRandomOrder()->first()->id;
 
-        // Log giá trị để kiểm tra
-        // Log::info('--------', ['sellerId' => $sellerId, 'userId' => $userId]);
+        // // Log giá trị để kiểm tra
+        // // Log::info('--------', ['sellerId' => $sellerId, 'userId' => $userId]);
 
-        $isDefault = false;
-        if ($userId && !in_array($userId, self::$usersWithDefaultAddress)) {
-            $isDefault = true;
-            self::$usersWithDefaultAddress[] = $userId;
-        }
+        // $isDefault = false;
+        // if ($userId && !in_array($userId, self::$usersWithDefaultAddress)) {
+        //     $isDefault = true;
+        //     self::$usersWithDefaultAddress[] = $userId;
+        // }
+
+        // return [
+        //     'address_line' => $this->faker->address(),
+        //     'default' => $isDefault,
+        //     'province_id' => $provinceId,
+        //     'seller_id' => $sellerId,
+        //     'user_id' => $userId,
+        // ];
 
         return [
             'address_line' => $this->faker->address(),
-            'default' => $isDefault,
-            'province_id' => $provinceId,
-            'seller_id' => $sellerId,
-            'user_id' => $userId,
+            'default' => false,
+            'province_id' => Province::inRandomOrder()->first()->id,
+            'user_id' => User::inRandomOrder()->first()->id,
+            'seller_id' => Seller::inRandomOrder()->first()->id,
         ];
     }
+
 }

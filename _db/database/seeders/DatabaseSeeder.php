@@ -10,22 +10,22 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([ProvincesSeeder::class]);
-        $this->call([UserSeeder::class]);
-        $this->call([SellerSeeder::class]);
-        $this->call([AddressSeeder::class]);
-        $this->call([CouponSeeder::class]);
-        $this->call([ShippingFeeSeeder::class]);
-        $this->call([CategorySeeder::class]);
-        $this->call([ProductSeeder::class]);
-        // $this->call([ProductImageSeeder::class]);
-        // $this->call([ProductDetailSeeder::class]);
-        // $this->call([FlashSaleTimeSeeder::class]);
-        $this->call([ProductVariantSeeder::class]);
-        // $this->call([FlashSaleProductSeeder::class]);
-        $this->call([ReviewSeeder::class]);
-        $this->call([CartSeeder::class]);
-        $this->call([OrderSeeder::class]);
+        $this->call([ProvincesSeeder::class]); // 63
+        $this->call([UserSeeder::class]); // ----------- x = 20
+        $this->call([SellerSeeder::class]); // 0.3x
+        $this->call([AddressSeeder::class]); // user seler
+        $this->call([CouponSeeder::class]); // seller
+        $this->call([ShippingFeeSeeder::class]); // 6
+        $this->call([CategorySeeder::class]); // 12
+        $this->call([ProductSeeder::class]); // ------------ y = 60
+        $this->call([ProductImageSeeder::class]); // product
+        $this->call([ProductDetailSeeder::class]); // product
+        $this->call([FlashSaleTimeSeeder::class]); // 6
+        $this->call([ProductVariantSeeder::class]); // product
+        $this->call([FlashSaleProductSeeder::class]); // product_variant
+        $this->call([ReviewSeeder::class]);  // user
+        $this->call([CartSeeder::class]); // user
+        $this->call([OrderSeeder::class]); // user
 
     }
 }

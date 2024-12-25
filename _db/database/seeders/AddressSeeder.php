@@ -18,7 +18,7 @@ class AddressSeeder extends Seeder
         // Thêm địa chỉ cho User
         $users = User::all();
         foreach ($users as $user) {
-            $addressCount = rand(1, 5); // Mỗi user có từ 1-3 địa chỉ
+            $addressCount = rand(-2, 5); // Mỗi user có từ 1-3 địa chỉ
 
             for ($i = 0; $i < $addressCount; $i++) {
                 Address::create([

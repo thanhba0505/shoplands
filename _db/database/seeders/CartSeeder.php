@@ -29,7 +29,7 @@ class CartSeeder extends Seeder
                         ->where('product_variant_id', $product_variant->id)
                         ->exists()) {
                         // Lấy số lượng ngẫu nhiên không vượt quá số lượng còn lại
-                        $quantity = rand(1, $product_variant->quantity);
+                        $quantity = rand(1, min($product_variant->quantity, 5));
 
                         // Tạo giỏ hàng mới với số lượng hợp lệ
                         Cart::factory()->create([

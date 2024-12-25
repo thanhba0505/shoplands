@@ -22,7 +22,7 @@ class OrderSeeder extends Seeder
         $users = User::whereHas('addresses')->get();
 
         foreach ($users as $user) {
-            $orderCount = rand(1, 5);
+            $orderCount = rand(-3, 5);
 
             for ($i = 0; $i < $orderCount; $i++) {
                 $seller = Seller::inRandomOrder()->first();
@@ -58,7 +58,7 @@ class OrderSeeder extends Seeder
 
                     foreach ($productVariants as $productVariant) {
                         $quantity = rand(1, 5);
-                        $price = $productVariant->price * (rand(80, 99) / 100);
+                        $price = round($productVariant->price * (rand(80, 99) / 100), -3);
 
                         OrderItem::create([
                             'order_id' => $order->id,
