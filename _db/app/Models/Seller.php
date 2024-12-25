@@ -16,4 +16,10 @@ class Seller extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Mối quan hệ với bảng addresses
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 }
