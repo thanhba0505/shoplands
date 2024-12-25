@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('order_status', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['pending', 'packing', 'packed', 'shipping', 'delivered', 'cancelled', 'returned', 'completed']);
+            $table->enum('status', ['pending', 'packing', 'packed', 'shipping', 'delivered', 'canceled', 'returned', 'return requested', 'return rejected', 'return approved', 'completed']);
             $table->dateTime('date_time');
             $table->unsignedBigInteger('order_id');
             $table->timestamps();

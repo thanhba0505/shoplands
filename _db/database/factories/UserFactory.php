@@ -12,7 +12,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'phone' => $this->faker->unique()->phoneNumber(),
+            'phone' => '0' . $this->faker->unique()->numerify('#########'),
             'password' => bcrypt('123'), // Mật khẩu mặc định
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),

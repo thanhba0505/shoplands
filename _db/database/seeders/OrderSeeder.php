@@ -10,6 +10,7 @@ use App\Models\Seller;
 use App\Models\Coupon;
 use App\Models\OrderStatus;
 use App\Models\ShippingFee;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,7 @@ class OrderSeeder extends Seeder
         $users = User::whereHas('addresses')->get();
 
         foreach ($users as $user) {
-            $orderCount = rand(-3, 5);
+            $orderCount = rand(0, 5);
 
             for ($i = 0; $i < $orderCount; $i++) {
                 $seller = Seller::inRandomOrder()->first();
@@ -101,6 +102,97 @@ class OrderSeeder extends Seeder
                         'date_time' => $pendingDate,
                         'order_id' => $order->id,
                     ]);
+
+                    $a = rand(0, 100);
+
+                    if ($a <= 90) {
+                        OrderStatus::create([
+                            'status' => 'packing',
+                            'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                            'order_id' => $order->id,
+                        ]);
+                    }
+
+                    if ($a <= 80) {
+                        OrderStatus::create([
+                            'status' => 'packed',
+                            'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                            'order_id' => $order->id,
+                        ]);
+                    }
+
+                    $b = rand(1, 100);
+
+                    if ($a <= 80 && $b <= 50) {
+
+                        $e = rand(1, 100);
+
+                        if ($e <= 75) {
+                            OrderStatus::create([
+                                'status' => 'shipping',
+                                'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                'order_id' => $order->id,
+                            ]);
+                        }
+
+                        if ($e <= 60) {
+                            OrderStatus::create([
+                                'status' => 'delivered',
+                                'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                'order_id' => $order->id,
+                            ]);
+                        }
+
+                        $c = rand(1, 100);
+
+                        if ($e <= 60 && $c <= 50) {
+                            OrderStatus::create([
+                                'status' => 'completed',
+                                'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                'order_id' => $order->id,
+                            ]);
+                        } else if ($e <= 60 && $c <= 80) {
+                            OrderStatus::create([
+                                'status' => 'return requested',
+                                'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                'order_id' => $order->id,
+                            ]);
+
+                            $d = rand(1, 100);
+
+                            if ($d <= 40) {
+                                OrderStatus::create([
+                                    'status' => 'return rejected',
+                                    'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                    'order_id' => $order->id,
+                                ]);
+
+                                OrderStatus::create([
+                                    'status' => 'completed',
+                                    'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                    'order_id' => $order->id,
+                                ]);
+                            } else  if ($d <= 80) {
+                                OrderStatus::create([
+                                    'status' => 'return approved',
+                                    'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                    'order_id' => $order->id,
+                                ]);
+
+                                OrderStatus::create([
+                                    'status' => 'returned',
+                                    'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                    'order_id' => $order->id,
+                                ]);
+                            }
+                        }
+                    } else if ($b <= 70) {
+                        OrderStatus::create([
+                            'status' => 'canceled',
+                            'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                            'order_id' => $order->id,
+                        ]);
+                    }
                 }
             }
         }
@@ -108,7 +200,11 @@ class OrderSeeder extends Seeder
 
     private function getValidPendingDate($startDate, $endDate)
     {
-        // Lấy ngày hợp lệ nằm trong khoảng thời gian hiệu lực của coupon
+        // Chuyển đổi chuỗi thành đối tượng Carbon
+        $startDate = Carbon::parse($startDate);
+        $endDate = Carbon::parse($endDate);
+
+        // Trả về now() nếu nằm trong khoảng, ngược lại trả về $startDate
         return now()->between($startDate, $endDate) ? now() : $startDate;
     }
 }
