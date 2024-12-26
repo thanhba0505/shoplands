@@ -3,6 +3,7 @@
 // Nạp các tệp cần thiết
 require_once './config.php';
 require_once './core/Session.php';
+require_once './core/Cookie.php';
 require_once './core/Router.php';
 require_once './core/View.php';
 

@@ -7,3 +7,5 @@ define('USER', 'root');
 define('PASSWORD', '');
 define('DATABASE', 'shopee');
 define('CHARSET', 'utf8mb4');
+
+define('BCRYPT_COST', 12);

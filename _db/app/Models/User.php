@@ -12,14 +12,14 @@ class User extends Model
     protected $fillable = ['phone', 'password', 'name', 'email', 'avatar'];
 
     // Nếu cần mã hóa mật khẩu
-    protected static function booted()
-    {
-        static::creating(function ($user) {
-            if ($user->password) {
-                $user->password = bcrypt($user->password); // Mã hóa mật khẩu
-            }
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::creating(function ($user) {
+    //         if ($user->password) {
+    //             $user->password = bcrypt($user->password); // Mã hóa mật khẩu
+    //         }
+    //     });
+    // }
 
     public function orders()
     {

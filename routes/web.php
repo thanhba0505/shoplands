@@ -43,6 +43,7 @@ $router->get('/seller/products/{page}', 'Seller/ProductController@show');
 
 // Trang xác thực ---------------------------------------------------------------------
 $router->get('/login', 'Auth/LoginController@show');
+$router->post('/login', 'Auth/LoginController@login');
 $router->get('/register', 'Auth/RegisterController@show');
 
 

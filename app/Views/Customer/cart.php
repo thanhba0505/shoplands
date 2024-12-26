@@ -6,9 +6,9 @@
             <tr class="border-bottom3">
                 <td width="100px" class="pt-4">
                     <div class="d-flex" style="margin-left: 36px;">
-                        <div class="checkbox">
-                            <input type="checkbox" id="custom-checkbox" class="custom-checkbox">
-                            <label for="custom-checkbox" class="checkbox-label"></label>
+                        <div class="form-group-checkbox">
+                            <input type="checkbox" id="checkbox" class="input-checkbox">
+                            <label for="checkbox" class="label-checkbox"></label>
                         </div>
                     </div>
                 </td>
@@ -35,9 +35,9 @@
             <tr>
                 <td width="100px">
                     <div class="d-flex" style="margin-left: 36px;">
-                        <div class="checkbox">
-                            <input type="checkbox" id="custom-checkbox" class="custom-checkbox">
-                            <label for="custom-checkbox" class="checkbox-label"></label>
+                        <div class="form-group-checkbox">
+                            <input type="checkbox" id="checkbox" class="input-checkbox">
+                            <label for="checkbox" class="label-checkbox"></label>
                         </div>
                     </div>
                 </td>
