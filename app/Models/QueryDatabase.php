@@ -14,9 +14,13 @@ class QueryDatabase extends ConnectDatabase
 
     public function find($id)
     {
+        if (!is_numeric($id)) {
+            throw new InvalidArgumentException("ID must be a number.");
+        }
         $sql = "SELECT * FROM {$this->table} WHERE id = :id";
         return $this->query($sql, ['id' => $id])->fetch();
     }
+
 
     public function create($data)
     {

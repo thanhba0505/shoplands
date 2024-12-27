@@ -21,11 +21,17 @@ class ConnectDatabase
 
     public function query($sql, $params = [])
     {
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute($params);
-        return $stmt;
+        try {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->execute($params);
+            return $stmt;
+        } catch (PDOException $e) {
+            error_log($e->getMessage(), 3, 'errors.log');
+            throw new Exception("Query failed: " . $e->getMessage());
+        }
     }
-    
+
+
     public function getConnection()
     {
         return $this->connection;

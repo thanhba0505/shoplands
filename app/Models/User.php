@@ -12,4 +12,33 @@ class User extends QueryDatabase
         $sql = "SELECT * FROM {$this->table} WHERE phone = :phone";
         return $this->query($sql, ['phone' => $phone])->fetch();
     }
+
+    public function updateTokens($userId, $accessToken, $refreshToken)
+    {
+        $this->update($userId, [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+        ]);
+    }
+
+    public function findByRefreshToken($refreshToken)
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE refresh_token = :refresh_token LIMIT 1";
+
+        $stmt = $this->query($sql, ['refresh_token' => $refreshToken]);
+        $session = $stmt->fetch();
+
+        if (!$session) {
+            return null;
+        }
+
+        return $session;
+    }
+
+    // Hàm phụ để xóa session theo refresh token
+    private function deleteSessionByToken($refreshToken)
+    {
+        $sql = "DELETE FROM {$this->table} WHERE refresh_token = :refresh_token";
+        $this->query($sql, ['refresh_token' => $refreshToken]);
+    }
 }

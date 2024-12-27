@@ -1,21 +1,20 @@
 <?php
 
 require_once 'app/Models/User.php';
-require_once 'core/Session.php';
-require_once 'core/Cookie.php';
+// require_once 'core/Session.php';
+// require_once 'core/Cookie.php';
 
 class LoginController
 {
     public function show()
     {
-        // Hiển thị trang đăng nhập
         View::make('Auth/login', [], 'layout/layout-auth');
     }
 
     public function login()
     {
-        $phone = $_POST['phone'];
-        $password = $_POST['password'];
+        $phone = Request::post('phone');
+        $password = Request::post('password');
 
         if (empty($phone) || empty($password)) {
             // return View::make('Auth/login', ['error' => 'Số điện thoại và mật khẩu không được để trống.'], 'layout/layout-auth');
@@ -34,11 +33,28 @@ class LoginController
             exit;
         }
 
-        $cookie = new Cookie();
-        $cookie->set('user_id', $user['id'], 3600);
-        echo 'Đăng nhận thành công: ' . $user['name'] . '<br>';
+        // Tạo Access Token và Refresh Token
+        $accessToken = Token::createAccessToken($user['id'], 'user');
+        $refreshToken = Token::createRefreshToken();
 
-        // header('Location: ' . BASE_URL . '/');
+        // Lưu token vào cơ sở dữ liệu
+        $userModel->updateTokens($user['id'], $accessToken, $refreshToken);
+
+        // Gửi Token qua Cookie
+        $cookie = new Cookie();
+        $cookie->setToken($accessToken, $refreshToken);
+
+        echo 'Đăng nhập thành công: ' . $user['name'];
+        $cookie->debug();
+        exit;
+    }
+
+    public function logout()
+    {
+        $cookie = new Cookie();
+        $cookie->removeToken();
+
+        echo 'Đăng xuất thành công:';
         exit;
     }
 }

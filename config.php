@@ -8,4 +8,4 @@ define('PASSWORD', '');
 define('DATABASE', 'shopee');
 define('CHARSET', 'utf8mb4');
 
-define('BCRYPT_COST', 12);
+define('SECRET_KEY', 'day_la_cai_key');

@@ -1,15 +1,17 @@
 <?php
 
+require_once './app/Middlewares/AuthMiddleware.php';
+
 $router->get('/', 'Customer/HomeController@show');
 
 // Trang sản phẩm ---------------------------------------------------------------------
 $router->get('/product', 'Customer/ProductController@show');
 
 // Trang giỏ hàng ---------------------------------------------------------------------
-$router->get('/cart', 'Customer/CartController@show');
+$router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
 
 // Trang bài viết ---------------------------------------------------------------------
-$router->get('/post', 'Customer/PostController@show');
+$router->get('/post', 'Customer/PostController@show', [AuthMiddleware::class]);
 
 // Trang bán hàng ---------------------------------------------------------------------
 // Trang đăng ký bán hàng

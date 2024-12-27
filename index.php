@@ -6,6 +6,8 @@ require_once './core/Session.php';
 require_once './core/Cookie.php';
 require_once './core/Router.php';
 require_once './core/View.php';
+require_once './core/Token.php';
+require_once './core/Request.php';
 
 // Autoload các middleware
 spl_autoload_register(function ($class) {

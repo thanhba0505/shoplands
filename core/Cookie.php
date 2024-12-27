@@ -53,4 +53,16 @@ class Cookie
         print_r($_COOKIE);
         echo '</pre>';
     }
+
+    public function setToken($accessToken, $refreshToken, $expiry_access = 10, $expiry_refresh = 60)
+    {
+        $this->set('access_token', $accessToken, $expiry_access);
+        $this->set('refresh_token', $refreshToken, $expiry_refresh);
+    }
+
+    public function removeToken()
+    {
+        $this->remove('access_token');
+        $this->remove('refresh_token');
+    }
 }
