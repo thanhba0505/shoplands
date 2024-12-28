@@ -6,8 +6,7 @@ class AuthMiddleware
 {
     public function handle()
     {
-        $cookie = new Cookie();
-        $accessToken = $cookie->get('access_token');
+        $accessToken  = Cookie::get('access_token');
 
         if (!$accessToken || !Token::validateAccessToken($accessToken)) {
             echo 'Access token không hợp lệ!<br>';
@@ -20,8 +19,7 @@ class AuthMiddleware
 
     public function refreshToken()
     {
-        $cookie = new Cookie();
-        $refreshToken = $cookie->get('refresh_token');
+        $refreshToken = Cookie::get('refresh_token');
 
         if (!$refreshToken) {
             echo 'Refresh token làm mới không tồn tại!<br>';
@@ -43,7 +41,7 @@ class AuthMiddleware
         $userModel->updateTokens($user['id'], $accessToken, $refreshToken);
 
         // Cập nhật Access Token trong Cookie
-        $cookie->setToken($accessToken, $refreshToken);
+        Cookie::setToken($accessToken, $refreshToken);
 
         echo 'Access Token mới đã được tạo!';
         exit;

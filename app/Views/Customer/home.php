@@ -15,7 +15,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/thoi-trang-nam.webp" alt="">
+                <img src="<?= Asset::url('img/thoi-trang-nam.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -24,7 +24,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/thoi-trang-nu.webp" alt="">
+                <img src="<?= Asset::url('img/thoi-trang-nu.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -33,7 +33,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/thoi-trang-tre-em.webp" alt="">
+                <img src="<?= Asset::url('img/thoi-trang-tre-em.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -42,7 +42,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/nha-cua-doi-song.webp" alt="">
+                <img src="<?= Asset::url('img/nha-cua-doi-song.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -51,7 +51,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/dien-thoai-va-phu-kien.webp" alt="">
+                <img src="<?= Asset::url('img/dien-thoai-va-phu-kien.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -60,7 +60,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/dong-ho.webp" alt="">
+                <img src="<?= Asset::url('img/dong-ho.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -69,7 +69,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/may-tinh.webp" alt="">
+                <img src="<?= Asset::url('img/may-tinh.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -78,7 +78,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/nha-sach-online.webp" alt="">
+                <img src="<?= Asset::url('img/nha-sach-online.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -87,7 +87,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/phu-kien-trang-suc.webp" alt="">
+                <img src="<?= Asset::url('img/phu-kien-trang-suc.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -96,7 +96,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/the-thao-va-du-lich.webp" alt="">
+                <img src="<?= Asset::url('img/the-thao-va-du-lich.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -105,7 +105,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/thiet-bi-dien-tu.webp" alt="">
+                <img src="<?= Asset::url('img/thiet-bi-dien-tu.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -114,7 +114,7 @@
     <div class="col-2">
         <a href="" class=" catagory-item">
             <div class="catagory-img">
-                <img src="<?= BASE_URL ?>/public/images/thiet-bi-gia-dung.webp" alt="">
+                <img src="<?= Asset::url('img/thiet-bi-gia-dung.webp')?>" alt="">
             </div>
             <span class="text-ellipsis-1 m-auto" style="max-width: 150px;"> sdf à ádfasf á asdf as asdfasdDanh mục</span>
         </a>
@@ -130,7 +130,7 @@
 
     <div class="col-2">
         <a href="" class="product-item p-2">
-            <img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt="">
+            <img src="<?= Asset::url('uploads/img/cap-sac.webp')?>" alt="">
             <span class="text-ellipsis-2 m-auto fw-bold fs-4">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
             <div class="">
                 <i class="fa-solid fa-star"></i>
@@ -172,7 +172,7 @@
 
     <div class="col-3">
         <a href="" class="product-item p-2">
-            <img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt="">
+            <img src="<?= Asset::url('uploads/img/cap-sac.webp')?>" alt="">
             <span class="text-ellipsis-m-autofw-bold fs-4">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
             <div class="">
                 <i class="fa-solid fa-star"></i>

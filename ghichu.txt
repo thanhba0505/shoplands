@@ -1,1 +1,6 @@
 Sửa .htaccess RewriteBase /congnghemoi/shopee/ thành path lưu dự án
+
+
+- Bảo mật access token và refresh token
+- Bảo mật form CSRF
+- Bảo mật chống XSS

@@ -17,9 +17,7 @@ class LoginController
         $password = Request::post('password');
 
         if (empty($phone) || empty($password)) {
-            // return View::make('Auth/login', ['error' => 'Số điện thoại và mật khẩu không được để trống.'], 'layout/layout-auth');
-            // header('Location: ' . BASE_URL . '/login');
-            echo 'Số điện thoại và mật khẩu không được để trống';
+            Redirect::to('/login', 'Số điện thoại và mật khẩu không được để trống.', 'error');
             exit;
         }
 
@@ -27,9 +25,7 @@ class LoginController
         $user = $userModel->findByPhone($phone);
 
         if (!$user || !password_verify($password, $user['password'])) {
-            // return View::make('Auth/login', ['error' => 'Số điện thoại hoặc mật khẩu không đúng.'], 'layout/layout-auth');
-            // header('Location: ' . BASE_URL . '/login');
-            echo 'Số điện thoại hoặc mật khẩu không đúng' . '<br>';
+            Redirect::to('/login', 'Số điện thoại hoặc mật khẩu không đúng.', 'error');
             exit;
         }
 
@@ -41,20 +37,27 @@ class LoginController
         $userModel->updateTokens($user['id'], $accessToken, $refreshToken);
 
         // Gửi Token qua Cookie
-        $cookie = new Cookie();
-        $cookie->setToken($accessToken, $refreshToken);
+        Cookie::setToken($accessToken, $refreshToken);
 
-        echo 'Đăng nhập thành công: ' . $user['name'];
-        $cookie->debug();
+        Redirect::to('/', 'Đăng nhập thành công.');
         exit;
     }
 
     public function logout()
     {
-        $cookie = new Cookie();
-        $cookie->removeToken();
+        // Lấy refresh_token từ cookie
+        $refreshToken = Cookie::get('refresh_token');
 
-        echo 'Đăng xuất thành công:';
+        // Nếu tồn tại refresh_token, xóa khỏi CSDL
+        if ($refreshToken) {
+            $userModel = new User();
+            $userModel->deleteTokensByRefreshToken($refreshToken);
+        }
+
+        // Xóa token trong cookie
+        Cookie::removeToken();
+
+        Redirect::to('/login', 'Đăng xuất thành công.');
         exit;
     }
 }

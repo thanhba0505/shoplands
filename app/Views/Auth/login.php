@@ -4,6 +4,7 @@
     </div>
     <div class="col-12">
         <form autocomplete="off" action="<?= BASE_URL ?>/login" method="post">
+            <input type="hidden" name="csrf" value="<?= CSRF::getToken() ?>">
             <div class="form-group">
                 <label for="phone">Số điện thoại</label>
                 <input type="text" name="phone" class="form-control" id="phone" placeholder="Nhập số điện thoại">

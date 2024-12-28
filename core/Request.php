@@ -8,7 +8,7 @@ class Request
         if (isset($_POST[$value])) {
             return self::sanitize($_POST[$value]);
         }
-        return $default; // Hoặc bạn có thể ném ra ngoại lệ nếu muốn
+        return $default;
     }
 
     // Phương thức để lấy giá trị từ $_GET
@@ -17,7 +17,7 @@ class Request
         if (isset($_GET[$value])) {
             return self::sanitize($_GET[$value]);
         }
-        return $default; // Hoặc bạn có thể ném ra ngoại lệ nếu muốn
+        return $default;
     }
 
     // Phương thức để mã hóa dữ liệu tránh XSS

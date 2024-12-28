@@ -2,67 +2,69 @@
 
 class Cookie
 {
-    private $path = "/";
-    private $domain = ""; // Có thể đặt tên miền nếu cần
-    private $secure = true; // Chỉ gửi cookie qua HTTPS
-    private $httponly = true; // Không thể truy cập cookie qua JavaScript
+    private static $path = "/";
+    private static $domain = ""; // Có thể đặt tên miền nếu cần
+    private static $secure = true; // Chỉ gửi cookie qua HTTPS
+    private static $httponly = true; // Không thể truy cập cookie qua JavaScript
 
-    public function __construct()
+    // Thiết lập mặc định cho cookie
+    public static function init()
     {
-        // Thiết lập cấu hình cookie mặc định
-        $this->secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        self::$secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
     }
 
     // Lưu cookie
-    public function set($key, $value, $expiry = 3600)
+    public static function set($key, $value, $expiry = 3600)
     {
         $expiryTime = time() + $expiry; // Thời gian hết hạn tính bằng giây
         return setcookie($key, $value, [
             'expires' => $expiryTime,
-            'path' => $this->path,
-            'domain' => $this->domain,
-            'secure' => $this->secure,
-            'httponly' => $this->httponly,
+            'path' => self::$path,
+            'domain' => self::$domain,
+            'secure' => self::$secure,
+            'httponly' => self::$httponly,
             'samesite' => 'Strict', // Giảm thiểu nguy cơ tấn công CSRF
         ]);
     }
 
     // Lấy giá trị cookie
-    public function get($key)
+    public static function get($key)
     {
         return $_COOKIE[$key] ?? null;
     }
 
     // Xóa cookie
-    public function remove($key)
+    public static function remove($key)
     {
         return setcookie($key, '', [
             'expires' => time() - 3600, // Thời gian quá khứ để xóa
-            'path' => $this->path,
-            'domain' => $this->domain,
-            'secure' => $this->secure,
-            'httponly' => $this->httponly,
+            'path' => self::$path,
+            'domain' => self::$domain,
+            'secure' => self::$secure,
+            'httponly' => self::$httponly,
             'samesite' => 'Strict',
         ]);
     }
 
     // Hiển thị thông tin debug cookie
-    public function debug()
+    public static function debug()
     {
         echo '<pre>';
         print_r($_COOKIE);
         echo '</pre>';
     }
 
-    public function setToken($accessToken, $refreshToken, $expiry_access = 10, $expiry_refresh = 60)
+    // Lưu token (Access Token và Refresh Token)
+    public static function setToken($accessToken, $refreshToken, $expiryAccess = 60 * 60, $expiryRefresh = 60 * 60 * 24 * 30)
     {
-        $this->set('access_token', $accessToken, $expiry_access);
-        $this->set('refresh_token', $refreshToken, $expiry_refresh);
+        self::set('access_token', $accessToken, $expiryAccess);
+        self::set('refresh_token', $refreshToken, $expiryRefresh);
     }
 
-    public function removeToken()
+    // Xóa token
+    public static function removeToken()
     {
-        $this->remove('access_token');
-        $this->remove('refresh_token');
+        self::remove('access_token');
+        self::remove('refresh_token');
     }
 }

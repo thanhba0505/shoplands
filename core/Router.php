@@ -43,6 +43,19 @@ class Router
         foreach ($this->routes[$method] as $route => $action) {
             $routePattern = preg_replace('/\{(\w+)\}/', '(?P<\1>[^/]+)', strtolower($route));
             if (preg_match('#^' . $routePattern . '$#', $uri, $matches)) {
+
+                // Nếu là POST request, kiểm tra CSRF token
+                if ($method === 'POST') {
+                    // Kiểm tra CSRF Token
+                    $csrfToken = Request::post('csrf');
+                    if (!CSRF::validateToken($csrfToken)) {
+                        // Nếu CSRF Token không hợp lệ, lưu thông báo và chuyển hướng
+                        Session::set('error', 'CSRF Token không hợp lệ.');
+                        Redirect::to('/');
+                        exit;
+                    }
+                }
+
                 // Middleware
                 if (!empty($this->middlewares[$method][$route])) {
                     foreach ($this->middlewares[$method][$route] as $middleware) {

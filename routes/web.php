@@ -1,8 +1,14 @@
 <?php
 
-require_once './app/Middlewares/AuthMiddleware.php';
-
 $router->get('/', 'Customer/HomeController@show');
+
+// Trang xác thực ---------------------------------------------------------------------
+$router->get('/login', 'Auth/LoginController@show');
+$router->post('/login', 'Auth/LoginController@login');
+
+$router->get('/logout', 'Auth/LoginController@logout');
+
+$router->get('/register', 'Auth/RegisterController@show');
 
 // Trang sản phẩm ---------------------------------------------------------------------
 $router->get('/product', 'Customer/ProductController@show');
@@ -15,13 +21,13 @@ $router->get('/post', 'Customer/PostController@show', [AuthMiddleware::class]);
 
 // Trang bán hàng ---------------------------------------------------------------------
 // Trang đăng ký bán hàng
-$router->get('/seller/register', 'Seller/SellerRegisterController@show');
+$router->get('/seller/register', 'Seller/SellerRegisterController@show', [AuthMiddleware::class]);
 
 // Quản lý đơn hàng
-$router->get('/seller/orders/{page}', 'Seller/OrderController@show');
+$router->get('/seller/orders/{page}', 'Seller/OrderController@show', [AuthMiddleware::class]);
 
 // // Quản lý sản phẩm
-$router->get('/seller/products/{page}', 'Seller/ProductController@show');
+$router->get('/seller/products/{page}', 'Seller/ProductController@show', [AuthMiddleware::class]);
 // $router->get('/seller/products/in-stock', 'Seller/ProductController@inStock');
 // $router->get('/seller/products/out-of-stock', 'Seller/ProductController@outOfStock');
 // $router->get('/seller/products/locked', 'Seller/ProductController@locked');
@@ -42,11 +48,5 @@ $router->get('/seller/products/{page}', 'Seller/ProductController@show');
 // $router->get('/seller/store/settings', 'Seller/StoreController@settings');
 // $router->get('/seller/store/decor', 'Seller/StoreController@decor');
 // $router->get('/seller/store/highlight-products', 'Seller/StoreController@highlightProducts');
-
-// Trang xác thực ---------------------------------------------------------------------
-$router->get('/login', 'Auth/LoginController@show');
-$router->post('/login', 'Auth/LoginController@login');
-$router->get('/register', 'Auth/RegisterController@show');
-
 
 // $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class, AuthMiddleware::class]);

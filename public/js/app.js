@@ -1,54 +1,21 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const steps = document.querySelectorAll(".step");
-    const formSteps = document.querySelectorAll(".form-step");
-    const progress = document.getElementById("progress");
-    const nextBtns = document.querySelectorAll(".next-btn");
-    const prevBtns = document.querySelectorAll(".prev-btn");
+document.addEventListener("DOMContentLoaded", () => {});
 
-    // Kiểm tra xem có phần tử cần thiết không
-    if (!steps.length || !formSteps.length || !progress) {
-        return; // Thoát nếu không tìm thấy phần tử nào liên quan
-    }
+function showNotification(message, type = "success", duration = 3000) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.hidden = false; // Xóa thuộc tính hidden
 
-    let currentStep = 0;
+    // Hiệu ứng hiển thị
+    setTimeout(() => {
+        notification.classList.add("show");
+    }, 10);
 
-    // Cập nhật giao diện thanh tiến trình
-    function updateProgress() {
-        steps.forEach((step, index) => {
-            if (index <= currentStep) {
-                step.classList.add("active");
-            } else {
-                step.classList.remove("active");
-            }
-        });
-
-        const progressWidth = (currentStep / (steps.length - 1)) * 100;
-        progress.style.width = `${progressWidth}%`;
-
-        formSteps.forEach((formStep, index) => {
-            formStep.classList.toggle("active", index === currentStep);
-        });
-    }
-
-    // Sự kiện nút Tiếp theo
-    nextBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            if (currentStep < steps.length - 1) {
-                currentStep++;
-                updateProgress();
-            }
-        });
-    });
-
-    // Sự kiện nút Quay lại
-    prevBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            if (currentStep > 0) {
-                currentStep--;
-                updateProgress();
-            }
-        });
-    });
-
-    updateProgress();
-});
+    // Xóa thông báo sau thời gian quy định
+    setTimeout(() => {
+        notification.classList.remove("show");
+        setTimeout(() => {
+            notification.hidden = true; // Thêm lại thuộc tính hidden
+        }, 500);
+    }, duration);
+}

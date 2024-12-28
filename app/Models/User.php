@@ -35,10 +35,9 @@ class User extends QueryDatabase
         return $session;
     }
 
-    // Hàm phụ để xóa session theo refresh token
-    private function deleteSessionByToken($refreshToken)
+    public function deleteTokensByRefreshToken($refreshToken)
     {
-        $sql = "DELETE FROM {$this->table} WHERE refresh_token = :refresh_token";
+        $sql = "UPDATE users SET access_token = NULL, refresh_token = NULL WHERE refresh_token = :refresh_token";
         $this->query($sql, ['refresh_token' => $refreshToken]);
     }
 }
