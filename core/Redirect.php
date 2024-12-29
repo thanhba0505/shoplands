@@ -33,4 +33,14 @@ class Redirect
         }
         exit();
     }
+
+    public static function url($path = '')
+    {
+        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST']; // Lấy BASE_URL đã định nghĩa
+
+        // Kiểm tra nếu đường dẫn không trống, tạo URL đầy đủ
+        $url = rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+
+        return $url;
+    }
 }

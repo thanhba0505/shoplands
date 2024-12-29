@@ -5,7 +5,7 @@ class Notification
     public static function show($duration = 3000)
     {
         $message = Session::get('notification.message');
-        $type = Session::get('notification.type');
+        $type = Session::get('notification.type') ?? 'success';
 
         if (empty($message) || empty($type)) {
             return;

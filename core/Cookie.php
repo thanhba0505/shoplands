@@ -55,7 +55,7 @@ class Cookie
     }
 
     // Lưu token (Access Token và Refresh Token)
-    public static function setToken($accessToken, $refreshToken, $expiryAccess = 60 * 60, $expiryRefresh = 60 * 60 * 24 * 30)
+    public static function setToken($accessToken, $refreshToken, $expiryAccess = ACCESS_TOKEN_EXPIRY, $expiryRefresh = REFRESH_TOKEN_EXPIRY)
     {
         self::set('access_token', $accessToken, $expiryAccess);
         self::set('refresh_token', $refreshToken, $expiryRefresh);

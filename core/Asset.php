@@ -6,7 +6,7 @@ class Asset
     {
         $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST'];
 
-        $version = $v ? '?v=' . rand(1, 100) : '';
+        $version = $v ? '?v=' . rand() : '';
 
         return rtrim($baseUrl, '/') . '/public/' . ltrim($path, '/') . $version;
     }

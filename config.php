@@ -9,3 +9,6 @@ define('DATABASE', 'shopee');
 define('CHARSET', 'utf8mb4');
 
 define('SECRET_KEY', 'day_la_cai_key');
+
+define('ACCESS_TOKEN_EXPIRY', 60 * 60);
+define('REFRESH_TOKEN_EXPIRY', 60 * 60 * 24 * 30);
