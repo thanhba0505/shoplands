@@ -56,7 +56,11 @@ if (!CSRF::getToken()) {
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 
-    <div id="notification" class="notification"></div>
+    <div id="notification" class="notification" hidden>
+        <span id="notification-type"></span>
+        <span id="notification-message"></span>
+    </div>
+
     <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <?php Notification::show(); ?>
 </body>
