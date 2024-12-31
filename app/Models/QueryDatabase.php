@@ -13,6 +13,7 @@ class QueryDatabase extends ConnectDatabase
     protected $orderBy = '';
     protected $limit = '';
 
+
     public function select($columns = '*')
     {
         if ($columns === '*') {
@@ -20,32 +21,24 @@ class QueryDatabase extends ConnectDatabase
         } else {
             $columns = array_map(function ($column) {
                 return strpos($column, '.') === false ? "{$this->table}.$column" : $column;
-            }, explode(',', $columns));
+            }, (array) $columns);
             $this->query = "SELECT " . implode(', ', $columns) . " FROM {$this->table}";
         }
         return $this;
     }
 
-    public function joinWithConditions(
-        $tableToJoin,
-        $onCondition,
-        $joinColumns = '',
-        $joinType = 'INNER'
-    ) {
-        if (!empty($joinColumns)) {
-            $joinColumns = array_map(function ($column) use ($tableToJoin) {
-                return strpos($column, '.') === false ? "$tableToJoin.$column" : $column;
-            }, explode(',', $joinColumns));
-
-            $joinColumnsString = implode(', ', $joinColumns);
-            $this->query = preg_replace(
-                '/^SELECT\s+(.*?)\s+FROM/',
-                "SELECT $1, $joinColumnsString FROM",
-                $this->query
-            );
+    public function joinWithSubquery($subquery, $alias, $onCondition, $joinType = 'INNER')
+    {
+        if (strpos($this->query, 'SELECT') !== false) {
+            $this->query = preg_replace('/SELECT (.*?) FROM/', 'SELECT $1, ' . $alias . '.* FROM', $this->query);
         }
+        $this->join .= " $joinType JOIN ($subquery) AS $alias ON $onCondition";
+        return $this;
+    }
 
-        $this->join .= " $joinType JOIN $tableToJoin ON $onCondition";
+    public function from($table)
+    {
+        $this->table = $table;
         return $this;
     }
 
@@ -73,6 +66,29 @@ class QueryDatabase extends ConnectDatabase
         return $this;
     }
 
+    public function joinWithConditions(
+        $tableToJoin,
+        $onCondition,
+        $joinColumns = '',
+        $joinType = 'INNER'
+    ) {
+        if (!empty($joinColumns)) {
+            $joinColumns = array_map(function ($column) use ($tableToJoin) {
+                return strpos($column, '.') === false ? "$tableToJoin.$column" : $column;
+            }, explode(',', $joinColumns));
+
+            $joinColumnsString = implode(', ', $joinColumns);
+            $this->query = preg_replace(
+                '/^SELECT\s+(.*?)\s+FROM/',
+                "SELECT $1, $joinColumnsString FROM",
+                $this->query
+            );
+        }
+
+        $this->join .= " $joinType JOIN $tableToJoin ON $onCondition";
+        return $this;
+    }
+
     public function groupBy($columns)
     {
         $this->groupBy = " GROUP BY $columns";
@@ -91,8 +107,13 @@ class QueryDatabase extends ConnectDatabase
         return $this;
     }
 
-    protected function buildQuery()
+    public function buildQuery()
     {
+        // Kiểm tra nếu không có cột nào được chỉ định
+        if (strpos($this->query, 'SELECT') === false) {
+            $this->select('*');
+        }
+
         return $this->query
             . $this->join
             . $this->where
