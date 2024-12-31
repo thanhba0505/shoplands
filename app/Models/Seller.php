@@ -1,22 +1,24 @@
 <?php
 
 require_once 'app/Models/QueryDatabase.php';
+require_once 'app/Models/User.php';
 
 class Seller extends QueryDatabase
 {
     protected $table = 'sellers';
 
-    // Tìm người dùng theo số điện thoại
-    public function findByUserId($userId)
+    // Lấy người bán hien tại
+    public function getCurrentSeller()
     {
-        $sql = "SELECT * FROM {$this->table} WHERE user_id = :user_id";
-        return $this->query($sql, ['user_id' => $userId])->fetch();
+        $user = new User();
+        $currentUser = $user->getCurrentUser();
+        return $this->select()->where('user_id = ?', $currentUser['id'])->first();
     }
 
+    // Kiểm tra có phải người bán
     public function isSeller($userId)
     {
-        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE user_id = :user_id";
-        $result = $this->query($sql, ['user_id' => $userId])->fetchColumn();
-        return $result > 0;
+        $result = $this->select()->where('user_id = ?', $userId)->first(); 
+        return $result !== null;
     }
 }

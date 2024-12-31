@@ -12,6 +12,7 @@ require_once './core/CSRF.php';
 require_once './core/Redirect.php';
 require_once './core/Asset.php';
 require_once './core/Notification.php';
+require_once './core/Console.php';
 
 // Tạo session bảo mật
 Session::init();

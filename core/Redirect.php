@@ -43,4 +43,30 @@ class Redirect
 
         return $url;
     }
+
+    public static function reload()
+    {
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
+    }
+
+    public static function register()
+    {
+        self::to('/register');
+    }
+
+    public static function logout()
+    {
+        self::to('/logout');
+    }
+
+    public static function home()
+    {
+        self::to('/');
+    }
+
+    public static function login()
+    {
+        self::to('/login');
+    }
 }

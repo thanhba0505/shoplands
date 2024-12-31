@@ -30,7 +30,7 @@ class LoginController
         }
 
         // Tạo Access Token và Refresh Token
-        $accessToken = Token::createAccessToken($user['id'], 'user');
+        $accessToken = Token::createAccessToken($user['id']);
         $refreshToken = Token::createRefreshToken();
 
         // Lưu token vào cơ sở dữ liệu

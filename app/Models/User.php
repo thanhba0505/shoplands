@@ -6,38 +6,46 @@ class User extends QueryDatabase
 {
     protected $table = 'users';
 
+    // Lấy người dùng hiện tại
+    public function getCurrentUser()
+    {
+        $accessToken = Cookie::get('access_token');
+
+        $userId = Token::getUserId($accessToken);
+
+        return $this->select()->where('id = ?', $userId)->first();
+    }
+
     // Tìm người dùng theo số điện thoại
     public function findByPhone($phone)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE phone = :phone";
-        return $this->query($sql, ['phone' => $phone])->fetch();
+        return $this->select()->where('phone = ?', $phone)->first();
     }
 
+    // Cập nhật Access Token và Refresh Token cho người dùng
     public function updateTokens($userId, $accessToken, $refreshToken)
     {
-        $this->update($userId, [
-            'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,
-        ]);
+        // Đảm bảo rằng có truy vấn cơ sở trước khi gọi update
+        return $this->where('id = ?', $userId)
+            ->updateWithConditions([
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken
+            ]);
     }
 
+
+    // Tìm người dùng theo Refresh Token
     public function findByRefreshToken($refreshToken)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE refresh_token = :refresh_token LIMIT 1";
-
-        $stmt = $this->query($sql, ['refresh_token' => $refreshToken]);
-        $session = $stmt->fetch();
-
-        if (!$session) {
-            return null;
-        }
-
-        return $session;
+        return $this->select()->where('refresh_token = ?', $refreshToken)->first();
     }
 
+    // Xóa Access Token và Refresh Token bằng Refresh Token
     public function deleteTokensByRefreshToken($refreshToken)
     {
-        $sql = "UPDATE users SET access_token = NULL, refresh_token = NULL WHERE refresh_token = :refresh_token";
-        $this->query($sql, ['refresh_token' => $refreshToken]);
+        return $this->where('refresh_token = ?', $refreshToken)->updateWithConditions([
+            'access_token' => null,
+            'refresh_token' => null
+        ]);
     }
 }

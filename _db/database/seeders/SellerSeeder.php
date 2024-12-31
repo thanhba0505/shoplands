@@ -19,6 +19,17 @@ class SellerSeeder extends Seeder
         // Lặp qua user và tạo seller
         foreach ($users as $user) {
             // Random dựa trên tỷ lệ
+            if ($user->id == 1) {
+                Seller::factory()->create([
+                    'user_id' => 1,
+                ]);
+                continue;
+            }
+
+            if ($user->id == 2) {
+                continue;
+            }
+
             if (rand(0, 100) <= $percentage * 100) {
                 Seller::factory()->create([
                     'user_id' => $user->id,

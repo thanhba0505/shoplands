@@ -1,5 +1,8 @@
 <?php
 
+require_once 'app/Models/Seller.php';
+require_once 'app/Models/Order.php';
+
 class OrderController
 {
     public function show($page = 'all')
@@ -10,30 +13,38 @@ class OrderController
         }
 
         $data = [
-            'title' => 'Seller Page',
+            'title' => 'Quản lý đơn hàng',
             'title_header' => 'Kênh người bán',
             'group' => 'order',
             'page' => $page
         ];
 
-        if ($page == 'all') {
+        $seller = new Seller();
+        $currentSeller = $seller->getCurrentSeller();
 
-            $to_do_list = [
-                'pending' => '3',
-                'packing' => '2',
-                'packed' => '5',
-                'shipping' => '2',
-                'dilivered' => '7',
-                'completed' => '2',
-                'returned' => '7',
-                'cancelled' => '4',
-            ];
+        $order = new Order();
+        $orders = $order->getOrdersBySellerId($currentSeller['id']);
 
-            $data = array_merge($data, $to_do_list);
+        Console::log($orders);
 
-            View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
-            return;
-        }
+        // if ($page == 'all') {
+
+        //     $to_do_list = [
+        //         'pending' => '3',
+        //         'packing' => '2',
+        //         'packed' => '5',
+        //         'shipping' => '2',
+        //         'dilivered' => '7',
+        //         'completed' => '2',
+        //         'returned' => '7',
+        //         'cancelled' => '4',
+        //     ];
+
+        //     $data = array_merge($data, $to_do_list);
+
+        //     View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
+        //     return;
+        // }
 
         View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
     }

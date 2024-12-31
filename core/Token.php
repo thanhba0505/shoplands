@@ -63,6 +63,6 @@ class Token
     {
         $payload = self::getPayload($token);
 
-        return $payload['user_id'] ?? null; // Trả về user_id hoặc null nếu không có
+        return $payload['user_id'] ?? null; 
     }
 }

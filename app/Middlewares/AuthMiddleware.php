@@ -31,12 +31,14 @@ class AuthMiddleware
         }
 
         // Tạo Token mới
-        $accessToken = Token::createAccessToken($user['id'], 'user');
+        $accessToken = Token::createAccessToken($user['id']);
         $refreshToken = Token::createRefreshToken();
 
         $userModel->updateTokens($user['id'], $accessToken, $refreshToken);
 
         // Cập nhật Access Token trong Cookie
         Cookie::setToken($accessToken, $refreshToken);
+
+        Redirect::reload();
     }
 }
