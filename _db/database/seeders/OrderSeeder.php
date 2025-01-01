@@ -52,6 +52,7 @@ class OrderSeeder extends Seeder
                         'subtotal_price' => 0,
                         'discount_amount' => 0,
                         'final_price' => 0,
+                        'revenue' => 0,
                     ]);
 
                     $subtotalPrice = 0;
@@ -84,11 +85,15 @@ class OrderSeeder extends Seeder
                     // Tính tổng tiền cuối cùng
                     $finalPrice = max($subtotalPrice - $discountAmount + $shippingFee->shipping_fee, 0);
 
+                    // Tính doanh thu
+                    $revenue = max($subtotalPrice * 0.95, $subtotalPrice - 50000);
+
                     // Cập nhật các cột
                     $order->update([
                         'subtotal_price' => $subtotalPrice,
                         'discount_amount' => $discountAmount,
                         'final_price' => $finalPrice,
+                        'revenue' => $revenue,
                     ]);
 
                     // Tạo trạng thái "pending" cho đơn hàng

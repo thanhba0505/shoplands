@@ -13,13 +13,13 @@ class ProductVariantFactory extends Factory
 
     public function definition(): array
     {
-        $price = $this->faker->randomFloat(0, 10000, 1500000);
+        $price = $this->faker->randomFloat(0, 10000, 200000);
 
         // Làm tròn giá trị `price` đến hàng ngàn
-        $price = round($price, -3);
+        $price = round(sqrt($price) * 1000, 0);
 
         // Giá khuyến mãi (giữ nguyên tỷ lệ giảm giá)
-        $promotionPrice = round($price * 0.8, -3);
+        $promotionPrice = rand(1, 100) > 70 ? round($price * rand(80, 95) / 100, -1) : null;
 
 
         return [

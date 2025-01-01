@@ -27,8 +27,9 @@ class ConnectDatabase
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
-            error_log($e->getMessage(), 3, 'errors.log');
-            throw new Exception("Query failed: " . $e->getMessage());
+            // throw new Exception("Query failed: " . $e->getMessage());
+            Console::error('Query failed: ' . $e->getMessage());
+            return null;
         }
     }
 

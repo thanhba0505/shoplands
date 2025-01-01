@@ -15,9 +15,9 @@ class CouponFactory extends Factory
         $sellerId = Seller::inRandomOrder()->first()->id;
 
         $discountType = $this->faker->randomElement(['percentage', 'fixed']);
-        $discountValue = $discountType === 'percentage' ? $this->faker->numberBetween(5, 50) : $this->faker->numberBetween(10, 200);
-        $maximumDiscount = $discountType === 'percentage' ? $this->faker->numberBetween(100, 500) : null;
-        $minimumOrderValue = $this->faker->numberBetween(100, 1000);
+        $discountValue = $discountType === 'percentage' ? $this->faker->numberBetween(5, 50) : round($this->faker->numberBetween(10000, 30000), -3);
+        $maximumDiscount = $discountType === 'percentage' ? round($this->faker->numberBetween(20000, 50000), -3) : null;
+        $minimumOrderValue = round($this->faker->numberBetween(80000, 500000), -3);
         $usageLimit = $this->faker->numberBetween(1, 100);
 
         // Ngẫu nhiên chọn ngày trong vòng 1 tháng trước và 1 tháng sau
