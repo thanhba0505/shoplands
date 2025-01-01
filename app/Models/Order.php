@@ -1,24 +1,23 @@
 <?php
 
-require_once 'app/Models/QueryDatabase.php';
+require_once 'app/Models/QueryCustom.php';
 
-class Order extends QueryDatabase
+class Order
 {
     protected $table = 'orders';
 
     public function getOrdersBySellerId($sellerId)
     {
-        // Subquery lấy thông tin từ order_items
-        $subquery = $this->from('order_items')
-            ->select(['id', 'quantity', 'price', 'order_id'])  // Chọn các cột từ order_items
-            ->buildQuery();
+        $query = new QueryCustom();
 
-        // Truy vấn chính kết hợp với subquery
-        return $this->from('orders')
-            ->select(['id', 'subtotal_price', 'payment_method'])  // Chọn các cột từ orders
-            ->joinWithSubquery($subquery, 'sub_order_items', 'orders.id = sub_order_items.order_id')
-            ->where('seller_id = ?', $sellerId)
+        $result = $query
+            ->select(['orders.id', 'subtotal_price', 'payment_method'])
+            ->from('orders')
+            ->join('order_items', 'orders.id = order_items.order_id')
+            ->where('seller_id = :sellerId', ['sellerId' => $sellerId])
             ->limit(10)
             ->all();
+
+        return $result;
     }
 }

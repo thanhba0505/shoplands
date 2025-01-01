@@ -1,8 +1,8 @@
 <?php
 
-require_once 'app/Models/QueryDatabase.php';
+require_once 'app/Models/QueryCustom.php';
 
-class User extends QueryDatabase
+class User
 {
     protected $table = 'users';
 
@@ -10,42 +10,70 @@ class User extends QueryDatabase
     public function getCurrentUser()
     {
         $accessToken = Cookie::get('access_token');
-
         $userId = Token::getUserId($accessToken);
 
-        return $this->select()->where('id = ?', $userId)->first();
+        $query  = new QueryCustom();
+        $result = $query
+            ->select()
+            ->from('users')
+            ->where('id = :userId', ['userId' => $userId])
+            ->first();
+
+        return $result;
     }
 
     // Tìm người dùng theo số điện thoại
     public function findByPhone($phone)
     {
-        return $this->select()->where('phone = ?', $phone)->first();
+        $query  = new QueryCustom();
+        $result = $query
+            ->select()
+            ->from('users')
+            ->where('phone = :phone', ['phone' => $phone])
+            ->first();
+
+        return $result;
     }
 
     // Cập nhật Access Token và Refresh Token cho người dùng
     public function updateTokens($userId, $accessToken, $refreshToken)
     {
-        // Đảm bảo rằng có truy vấn cơ sở trước khi gọi update
-        return $this->where('id = ?', $userId)
-            ->updateWithConditions([
-                'access_token' => $accessToken,
-                'refresh_token' => $refreshToken
-            ]);
+        $query  = new QueryCustom();
+        $result = $query->update('users', [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken
+        ], 'id = :id', [
+            'id' => $userId
+        ]);
+
+        return $result;
     }
 
 
     // Tìm người dùng theo Refresh Token
     public function findByRefreshToken($refreshToken)
     {
-        return $this->select()->where('refresh_token = ?', $refreshToken)->first();
+        $query  = new QueryCustom();
+        $result = $query
+            ->select()
+            ->from('users')
+            ->where('refresh_token = :refreshToken', ['refreshToken' => $refreshToken])
+            ->first();
+
+        return $result;
     }
 
     // Xóa Access Token và Refresh Token bằng Refresh Token
     public function deleteTokensByRefreshToken($refreshToken)
     {
-        return $this->where('refresh_token = ?', $refreshToken)->updateWithConditions([
+        $query  = new QueryCustom();
+        $result = $query->update('users', [
             'access_token' => null,
             'refresh_token' => null
+        ], 'refresh_token = :refreshToken', [
+            'refreshToken' => $refreshToken
         ]);
+
+        return $result;
     }
 }
