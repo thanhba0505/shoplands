@@ -4,6 +4,9 @@ class CartController
 {
     public function show()
     {
+
+
+        
         $data = [
             'title' => 'Cart Page',
         ];
