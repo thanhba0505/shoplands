@@ -4,3 +4,17 @@ Sửa .htaccess RewriteBase /congnghemoi/shopee/ thành path lưu dự án
 - Bảo mật access token và refresh token
 - Bảo mật form CSRF
 - Bảo mật chống XSS
+
+- Chạy csdl 
+*** Tải composer trên trình duyệt (nếu máy chưa tải) - dùng composer --version để ktra phiên bản
+B1 cd _db
+B2 composer install
+B2 php artisan migrate:fresh --seed
+
+
+- Load lệnh git
+git add .
+git commit -m "message"
+
+git push
+git pull
