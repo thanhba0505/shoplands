@@ -7,3 +7,5 @@
 </main>
 
 <?php include './app/views/layout/footer.php'; ?>
+
+<title><?= $title ?? 'Shopee' ?></title>

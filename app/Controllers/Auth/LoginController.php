@@ -8,7 +8,7 @@ class LoginController
 {
     public function show()
     {
-        View::make('Auth/login', [], 'layout/layout-primary');
+        View::make('Auth/login', ['title' => 'Đăng nhập'], 'layout/layout-primary');
     }
 
     public function login()

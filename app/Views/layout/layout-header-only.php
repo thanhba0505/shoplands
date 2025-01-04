@@ -6,3 +6,5 @@
         <?= $content ?>
     </section>
 </main>
+
+<title><?= $title ?? 'Shopee' ?></title>

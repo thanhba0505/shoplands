@@ -16,3 +16,5 @@
         </div>
     </section>
 </main>
+
+<title><?= $title ?? 'Shopee' ?></title>
