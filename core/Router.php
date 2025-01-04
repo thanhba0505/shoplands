@@ -49,10 +49,7 @@ class Router
                     // Kiểm tra CSRF Token
                     $csrfToken = Request::post('csrf');
                     if (!CSRF::validateToken($csrfToken)) {
-                        // Nếu CSRF Token không hợp lệ, lưu thông báo và chuyển hướng
-                        Session::set('error', 'CSRF Token không hợp lệ.');
-                        Redirect::to('/');
-                        exit;
+                        Redirect::to('/login', 'CSRF Token không hợp lệ.', 'error');
                     }
                 }
 
@@ -92,6 +89,6 @@ class Router
         }
 
         // Nếu không tìm thấy route
-        View::make('App/404');
+        View::make('App/404', ['title' => '404 Not Found'], 'layout/layout-primary');
     }
 }

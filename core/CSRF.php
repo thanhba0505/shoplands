@@ -35,4 +35,9 @@ class CSRF
     {
         return Session::get(self::$tokenName) ?? null;
     }
+
+    public static function input()
+    {
+        return '<input type="text" name="csrf" value="' . self::getToken() . '" hidden>';
+    }
 }

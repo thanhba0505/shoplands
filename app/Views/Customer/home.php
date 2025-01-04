@@ -139,7 +139,7 @@
         <div class="col-span-2">
             <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
                 <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::url('uploads/img/cap-sac.webp') ?>" alt="">
-                <span class="truncate font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
+                <span class="line-clamp-2 w-full font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
                 <div class="flex items-center mt-2">
                     <i class="fa-solid fa-star text-yellow-400"></i>
                     <i class="fa-solid fa-star text-yellow-400"></i>
@@ -175,7 +175,7 @@
         <div class="col-span-3">
             <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
                 <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::url('uploads/img/cap-sac.webp') ?>" alt="">
-                <span class="truncate font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
+                <span class="line-clamp-2 w-full font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
                 <div class="flex items-center mt-2">
                     <i class="fa-solid fa-star text-yellow-400"></i>
                     <i class="fa-solid fa-star text-yellow-400"></i>

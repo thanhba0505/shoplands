@@ -13,7 +13,7 @@ require_once './core/Redirect.php';
 require_once './core/Asset.php';
 require_once './core/Notification.php';
 require_once './core/Console.php';
-
+Console::log('Xử lý route');
 // Tạo session bảo mật
 Session::init();
 
@@ -47,13 +47,15 @@ if (!CSRF::getToken()) {
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <link rel="stylesheet" href="<?= Asset::url('css/output.css', true) ?>">
     <link rel="stylesheet" href="<?= Asset::url('css/global.css', true) ?>">
 
-    <script src="<?= Asset::url('js/tailwind.min.js', true) ?>"></script>
+    <!-- <script src="<?= Asset::url('js/tailwind.min.js', true) ?>"></script> -->
     <script src="<?= Asset::url('js/alpine.min.js', true) ?>" defer></script>
 </head>
 
 <body class="bg-gray-100" style="min-width: 1200px; width: 100%; overflow-x: hidden">
+    
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 

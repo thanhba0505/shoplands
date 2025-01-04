@@ -59,7 +59,7 @@ class Redirect
 
     public static function home($type = 'url', $message = '', $typeMessage = 'success')
     {
-        return self::route($type, 'home', $message, $typeMessage);
+        return self::route($type, '', $message, $typeMessage);
     }
 
     public static function login($type = 'url', $message = '', $typeMessage = 'success')

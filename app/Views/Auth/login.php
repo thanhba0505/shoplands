@@ -3,7 +3,7 @@
         Đăng Nhập
     </h2>
     <form action="#" method="POST">
-        <input type="text" name="csrf" value="<?= CSRF::getToken() ?>" hidden>
+        <?= CSRF::input() ?>
 
         <!-- Email -->
         <div class="mb-4">
