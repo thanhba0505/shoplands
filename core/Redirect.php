@@ -2,33 +2,36 @@
 
 class Redirect
 {
-    // Phương thức chuyển hướng đến một URL
+    public static function route($type = 'url',  $path = '', $message = '', $typeMessage = 'success')
+    {
+        if ($type == 'url') {
+            return self::url($path);
+        } else if ($type == 'to') {
+            return self::to($path, $message, $typeMessage);
+        } else {
+            return self::url($path);
+        }
+    }
+
     public static function to($path = '', $message = '', $type = 'success')
     {
         if ($message !== '') {
             Notification::set($message, $type);
         }
+        $url = self::url($path);
 
-        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST']; // Lấy BASE_URL đã định nghĩa
-
-        // Kiểm tra nếu đường dẫn không trống, tạo URL đầy đủ
-        $url = rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
-
-        // Chuyển hướng (redirect) tới URL
         header("Location: $url");
-        exit(); // Đảm bảo mã dừng lại ngay sau khi chuyển hướng
+        exit();
     }
 
-    // Phương thức chuyển hướng về trang trước đó
     public static function back()
     {
-        // Kiểm tra xem có referrer (trang trước) hay không
         $referrer = $_SERVER['HTTP_REFERER'] ?? null;
 
         if ($referrer) {
             header("Location: $referrer");
         } else {
-            // Nếu không có referrer, chuyển hướng về trang chủ
+
             self::to('/');
         }
         exit();
@@ -36,9 +39,8 @@ class Redirect
 
     public static function url($path = '')
     {
-        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST']; // Lấy BASE_URL đã định nghĩa
+        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST'];
 
-        // Kiểm tra nếu đường dẫn không trống, tạo URL đầy đủ
         $url = rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
 
         return $url;
@@ -50,23 +52,48 @@ class Redirect
         exit();
     }
 
-    public static function register()
+    public static function logout($type = 'url', $message = '', $typeMessage = 'success')
     {
-        self::to('/register');
+        return self::route($type, 'logout', $message, $typeMessage);
     }
 
-    public static function logout()
+    public static function home($type = 'url', $message = '', $typeMessage = 'success')
     {
-        self::to('/logout');
+        return self::route($type, 'home', $message, $typeMessage);
     }
 
-    public static function home()
+    public static function login($type = 'url', $message = '', $typeMessage = 'success')
     {
-        self::to('/');
+        return self::route($type, 'login', $message, $typeMessage);
     }
 
-    public static function login()
+    public static function register($type = 'url', $message = '', $typeMessage = 'success')
     {
-        self::to('/login');
+        return self::route($type, 'register', $message, $typeMessage);
+    }
+
+    public static function product($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'products', $message, $typeMessage);
+    }
+
+    public static function post($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'posts', $message, $typeMessage);
+    }
+
+    public static function cart($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'cart', $message, $typeMessage);
+    }
+
+    public static function order($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'orders', $message, $typeMessage);
+    }
+
+    public static function seller($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'seller/orders/all', $message, $typeMessage);
     }
 }

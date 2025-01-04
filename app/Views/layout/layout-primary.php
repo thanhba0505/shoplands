@@ -1,12 +1,9 @@
-<?php include './app/views/layout/index.php'; ?>
+<?php include './app/views/layout/header.php'; ?>
 
-<div class="container">
-    <?php include './app/views/layout/header.php'; ?>
-
-
-    <div class="app-content">
+<main class="2xl:container mx-auto p-6">
+    <section class="bg-white p-6 rounded-lg shadow-md">
         <?= $content ?>
-    </div>
+    </section>
+</main>
 
-    <?php include './app/views/layout/footer.php'; ?>
-</div>
+<?php include './app/views/layout/footer.php'; ?>

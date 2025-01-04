@@ -46,6 +46,6 @@ class OrderController
         //     return;
         // }
 
-        View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
+        View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
     }
 }

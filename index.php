@@ -47,23 +47,34 @@ if (!CSRF::getToken()) {
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="<?= Asset::url('css/root.css', true) ?>">
     <link rel="stylesheet" href="<?= Asset::url('css/global.css', true) ?>">
-    <link rel="stylesheet" href="<?= Asset::url('css/app.css', true) ?>">
-    <link rel="stylesheet" href="<?= Asset::url('css/bootstrap.css', true) ?>">
+
+    <script src="<?= Asset::url('js/tailwind.min.js', true) ?>"></script>
+    <script src="<?= Asset::url('js/alpine.min.js', true) ?>" defer></script>
 </head>
 
-<body>
+<body class="bg-gray-100" style="min-width: 1200px; width: 100%; overflow-x: hidden">
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 
-    <div id="notification" class="notification" hidden>
-        <span id="notification-type"></span>
-        <span id="notification-message"></span>
+
+    <!-- Thông báo -->
+    <div id="notification" class="fixed 
+        <?php
+        if (Session::get('notification.type') === 'error') {
+            echo 'bg-red-400';
+        } else {
+            echo 'bg-blue-400';
+        }
+        ?>  
+        fixed text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">
+
+        <span class="" id="notification-message"><?= Session::get('notification.message') ?></span>
     </div>
 
     <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <?php Notification::show(); ?>
+    <title><?= $title ?? 'Shopee' ?></title>
 </body>
 
 </html>

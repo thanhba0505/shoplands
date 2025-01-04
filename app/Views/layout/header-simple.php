@@ -1,15 +1,14 @@
-<div class="header">
-
-    <div class="row align-items-center">
-        <div class="col-auto">
-            <a href="<?= Redirect::url('/') ?>" style="width: 120px">
-                <?= Asset::logoSvg() ?>
-            </a>
-        </div>
-
-        <div class="col">
-            <h2 class="text-color-5 pl-4 border-left border-color-5"><?php echo $title_header; ?></h2>
+<nav class="bg-blue-600 text-white py-4 sticky top-0 z-50">
+    <div class="2xl:container mx-auto px-6">
+        <div class="flex justify-start items-end">
+            <div class="text-lg font-semibold">
+                <a href="<?= Redirect::url('/') ?>" style="width: 120px">
+                    <?= Asset::logoSvg('fill-white', 120) ?>
+                </a>
+            </div>
+            <div class="ml-4 pl-4 border-l border-white font-semibold text-2xl pb-px">
+                <?= $title_header ?? '' ?>
+            </div>
         </div>
     </div>
-
-</div>
+</nav>

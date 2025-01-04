@@ -1,28 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {});
 
-function showNotification(message = "", type = "success", duration = 3000) {
+function showNotification(duration = 3000) {
     const notification = document.getElementById("notification");
-
-    // Cập nhật nội dung và kiểu thông báo
-    const typeElement = document.getElementById("notification-type");
-    const messageElement = document.getElementById("notification-message");
-    typeElement.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-    messageElement.textContent = message;
-
-    // Cập nhật lớp CSS và hiển thị thông báo
-    notification.className = `notification ${type}`;
+    // Cập nhật lớp CSS
     notification.hidden = false;
 
-    // Thêm hiệu ứng hiển thị
+    // Hiển thị với hiệu ứng
     setTimeout(() => {
-        notification.classList.add("show");
-    }, 10);
+        notification.classList.remove("right-8");
+        notification.classList.remove("opacity-0");
+        notification.classList.add("right-10");
+        notification.classList.add("opacity-1");
+    }, 50);
 
     // Ẩn thông báo sau thời gian quy định
     setTimeout(() => {
-        notification.classList.remove("show");
+        notification.classList.add("right-8");
+        notification.classList.add("opacity-0");
+        notification.classList.remove("opacity-1");
+        notification.classList.remove("right-10");
         setTimeout(() => {
-            notification.hidden = true; // Ẩn thông báo hoàn toàn
-        }, 500); // Thời gian cho hiệu ứng ẩn
+            notification.hidden = true; // Ẩn hoàn toàn
+        }, 500); // Thời gian cho hiệu ứng
     }, duration);
 }

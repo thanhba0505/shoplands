@@ -12,19 +12,19 @@ class ProductController
             return;
         }
 
-        $userModel = new UserModel();
-        $users = $userModel->getTest('Thử nghiệm');
+        // $userModel = new User();
+        // $users = $userModel->getTest('Thử nghiệm');
 
-        $data = [
-            'title' => 'Seller Page',
-            'title_header' => 'Kênh người bán',
-            'group' => 'product',
-            'page' => $page,
-            'users' => $users
-        ];
+        // $data = [
+        //     'title' => 'Seller Page',
+        //     'title_header' => 'Kênh người bán',
+        //     'group' => 'product',
+        //     'page' => $page,
+        //     'users' => $users
+        // ];
 
 
 
-        View::make('Seller/Product/index', $data, 'layout/layout-header-simple-fullwidth');
+        View::make('Seller/Product/index', [], 'layout/layout-header-only');
     }
 }

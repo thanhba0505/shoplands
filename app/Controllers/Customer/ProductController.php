@@ -8,6 +8,6 @@ class ProductController
             'title' => 'Product Page',
         ];
 
-        View::make('Customer/product', $data, 'layout/layout-primary');
+        View::make('Customer/products', $data, 'layout/layout-primary');
     }
 }

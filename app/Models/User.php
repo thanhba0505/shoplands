@@ -9,8 +9,7 @@ class User
     // Lấy người dùng hiện tại
     public function getCurrentUser()
     {
-        $accessToken = Cookie::get('access_token');
-        $userId = Token::getUserId($accessToken);
+        $userId = Token::getUserId();
 
         $query  = new QueryCustom();
         $result = $query

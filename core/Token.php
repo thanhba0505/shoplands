@@ -45,9 +45,10 @@ class Token
     }
 
     // Giải mã Access Token và lấy thông tin
-    public static function getPayload($token)
+    public static function getPayload()
     {
-        $parts = explode('.', $token);
+        $accessToken = Cookie::get('access_token');
+        $parts = explode('.', $accessToken);
         if (count($parts) !== 2) {
             return null;
         }
@@ -59,10 +60,16 @@ class Token
     }
 
     // Lấy User ID từ Access Token
-    public static function getUserId($token)
+    public static function getUserId()
     {
-        $payload = self::getPayload($token);
+        $payload = self::getPayload();
 
-        return $payload['user_id'] ?? null; 
+        return $payload['user_id'] ?? null;
+    }
+
+    public static function checkAuth()
+    {
+        $accessToken = Cookie::get('access_token');
+        return self::validateAccessToken($accessToken);
     }
 }

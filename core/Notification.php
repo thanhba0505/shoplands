@@ -11,7 +11,7 @@ class Notification
             return;
         }
 
-        echo "<script>document.addEventListener('DOMContentLoaded', () => {showNotification('$message', '$type', $duration);});</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', () => {showNotification($duration);});</script>";
         Session::remove('notification.message');
         Session::remove('notification.type');
     }

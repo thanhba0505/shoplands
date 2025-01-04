@@ -16,10 +16,13 @@ $router->get('/register', 'Auth/RegisterController@show');
 
 
 // Trang sản phẩm ---------------------------------------------------------------------
-$router->get('/product', 'Customer/ProductController@show');
+$router->get('/products', 'Customer/ProductController@show');
+
+// Trang chi tiết sản phẩm ---------------------------------------------------------------------
+$router->get('/products/{id}', 'Customer/ProductDetailController@show');
 
 // Trang bài viết ---------------------------------------------------------------------
-$router->get('/post', 'Customer/PostController@show');
+$router->get('/posts', 'Customer/PostController@show');
 
 
 
@@ -30,7 +33,10 @@ $router->get('/post', 'Customer/PostController@show');
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
 
-// Trang bán hàng ---------------------------------------------------------------------
+// Trang giỏ hàng ---------------------------------------------------------------------
+$router->get('/orders', 'Customer/OrderController@show', [AuthMiddleware::class]);
+
+// Trang đăng ký bán hàng ---------------------------------------------------------------------
 $router->get('/seller/register', 'Seller/SellerRegisterController@show', [AuthMiddleware::class]);
 
 

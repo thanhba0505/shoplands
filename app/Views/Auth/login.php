@@ -1,24 +1,47 @@
-<div class="row">
-    <div class="col-12">
-        <a href="<?= Redirect::url('/') ?>" style="width: 180px" class="m-auto py-1 px-2">
-            <?= Asset::logoSvg('var(--light-color)') ?>
-        </a>
-        <!-- <span class="text-center font-size-4 fw-bold">Login</span> -->
-    </div>
-    <div class="col-12">
-        <form action="<?= BASE_URL ?>/login" method="post" class="pb-4 px-5">
-            <input type="hidden" name="csrf" value="<?= CSRF::getToken() ?>">
-            <div class="form-group">
-                <label class="font-size-3 pb-2" for="phone">Số điện thoại</label>
-                <input type="text" name="phone" class="form-control" id="phone" placeholder="Nhập số điện thoại">
-            </div>
-            <div class="form-group mt-4">
-                <label class="font-size-3 pb-2" for="password">Mật khẩu</label>
-                <input type="password" name="password" class="form-control" id="password" placeholder="Nhập mật khẩu">
-            </div>
-            <div class="mt-5 pt-3">
-                <button class="btn w-100" type="submit">Đăng nhập</button>
-            </div>
-        </form>
-    </div>
+<div class="bg-white p-6 rounded-lg border shadow mx-auto w-full max-w-sm my-20">
+    <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">
+        Đăng Nhập
+    </h2>
+    <form action="#" method="POST">
+        <input type="text" name="csrf" value="<?= CSRF::getToken() ?>" hidden>
+
+        <!-- Email -->
+        <div class="mb-4">
+            <label
+                for="phone"
+                class="block text-sm font-medium text-gray-600">Số điện thoại</label>
+            <input
+                type="text"
+                id="phone"
+                name="phone"
+                required
+                class="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+        <!-- Mật khẩu -->
+        <div class="mb-4">
+            <label
+                for="password"
+                class="block text-sm font-medium text-gray-600">Mật khẩu</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                class="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+        <!-- Ghi nhớ -->
+        <div class="flex items-center justify-end mb-4">
+            <a href="#" class="text-sm text-blue-500 hover:underline">Quên mật khẩu?</a>
+        </div>
+        <!-- Nút đăng nhập -->
+        <button
+            type="submit"
+            class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Đăng Nhập
+        </button>
+    </form>
+    <p class="text-sm text-gray-600 mt-4 text-center">
+        Bạn chưa có tài khoản?
+        <a href="#" class="text-blue-500 hover:underline">Đăng ký</a>
+    </p>
 </div>

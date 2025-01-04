@@ -30,7 +30,7 @@ class CSRF
         return hash_equals($sessionToken, $token);
     }
 
-    // Lấy CSRF Token hiện tại (nếu cần trong các trường hợp đặc biệt)
+    // Lấy CSRF Token hiện tại 
     public static function getToken()
     {
         return Session::get(self::$tokenName) ?? null;
