@@ -24,11 +24,10 @@ class Token
     }
 
     // Tạo Access Token có chữ ký
-    public static function createAccessToken($userId, $roll = 'user')
+    public static function createAccessToken($userId)
     {
         $payload = [
             'user_id' => $userId,
-            'roll' => $roll,
             'exp' => time() + 3600, // Token hết hạn sau 1 giờ
         ];
         $payloadBase64 = base64_encode(json_encode($payload));
