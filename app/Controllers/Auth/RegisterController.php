@@ -4,6 +4,6 @@ class RegisterController
 {
     public function show()
     {
-        View::make('Auth/login', [], 'layout/layout-header-only');
+        View::make('Auth/register', [], 'layout/layout-primary');
     }
 }
