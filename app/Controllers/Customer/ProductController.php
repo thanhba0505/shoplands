@@ -6,8 +6,9 @@ class ProductController
     {
         $data = [
             'title' => 'Product Page',
+            'sidebar' => 'products'
         ];
 
-        View::make('Customer/products', $data, 'layout/layout-primary');
+        View::make('Customer/products', $data, 'layout/layout-sidebar');
     }
 }
