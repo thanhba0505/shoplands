@@ -71,7 +71,7 @@
 
     <!-- Lặp lại các danh mục tương tự -->
     <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
+        <a href="<?php Redirect::url('products?category=may-tinh') ?>" class="flex flex-col items-center">
             <div class="w-full h-32">
                 <img class="object-cover w-full h-full" src="<?= Asset::url('img/may-tinh.webp') ?>" alt="">
             </div>
@@ -136,6 +136,8 @@
 <div class="mt-10">
     <div class="text-center text-xl font-bold py-3 bg-gray-100 text-gray-800">Gợi ý cho bạn</div>
     <div class="grid grid-cols-12 gap-4 mt-4">
+
+        <?php for ($i = 0; $i < 6; $i++): ?>
         <div class="col-span-2">
             <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
                 <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::url('uploads/img/cap-sac.webp') ?>" alt="">
@@ -154,6 +156,7 @@
                 <span class="text-sm text-gray-600">Đã bán 10k</span>
             </a>
         </div>
+        <?php endfor; ?>
 
         <!-- Thêm các sản phẩm khác tương tự -->
     </div>

@@ -19,5 +19,6 @@ git commit -m "message"
 git push
 git pull
 
+Bật câu lệnh css : npm run watch
 
 Pham Ngoc Tuan

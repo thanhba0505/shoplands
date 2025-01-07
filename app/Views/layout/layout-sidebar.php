@@ -6,7 +6,14 @@
         <div class="grid grid-cols-6 gap-6">
             <!-- Sidebar -->
             <div class="col-span-1">
-                <?php include './app/views/Seller/seller-sidebar.php'; ?>
+                <?php 
+                if (isset($sidebar) && $sidebar=='products') {
+                    include './app/views/Customer/products-sidebar.php'; 
+                } else{
+                    include './app/views/Seller/seller-sidebar.php'; 
+                }
+                
+                ?>
             </div>
 
             <!-- Content -->
