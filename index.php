@@ -50,26 +50,17 @@ if (!CSRF::getToken()) {
     <link rel="stylesheet" href="<?= Asset::url('css/output.css', true) ?>">
     <link rel="stylesheet" href="<?= Asset::url('css/global.css', true) ?>">
 
-    <!-- <script src="<?= Asset::url('js/tailwind.min.js', true) ?>"></script> -->
     <script src="<?= Asset::url('js/alpine.min.js', true) ?>" defer></script>
 </head>
 
 <body class="bg-gray-100" style="min-width: 1200px; width: 100%; overflow-x: hidden">
-    
+
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 
 
     <!-- Thông báo -->
-    <div id="notification" class="fixed 
-        <?php
-        if (Session::get('notification.type') === 'error') {
-            echo 'bg-red-400';
-        } else {
-            echo 'bg-blue-400';
-        }
-        ?>  
-        fixed text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">
+    <div id="notification" class="fixed <?= Session::get('notification.type') === 'error' ? 'bg-red-400' : 'bg-blue-400' ?> text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">
 
         <span class="" id="notification-message"><?= Session::get('notification.message') ?></span>
     </div>
