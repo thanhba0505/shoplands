@@ -11,16 +11,21 @@ return new class extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->string('image_path');
-            $table->unsignedBigInteger('product_id'); // Foreign key
+            $table->boolean('default')->default(false);
+            $table->unsignedBigInteger('product_id');
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products');
+
+            // Ràng buộc unique chỉ áp dụng khi default = true
+            // $table->unique(['product_id', 'default'], 'unique_default_image_per_product');
         });
     }
 
     public function down(): void
     {
         Schema::table('product_images', function (Blueprint $table) {
+            $table->dropUnique('unique_default_image_per_product');
             $table->dropForeign(['product_id']);
         });
 
