@@ -71,7 +71,12 @@ class Redirect
     {
         return self::route($type, 'register', $message, $typeMessage);
     }
-
+    
+    public static function accountSettings($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'account-settings', $message, $typeMessage);
+    }
+    
     public static function product($type = 'url', $message = '', $typeMessage = 'success')
     {
         return self::route($type, 'products', $message, $typeMessage);

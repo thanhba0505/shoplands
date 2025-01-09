@@ -9,7 +9,9 @@
                 <?php 
                 if (isset($sidebar) && $sidebar=='products') {
                     include './app/views/Customer/products-sidebar.php'; 
-                } else{
+                } else if (isset($sidebar) && $sidebar=='info') {
+                    include './app/views/Customer/info-sidebar.php'; 
+                } else  {
                     include './app/views/Seller/seller-sidebar.php'; 
                 }
                 
@@ -17,11 +19,15 @@
             </div>
 
             <!-- Content -->
-            <div class="col-span-5">
+            <div class="<?= isset($sidebar) && $sidebar=='info' ? 'col-span-4' : 'col-span-5' ?>">
                 <?= $content ?>
             </div>
         </div>
     </section>
 </main>
+
+<?php if (isset($footer) && $footer == true) {
+    include './app/views/layout/footer.php';
+}?>
 
 <title><?= $title ?? 'Shopee' ?></title>

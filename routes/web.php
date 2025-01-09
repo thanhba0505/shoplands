@@ -36,10 +36,14 @@ $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/orders', 'Customer/OrderController@show', [AuthMiddleware::class]);
 
+
+// Trang thiết lập thông tin ---------------------------------------------------------------------
+$router->get('/account-settings', 'Customer/AccountSettingsController@show', [AuthMiddleware::class]);
+
+
+
 // Trang đăng ký bán hàng ---------------------------------------------------------------------
 $router->get('/seller/register', 'Seller/SellerRegisterController@show', [AuthMiddleware::class]);
-
-
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // CẦN ĐĂNG NHẬP NGƯỜI BÁN  ================================================================================================================================================

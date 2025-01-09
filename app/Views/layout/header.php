@@ -44,6 +44,7 @@
                             x-transition
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md overflow-hidden">
                             <a href="#" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
+                            <a href="<?= Redirect::accountSettings() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
                             <a href="#" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>
                         </div>
                     </div>
@@ -72,6 +73,7 @@
                         class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md overflow-hidden">
                         <?php if (Token::checkAuth()) : ?>
                             <a href="<?= Redirect::seller() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
+                            <a href="<?= Redirect::accountSettings() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
                             <a href="<?= Redirect::logout() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>
                         <?php else : ?>
                             <a href="<?= Redirect::login() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng nhập</a>

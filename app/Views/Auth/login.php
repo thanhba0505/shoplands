@@ -42,6 +42,6 @@
     </form>
     <p class="text-sm text-gray-600 mt-4 text-center">
         Bạn chưa có tài khoản?
-        <a href="#" class="text-blue-500 hover:underline">Đăng ký</a>
+        <a href="<?= Redirect::register() ?>" class="text-blue-500 hover:underline">Đăng ký</a>
     </p>
 </div>
