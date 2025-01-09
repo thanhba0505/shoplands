@@ -4,8 +4,6 @@ require_once 'app/Models/QueryCustom.php';
 
 class Order
 {
-    protected $table = 'orders';
-
     public function getOrdersBySellerId($sellerId)
     {
         $query = new QueryCustom();

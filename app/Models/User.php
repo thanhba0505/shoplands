@@ -4,7 +4,6 @@ require_once 'app/Models/QueryCustom.php';
 
 class User
 {
-    protected $table = 'users';
 
     // Lấy người dùng hiện tại
     public function getCurrentUser()

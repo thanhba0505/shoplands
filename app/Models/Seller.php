@@ -5,8 +5,6 @@ require_once 'app/Models/User.php';
 
 class Seller
 {
-    protected $table = 'sellers';
-
     // Lấy người bán hien tại
     public function getCurrentSeller()
     {

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'app/Models/Product.php';
+require_once 'app/Models/Category.php';
 
 class HomeController
 {
@@ -8,13 +9,15 @@ class HomeController
     {
         // GỌI MODEL ĐẾN SẢN PHẨM
         $product = new Product();
-        $result = $product->getProducts();
+        $product_result = $product->getProducts();
 
-        Console::log($result);
+        $category = new Category();
+        $category_result = $category->getAll();
 
         $data = [
             'title' => 'Trang chủ',
-            'products' => $result ? $result : [],
+            'products' => $product_result ? $product_result : [],
+            'categories' => $category_result ? $category_result : [],
         ];
 
         // Render view với layout

@@ -10,126 +10,18 @@
     <div class="col-span-12 text-center text-xl font-bold pt-3">Danh mục</div>
 
     <!-- Category Item -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/thoi-trang-nam.webp') ?>" alt="">
+    <?php if (!empty($categories)): ?>
+        <?php foreach ($categories as $category): ?>
+            <div class="col-span-2">
+                <a href="<?= Redirect::product() . '?category=' . $category['slug'] ?>" class="flex flex-col items-center">
+                    <div class="w-full h-32">
+                        <img class="object-cover w-full h-full" src="<?= Asset::url('img/' . $category['slug'] . '.webp') ?>" alt="">
+                    </div>
+                    <span class="text-center text-sm truncate w-full max-w-[150px] mt-2"><?= $category['name'] ?></span>
+                </a>
             </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/thoi-trang-nu.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/thoi-trang-tre-em.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/nha-cua-doi-song.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/dien-thoai-va-phu-kien.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/dong-ho.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="<?php Redirect::url('products?category=may-tinh') ?>" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/may-tinh.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/nha-sach-online.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/phu-kien-trang-suc.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/the-thao-va-du-lich.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/thiet-bi-dien-tu.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Lặp lại các danh mục tương tự -->
-    <div class="col-span-2">
-        <a href="#" class="flex flex-col items-center">
-            <div class="w-full h-32">
-                <img class="object-cover w-full h-full" src="<?= Asset::url('img/thiet-bi-gia-dung.webp') ?>" alt="">
-            </div>
-            <span class="text-center text-sm truncate w-full max-w-[150px] mt-2">Danh mục</span>
-        </a>
-    </div>
-
-    <!-- Thêm các mục danh mục khác vào đây -->
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 <!-- Gợi ý sản phẩm -->
