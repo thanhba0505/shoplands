@@ -92,6 +92,11 @@ class Redirect
         return self::route($type, 'cart', $message, $typeMessage);
     }
 
+    public static function shop($type = 'url', $message = '', $typeMessage = 'success')
+    {
+        return self::route($type, 'shop', $message, $typeMessage);
+    }
+
     public static function order($type = 'url', $message = '', $typeMessage = 'success')
     {
         return self::route($type, 'orders', $message, $typeMessage);

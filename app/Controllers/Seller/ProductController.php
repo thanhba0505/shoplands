@@ -25,7 +25,6 @@ class ProductController
 
         $conn = new ConnectDatabase();
         $sql = file_get_contents('.sql');
-        echo $sql;
         $products = $conn->query($sql)->fetchAll();
 
         // Console::table($products);
