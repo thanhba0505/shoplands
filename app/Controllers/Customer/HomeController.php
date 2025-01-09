@@ -14,6 +14,7 @@ class HomeController
 
         $data = [
             'title' => 'Trang chủ',
+            'products' => $result ? $result : [],
         ];
 
         // Render view với layout

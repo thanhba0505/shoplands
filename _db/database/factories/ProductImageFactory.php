@@ -13,7 +13,7 @@ class ProductImageFactory extends Factory
     public function definition(): array
     {
         return [
-            'image_path' => 'http://localhost/congnghemoi/shopee/public/uploads/img/cap-sac.webp',
+            'image_path' => 'http://localhost/code-php/shopee/public/uploads/img/cap-sac.webp',
             'product_id' => Product::inRandomOrder()->first()->id,
         ];
     }

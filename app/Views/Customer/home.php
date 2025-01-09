@@ -137,26 +137,39 @@
     <div class="text-center text-xl font-bold py-3 bg-gray-100 text-gray-800">Gợi ý cho bạn</div>
     <div class="grid grid-cols-12 gap-4 mt-4">
 
-        <?php for ($i = 0; $i < 6; $i++): ?>
-        <div class="col-span-2">
-            <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::url('uploads/img/cap-sac.webp') ?>" alt="">
-                <span class="line-clamp-2 w-full font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
-                <div class="flex items-center mt-2">
-                    <i class="fa-solid fa-star text-yellow-400"></i>
-                    <i class="fa-solid fa-star text-yellow-400"></i>
-                    <i class="fa-solid fa-star text-yellow-400"></i>
-                    <i class="fa-regular fa-star text-gray-400"></i>
-                    <i class="fa-regular fa-star text-gray-400"></i>
+        <!-- Product Item -->
+        <?php if (!empty($products)): ?>
+            <?php foreach ($products as $product): ?>
+                <div class="col-span-2">
+                    <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                        <img class="mb-3 w-full h-48 object-cover" src="<?= $product['image_path'] ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= htmlspecialchars($product['name']) ?></span>
+                        <div class="flex items-center mt-2">
+                            <?php
+                            $rating = round($product['rating'] ?? 0);
+                            for ($star = 1; $star <= 5; $star++):
+                            ?>
+                                <?php if ($star <= $rating): ?>
+                                    <i class="fa-solid fa-star text-yellow-400"></i>
+                                <?php else: ?>
+                                    <i class="fa-regular fa-star text-gray-400"></i>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between w-full">
+                            <?php if ($product['promotion_price']): ?>
+                                <span class="line-through text-sm text-gray-500"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
+                                <span class="text-red-500 font-bold text-lg"><?= number_format($product['promotion_price'], 0, ',', '.') ?>đ</span>
+                            <?php else: ?>
+                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
+                            <?php endif; ?>
+                        </div>
+                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= $product['sold_quantity'] ?? 0 ?></span>
+                    </a>
                 </div>
-                <div class="mt-2 flex items-center justify-between w-full">
-                    <span class="line-through text-sm text-gray-500">3.000.000đ</span>
-                    <span class="text-red-500 font-bold">200.000đ</span>
-                </div>
-                <span class="text-sm text-gray-600">Đã bán 10k</span>
-            </a>
-        </div>
-        <?php endfor; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
 
         <!-- Thêm các sản phẩm khác tương tự -->
     </div>
