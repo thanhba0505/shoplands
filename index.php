@@ -5,6 +5,7 @@ require_once './config.php';
 require_once './core/Session.php';
 require_once './core/Cookie.php';
 require_once './core/Router.php';
+require_once './core/Auth.php';
 require_once './core/View.php';
 require_once './core/Token.php';
 require_once './core/Request.php';
@@ -13,12 +14,14 @@ require_once './core/Redirect.php';
 require_once './core/Asset.php';
 require_once './core/Notification.php';
 require_once './core/Console.php';
-
 // Tạo session bảo mật
 Session::init();
 
 // Tạo cookie bảo mật
 Cookie::init();
+Cookie::debug();
+echo Auth::checkAuth() ? 'auth:true<br>' : 'auth:false<br>';
+echo Auth::checkAuth('seller') ? 'seller:true<br>' : 'seller:false<br>';
 
 // Autoload các middleware
 spl_autoload_register(function ($class) {
@@ -27,6 +30,15 @@ spl_autoload_register(function ($class) {
         require_once $middlewarePath;
     }
 });
+
+$accessToken = Cookie::get('access_token');
+if (!$accessToken) {
+    $auth = Auth::reLogin();
+
+    if ($auth) {
+        Redirect::reload();
+    }
+}
 
 // Tạo router và nạp route
 $router = new Router();

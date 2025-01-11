@@ -17,45 +17,21 @@ class LoginController
         $password = Request::post('password');
 
         if (empty($phone) || empty($password)) {
-            Redirect::to('/login', 'Số điện thoại và mật khẩu không được để trống.', 'error');
-            exit;
+            Redirect::back('Số điện thoại và mật khẩu không được để trống!', 'error');
         }
 
-        $userModel = new User();
-        $user = $userModel->findByPhone($phone);
+        $auth = Auth::login($phone, $password);
 
-        if (!$user || !password_verify($password, $user['password'])) {
-            Redirect::to('/login', 'Số điện thoại hoặc mật khẩu không đúng.', 'error');
-            exit;
+        if (!$auth) {
+            Redirect::back('Số điện thoại hoặc mật khẩu không đúng!', 'error');
         }
-
-        // Tạo Access Token và Refresh Token
-        $accessToken = Token::createAccessToken($user['id']);
-        $refreshToken = Token::createRefreshToken();
-
-        // Lưu token vào cơ sở dữ liệu
-        $userModel->updateTokens($user['id'], $accessToken, $refreshToken);
-
-        // Gửi Token qua Cookie
-        Cookie::setToken($accessToken, $refreshToken);
 
         Redirect::to('/', 'Đăng nhập thành công.');
-        exit;
     }
 
     public function logout()
     {
-        // Lấy refresh_token từ cookie
-        $refreshToken = Cookie::get('refresh_token');
-
-        // Nếu tồn tại refresh_token, xóa khỏi CSDL
-        if ($refreshToken) {
-            $userModel = new User();
-            $userModel->deleteTokensByRefreshToken($refreshToken);
-        }
-
-        // Xóa token trong cookie
-        Cookie::removeToken();
+        Auth::logout();
 
         Redirect::to('/login', 'Đăng xuất thành công.');
         exit;

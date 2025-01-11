@@ -5,33 +5,17 @@ require_once 'app/Models/User.php';
 
 class Seller
 {
-    // Lấy người bán hien tại
-    public function getCurrentSeller()
+    public function findByUserId($userId)
     {
-        $user = new User();
-        $currentUser = $user->getCurrentUser();
-
         $query  = new QueryCustom();
         $result = $query
             ->select()
             ->from('sellers')
-            ->where('user_id = :userId', ['userId' => $currentUser['id']])
+            ->where('user_id = :id', ['id' => $userId])
             ->first();
 
         return $result;
-    }
 
-    // Kiểm tra có phải người bán
-    public function isSeller($userId)
-    {
-        $query  = new QueryCustom();
-        $result = $query
-            ->select()
-            ->from('sellers')
-            ->where('user_id = :userId', ['userId' => $userId])
-            ->first();
-
-        return $result !== null;
     }
 
 

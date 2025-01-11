@@ -9,7 +9,7 @@
             <div>
                 <a href="<?= Redirect::product() ?>" class="px-4 py-2 hover:bg-blue-700">Sản phẩm</a>
                 <a href="<?= Redirect::post() ?>" class="px-4 py-2 hover:bg-blue-700">Bài viết</a>
-                <?php if (Token::checkAuth()) : ?>
+                <?php if (Auth::checkAuth()) : ?>
                     <a href="<?= Redirect::cart() ?>" class="px-4 py-2 hover:bg-blue-700">Giỏ hàng</a>
                     <a href="<?= Redirect::order() ?>" class="px-4 py-2 hover:bg-blue-700">Lịch sử đơn hàng</a>
                 <?php else : ?>
@@ -28,7 +28,7 @@
                         class="w-full pl-10 pr-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
-                <?php if (Token::checkAuth()) : ?>
+                <?php if (Auth::checkAuth()) : ?>
                     <div x-data="{ open: false }" class="relative w-10 h-10 ml-5">
                         <!-- Button with Circle Icon -->
                         <button
@@ -54,7 +54,7 @@
                 <div x-data="{ open: false }" class="relative w-10 h-10 ml-5">
                     <!-- Button with Circle Image -->
 
-                    <?php if (Token::checkAuth()) : ?>
+                    <?php if (Auth::checkAuth()) : ?>
                         <button @click="open = !open" class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
                             <img src="https://ih1.redbubble.net/image.5331360186.6213/st,small,845x845-pad,1000x1000,f8f8f8.jpg" alt="Profile" class="w-full h-full object-cover">
                         </button>
@@ -71,7 +71,7 @@
                         @click.away="open = false"
                         x-transition
                         class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md overflow-hidden">
-                        <?php if (Token::checkAuth()) : ?>
+                        <?php if (Auth::checkAuth()) : ?>
                             <a href="<?= Redirect::seller() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
                             <a href="<?= Redirect::accountSettings() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
                             <a href="<?= Redirect::logout() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>

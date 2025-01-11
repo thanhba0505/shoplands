@@ -1,8 +1,30 @@
 <?php
 
+require_once 'app/Models/User.php';
+
 class Token
 {
     private static $secretKey = SECRET_KEY; // Khóa bí mật
+
+    // Tạo Access Token có chữ ký
+    public static function createAccessToken($userId)
+    {
+        $payload = [
+            'id' => $userId,
+            'exp' => time() + ACCESS_TOKEN_EXPIRY, // Token hết hạn sau 1 giờ
+        ];
+        $payloadBase64 = base64_encode(json_encode($payload));
+        $signature = hash_hmac('sha256', $payloadBase64, self::$secretKey);
+
+        return $payloadBase64 . '.' . $signature;
+    }
+
+
+    // Tạo Refresh Token
+    public static function createRefreshToken()
+    {
+        return bin2hex(random_bytes(32)); // Chuỗi ngẫu nhiên dài
+    }
 
     // Xác thực Access Token
     public static function validateAccessToken($token)
@@ -23,30 +45,15 @@ class Token
         return $payload && $payload['exp'] > time(); // Token còn hạn
     }
 
-    // Tạo Access Token có chữ ký
-    public static function createAccessToken($userId)
-    {
-        $payload = [
-            'user_id' => $userId,
-            'exp' => time() + 3600, // Token hết hạn sau 1 giờ
-        ];
-        $payloadBase64 = base64_encode(json_encode($payload));
-        $signature = hash_hmac('sha256', $payloadBase64, self::$secretKey);
-
-        return $payloadBase64 . '.' . $signature;
-    }
-
-
-    // Tạo Refresh Token
-    public static function createRefreshToken()
-    {
-        return bin2hex(random_bytes(32)); // Chuỗi ngẫu nhiên dài
-    }
-
     // Giải mã Access Token và lấy thông tin
-    public static function getPayload()
+    public static function getPayload($accessToken)
     {
-        $accessToken = Cookie::get('access_token');
+        $check = self::validateAccessToken($accessToken);
+
+        if (!$check) {
+            return null;
+        }
+
         $parts = explode('.', $accessToken);
         if (count($parts) !== 2) {
             return null;
@@ -56,19 +63,5 @@ class Token
         $payload = json_decode(base64_decode($payloadBase64), true);
 
         return $payload ?: null;
-    }
-
-    // Lấy User ID từ Access Token
-    public static function getUserId()
-    {
-        $payload = self::getPayload();
-
-        return $payload['user_id'] ?? null;
-    }
-
-    public static function checkAuth()
-    {
-        $accessToken = Cookie::get('access_token');
-        return self::validateAccessToken($accessToken);
     }
 }

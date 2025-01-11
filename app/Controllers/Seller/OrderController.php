@@ -19,13 +19,13 @@ class OrderController
             'page' => $page
         ];
 
-        $seller = new Seller();
-        $currentSeller = $seller->getCurrentSeller();
+        // $seller = new Seller();
+        // $currentSeller = $seller->getCurrentSeller();
 
-        $order = new Order();
-        $orders = $order->getOrdersBySellerId($currentSeller['id']);
+        // $order = new Order();
+        // $orders = $order->getOrdersBySellerId($currentSeller['id']);
 
-        Console::log($orders);
+        // Console::log($orders);
 
         // if ($page == 'all') {
 

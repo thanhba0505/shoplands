@@ -4,17 +4,14 @@ require_once 'app/Models/QueryCustom.php';
 
 class User
 {
-
-    // Lấy người dùng hiện tại
-    public function getCurrentUser()
+    // Tìm người dùng theo id
+    public function findById($id)
     {
-        $userId = Token::getUserId();
-
         $query  = new QueryCustom();
         $result = $query
             ->select()
             ->from('users')
-            ->where('id = :userId', ['userId' => $userId])
+            ->where('id = :id', ['id' => $id])
             ->first();
 
         return $result;
