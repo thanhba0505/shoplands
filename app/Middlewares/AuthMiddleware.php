@@ -10,7 +10,7 @@ class AuthMiddleware
             $result = Auth::reLogin();
 
             if (!$result) {
-                Redirect::to('/login', 'Vui lòng đăng nhập!', 'error');
+                Redirect::login()->notification('Vui lòng đăng nhập!', 'error')->redirect();
             } else {
                 Redirect::reload();
             }

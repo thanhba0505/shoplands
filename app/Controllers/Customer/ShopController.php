@@ -2,8 +2,10 @@
 
 class ShopController
 {
-    public function show($id)
+    public function show()
     {
+        $id = Request::get('id');
+        
         $data = [
             'title' => 'Shop Page',
             'id' => $id

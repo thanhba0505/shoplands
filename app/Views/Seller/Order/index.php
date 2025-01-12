@@ -1,14 +1,14 @@
 <h2 class="text-2xl font-semibold">Quản lý đơn hàng</h2>
 <div class="flex space-x-4 mt-4 border-b text-center text-sm">
-    <a href="<?= Redirect::url('seller/orders/all') ?>" class="py-2 px-4 <?= $page == 'all' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Tất cả</a>
-    <a href="<?= Redirect::url('seller/orders/pending') ?>" class="py-2 px-4 <?= $page == 'pending' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Chờ xác nhận</a>
-    <a href="<?= Redirect::url('seller/orders/packing') ?>" class="py-2 px-4 <?= $page == 'packing' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đang đóng gói</a>
-    <a href="<?= Redirect::url('seller/orders/packed') ?>" class="py-2 px-4 <?= $page == 'packed' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã đóng gói</a>
-    <a href="<?= Redirect::url('seller/orders/shipping') ?>" class="py-2 px-4 <?= $page == 'shipping' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đang vận chuyển</a>
-    <a href="<?= Redirect::url('seller/orders/dilivered') ?>" class="py-2 px-4 <?= $page == 'dilivered' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã giao hàng</a>
-    <a href="<?= Redirect::url('seller/orders/completed') ?>" class="py-2 px-4 <?= $page == 'completed' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã hoàn thành</a>
-    <a href="<?= Redirect::url('seller/orders/returned') ?>" class="py-2 px-4 <?= $page == 'returned' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đơn hoàn trả</a>
-    <a href="<?= Redirect::url('seller/orders/cancelled') ?>" class="py-2 px-4 <?= $page == 'cancelled' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã hủy</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'all'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'all' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Tất cả</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'pending'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'pending' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Chờ xác nhận</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'packing'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'packing' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đang đóng gói</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'packed'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'packed' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã đóng gói</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'shipping'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'shipping' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đang vận chuyển</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'dilivered'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'dilivered' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã giao hàng</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'completed'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'completed' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã hoàn thành</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'returned'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'returned' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đơn hoàn trả</a>
+    <a href="<?= Redirect::seller('order')->withQuery(['page' => 'cancelled'])->getUrl() ?>" class="py-2 px-4 <?= $page == 'cancelled' ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">Đã hủy</a>
 </div>
 
 <div class="text-center bg-blue-200 py-3 mt-5 text-lg font-medium">

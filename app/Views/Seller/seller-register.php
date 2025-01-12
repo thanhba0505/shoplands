@@ -42,7 +42,7 @@
                 <tr>
                     <td colspan="2">
                         <div class="border-top pt-3 px-1 row mt-3" style="border-width: 2px !important;">
-                            <div class="col-6 py-0" style="padding-left: 12px; padding-right: 12px"><a href="<?= Redirect::url('/') ?>" class="w-100 btn btn-outline btn-outline-2 btn mt-2">Hủy</a></div>
+                            <div class="col-6 py-0" style="padding-left: 12px; padding-right: 12px"><a href="<?= Redirect::home()->getUrl() ?>" class="w-100 btn btn-outline btn-outline-2 btn mt-2">Hủy</a></div>
                             <div class="col-6 py-0" style="padding-left: 12px; padding-right: 12px"><button class="w-100 btn mt-2">Đăng ký</button></div>
                         </div>
                     </td>

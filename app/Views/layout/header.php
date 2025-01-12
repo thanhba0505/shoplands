@@ -2,19 +2,19 @@
     <div class="2xl:container mx-auto px-6">
         <div class="flex justify-between items-center">
             <div class="text-lg font-semibold">
-                <a href="<?= Redirect::url('/') ?>" style="width: 120px">
+                <a href="<?= Redirect::home()->getUrl() ?>" style="width: 120px">
                     <?= Asset::logoSvg('fill-white', 120) ?>
                 </a>
             </div>
             <div>
-                <a href="<?= Redirect::product() ?>" class="px-4 py-2 hover:bg-blue-700">Sản phẩm</a>
-                <a href="<?= Redirect::post() ?>" class="px-4 py-2 hover:bg-blue-700">Bài viết</a>
+                <a href="<?= Redirect::product()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Sản phẩm</a>
+                <a href="<?= Redirect::post()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Bài viết</a>
                 <?php if (Auth::checkAuth()) : ?>
-                    <a href="<?= Redirect::cart() ?>" class="px-4 py-2 hover:bg-blue-700">Giỏ hàng</a>
-                    <a href="<?= Redirect::order() ?>" class="px-4 py-2 hover:bg-blue-700">Lịch sử đơn hàng</a>
+                    <a href="<?= Redirect::cart()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Giỏ hàng</a>
+                    <a href="<?= Redirect::order()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Lịch sử đơn hàng</a>
                 <?php else : ?>
-                    <a href="<?= Redirect::login() ?>" class="px-4 py-2 hover:bg-blue-700">Đăng nhập</a>
-                    <a href="<?= Redirect::register() ?>" class="px-4 py-2 hover:bg-blue-700">Đăng ký</a>
+                    <a href="<?= Redirect::login()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Đăng nhập</a>
+                    <a href="<?= Redirect::register()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Đăng ký</a>
                 <?php endif ?>
             </div>
             <div class="flex justify-between items-center">
@@ -44,7 +44,7 @@
                             x-transition
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md overflow-hidden">
                             <a href="#" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
-                            <a href="<?= Redirect::accountSettings() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
+                            <a href="<?= Redirect::accountSettings()->getUrl() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
                             <a href="#" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>
                         </div>
                     </div>
@@ -72,12 +72,12 @@
                         x-transition
                         class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md overflow-hidden">
                         <?php if (Auth::checkAuth()) : ?>
-                            <a href="<?= Redirect::seller() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
-                            <a href="<?= Redirect::accountSettings() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
-                            <a href="<?= Redirect::logout() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>
+                            <a href="<?= Redirect::seller('order')->withQuery(['page'=>'all'])->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
+                            <a href="<?= Redirect::accountSettings()->getUrl() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
+                            <a href="<?= Redirect::logout()->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>
                         <?php else : ?>
-                            <a href="<?= Redirect::login() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng nhập</a>
-                            <a href="<?= Redirect::register() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng ký</a>
+                            <a href="<?= Redirect::login()->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng nhập</a>
+                            <a href="<?= Redirect::register()->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng ký</a>
                         <?php endif ?>
                     </div>
                 </div>

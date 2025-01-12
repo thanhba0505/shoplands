@@ -13,11 +13,11 @@
     <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $category): ?>
             <div class="col-span-2">
-                <a href="<?= Redirect::product() . '?category=' . $category['slug'] ?>" class="flex flex-col items-center">
+                <a href="<?= Redirect::product()->getUrl() . '?category=' . $category['slug'] ?>" class="flex flex-col items-center">
                     <div class="w-full h-32">
-                        <img class="object-cover w-full h-full" src="<?= Asset::url('img/' . $category['slug'] . '.webp') ?>" alt="">
+                        <img class="object-cover w-full h-full" src="<?= Asset::img($category['slug'] . '.webp') ?>" alt="">
                     </div>
-                    <span class="text-center text-sm truncate w-full max-w-[150px] mt-2"><?= $category['name'] ?></span>
+                    <span class="text-center text-sm truncate w-full max-w-[150px] mt-2"><?= Util::encodeHtml($category['name']) ?></span>
                 </a>
             </div>
         <?php endforeach; ?>
@@ -33,9 +33,9 @@
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $product): ?>
                 <div class="col-span-2">
-                    <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                        <img class="mb-3 w-full h-48 object-cover" src="<?= $product['image_path'] ?>" alt="<?= htmlspecialchars($product['name']) ?>">
-                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= htmlspecialchars($product['name']) ?></span>
+                    <a href="<?= Redirect::product()->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                        <img class="mb-3 w-full h-48 object-cover" src="<?= Util::encodeHtml($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
+                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
                         <div class="flex items-center mt-2">
                             <?php
                             $rating = round($product['rating'] ?? 0);
@@ -50,13 +50,13 @@
                         </div>
                         <div class="mt-2 flex items-center justify-between w-full">
                             <?php if ($product['promotion_price']): ?>
-                                <span class="line-through text-sm text-gray-500"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
-                                <span class="text-red-500 font-bold text-lg"><?= number_format($product['promotion_price'], 0, ',', '.') ?>đ</span>
+                                <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['price']) ?></span>
+                                <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price']) ?></span>
                             <?php else: ?>
-                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
+                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['price']) ?></span>
                             <?php endif; ?>
                         </div>
-                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= $product['sold_quantity'] ?? 0 ?></span>
+                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['sold_quantity']) ?? 0 ?></span>
                     </a>
                 </div>
             <?php endforeach; ?>
@@ -82,7 +82,7 @@
     <div class="grid grid-cols-12 gap-4 mt-4">
         <div class="col-span-3">
             <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::url('uploads/img/cap-sac.webp') ?>" alt="">
+                <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::uploadImg('cap-sac.webp') ?>" alt="">
                 <span class="line-clamp-2 w-full font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
                 <div class="flex items-center mt-2">
                     <i class="fa-solid fa-star text-yellow-400"></i>

@@ -38,6 +38,6 @@ class CSRF
 
     public static function input()
     {
-        return '<input type="text" name="csrf" value="' . self::getToken() . '" hidden>';
+        return '<input type="text" name="csrf" value="' . Util::encodeHtml(self::getToken()) . '" hidden>';
     }
 }

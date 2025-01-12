@@ -16,16 +16,16 @@ $router->get('/register', 'Auth/RegisterController@show');
 
 
 // Trang sản phẩm ---------------------------------------------------------------------
-$router->get('/products', 'Customer/ProductController@show');
+$router->get('/product', 'Customer/ProductController@show');
 
 // Trang chi tiết sản phẩm ---------------------------------------------------------------------
-$router->get('/products/{id}', 'Customer/ProductDetailController@show');
+$router->get('/product/detail', 'Customer/ProductDetailController@show');
 
 // Trang bài viết ---------------------------------------------------------------------
-$router->get('/posts', 'Customer/PostController@show');
+$router->get('/post', 'Customer/PostController@show');
 
 // Trang shop ---------------------------------------------------------------------
-$router->get('/shop/{id}', 'Customer/ShopController@show');
+$router->get('/shop', 'Customer/ShopController@show');
 
 
 
@@ -37,11 +37,11 @@ $router->get('/shop/{id}', 'Customer/ShopController@show');
 $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
 
 // Trang giỏ hàng ---------------------------------------------------------------------
-$router->get('/orders', 'Customer/OrderController@show', [AuthMiddleware::class]);
+$router->get('/order', 'Customer/OrderController@show', [AuthMiddleware::class]);
 
 
 // Trang thiết lập thông tin ---------------------------------------------------------------------
-$router->get('/account-settings', 'Customer/AccountSettingsController@show', [AuthMiddleware::class]);
+$router->get('/account-setting', 'Customer/AccountSettingsController@show', [AuthMiddleware::class]);
 
 
 
@@ -53,10 +53,10 @@ $router->get('/seller/register', 'Seller/SellerRegisterController@show', [AuthMi
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // Quản lý đơn hàng ---------------------------------------------------------------------
-$router->get('/seller/orders/{page}', 'Seller/OrderController@show', [SellerAuthMiddleware::class]);
+$router->get('/seller/order', 'Seller/OrderController@show', [SellerAuthMiddleware::class]);
 
 // // Quản lý sản phẩm
-$router->get('/seller/products/{page}', 'Seller/ProductController@show', [SellerAuthMiddleware::class]);
+$router->get('/seller/product', 'Seller/ProductController@show', [SellerAuthMiddleware::class]);
 // $router->get('/seller/products/in-stock', 'Seller/ProductController@inStock');
 // $router->get('/seller/products/out-of-stock', 'Seller/ProductController@outOfStock');
 // $router->get('/seller/products/locked', 'Seller/ProductController@locked');

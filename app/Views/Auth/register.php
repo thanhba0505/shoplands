@@ -103,6 +103,6 @@
     </form>
     <p class="text-sm text-gray-600 mt-4 text-center">
         Bạn đã có tài khoản?
-        <a href="<?= Redirect::login() ?>" class="text-blue-500 hover:underline">Đăng nhập</a>
+        <a href="<?= Redirect::login()->getUrl() ?>" class="text-blue-500 hover:underline">Đăng nhập</a>
     </p>
 </div>

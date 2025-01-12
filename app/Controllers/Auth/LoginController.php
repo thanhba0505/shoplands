@@ -17,23 +17,23 @@ class LoginController
         $password = Request::post('password');
 
         if (empty($phone) || empty($password)) {
-            Redirect::back('Số điện thoại và mật khẩu không được để trống!', 'error');
+            Redirect::back()->notification('Số điện thoại và mật khẩu không được để trống', 'error')->redirect();
         }
 
         $auth = Auth::login($phone, $password);
 
         if (!$auth) {
-            Redirect::back('Số điện thoại hoặc mật khẩu không đúng!', 'error');
+            Redirect::back()->notification('Số điện thoại hoặc mật khẩu không đúng', 'error')->redirect();
         }
 
-        Redirect::to('/', 'Đăng nhập thành công.');
+        Redirect::home()->notification('Đăng nhập thành công')->redirect();
     }
 
     public function logout()
     {
         Auth::logout();
 
-        Redirect::to('/login', 'Đăng xuất thành công.');
+        Redirect::login()->notification('Đăng xuất thành công')->redirect();
         exit;
     }
 }

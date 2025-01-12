@@ -2,109 +2,137 @@
 
 class Redirect
 {
-    public static function route($type = 'url',  $path = '', $message = '', $typeMessage = 'success')
+    protected $path;
+    protected $message;
+    protected $type;
+    protected $queryParams = [];
+
+    private function __construct($path = '', $message = '', $type = 'success')
     {
-        if ($type == 'url') {
-            return self::url($path);
-        } else if ($type == 'to') {
-            return self::to($path, $message, $typeMessage);
-        } else {
-            return self::url($path);
-        }
+        $this->path = Util::encodeHtml($path); // Mã hóa đường dẫn
+        $this->message = $message; // Thông báo không cần encode ở đây
+        $this->type = $type;
     }
 
-    public static function to($path = '', $message = '', $type = 'success')
+    public static function to($path = '/')
     {
-        if ($message !== '') {
-            Notification::set($message, $type);
-        }
-        $url = self::url($path);
-
-        header("Location: $url");
-        exit();
+        return new self(Util::encodeHtml($path)); // Mã hóa khi tạo instance
     }
 
-    public static function back($message = '', $type = 'success')
+    public static function back()
     {
-        $referrer = $_SERVER['HTTP_REFERER'] ?? null;
-
-        if ($referrer) {
-            Notification::set($message, $type);
-            header("Location: $referrer");
-        } else {
-
-            self::to('/');
-        }
-        exit();
+        $referrer = $_SERVER['HTTP_REFERER'] ?? '/';
+        return new self(Util::encodeHtml($referrer)); // Mã hóa referrer
     }
 
-    public static function url($path = '')
+    public function withQuery(array $params)
+    {
+        foreach ($params as $key => $value) {
+            // Mã hóa từng cặp key-value trong query
+            $this->queryParams[Util::encodeHtml($key)] = Util::encodeHtml($value);
+        }
+        return $this;
+    }
+
+    public static function fullUrl($path = '', array $queryParams = [])
     {
         $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST'];
+        $url = rtrim($baseUrl, '/') . '/' . ltrim(Util::encodeHtml($path), '/');
 
-        $url = rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+        if (!empty($queryParams)) {
+            $queryParams = array_map('Util::encodeHtml', $queryParams); // Mã hóa query
+            $url .= '?' . http_build_query($queryParams);
+        }
 
         return $url;
     }
 
+    // Trả về URL của đối tượng hiện tại
+    public function getUrl()
+    {
+        return self::fullUrl($this->path, $this->queryParams);
+    }
+
+    // Đặt thông báo cho redirect
+    public function notification($message, $type = 'success')
+    {
+        $this->message = $message;
+        $this->type = $type;
+        Notification::set($message, $type);
+        return $this;
+    }
+
+    // Thực hiện chuyển hướng
+    public function redirect()
+    {
+        if (!empty($this->message)) {
+            Notification::set($this->message, $this->type);
+        }
+
+        header("Location: " . $this->getUrl());
+        exit();
+    }
+
+    // Shortcut với tham số động
+    public static function home($action = '')
+    {
+        return new self(trim('/' . $action, '/'));
+    }
+
+    public static function login($action = '')
+    {
+        return new self(trim('login/' . $action, '/'));
+    }
+
+    public static function logout($action = '')
+    {
+        return new self(trim('logout/' . $action, '/'));
+    }
+
+    public static function register($action = '')
+    {
+        return new self(trim('register/' . $action, '/'));
+    }
+
+    public static function cart($action = '')
+    {
+        return new self(trim('cart/' . $action, '/'));
+    }
+
+    public static function order($action = '')
+    {
+        return new self(trim('order/' . $action, '/'));
+    }
+
+    public static function shop($action = '')
+    {
+        return new self(trim('shop/' . $action, '/'));
+    }
+
+    public static function post($action = '')
+    {
+        return new self(trim('post/' . $action, '/'));
+    }
+
+    public static function product($action = '')
+    {
+        return new self(trim('product/' . $action, '/'));
+    }
+
+    public static function seller($action = 'order')
+    {
+        return new self(trim('seller/' . $action, '/'));
+    }
+
+    public static function accountSettings($action = '')
+    {
+        return new self(trim('account-setting/' . $action, '/'));
+    }
+
+    // Tải lại trang hiện tại
     public static function reload()
     {
         header("Location: " . $_SERVER['REQUEST_URI']);
         exit();
-    }
-
-    public static function logout($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'logout', $message, $typeMessage);
-    }
-
-    public static function home($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, '', $message, $typeMessage);
-    }
-
-    public static function login($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'login', $message, $typeMessage);
-    }
-
-    public static function register($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'register', $message, $typeMessage);
-    }
-
-    public static function accountSettings($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'account-settings', $message, $typeMessage);
-    }
-
-    public static function product($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'products', $message, $typeMessage);
-    }
-
-    public static function post($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'posts', $message, $typeMessage);
-    }
-
-    public static function cart($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'cart', $message, $typeMessage);
-    }
-
-    public static function shop($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'shop', $message, $typeMessage);
-    }
-
-    public static function order($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'orders', $message, $typeMessage);
-    }
-
-    public static function seller($type = 'url', $message = '', $typeMessage = 'success')
-    {
-        return self::route($type, 'seller/orders/all', $message, $typeMessage);
     }
 }

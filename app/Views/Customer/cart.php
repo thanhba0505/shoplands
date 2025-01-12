@@ -23,7 +23,7 @@ foreach ($carts as $cart) {
                             </div>
                         </td>
                         <td colspan="2">
-                            <div class="flex"><a href="<?= Redirect::shop() . '/' . $group['seller_id'] ?>" class="text-blue-600 hover:underline"><?= $group['seller_name'] ?></a></div>
+                            <div class="flex"><a href="<?= Redirect::shop()->withQuery(['id'=>$group['seller_id']])->getUrl() ?>" class="text-blue-600 hover:underline"><?= $group['seller_name'] ?></a></div>
                         </td>
                         <td class="text-center text-lg">Phân loại</td>
                         <td class="text-center text-lg">Đơn giá</td>
@@ -44,36 +44,36 @@ foreach ($carts as $cart) {
                                 <div class="w-24 h-24"><img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt="" class="w-full h-full object-cover"></div>
                             </td>
                             <td>
-                                <a href="#" class="line-clamp-2 font-semibold text-base px-4"><?= $product['product_name'] ?></a>
+                                <a href="<?= Redirect::product('detail')->withQuery(['id' => $product['product_id']])->getUrl()?>" class="line-clamp-2 font-semibold text-base px-4"><?= Util::encodeHtml($product['product_name']) ?></a>
                             </td>
                             <td class="w-36 text-center">
-                                <span class="block text-sm font-bold"><?= htmlspecialchars($product['product_attribute']) ?>: <?= htmlspecialchars($product['product_attribute_value']) ?></span>
+                                <span class="block text-sm font-bold"><?= Util::encodeHtml($product['product_attribute']) ?>: <?= Util::encodeHtml($product['product_attribute_value']) ?></span>
                             </td>
                             <td class="w-36 text-center">
                                 <?php if ($product['product_promotion_price'] != ''): ?>
-                                    <span class="block line-through text-sm"><?= number_format($product['product_price'], 0, ',', '.') ?>đ</span>
+                                    <span class="block line-through text-sm"><?= Util::formatCurrency($product['product_price']) ?></span>
                                     <span class="block text-lg font-bold text-red-600">
-                                        <?= number_format($product['product_promotion_price'], 0, ',', '.') ?> Vnđ
+                                        <?= Util::formatCurrency($product['product_promotion_price']) ?>
                                     </span>
                                 <?php else: ?>
-                                    <span class="font-bold text-lg text-red-600"><?= number_format($product['product_price'], 0, ',', '.') ?> Vnđ</span>
+                                    <span class="font-bold text-lg text-red-600"><?= Util::formatCurrency($product['product_price']) ?></span>
                                 <?php endif; ?>
                             </td>
                             <td class="w-36 text-center">
-                                <input type="number" value="<?= $product['cart_quantity'] ?>" class="form-input w-16 mx-auto text-center border border-gray-300 rounded">
+                                <input type="number" value="<?= Util::encodeHtml($product['cart_quantity']) ?>" class="form-input w-16 mx-auto text-center border border-gray-300 rounded">
                             </td>
                             <td class="w-36 text-center">
 
                                 <span class="font-bold text-lg text-red-600">
                                     <?php if ($product['product_promotion_price'] != '')
-                                        echo number_format($product['product_promotion_price'] * $product['cart_quantity'], 0, ',', '.');
+                                        echo Util::formatCurrency($product['product_promotion_price'] * $product['cart_quantity']);
                                     else
-                                        echo number_format($product['product_price'] * $product['cart_quantity'], 0, ',', '.');
-                                    ?> Vnđ
+                                        echo Util::formatCurrency($product['product_price'] * $product['cart_quantity']);
+                                    ?>
                                 </span>
                             </td>
                             <td class="w-36 text-center">
-                                <a href="<?= Redirect::cart() . '/delete/' . $product['cart_id'] ?>" class="text-red-600 hover:underline">Xóa</a>
+                                <a href="<?= Redirect::cart('delete')->withQuery(['id'=>$product['cart_id']])->getUrl() ?>" class="text-red-600 hover:underline">Xóa</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

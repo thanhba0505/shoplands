@@ -5,8 +5,10 @@ require_once 'app/Models/Order.php';
 
 class OrderController
 {
-    public function show($page = 'all')
+    public function show()
     {
+        $page = Request::get('page', 'all');
+
         if (!in_array($page, ['all', 'pending', 'packing', 'packed', 'shipping', 'dilivered', 'completed', 'returned', 'cancelled'])) {
             View::make('App/404');
             return;

@@ -2,8 +2,10 @@
 
 class ProductDetailController
 {
-    public function show($id)
+    public function show()
     {
+        $id = Request::get('id');
+
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id

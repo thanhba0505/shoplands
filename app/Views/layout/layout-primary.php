@@ -8,4 +8,4 @@
 
 <?php include './app/views/layout/footer.php'; ?>
 
-<title><?= $title ?? 'Shopee' ?></title>
+<title><?= Util::encodeHtml($title) ?? 'Shopee' ?></title>

@@ -7,4 +7,4 @@
     </section>
 </main>
 
-<title><?= $title ?? 'Shopee' ?></title>
+<title><?= Util::encodeHtml($title) ?? 'Shopee' ?></title>
