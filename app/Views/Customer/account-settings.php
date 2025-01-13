@@ -45,7 +45,7 @@
         <label class="w-1/3 text-sm font-medium text-gray-700">Ngày sinh</label>
         <div class="flex space-x-2 w-full">
             <!-- Chọn ngày -->
-            <select id="day" name="day" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <select id="day" name="day" class="w-full p-2 border-2 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
                 <option value="">Ngày</option>
                 <?php
                 // Tạo các lựa chọn cho tháng và năm
@@ -89,7 +89,7 @@
             </select>
 
             <!-- Chọn tháng -->
-            <select id="month" name="month" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <select id="month" name="month" class="w-full p-2 border-2 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
                 <option value="">Tháng</option>
                 <?php
                 // Đặt tháng mặc định là 1 (tháng 1)
@@ -101,7 +101,7 @@
             </select>
 
             <!-- Chọn năm -->
-            <select id="year" name="year" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <select id="year" name="year" class="w-full p-2 border-2 border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
                 <option value="">Năm</option>
                 <?php
                 // Đặt năm mặc định là 2025
