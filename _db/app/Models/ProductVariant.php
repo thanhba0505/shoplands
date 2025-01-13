@@ -14,17 +14,11 @@ class ProductVariant extends Model
         'promotion_price',
         'quantity',
         'sold_quantity',
-        'product_attribute_value_id',
         'product_id',
     ];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function productAttributeValue()
-    {
-        return $this->belongsTo(ProductAttributeValue::class);
     }
 }

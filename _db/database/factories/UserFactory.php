@@ -12,7 +12,6 @@ class UserFactory extends Factory
 
     public function definition(): array
     {
-        Log::info(password_hash('123', PASSWORD_ARGON2I));
         return [
             'phone' => '0' . $this->faker->unique()->numerify('#########'),
             'password' => password_hash('123', PASSWORD_ARGON2I),

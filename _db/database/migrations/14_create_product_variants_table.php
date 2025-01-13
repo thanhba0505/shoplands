@@ -14,11 +14,9 @@ return new class extends Migration
             $table->decimal('promotion_price', 15, 2)->nullable();
             $table->integer('quantity');
             $table->integer('sold_quantity');
-            $table->unsignedBigInteger('product_attribute_value_id')->nullable(); // Foreign key
             $table->unsignedBigInteger('product_id'); // Foreign key
             $table->timestamps();
 
-            $table->foreign('product_attribute_value_id')->references('id')->on('product_attribute_values');
             $table->foreign('product_id')->references('id')->on('products');
         });
     }
@@ -26,7 +24,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropForeign(['product_attribute_value_id']);
             $table->dropForeign(['product_id']);
         });
 
