@@ -49,7 +49,7 @@ class Router
                     // Kiểm tra CSRF Token
                     $csrfToken = Request::post('csrf');
                     if (!CSRF::validateToken($csrfToken)) {
-                        Redirect::to('/login', 'CSRF Token không hợp lệ.', 'error');
+                        Redirect::back()->notification('CSRF Token khẑng hợp lệ!', 'error')->redirect();
                     }
                 }
 

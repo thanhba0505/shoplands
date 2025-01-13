@@ -36,11 +36,16 @@ class Redirect
 
     public static function fullUrl($path = '', array $queryParams = [])
     {
-        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST'];
-        $url = rtrim($baseUrl, '/') . '/' . ltrim(Util::encodeHtml($path), '/');
+        // Kiểm tra nếu $path đã là URL đầy đủ
+        if (preg_match('/^(http|https):\/\//', $path)) {
+            $url = $path;
+        } else {
+            $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://' . $_SERVER['HTTP_HOST'];
+            $url = rtrim($baseUrl, '/') . '/' . ltrim(Util::encodeHtml($path), '/');
+        }
 
         if (!empty($queryParams)) {
-            $queryParams = array_map('Util::encodeHtml', $queryParams); // Mã hóa query
+            $queryParams = array_map('Util::encodeHtml', $queryParams);
             $url .= '?' . http_build_query($queryParams);
         }
 

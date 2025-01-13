@@ -6,12 +6,13 @@ class CartController
 {
     public function show()
     {
+        $user = Auth::getUser() ?? null;
 
         $cart = new Cart();
-        $cart_result = $cart->getAll();
+        $cart_result = $cart->getAllByUserId($user['id']);
 
         $data = [
-            'title' => 'Cart Page',
+            'title' => 'Giỏ hàng',
             'carts' => $cart_result
         ];
 

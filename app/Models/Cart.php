@@ -5,7 +5,7 @@ require_once 'app/Models/ConnectDatabase.php';
 class Cart
 {
 
-    public function getAll()
+    public function getAllByUserId($userId)
     {
         $query = new ConnectDatabase();
 
@@ -30,12 +30,10 @@ class Cart
                 LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
                 LEFT JOIN sellers s ON s.id = p.seller_id
             WHERE
-                c.user_id = 3
-            LIMIT
-                30
+                c.user_id = :userId
         ";
 
-        $result = $query->query($sql)->fetchAll();
+        $result = $query->query($sql, ['userId' => $userId])->fetchAll();
 
         return $result;
     }

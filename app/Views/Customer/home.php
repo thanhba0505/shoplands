@@ -33,7 +33,7 @@
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $product): ?>
                 <div class="col-span-2">
-                    <a href="<?= Redirect::product()->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                    <a href="<?= Redirect::product('detail')->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
                         <img class="mb-3 w-full h-48 object-cover" src="<?= Util::encodeHtml($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
                         <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
                         <div class="flex items-center mt-2">

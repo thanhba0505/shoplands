@@ -2,7 +2,7 @@
     <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">
         Đăng Nhập
     </h2>
-    <form action="#" method="POST">
+    <form action="<?= Redirect::login()->getUrl() ?>" method="POST">
         <?= CSRF::input() ?>
 
         <!-- Email -->
