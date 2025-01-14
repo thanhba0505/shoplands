@@ -60,8 +60,6 @@ if (!CSRF::getToken()) {
 
     <link rel="stylesheet" href="<?= Asset::url('css/output.css', true) ?>">
     <link rel="stylesheet" href="<?= Asset::url('css/global.css', true) ?>">
-
-    <script src="<?= Asset::url('js/alpine.min.js', true) ?>" defer></script>
 </head>
 
 <body class="bg-gray-100" style="min-width: 1200px; width: 100%; overflow-x: hidden">
@@ -76,8 +74,10 @@ if (!CSRF::getToken()) {
         <span class="" id="notification-message"><?= Session::get('notification.message') ?></span>
     </div>
 
-    <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <?php Notification::show(); ?>
+
+    <script src="<?= Asset::url('js/alpine.min.js', true) ?>"></script>
+    <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <title><?= $title ?? 'Shopee' ?></title>
 </body>
 

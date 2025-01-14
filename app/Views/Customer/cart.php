@@ -153,13 +153,13 @@ foreach ($carts as $cart) {
             init() {
                 // Khởi tạo dữ liệu từ PHP
                 <?php foreach ($groupedCarts as $group): ?>
-                    this.sellers['<?= $group['seller_id'] ?>'] = {
+                    this.sellers['<?= Util::encodeHtml($group['seller_id']) ?>'] = {
                         checked: false,
                         products: <?= json_encode(array_reduce($group['products'], function ($carry, $product) {
                                         $carry[$product['cart_id']] = [
                                             'checked' => false,
-                                            'price' => $product['product_promotion_price'] ?: $product['product_price'],
-                                            'quantity' => $product['cart_quantity']
+                                            'price' => Util::encodeHtml($product['product_promotion_price']) ?: Util::encodeHtml($product['product_price']),
+                                            'quantity' => Util::encodeHtml($product['cart_quantity'])
                                         ];
                                         return $carry;
                                     }, [])) ?>

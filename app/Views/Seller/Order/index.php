@@ -16,7 +16,7 @@
 </div>
 
 <div class="overflow-x-auto">
-    <table class="table-auto w-full mt-5 border-collapse border border-blue-300 text-sm">
+    <table class="table-auto w-full mt-5 border-collapse text-sm">
         <thead>
             <tr class="bg-blue-200 text-center font-semibold">
                 <th class="border border-blue-300 px-4 py-2">Sản phẩm</th>
@@ -28,33 +28,41 @@
             </tr>
         </thead>
         <tbody>
-            <?php for ($i = 0; $i < 5; $i++): ?>
+            <?php foreach ($orders as $order): ?>
                 <tr>
                     <td colspan="6" class="py-2"></td>
                 </tr>
                 <tr class="bg-blue-100">
-                    <td colspan="3" class="border border-blue-300 px-4 py-2 font-bold">Tên người mua</td>
-                    <td colspan="3" class="border border-blue-300 px-4 py-2 text-right">Mã đơn hàng: <?= rand(10000000, 99999999) ?></td>
+                    <td colspan="3" class="border border-blue-300 px-4 py-2 font-bold"><?= Util::encodeHtml($order['user_name']) ?></td>
+                    <td colspan="3" class="border border-blue-300 px-4 py-2 text-right">Mã đơn hàng: <?= Util::encodeHtml($order['order_id']) ?></td>
                 </tr>
                 <tr class="text-center">
-                    <td class="border border-blue-300 px-4 py-2">
-                        <?php $limit = rand(1, 3); ?>
-                        <?php for ($j = 0; $j < $limit; $j++): ?>
-                            <div class="flex justify-between items-center gap-x-1 <?= $j != $limit - 1 ? 'mb-3' : ''; ?>">
+                    <td class="border border-blue-300 px-4 py-2 gap-3 flex flex-col">
+                        <?php foreach ($order['products'] as $product): ?>
+                            <div class="flex items-center gap-x-4">
                                 <img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt="" class="w-10 h-10 border border-blue-300">
-                                <span class="truncate w-40">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
-                                <span>x<?= rand(1, 3) ?></span>
-                                <span>Cáp, dây sạc</span>
+                                <span class="line-clamp-2 w-20 flex-1 pe-4 text-start"><?= Util::encodeHtml($product['product_name']) ?></span>
+                                <?php if (count($product['attributes']) > 1): ?>
+                                    <ul class="text-end">
+                                        <?php foreach ($product['attributes'] as $attribute): ?>
+                                            <li><?= Util::encodeHtml($attribute['attribute_name']) ?>: <i><?= Util::encodeHtml($attribute['attribute_value']) ?></i></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+
+                                <div>
+                                    x<?= Util::encodeHtml($product['order_quantity']) ?>
+                                </div>
                             </div>
-                        <?php endfor; ?>
+                        <?php endforeach; ?>
                     </td>
-                    <td class="border border-blue-300 px-4 py-2">180.000đ</td>
-                    <td class="border border-blue-300 px-4 py-2">Giao hàng nhanh</td>
-                    <td class="border border-blue-300 px-4 py-2">01/01/2022</td>
-                    <td class="border border-blue-300 px-4 py-2">Đang đóng gói</td>
+                    <td class="border border-blue-300 px-4 py-2"><?= Util::formatCurrency($order['revenue']) ?></td>
+                    <td class="border border-blue-300 px-4 py-2"><?= Util::encodeHtml($order['shipping_method']) ?></td>
+                    <td class="border border-blue-300 px-4 py-2"><?= Util::formatDate($order['order_created_at']) ?></td>
+                    <td class="border border-blue-300 px-4 py-2"><?= Util::encodeHtml($order['order_status']) ?></td>
                     <td class="border border-blue-300 px-4 py-2">
                         <a href="<?= BASE_URL ?>/seller/orders/detail" class="text-blue-500 hover:underline">Chi tiết</a><br>
-                        <?php
+                        <!-- <?php
                         $trang_thai = $page ?? null;
                         switch ($trang_thai) {
                             case 'pending':
@@ -73,10 +81,10 @@
                             default:
                                 break;
                         }
-                        ?>
+                        ?> -->
                     </td>
                 </tr>
-            <?php endfor; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>

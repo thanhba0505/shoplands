@@ -16,7 +16,23 @@ class Util
     }
 
     // Định dạng thời gian theo định dạng tùy chỉnh
-    public static function formatDate($date, $format = 'd/m/Y H:i:s')
+    public static function formatDateTime($date, $format = 'd/m/Y H:i:s')
+    {
+        $date = self::encodeHtml($date);
+        $timestamp = strtotime($date);
+        return date($format, $timestamp);
+    }
+
+    // Định dạng thời gian theo định dạng tùy chỉnh
+    public static function formatDate($date, $format = 'd/m/Y')
+    {
+        $date = self::encodeHtml($date);
+        $timestamp = strtotime($date);
+        return date($format, $timestamp);
+    }
+
+    // Định dạng thời gian theo định dạng tùy chỉnh
+    public static function formatTime($date, $format = 'H:i:s')
     {
         $date = self::encodeHtml($date);
         $timestamp = strtotime($date);
