@@ -59,7 +59,7 @@ class ProductVariantSeeder extends Seeder
                             'product_id' => $product->id,
                         ]);
 
-                        Log::info('----====---', ['index' => $index, 'product_variant' => $product_variant->id]);
+                        Log::info('product_variant: ', ['product_variant' => $product_variant->id]);
 
                         // // Tạo các giá trị thuộc tính cho biến thể
                         foreach ($variant_values as $value_id) {
@@ -68,7 +68,7 @@ class ProductVariantSeeder extends Seeder
                                 'product_attribute_value_id' => $value_id,
                             ]);
 
-                            Log::info("----------***---------", ['product_variant_value' => $product_variant_value->id, 'product_variant_id' => $product_variant->id, 'product_attribute_value_id' => $value_id]);
+                            Log::info("product_variant_value: ", ['product_attribute_value_id' => $value_id]);
                         }
 
                         // foreach ($variant_values as $value_id) {
