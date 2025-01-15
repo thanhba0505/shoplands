@@ -14,6 +14,7 @@ require_once './core/CSRF.php';
 require_once './core/Redirect.php';
 require_once './core/Asset.php';
 require_once './core/Notification.php';
+require_once './core/Other.php';
 require_once './core/Console.php';
 // Tạo session bảo mật
 Session::init();
@@ -77,6 +78,7 @@ if (!CSRF::getToken()) {
 
     <?php Notification::show(); ?>
 
+    <script src="<?= Asset::url('js/jquery.min.js', true) ?>"></script>
     <script src="<?= Asset::url('js/alpine.min.js', true) ?>"></script>
     <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <title><?= $title ?? 'Shopee' ?></title>

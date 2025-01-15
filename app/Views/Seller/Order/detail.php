@@ -1,0 +1,1 @@
+<h2 class="text-2xl font-semibold">Chi tiết đơn hàng</h2> <?= Request::get('id') ?>

@@ -1,6 +1,6 @@
 <h2 class="text-2xl font-semibold">Quản lý đơn hàng</h2>
 <div class="flex space-x-1 mt-4 border-b text-center text-sm">
-    <?php foreach ($listStatus as $key => $label): ?>
+    <?php foreach ($listOrderStatus as $key => $label): ?>
         <a href="<?= Redirect::seller('order')->withQuery(['page' => $key])->getUrl() ?>"
             class="py-2 px-2 <?= $page == $key ? 'border-b-2 border-blue-500 font-semibold text-blue-500' : 'text-gray-600'; ?>">
             <?= Util::encodeHtml($label) ?>
@@ -62,7 +62,7 @@
                     <td class="border border-blue-300 px-4 py-2">
                         <?= Util::formatDate($order['latest_status_date']) ?>
                         <br>
-                        <?= Util::encodeHtml($listStatus[$order['order_status']]) ?>
+                        <?= Util::encodeHtml($listOrderStatus[$order['order_status']]) ?>
                     </td>
                     <td class="border border-blue-300 px-4 py-2">
                         <a href="<?= Redirect::seller('order/detail')->withQuery(['id' => $order['order_id']])->getUrl() ?>" class="text-blue-500 hover:underline">Chi tiết</a><br>

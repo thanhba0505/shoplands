@@ -7,24 +7,11 @@ class OrderController
 {
     public function show()
     {
-        $listStatus = [
-            'all' => 'Tất cả',
-            'pending' => 'Chờ xác nhận',
-            'packing' => 'Đang đóng gói',
-            'packed' => 'Đã đóng gói',
-            'shipping' => 'Đang vận chuyển',
-            'delivered' => 'Đã giao hàng',
-            'completed' => 'Đã hoàn thành',
-            'return-requested' => 'Yêu cầu trả hàng',
-            'return-approved' => 'Chấp nhận trả hàng',
-            'return-rejected' => 'Từ chối trả hàng',
-            'returned' => 'Đã trả hàng',
-            'canceled' => 'Đã hủy',
-        ];
+        $listOrderStatus = Other::listOrderStatus();
 
         $page = Request::get('page');
 
-        if (!array_key_exists($page, $listStatus)) {
+        if (!array_key_exists($page, $listOrderStatus)) {
             Redirect::seller()->withQuery(['page' => 'all'])->redirect();
         }
 
@@ -79,32 +66,21 @@ class OrderController
             'title' => 'Quản lý đơn hàng',
             'title_header' => 'Kênh người bán',
             'group' => 'order',
-            'listStatus' => $listStatus,
+            'listOrderStatus' => $listOrderStatus,
             'page' => $page,
             'orders' => $orders
         ];
 
-
-
-        // if ($page == 'all') {
-
-        //     $to_do_list = [
-        //         'pending' => '3',
-        //         'packing' => '2',
-        //         'packed' => '5',
-        //         'shipping' => '2',
-        //         'dilivered' => '7',
-        //         'completed' => '2',
-        //         'returned' => '7',
-        //         'cancelled' => '4',
-        //     ];
-
-        //     $data = array_merge($data, $to_do_list);
-
-        //     View::make('Seller/Order/index', $data, 'layout/layout-header-simple-fullwidth');
-        //     return;
-        // }
-
         View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
+    }
+
+    public function showDetail()
+    {
+
+        $data = [
+            'title' => 'Chi tiết đơn hàng'
+        ];
+
+        View::make('Seller/Order/detail', $data, 'layout/layout-sidebar');
     }
 }
