@@ -150,7 +150,7 @@ class OrderSeeder extends Seeder
 
                         $c = rand(1, 100);
 
-                        if ($e <= 60 && $c <= 50) {
+                        if ($e <= 60 && $c <= 20) {
                             OrderStatus::create([
                                 'status' => 'completed',
                                 'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
@@ -158,7 +158,7 @@ class OrderSeeder extends Seeder
                             ]);
                         } else if ($e <= 60 && $c <= 80) {
                             OrderStatus::create([
-                                'status' => 'return requested',
+                                'status' => 'return-requested',
                                 'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
                                 'order_id' => $order->id,
                             ]);
@@ -167,28 +167,36 @@ class OrderSeeder extends Seeder
 
                             if ($d <= 40) {
                                 OrderStatus::create([
-                                    'status' => 'return rejected',
+                                    'status' => 'return-rejected',
                                     'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
                                     'order_id' => $order->id,
                                 ]);
 
-                                OrderStatus::create([
-                                    'status' => 'completed',
-                                    'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
-                                    'order_id' => $order->id,
-                                ]);
+                                $f = rand(1, 100);
+
+                                if ($f <= 20) {
+                                    OrderStatus::create([
+                                        'status' => 'completed',
+                                        'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                        'order_id' => $order->id,
+                                    ]);
+                                }
                             } else  if ($d <= 80) {
                                 OrderStatus::create([
-                                    'status' => 'return approved',
+                                    'status' => 'return-approved',
                                     'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
                                     'order_id' => $order->id,
                                 ]);
 
-                                OrderStatus::create([
-                                    'status' => 'returned',
-                                    'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
-                                    'order_id' => $order->id,
-                                ]);
+                                $g = rand(1, 100);
+
+                                if ($g <= 20) {
+                                    OrderStatus::create([
+                                        'status' => 'returned',
+                                        'date_time' => $pendingDate->addDays(rand(1, 3))->addHours(rand(0, 23))->addMinutes(rand(0, 59)),
+                                        'order_id' => $order->id,
+                                    ]);
+                                }
                             }
                         }
                     } else if ($b <= 70) {

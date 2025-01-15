@@ -17,6 +17,19 @@ class User
         return $result;
     }
 
+    // Tìm người dùng theo id
+    public function findByAccessToken($accessToken)
+    {
+        $query  = new QueryCustom();
+        $result = $query
+            ->select()
+            ->from('users')
+            ->where('access_token = :accessToken', ['accessToken' => $accessToken])
+            ->first();
+
+        return $result;
+    }
+
     // Tìm người dùng theo số điện thoại
     public function findByPhone($phone)
     {

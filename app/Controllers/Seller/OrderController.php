@@ -7,9 +7,24 @@ class OrderController
 {
     public function show()
     {
+        $listStatus = [
+            'all' => 'Tất cả',
+            'pending' => 'Chờ xác nhận',
+            'packing' => 'Đang đóng gói',
+            'packed' => 'Đã đóng gói',
+            'shipping' => 'Đang vận chuyển',
+            'delivered' => 'Đã giao hàng',
+            'completed' => 'Đã hoàn thành',
+            'return-requested' => 'Yêu cầu trả hàng',
+            'return-approved' => 'Chấp nhận trả hàng',
+            'return-rejected' => 'Từ chối trả hàng',
+            'returned' => 'Đã trả hàng',
+            'canceled' => 'Đã hủy',
+        ];
+
         $page = Request::get('page');
 
-        if (!in_array($page, ['all', 'pending', 'packing', 'packed', 'shipping', 'dilivered', 'completed', 'returned', 'cancelled'])) {
+        if (!array_key_exists($page, $listStatus)) {
             Redirect::seller()->withQuery(['page' => 'all'])->redirect();
         }
 
@@ -18,7 +33,7 @@ class OrderController
         $seller = $sellerModel->findByUserId($user['id']);
 
         $order = new Order();
-        $sqlResults = $order->getOrdersBySellerId($seller['id']);
+        $sqlResults = $order->getOrdersBySellerId($seller['id'], $page == 'all' ? null : $page);
 
         $orders = [];
 
@@ -64,6 +79,7 @@ class OrderController
             'title' => 'Quản lý đơn hàng',
             'title_header' => 'Kênh người bán',
             'group' => 'order',
+            'listStatus' => $listStatus,
             'page' => $page,
             'orders' => $orders
         ];

@@ -30,8 +30,8 @@ spl_autoload_register(function ($class) {
 });
 
 // Kiểm tra đang nhập
-$accessToken = Cookie::get('access_token');
-if (!$accessToken) {
+$checkAuth = Auth::checkAuth('user');
+if (!$checkAuth) {
     $auth = Auth::reLogin();
 
     if ($auth) {
@@ -67,6 +67,7 @@ if (!CSRF::getToken()) {
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 
+    <!-- <?php Cookie::debug();?> -->
 
     <!-- Thông báo -->
     <div id="notification" class="fixed <?= Session::get('notification.type') === 'error' ? 'bg-red-400' : 'bg-blue-400' ?> text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">

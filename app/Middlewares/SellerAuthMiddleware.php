@@ -9,7 +9,7 @@ class SellerAuthMiddleware
         $result = Auth::checkAuth('seller');
 
         if (!$result) {
-            Redirect::to('/seller/register');
+            Redirect::seller('register')->redirect();
         }
     }
 }

@@ -4,7 +4,7 @@ require_once 'app/Models/QueryCustom.php';
 
 class Order
 {
-    public function getOrdersBySellerId($seller_id)
+    public function getOrdersBySellerId($seller_id, $status = null)
     {
         $query = new ConnectDatabase();
 
@@ -56,6 +56,7 @@ class Order
             WHERE
                 o.seller_id = :seller_id
                 AND pi.default = :default
+                " . ($status ? "AND os_latest.status = :status" : "") . " 
             GROUP BY
                 o.id,
                 o.revenue,
@@ -74,10 +75,19 @@ class Order
                 os_latest.date_time,
                 os_latest.status
             LIMIT 100;
-
         ";
 
-        $result = $query->query($sql, ['seller_id' => $seller_id, 'default' => 1])->fetchAll();
+        // Gắn tham số truy vấn
+        $params = [
+            'seller_id' => $seller_id,
+            'default' => 1
+        ];
+        if ($status) {
+            $params['status'] = $status;
+        }
+
+        // Thực thi truy vấn
+        $result = $query->query($sql, $params)->fetchAll();
 
         return $result;
     }

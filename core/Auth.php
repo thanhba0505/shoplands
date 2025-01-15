@@ -92,7 +92,7 @@ class Auth
     {
         $accessToken  = Cookie::get('access_token');
 
-        if (!$accessToken || !Token::validateAccessToken($accessToken)) {
+        if (!$accessToken) {
             return false;
         }
 

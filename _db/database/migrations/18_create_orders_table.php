@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -31,6 +32,8 @@ return new class extends Migration
             $table->foreign('coupon_id')->references('id')->on('coupons');
             $table->foreign('user_id')->references('id')->on('users');
         });
+
+        DB::statement('ALTER TABLE orders AUTO_INCREMENT = 123456;');
     }
 
     public function down(): void

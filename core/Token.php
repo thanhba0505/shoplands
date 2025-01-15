@@ -54,6 +54,13 @@ class Token
             return null;
         }
 
+        $userModel = new User();
+        $user = $userModel->findByAccessToken($accessToken);
+
+        if (!$user) {
+            return null;
+        }
+
         $parts = explode('.', $accessToken);
         if (count($parts) !== 2) {
             return null;
