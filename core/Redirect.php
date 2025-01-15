@@ -84,6 +84,11 @@ class Redirect
         return new self(trim('/' . $action, '/'));
     }
 
+    public static function error($action = '')
+    {
+        return new self(trim('404/' . $action, '/'));
+    }
+
     public static function login($action = '')
     {
         return new self(trim('login/' . $action, '/'));

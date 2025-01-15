@@ -59,29 +59,33 @@
                     <td class="border border-blue-300 px-4 py-2"><?= Util::formatCurrency($order['revenue']) ?></td>
                     <td class="border border-blue-300 px-4 py-2"><?= Util::encodeHtml($order['shipping_method']) ?></td>
                     <td class="border border-blue-300 px-4 py-2"><?= Util::formatDate($order['order_created_at']) ?></td>
-                    <td class="border border-blue-300 px-4 py-2"><?= Util::encodeHtml($order['order_status']) ?></td>
                     <td class="border border-blue-300 px-4 py-2">
-                        <a href="<?= BASE_URL ?>/seller/orders/detail" class="text-blue-500 hover:underline">Chi tiết</a><br>
+                        <?= Util::formatDate($order['latest_status_date']) ?>
+                        <br>
+                        <?= Util::encodeHtml($order['order_status']) ?>
+                    </td>
+                    <td class="border border-blue-300 px-4 py-2">
+                        <a href="<?= Redirect::seller('order/detail')->withQuery(['id' => $order['order_id']])->getUrl() ?>" class="text-blue-500 hover:underline">Chi tiết</a><br>
                         <!-- <?php
-                        $trang_thai = $page ?? null;
-                        switch ($trang_thai) {
-                            case 'pending':
-                                echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-green-500 hover:underline">Xác nhận</a>';
-                                break;
-                            case 'packing':
-                                echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-green-500 hover:underline">Đã đóng gói</a>';
-                                break;
-                            case 'packed':
-                                echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-green-500 hover:underline">Đã giao</a>';
-                                break;
-                            case 'returned':
-                                echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-yellow-500 hover:underline">Chấp nhận</a><br>';
-                                echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-red-500 hover:underline">Từ chối</a>';
-                                break;
-                            default:
-                                break;
-                        }
-                        ?> -->
+                                $trang_thai = $page ?? null;
+                                switch ($trang_thai) {
+                                    case 'pending':
+                                        echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-green-500 hover:underline">Xác nhận</a>';
+                                        break;
+                                    case 'packing':
+                                        echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-green-500 hover:underline">Đã đóng gói</a>';
+                                        break;
+                                    case 'packed':
+                                        echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-green-500 hover:underline">Đã giao</a>';
+                                        break;
+                                    case 'returned':
+                                        echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-yellow-500 hover:underline">Chấp nhận</a><br>';
+                                        echo '<a href="' . BASE_URL . '/seller/orders/detail" class="pt-1 text-red-500 hover:underline">Từ chối</a>';
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                ?> -->
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -35,7 +35,9 @@ class OrderController
                     'revenue' => $row['order_revenue'],
                     'shipping_method' => $row['shipping_method'],
                     'order_created_at' => $row['order_created_at'],
-                    'order_status' => $row['order_status'],
+                    'order_date' => $row['order_date'],
+                    'latest_status_date' => $row['latest_status_date'],
+                    'order_status' => $row['latest_status'],
                     'products' => [],
                 ];
             }

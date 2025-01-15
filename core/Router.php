@@ -89,6 +89,6 @@ class Router
         }
 
         // Nếu không tìm thấy route
-        View::make('App/404', ['title' => '404 Not Found'], 'layout/layout-primary');
+        Redirect::error()->redirect();
     }
 }

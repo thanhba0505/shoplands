@@ -23,7 +23,9 @@ class Order
                 pav.value AS product_attribute_value,
                 pa.name AS product_attribute,
                 sf.shipping_method AS shipping_method,
-                MAX(os.status) AS order_status
+                os_pending.date_time AS order_date, -- Thời gian trạng thái Pending
+                os_latest.date_time AS latest_status_date, -- Thời gian trạng thái mới nhất
+                os_latest.status AS latest_status -- Trạng thái mới nhất
             FROM
                 orders o
                 JOIN users u ON u.id = o.user_id
@@ -35,7 +37,22 @@ class Order
                 LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
                 JOIN product_images pi ON pi.product_id = p.id
                 JOIN shipping_fees sf ON sf.id = o.shipping_fee_id
-                JOIN order_status os ON os.order_id = o.id
+                -- Lấy trạng thái Pending
+                LEFT JOIN (
+                    SELECT order_id, date_time
+                    FROM order_status
+                    WHERE status = 'Pending'
+                ) os_pending ON os_pending.order_id = o.id
+                -- Lấy trạng thái mới nhất
+                LEFT JOIN (
+                    SELECT order_id, status, date_time
+                    FROM order_status
+                    WHERE (order_id, date_time) IN (
+                        SELECT order_id, MAX(date_time)
+                        FROM order_status
+                        GROUP BY order_id
+                    )
+                ) os_latest ON os_latest.order_id = o.id
             WHERE
                 o.seller_id = :seller_id
                 AND pi.default = :default
@@ -52,9 +69,12 @@ class Order
                 oi.quantity,
                 pav.value,
                 pa.name,
-                sf.shipping_method
-            LIMIT
-                100
+                sf.shipping_method,
+                os_pending.date_time,
+                os_latest.date_time,
+                os_latest.status
+            LIMIT 100;
+
         ";
 
         $result = $query->query($sql, ['seller_id' => $seller_id, 'default' => 1])->fetchAll();
