@@ -30,16 +30,6 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Kiểm tra đang nhập
-$checkAuth = Auth::checkAuth('user');
-if (!$checkAuth) {
-    $auth = Auth::reLogin();
-
-    if ($auth) {
-        Redirect::reload();
-    }
-}
-
 // Tạo router và nạp route
 $router = new Router();
 require_once './routes/web.php';
@@ -61,6 +51,8 @@ if (!CSRF::getToken()) {
 
     <link rel="stylesheet" href="<?= Asset::url('css/output.css', true) ?>">
     <link rel="stylesheet" href="<?= Asset::url('css/global.css', true) ?>">
+
+    <script src="<?= Asset::url('js/jquery.min.js', true) ?>"></script>
 </head>
 
 <body class="bg-gray-100" style="min-width: 1200px; width: 100%; overflow-x: hidden">
@@ -68,17 +60,12 @@ if (!CSRF::getToken()) {
     <!-- // Xử lý request -->
     <?php $router->dispatch(); ?>
 
-    <!-- <?php Cookie::debug();?> -->
-
     <!-- Thông báo -->
     <div id="notification" class="fixed <?= Session::get('notification.type') === 'error' ? 'bg-red-400' : 'bg-blue-400' ?> text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">
-
         <span class="" id="notification-message"><?= Session::get('notification.message') ?></span>
     </div>
 
     <?php Notification::show(); ?>
-
-    <script src="<?= Asset::url('js/jquery.min.js', true) ?>"></script>
     <script src="<?= Asset::url('js/alpine.min.js', true) ?>"></script>
     <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <title><?= $title ?? 'Shopee' ?></title>
