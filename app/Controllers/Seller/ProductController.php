@@ -33,6 +33,6 @@ class ProductController
 
         
 
-        View::make('Seller/Product/index', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Product/index', $data, 'layout/layout-sidebar');
     }
 }

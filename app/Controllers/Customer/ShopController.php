@@ -11,6 +11,6 @@ class ShopController
             'id' => $id
         ];
 
-        View::make('Customer/shop', $data, 'layout/layout-primary');
+        return View::make('Customer/shop', $data, 'layout/layout-primary');
     }
 }

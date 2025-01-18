@@ -10,8 +10,8 @@
     <p>Loading content...</p>
 </div>
 
-<form action="<?= Redirect::order('test-ajax')->getUrl() ?>" method="post">
-    <?= CSRF::input() ?>
+<form action="<?= Redirect::to('api/ajax')->getUrl() ?>" method="post">
+    <!-- <?= CSRF::input() ?> -->
     <input type="text" name="action" value="loadTabContent">
     <input type="text" name="tab" value="tab1">
     <button type="submit">Load Tab 1</button>
@@ -35,13 +35,11 @@
             $('#tab-content').html('<p>Loading content...</p>');
 
             // Fetch tab content via AJAX
-            $.post('<?= Redirect::order('test-ajax')->getUrl() ?>', {
-                action: 'loadTabContent',
-                tab: tab,
-                csrf: '<?= CSRF::getToken() ?>'
+            $.post('<?= Redirect::to('api/ajax')->getUrl() ?>', {
+                tab: tab
             }, function(response) {
-                if (response.success) {
-                    $('#tab-content').html(response.content);
+                if (response) {
+                    $('#tab-content').html(response);
                 } else {
                     $('#tab-content').html('<p>Error loading content.</p>');
                 }

@@ -38,6 +38,7 @@ class Router
 
         $uri = trim($uri, '/');
         $method = $_SERVER['REQUEST_METHOD'];
+        $isApi = strpos($uri, 'api/') === 0;
 
         // Kiểm tra route và gọi action tương ứng
         foreach ($this->routes[$method] as $route => $action) {
@@ -45,11 +46,11 @@ class Router
             if (preg_match('#^' . $routePattern . '$#', $uri, $matches)) {
 
                 // Nếu là POST request, kiểm tra CSRF token
-                if ($method === 'POST') {
+                if (!$isApi && $method === 'POST') {
                     // Kiểm tra CSRF Token
                     $csrfToken = Request::post('csrf');
                     if (!CSRF::validateToken($csrfToken)) {
-                        Redirect::back()->notification('CSRF Token khẑng hợp lệ!', 'error')->redirect();
+                        Redirect::back()->notification('CSRF Token không hợp lệ!', 'error')->redirect();
                     }
                 }
 
@@ -81,9 +82,24 @@ class Router
                         }
                     }
 
-                    return call_user_func_array([$controller, $methodName], $params);
+
+                    $response = call_user_func_array([$controller, $methodName], $params);
+
+                    if ($isApi) {
+                        header('Content-Type: application/json');
+                        echo json_encode($response);
+                    } else {
+                        require_once 'html.php';
+                    }
+                    return;
                 } else {
-                    echo "Controller not found: $controllerName";
+                    if ($isApi) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['error' => "Controller not found: $controllerName"]);
+                    } else {
+                        echo "Controller not found: $controllerName";
+                    }
+                    return;
                 }
             }
         }

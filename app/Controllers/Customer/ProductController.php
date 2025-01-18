@@ -15,6 +15,6 @@ class ProductController
             'products' => $product_result ? $product_result : []
         ];
 
-        View::make('Customer/products', $data, 'layout/layout-sidebar');
+        return View::make('Customer/products', $data, 'layout/layout-sidebar');
     }
 }

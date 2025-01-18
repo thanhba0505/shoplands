@@ -71,7 +71,7 @@ class OrderController
             'orders' => $orders
         ];
 
-        View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
     }
 
     public function showDetail()
@@ -81,6 +81,6 @@ class OrderController
             'title' => 'Chi tiết đơn hàng'
         ];
 
-        View::make('Seller/Order/detail', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Order/detail', $data, 'layout/layout-sidebar');
     }
 }

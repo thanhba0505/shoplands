@@ -13,6 +13,6 @@ class AccountSettingsController
             'sidebar' => 'info'
         ];
 
-        View::make('Customer/account-settings', $data, 'layout/layout-sidebar');
+        return View::make('Customer/account-settings', $data, 'layout/layout-sidebar');
     }
 }

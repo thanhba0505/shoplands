@@ -20,7 +20,6 @@ class HomeController
             'categories' => $category_result ? $category_result : [],
         ];
 
-        // Render view với layout
-        View::make('Customer/home', $data, 'layout/layout-primary');
+        return View::make('Customer/home', $data, 'layout/layout-primary');
     }
 }

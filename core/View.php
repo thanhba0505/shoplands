@@ -15,10 +15,12 @@ class View
 
         // Nếu có layout, render layout và chèn nội dung
         if ($layout) {
+            ob_start();
             require "./app/views/$layout.php";
-        } else {
-            // Nếu không có layout, chỉ render nội dung view
-            echo $content;
+            return ob_get_clean();
         }
+
+        // Nếu không có layout, trả về nội dung view
+        return $content;
     }
 }

@@ -16,6 +16,6 @@ class CartController
             'carts' => $cart_result
         ];
 
-        View::make('Customer/cart', $data, 'layout/layout-primary');
+        return View::make('Customer/cart', $data, 'layout/layout-primary');
     }
 }

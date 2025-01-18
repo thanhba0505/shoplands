@@ -39,7 +39,7 @@ $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
 
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/order', 'Customer/OrderController@show', [AuthMiddleware::class]);
-$router->post('/order/test-ajax', 'Customer/OrderController@testAjax');
+$router->post('/api/ajax', 'Api/Ajax/Tab@testAjax');
 
 
 // Trang thiết lập thông tin ---------------------------------------------------------------------
