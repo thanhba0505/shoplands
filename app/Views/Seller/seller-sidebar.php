@@ -1,16 +1,14 @@
 <!-- Quản lý đơn hàng -->
 <div class="mb-6">
     <h3 class="text-lg font-semibold mb-2">Quản lý đơn hàng</h3>
-    <nav class="space-y-1">
+    <nav id="tab-order-sidebar" class="space-y-1">
         <?php $listOrderStatus = Other::listOrderStatus(); ?>
         <?php foreach ($listOrderStatus as $key => $label): ?>
-            <a href="<?= Redirect::seller('order')->withQuery(['page' => $key])->getUrl() ?>"
-                class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= ($group . '-' . $page) == ('order-' . $key) ? 'bg-blue-400 font-semibold text-white' : '' ?>">
+            <div data-tab="<?= Util::encodeHtml($key) ?>" class="px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
-            </a>
+            </div>
         <?php endforeach; ?>
     </nav>
-
 </div>
 
 <!-- Quản lý sản phẩm -->
@@ -25,3 +23,19 @@
         <a href="<?= Redirect::seller('product')->withQuery(['page' => 'deleted'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-deleted' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Đã xóa</a>
     </nav>
 </div>
+
+<script>
+    $(document).ready(function() {
+        loadTabAjax('<?= Redirect::to('api/seller/order/tab')->getUrl() ?>', {
+            contentId: 'tab-content',
+            dataName: 'tab',
+            tabContainers: [{
+                selectorId: 'tab-order-sidebar',
+                activeClass: 'bg-blue-400 font-semibold text-white'
+            }, {
+                selectorId: 'tab-content-order',
+                activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
+            }]
+        });
+    });
+</script>

@@ -9,10 +9,37 @@ class OrderController
     {
         $listOrderStatus = Other::listOrderStatus();
 
-        $page = Request::get('page');
+        $data = [
+            'title' => 'Quản lý đơn hàng',
+            'title_header' => 'Kênh người bán',
+            'group' => 'order',
+            'listOrderStatus' => $listOrderStatus,
+        ];
+
+        return View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
+    }
+
+    public function showDetail()
+    {
+
+        $data = [
+            'title' => 'Chi tiết đơn hàng'
+        ];
+
+        return View::make('Seller/Order/detail', $data, 'layout/layout-sidebar');
+    }
+
+    public function apiHandleTab()
+    {
+        $response = [];
+
+        $listOrderStatus = Other::listOrderStatus();
+
+        $page = Request::post('page');
 
         if (!array_key_exists($page, $listOrderStatus)) {
-            Redirect::seller()->withQuery(['page' => 'all'])->redirect();
+            $response['status'] = 'error';
+            return $response;
         }
 
         $user = Auth::getUser();
@@ -61,26 +88,11 @@ class OrderController
             ];
         }
 
-
-        $data = [
-            'title' => 'Quản lý đơn hàng',
-            'title_header' => 'Kênh người bán',
-            'group' => 'order',
-            'listOrderStatus' => $listOrderStatus,
-            'page' => $page,
-            'orders' => $orders
+        $response = [
+            'status' => 'success',
+            'content' => View::make('Seller/Order/tab-order', ['orders' => $orders, 'listOrderStatus' => $listOrderStatus], 'layout/no-layout'),
         ];
 
-        return View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
-    }
-
-    public function showDetail()
-    {
-
-        $data = [
-            'title' => 'Chi tiết đơn hàng'
-        ];
-
-        return View::make('Seller/Order/detail', $data, 'layout/layout-sidebar');
+        return $response;
     }
 }

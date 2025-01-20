@@ -23,7 +23,7 @@ class ConnectDatabase
     {
         try {
             $stmt = $this->connection->prepare($sql);
-            Console::log('SQL: ' . $sql);
+            // Console::log('SQL: ' . $sql);
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
