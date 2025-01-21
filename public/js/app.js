@@ -33,6 +33,7 @@ async function loadTabAjax(url, options = {}) {
         loadingId: "loadingId", // ID của phần tử loading
         errorId: "errorId", // ID của phần tử hiển thị lỗi
         noContentId: "noContentId", // ID của phần tử hiển thị "No content"
+        urlActive: "http://localhost/code-php/shopee",
     };
 
     const settings = Object.assign({}, defaults, options);
@@ -50,30 +51,36 @@ async function loadTabAjax(url, options = {}) {
     };
 
     const showIndicator = (indicatorId) => {
-        $(
-            `#${settings.loadingId}, #${settings.errorId}, #${settings.noContentId}`
-        ).hide();
-        $(`#${indicatorId}`).show();
+        // Ẩn tất cả các trạng thái nếu tồn tại
+        if ($("#" + settings.loadingId).length > 0)
+            $("#" + settings.loadingId).hide();
+        if ($("#" + settings.errorId).length > 0)
+            $("#" + settings.errorId).hide();
+        if ($("#" + settings.noContentId).length > 0)
+            $("#" + settings.noContentId).hide();
+
+        // Hiển thị trạng thái cụ thể nếu tồn tại
+        if ($("#" + indicatorId).length > 0) {
+            $("#" + indicatorId).show();
+        }
     };
 
     settings.tabContainers.forEach((tabContainer) => {
         $(`#${tabContainer.selectorId} [data-tab]`).click(async function (e) {
             e.preventDefault();
-
+            
             const $this = $(this);
-
-            // Kiểm tra nếu tab đã active và nội dung đã tồn tại
-            if (
-                $this.hasClass(tabContainer.activeClass) &&
-                $(`#${settings.contentId}`).html().trim() !== ""
-            ) {
-                return;
-            }
 
             const tab = $this.data(settings.dataName);
 
             // Lưu trạng thái tab vào localStorage
             localStorage.setItem("activeTab", tab);
+
+            
+            if (window.location.href !== settings.urlActive) {
+                window.location.href = settings.urlActive;
+                return;
+            }
 
             // Hiển thị loading indicator
             showIndicator(settings.loadingId);
@@ -109,5 +116,9 @@ async function loadTabAjax(url, options = {}) {
         setActiveTab(activeTab, tabContainer);
     });
 
-    $(`[data-tab="${activeTab}"]`).first().trigger("click");
+    if (
+        window.location.href === settings.urlActive
+    ) {
+        $(`[data-tab="${activeTab}"]`).first().trigger("click");
+    }
 }

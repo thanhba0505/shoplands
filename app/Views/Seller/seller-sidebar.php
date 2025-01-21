@@ -32,6 +32,7 @@
             loadingId: 'loadingId',
             noContentId: 'noContentId',
             errorId: 'errorId',
+            urlActive: '<?= Redirect::seller('order')->getUrl() ?>',
             tabContainers: [{
                 selectorId: 'tab-order-sidebar',
                 activeClass: 'bg-blue-400 font-semibold text-white'
