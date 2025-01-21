@@ -72,7 +72,7 @@
                         x-transition
                         class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md overflow-hidden">
                         <?php if (Auth::checkAuth()) : ?>
-                            <a href="<?= Redirect::seller('order')->withQuery(['page'=>'all'])->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
+                            <a href="<?= Redirect::seller('order')->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Kênh người bán</a>
                             <a href="<?= Redirect::accountSettings()->getUrl() ?>" @click="open = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Thiết lập thông tin</a>
                             <a href="<?= Redirect::logout()->getUrl() ?>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đăng xuất</a>
                         <?php else : ?>

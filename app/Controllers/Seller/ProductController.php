@@ -21,7 +21,7 @@ class ProductController
         $page = Request::get('page', 'all');
 
         if (!in_array($page, ['all', 'in-stock', 'out-of-stock', 'locked', 'hidden', 'deleted'])) {
-            Redirect::seller('product')->withQuery(['page' => 'all'])->redirect();
+            Redirect::seller('product')->redirect();
         }
 
         $data = [

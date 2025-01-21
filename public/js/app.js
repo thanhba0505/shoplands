@@ -25,63 +25,14 @@ function showNotification(duration = 3000) {
     }, duration);
 }
 
-// async function loadTabAjax(url, options = {}) {
-//     const defaults = {
-//         tabClass: "tabClass",
-//         contentId: "contentId",
-//         dataName: "dataName",
-//         activeClass: "active",
-//     };
-
-//     const settings = Object.assign({}, defaults, options);
-
-//     const setActiveTab = (tabKey) => {
-//         $("." + settings.tabClass).removeClass(settings.activeClass);
-//         $(`[data-tab="${tabKey}"]`).addClass(settings.activeClass);
-//     };
-
-//     $("." + settings.tabClass).click(async function (e) {
-//         e.preventDefault();
-
-//         const $this = $(this);
-//         const tab = $this.data(settings.dataName);
-
-//         // Lưu trạng thái tab vào localStorage
-//         localStorage.setItem("activeTab", tab);
-
-//         $("#" + settings.contentId).html(
-//             '<tr><td colspan="10">Loading content...</td></tr>'
-//         );
-
-//         setActiveTab(tab);
-
-//         try {
-//             const response = await $.post(url, { page: tab });
-//             if (response.content) {
-//                 $("#" + settings.contentId).html(response.content);
-//             } else {
-//                 $("#" + settings.contentId).html(
-//                     '<tr><td colspan="10">No content.</td></tr>'
-//                 );
-//             }
-//         } catch (error) {
-//             $("#" + settings.contentId).html(
-//                 '<tr><td colspan="10">Error loading content.</td></tr>'
-//             );
-//         }
-//     });
-
-//     // Lấy trạng thái tab từ localStorage
-//     const activeTab = localStorage.getItem("activeTab") || "all";
-//     setActiveTab(activeTab);
-//     $(`[data-tab="${activeTab}"]`).first().trigger("click");
-// }
-
 async function loadTabAjax(url, options = {}) {
     const defaults = {
         tabContainers: [], // Danh sách các container tab, sử dụng id
-        contentId: "contentId",
-        dataName: "dataName",
+        contentId: "contentId", // ID phần tử nội dung
+        dataName: "dataName", // Thuộc tính data-tab
+        loadingId: "loadingId", // ID của phần tử loading
+        errorId: "errorId", // ID của phần tử hiển thị lỗi
+        noContentId: "noContentId", // ID của phần tử hiển thị "No content"
     };
 
     const settings = Object.assign({}, defaults, options);
@@ -98,19 +49,37 @@ async function loadTabAjax(url, options = {}) {
         });
     };
 
+    const showIndicator = (indicatorId) => {
+        $(
+            `#${settings.loadingId}, #${settings.errorId}, #${settings.noContentId}`
+        ).hide();
+        $(`#${indicatorId}`).show();
+    };
+
     settings.tabContainers.forEach((tabContainer) => {
         $(`#${tabContainer.selectorId} [data-tab]`).click(async function (e) {
             e.preventDefault();
-            
+
             const $this = $(this);
+
+            // Kiểm tra nếu tab đã active và nội dung đã tồn tại
+            if (
+                $this.hasClass(tabContainer.activeClass) &&
+                $(`#${settings.contentId}`).html().trim() !== ""
+            ) {
+                return;
+            }
+
             const tab = $this.data(settings.dataName);
 
             // Lưu trạng thái tab vào localStorage
             localStorage.setItem("activeTab", tab);
 
-            $(`#${settings.contentId}`).html(
-                '<tr><td colspan="10">Loading content...</td></tr>'
-            );
+            // Hiển thị loading indicator
+            showIndicator(settings.loadingId);
+
+            // Xóa nội dung cũ
+            $(`#${settings.contentId}`).empty();
 
             setActiveTab(tab, tabContainer);
 
@@ -118,15 +87,17 @@ async function loadTabAjax(url, options = {}) {
                 const response = await $.post(url, { page: tab });
                 if (response.content) {
                     $(`#${settings.contentId}`).html(response.content);
+                    // Ẩn tất cả các indicator
+                    $(
+                        `#${settings.loadingId}, #${settings.errorId}, #${settings.noContentId}`
+                    ).hide();
                 } else {
-                    $(`#${settings.contentId}`).html(
-                        '<tr><td colspan="10">No content.</td></tr>'
-                    );
+                    // Hiển thị "No content" indicator
+                    showIndicator(settings.noContentId);
                 }
             } catch (error) {
-                $(`#${settings.contentId}`).html(
-                    '<tr><td colspan="10">Error loading content.</td></tr>'
-                );
+                // Hiển thị error indicator
+                showIndicator(settings.errorId);
             }
         });
     });

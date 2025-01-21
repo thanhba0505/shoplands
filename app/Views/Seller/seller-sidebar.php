@@ -4,7 +4,7 @@
     <nav id="tab-order-sidebar" class="space-y-1">
         <?php $listOrderStatus = Other::listOrderStatus(); ?>
         <?php foreach ($listOrderStatus as $key => $label): ?>
-            <div data-tab="<?= Util::encodeHtml($key) ?>" class="px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
+            <div data-tab="<?= Util::encodeHtml($key) ?>" class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
             </div>
         <?php endforeach; ?>
@@ -29,6 +29,9 @@
         loadTabAjax('<?= Redirect::to('api/seller/order/tab')->getUrl() ?>', {
             contentId: 'tab-content',
             dataName: 'tab',
+            loadingId: 'loadingId',
+            noContentId: 'noContentId',
+            errorId: 'errorId',
             tabContainers: [{
                 selectorId: 'tab-order-sidebar',
                 activeClass: 'bg-blue-400 font-semibold text-white'

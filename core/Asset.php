@@ -33,4 +33,12 @@ class Asset
                     </g>
                 </svg>';
     }
+
+    public static function loading($size = 'size-10')
+    {
+        return '<div class="flex items-center justify-center">
+                    <div class="' . $size . ' border-4 border-blue-500 border-t-transparent rounded-full animate-spin">
+                    </div>
+                </div>';
+    }
 }
