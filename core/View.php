@@ -3,24 +3,40 @@
 class View
 {
     // Render view với layout
-    public static function make($view, $data = [], $layout = null)
+    public static function make($view, $data = [], $header = 'main', $sidebar = null, $footer = 'main')
     {
         // Giải nén biến để có thể sử dụng trực tiếp trong view
         extract($data);
 
         // Lấy nội dung của view
         ob_start();
-        require "./app/views/$view.php";
+        require "./app/Views/$view.php";
         $content = ob_get_clean();
 
-        // Nếu có layout, render layout và chèn nội dung
-        if ($layout) {
+        // Header
+        $header = self::loadPartial("header/$header");
+
+        // Sidebar
+        $sidebar = self::loadPartial("sidebar/$sidebar");
+
+        // Footer
+        $footer = self::loadPartial("footer/$footer");
+
+        // Render template chính
+        ob_start();
+        require "./app/Views/layout/index.php";
+        return ob_get_clean();
+    }
+
+    // Hàm hỗ trợ load từng phần (header, sidebar, footer)
+    private static function loadPartial($path)
+    {
+        $filePath = "./app/Views/layout/$path.php";
+        if (file_exists($filePath)) {
             ob_start();
-            require "./app/views/$layout.php";
+            include $filePath;
             return ob_get_clean();
         }
-
-        // Nếu không có layout, trả về nội dung view
-        return $content;
+        return ''; // Trả về chuỗi trống nếu file không tồn tại
     }
 }

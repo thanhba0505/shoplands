@@ -31,4 +31,38 @@ class Other
             'locked' => 'Đã khóa',
         ];
     }
+
+    // Khuyến mãi
+    public static function listPromotion()
+    {
+        return [
+            'discount' => 'Giảm giá sản phẩm',
+            'coupon' => 'Mã giảm giá',
+        ];
+    }
+    
+    // Chăm sóc khách hàng
+    public static function listCustomerCare()
+    {
+        return [
+            'chat' => 'Trợ lý Chat',
+        ];
+    }
+    
+    // Dữ liệu
+    public static function listDataSale()
+    {
+        return [
+            'revenue' => 'Doanh thu bán hàng',
+        ];
+    }
+    
+    // Quản lý cửa hàng
+    public static function listAdmin()
+    {
+        return [
+            'info' => 'Thông tin cửa hàng',
+            'payment' => 'Cài đặt thanh toán',
+        ];
+    }
 }

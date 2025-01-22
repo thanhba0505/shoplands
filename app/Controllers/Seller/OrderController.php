@@ -11,12 +11,10 @@ class OrderController
 
         $data = [
             'title' => 'Quản lý đơn hàng',
-            'title_header' => 'Kênh người bán',
-            'group' => 'order',
             'listOrderStatus' => $listOrderStatus,
         ];
 
-        return View::make('Seller/Order/index', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Order/index', $data, sidebar: 'seller');
     }
 
     public function showDetail()
@@ -26,7 +24,7 @@ class OrderController
             'title' => 'Chi tiết đơn hàng'
         ];
 
-        return View::make('Seller/Order/detail', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Order/detail', $data, sidebar: 'seller');;
     }
 
     public function apiHandleTab()
@@ -88,11 +86,8 @@ class OrderController
             ];
         }
 
-        $response = [
-            'status' => 'success',
-            'content' => View::make('Seller/Order/tab-order', ['orders' => $orders, 'listOrderStatus' => $listOrderStatus], 'layout/no-layout'),
-        ];
+        $data = ['orders' => $orders, 'listOrderStatus' => $listOrderStatus];
 
-        return $response;
+        return Api::view('Seller/Order/tab-order', $data);
     }
 }

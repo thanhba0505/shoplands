@@ -86,8 +86,7 @@ class Router
                     $response = call_user_func_array([$controller, $methodName], $params);
 
                     if ($isApi) {
-                        header('Content-Type: application/json');
-                        echo json_encode($response);
+                        echo $response;
                     } else {
                         require_once 'html.php';
                     }

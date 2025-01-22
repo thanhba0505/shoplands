@@ -11,6 +11,6 @@ class ProductDetailController
             'id' => $id
         ];
 
-        return View::make('Customer/product-detail', $data, 'layout/layout-primary');
+        return View::make('Customer/product-detail', $data);
     }
 }

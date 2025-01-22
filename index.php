@@ -16,6 +16,7 @@ require_once './core/Asset.php';
 require_once './core/Notification.php';
 require_once './core/Other.php';
 require_once './core/Console.php';
+require_once './core/Api.php';
 // Tạo session bảo mật
 Session::init();
 

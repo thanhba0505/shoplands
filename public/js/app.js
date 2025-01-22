@@ -33,7 +33,7 @@ async function loadTabAjax(url, options = {}) {
         loadingId: "loadingId", // ID của phần tử loading
         errorId: "errorId", // ID của phần tử hiển thị lỗi
         noContentId: "noContentId", // ID của phần tử hiển thị "No content"
-        urlActive: "http://localhost/code-php/shopee",
+        urlActive: "",
     };
 
     const settings = Object.assign({}, defaults, options);
@@ -41,12 +41,14 @@ async function loadTabAjax(url, options = {}) {
     const setActiveTab = (tabKey) => {
         settings.tabContainers.forEach((tabContainer) => {
             const activeClass = tabContainer.activeClass || "active";
-            $(`#${tabContainer.selectorId} [data-${settings.dataName}]`).removeClass(
-                activeClass
-            );
-            $(`#${tabContainer.selectorId} [data-${settings.dataName}="${tabKey}"]`).addClass(
-                activeClass
-            );
+            $(
+                `#${tabContainer.selectorId} [data-${settings.dataName}]`
+            ).removeClass(activeClass);
+            if ($(`#${settings.contentId}`).length > 0) {
+                $(
+                    `#${tabContainer.selectorId} [data-${settings.dataName}="${tabKey}"]`
+                ).addClass(activeClass);
+            }
         });
     };
 
@@ -66,59 +68,60 @@ async function loadTabAjax(url, options = {}) {
     };
 
     settings.tabContainers.forEach((tabContainer) => {
-        $(`#${tabContainer.selectorId} [data-${settings.dataName}]`).click(async function (e) {
-            e.preventDefault();
-            
-            const $this = $(this);
+        $(`#${tabContainer.selectorId} [data-${settings.dataName}]`).click(
+            async function (e) {
+                e.preventDefault();
 
-            const tab = $this.data(settings.dataName);
+                const $this = $(this);
 
-            // Lưu trạng thái tab vào localStorage
-            localStorage.setItem("activeTab", tab);
+                const tab = $this.data(settings.dataName);
 
-            
-            if (window.location.href !== settings.urlActive) {
-                window.location.href = settings.urlActive;
-                return;
-            }
+                // Lưu trạng thái tab vào localStorage
+                localStorage.setItem(settings.dataName, tab);
 
-            // Hiển thị loading indicator
-            showIndicator(settings.loadingId);
-
-            // Xóa nội dung cũ
-            $(`#${settings.contentId}`).empty();
-
-            setActiveTab(tab, tabContainer);
-
-            try {
-                const response = await $.post(url, { page: tab });
-                if (response.content) {
-                    $(`#${settings.contentId}`).html(response.content);
-                    // Ẩn tất cả các indicator
-                    $(
-                        `#${settings.loadingId}, #${settings.errorId}, #${settings.noContentId}`
-                    ).hide();
-                } else {
-                    // Hiển thị "No content" indicator
-                    showIndicator(settings.noContentId);
+                if (window.location.href !== settings.urlActive) {
+                    window.location.href = settings.urlActive;
+                    return;
                 }
-            } catch (error) {
-                // Hiển thị error indicator
-                showIndicator(settings.errorId);
+
+                // Hiển thị loading indicator
+                showIndicator(settings.loadingId);
+
+                // Xóa nội dung cũ
+                $(`#${settings.contentId}`).empty();
+
+                setActiveTab(tab, tabContainer);
+
+                try {
+                    const response = await $.post(url, { page: tab });
+                    if (response.data) {
+                        $(`#${settings.contentId}`).html(response.data);
+                        // Ẩn tất cả các indicator
+                        $(
+                            `#${settings.loadingId}, #${settings.errorId}, #${settings.noContentId}`
+                        ).hide();
+                    } else {
+                        // Hiển thị "No content" indicator
+                        showIndicator(settings.noContentId);
+                    }
+                } catch (error) {
+                    // Hiển thị error indicator
+                    showIndicator(settings.errorId);
+                }
             }
-        });
+        );
     });
 
     // Lấy trạng thái tab từ localStorage
-    const activeTab = localStorage.getItem("activeTab") || "all";
+    const activeTab = localStorage.getItem(settings.dataName) || "all";
 
     settings.tabContainers.forEach((tabContainer) => {
         setActiveTab(activeTab, tabContainer);
     });
 
-    if (
-        window.location.href === settings.urlActive
-    ) {
-        $(`[data-${settings.dataName}="${activeTab}"]`).first().trigger("click");
+    if (window.location.href === settings.urlActive) {
+        $(`[data-${settings.dataName}="${activeTab}"]`)
+            .first()
+            .trigger("click");
     }
 }

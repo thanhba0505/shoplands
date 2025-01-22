@@ -8,6 +8,6 @@ class PostController
             'title' => 'Post Page',
         ];
 
-        return View::make('Customer/post', $data, 'layout/layout-primary');
+        return View::make('Customer/post', $data);
     }
 }

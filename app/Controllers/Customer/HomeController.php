@@ -20,6 +20,6 @@ class HomeController
             'categories' => $category_result ? $category_result : [],
         ];
 
-        return View::make('Customer/home', $data, 'layout/layout-primary');
+        return View::make('Customer/home', $data);
     }
 }

@@ -6,7 +6,7 @@ class ErrorController
 {
     public function show()
     {
-        return View::make('App/404', ['title' => '404 Not Found'], 'layout/layout-primary');
+        return View::make('App/404', ['title' => '404 Not Found']);
     }
 
     public function sql()

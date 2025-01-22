@@ -10,23 +10,14 @@ class ProductController
 
         $data = [
             'title' => 'Seller Page',
-            'title_header' => 'Kênh người bán',
-            'group' => 'product',
             'listProductStatus' => $listProductStatus
         ];
 
-        return View::make('Seller/Product/index', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Product/index', $data, sidebar: 'seller');
     }
 
     public function apiHandleTab()
     {
-        $response = [];
-
-        $response = [
-            'status' => 'success',
-            'content' => View::make('Seller/Product/tab-product', [], 'layout/no-layout'),
-        ];
-
-        return $response;
+        return Api::view('Seller/Product/tab-product', []);
     }
 }

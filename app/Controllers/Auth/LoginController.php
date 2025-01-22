@@ -8,7 +8,7 @@ class LoginController
 {
     public function show()
     {
-        return View::make('Auth/login', ['title' => 'Đăng nhập'], 'layout/layout-primary');
+        return View::make('Auth/login', ['title' => 'Đăng nhập']);
     }
 
     public function login()
@@ -34,6 +34,5 @@ class LoginController
         Auth::logout();
 
         Redirect::login()->notification('Đăng xuất thành công')->redirect();
-        exit;
     }
 }

@@ -9,6 +9,6 @@ class OrderController
         ];
 
         // Render view với layout
-        return View::make('Customer/orders', $data, 'layout/layout-primary');
+        return View::make('Customer/orders', $data);
     }
 }
