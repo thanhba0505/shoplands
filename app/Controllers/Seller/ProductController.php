@@ -6,33 +6,27 @@ class ProductController
 {
     public function show()
     {
-        // $listStatus = Other::listOrderStatus();
-
-        // $page = Request::get('page');
-
-        // if (!array_key_exists($page, $listStatus)) {
-        //     Redirect::seller()->withQuery(['page' => 'all'])->redirect();
-        // }
-
-        // $user = Auth::getUser();
-        // $sellerModel = new Seller();
-        // $seller = $sellerModel->findByUserId($user['id']);
-
-        $page = Request::get('page', 'all');
-
-        if (!in_array($page, ['all', 'in-stock', 'out-of-stock', 'locked', 'hidden', 'deleted'])) {
-            Redirect::seller('product')->redirect();
-        }
+        $listProductStatus = Other::listProductStatus();
 
         $data = [
             'title' => 'Seller Page',
             'title_header' => 'Kênh người bán',
             'group' => 'product',
-            'page' => $page,
+            'listProductStatus' => $listProductStatus
         ];
 
-        
-
         return View::make('Seller/Product/index', $data, 'layout/layout-sidebar');
+    }
+
+    public function apiHandleTab()
+    {
+        $response = [];
+
+        $response = [
+            'status' => 'success',
+            'content' => View::make('Seller/Product/tab-product', [], 'layout/no-layout'),
+        ];
+
+        return $response;
     }
 }

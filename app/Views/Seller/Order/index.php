@@ -1,7 +1,7 @@
 <h2 class="text-2xl font-semibold">Quản lý đơn hàng</h2>
-<div id="tab-content-order" class="flex space-x-1 mt-4 border-b text-center text-sm">
+<div id="tab-order-content" class="flex space-x-1 mt-4 border-b text-center text-sm">
     <?php foreach ($listOrderStatus as $key => $label): ?>
-        <div data-tab="<?= Util::encodeHtml($key) ?>" class="py-2 px-2 select-none cursor-pointer">
+        <div data-tab-order="<?= Util::encodeHtml($key) ?>" class="py-2 px-2 select-none cursor-pointer">
             <?= Util::encodeHtml($label) ?>
         </div>
     <?php endforeach; ?>

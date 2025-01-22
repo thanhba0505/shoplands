@@ -47,7 +47,7 @@ class OrderController
         $seller = $sellerModel->findByUserId($user['id']);
 
         $order = new Order();
-        $sqlResults = $order->getOrdersBySellerId($seller['id'], $page == 'all' ? null : $page);
+        $sqlResults = $order->getOrdersBySellerId($seller['id'], $page == 'order-all' ? null : $page);
 
         $orders = [];
 

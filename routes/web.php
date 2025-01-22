@@ -63,7 +63,7 @@ $router->post('api/seller/order/tab', 'Seller/OrderController@apiHandleTab');
 // // Quản lý sản phẩm
 $router->get('/seller/product', 'Seller/ProductController@show', [SellerAuthMiddleware::class]);
 
-
+$router->post('api/seller/product/tab', 'Seller/ProductController@apiHandleTab');
 
 
 

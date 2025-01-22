@@ -1,10 +1,21 @@
 <!-- Quản lý đơn hàng -->
-<div class="mb-6">
-    <h3 class="text-lg font-semibold mb-2">Quản lý đơn hàng</h3>
-    <nav id="tab-order-sidebar" class="space-y-1">
+<div x-data="accordionState('orderNavState', true)" class="transition-all duration-500" :class="isOpen ? 'pb-6' : 'pb-2'">
+    <div class="flex justify-start gap-3 items-center pb-2 select-none cursor-pointer"
+        @click="toggle()">
+        <div class="text-lg font-semibold">Quản lý đơn hàng</div>
+        <div>
+            <i class="fa-solid fa-angle-right transition-all duration-500" :class="isOpen ? 'rotate-90' : ''"></i>
+        </div>
+    </div>
+    <nav
+        id="tab-order-sidebar"
+        class="space-y-1 overflow-hidden transition-all duration-500"
+        :class="isOpen ? 'max-h-screen' : 'max-h-0'">
         <?php $listOrderStatus = Other::listOrderStatus(); ?>
         <?php foreach ($listOrderStatus as $key => $label): ?>
-            <div data-tab="<?= Util::encodeHtml($key) ?>" class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
+            <div
+                data-tab-order="<?= Util::encodeHtml($key) ?>"
+                class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
             </div>
         <?php endforeach; ?>
@@ -12,23 +23,45 @@
 </div>
 
 <!-- Quản lý sản phẩm -->
-<div class="mb-6">
-    <h3 class="text-lg font-semibold mb-2">Quản lý sản phẩm</h3>
-    <nav class="space-y-1">
-        <a href="<?= Redirect::seller('product')->withQuery(['page' => 'all'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-all' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Tất cả</a>
-        <a href="<?= Redirect::seller('product')->withQuery(['page' => 'in-stock'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-in-stock' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Còn hàng</a>
-        <a href="<?= Redirect::seller('product')->withQuery(['page' => 'out-of-stock'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-out-of-stock' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Hết hàng</a>
-        <a href="<?= Redirect::seller('product')->withQuery(['page' => 'locked'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-locked' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Đã bị khóa</a>
-        <a href="<?= Redirect::seller('product')->withQuery(['page' => 'hidden'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-hidden' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Đã ẩn</a>
-        <a href="<?= Redirect::seller('product')->withQuery(['page' => 'deleted'])->getUrl() ?>" class="block px-4 py-2 rounded-md linear duration-200 hover:bg-blue-400 hover:text-white <?= $group . '-' . $page == 'product-deleted' ? 'bg-blue-400 font-semibold text-white' : '' ?>">Đã xóa</a>
+<div x-data="accordionState('productNavState', true)" class="transition-all duration-500" :class="isOpen ? 'pb-6' : 'pb-2'">
+    <div class="flex justify-start gap-3 items-center pb-2 select-none cursor-pointer"
+        @click="toggle()">
+        <div class="text-lg font-semibold">Quản lý sản phẩm</div>
+        <div>
+            <i class="fa-solid fa-angle-right transition-all duration-500" :class="isOpen ? 'rotate-90' : ''"></i>
+        </div>
+    </div>
+    <nav
+        id="tab-product-sidebar"
+        class="space-y-1 overflow-hidden transition-all duration-500"
+        :class="isOpen ? 'max-h-screen' : 'max-h-0'">
+        <?php $listProductStatus = Other::listProductStatus(); ?>
+        <?php foreach ($listProductStatus as $key => $label): ?>
+            <div
+                data-tab-product="<?= Util::encodeHtml($key) ?>"
+                class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
+                <?= Util::encodeHtml($label) ?>
+            </div>
+        <?php endforeach; ?>
     </nav>
 </div>
 
+
 <script>
+    function accordionState(key, defaultState) {
+        return {
+            isOpen: JSON.parse(localStorage.getItem(key)) ?? defaultState, // Lấy trạng thái từ Local Storage hoặc sử dụng mặc định
+            toggle() {
+                this.isOpen = !this.isOpen; // Thay đổi trạng thái
+                localStorage.setItem(key, JSON.stringify(this.isOpen)); // Lưu trạng thái vào Local Storage
+            },
+        };
+    }
+
     $(document).ready(function() {
         loadTabAjax('<?= Redirect::to('api/seller/order/tab')->getUrl() ?>', {
             contentId: 'tab-content',
-            dataName: 'tab',
+            dataName: 'tab-order',
             loadingId: 'loadingId',
             noContentId: 'noContentId',
             errorId: 'errorId',
@@ -37,7 +70,24 @@
                 selectorId: 'tab-order-sidebar',
                 activeClass: 'bg-blue-400 font-semibold text-white'
             }, {
-                selectorId: 'tab-content-order',
+                selectorId: 'tab-order-content',
+                activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
+            }]
+        });
+
+
+        loadTabAjax('<?= Redirect::to('api/seller/product/tab')->getUrl() ?>', {
+            contentId: 'tab-content',
+            dataName: 'tab-product',
+            loadingId: 'loadingId',
+            noContentId: 'noContentId',
+            errorId: 'errorId',
+            urlActive: '<?= Redirect::seller('product')->getUrl() ?>',
+            tabContainers: [{
+                selectorId: 'tab-product-sidebar',
+                activeClass: 'bg-blue-400 font-semibold text-white'
+            }, {
+                selectorId: 'tab-product-content',
                 activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
             }]
         });

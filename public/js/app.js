@@ -41,10 +41,10 @@ async function loadTabAjax(url, options = {}) {
     const setActiveTab = (tabKey) => {
         settings.tabContainers.forEach((tabContainer) => {
             const activeClass = tabContainer.activeClass || "active";
-            $(`#${tabContainer.selectorId} [data-tab]`).removeClass(
+            $(`#${tabContainer.selectorId} [data-${settings.dataName}]`).removeClass(
                 activeClass
             );
-            $(`#${tabContainer.selectorId} [data-tab="${tabKey}"]`).addClass(
+            $(`#${tabContainer.selectorId} [data-${settings.dataName}="${tabKey}"]`).addClass(
                 activeClass
             );
         });
@@ -66,7 +66,7 @@ async function loadTabAjax(url, options = {}) {
     };
 
     settings.tabContainers.forEach((tabContainer) => {
-        $(`#${tabContainer.selectorId} [data-tab]`).click(async function (e) {
+        $(`#${tabContainer.selectorId} [data-${settings.dataName}]`).click(async function (e) {
             e.preventDefault();
             
             const $this = $(this);
@@ -119,6 +119,6 @@ async function loadTabAjax(url, options = {}) {
     if (
         window.location.href === settings.urlActive
     ) {
-        $(`[data-tab="${activeTab}"]`).first().trigger("click");
+        $(`[data-${settings.dataName}="${activeTab}"]`).first().trigger("click");
     }
 }
