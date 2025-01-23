@@ -1,7 +1,7 @@
-<h2 class="text-2xl font-semibold">Quản lý đơn hàng</h2>
-<div id="tab-order-content" class="flex space-x-1 mt-4 border-b text-center text-sm">
-    <?php foreach ($listOrderStatus as $key => $label): ?>
-        <div data-tab-order="<?= Util::encodeHtml($key) ?>" class="py-2 px-2 select-none cursor-pointer">
+<h2 class="text-2xl font-semibold">Quản lý sản phẩm</h2>
+<div id="tab-data-sale-content" class="flex space-x-1 mt-4 border-b text-center text-sm">
+    <?php foreach ($listDataSale as $key => $label): ?>
+        <div data-tab-data-sale="<?= Util::encodeHtml($key) ?>" class="py-2 px-2 select-none cursor-pointer">
             <?= Util::encodeHtml($label) ?>
         </div>
     <?php endforeach; ?>
@@ -27,7 +27,7 @@
         </thead>
 
         <!-- Nội dung -->
-        <tbody id="order-content"></tbody>
+        <tbody id="data-sale-content"></tbody>
 
         <tfoot>
             <tr id="loadingId" class="hidden">

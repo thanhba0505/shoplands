@@ -27,7 +27,7 @@
         </thead>
 
         <!-- Nội dung -->
-        <tbody id="tab-content-product"></tbody>
+        <tbody id="product-content"></tbody>
 
         <tfoot>
             <tr id="loadingId" class="hidden">

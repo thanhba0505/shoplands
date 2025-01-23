@@ -47,7 +47,7 @@
 </div>
 
 <!-- Khuyến mãi -->
-<div x-data="accordionState('productNavState', true)" class="mb-2 mt-1">
+<div x-data="accordionState('promotionNavState', true)" class="mb-2 mt-1">
     <div class="flex justify-start gap-3 items-center pb-2 select-none cursor-pointer"
         @click="toggle()">
         <div class="text-lg font-semibold">Khuyến mãi</div>
@@ -56,13 +56,13 @@
         </div>
     </div>
     <nav
-        id="tab-product-sidebar"
+        id="tab-promotion-sidebar"
         class="space-y-1 overflow-hidden transition-all duration-500"
         :class="isOpen ? 'max-h-screen' : 'max-h-0'">
         <?php $listPromotionProgram = Other::listPromotion(); ?>
         <?php foreach ($listPromotionProgram as $key => $label): ?>
             <div
-                data-tab-product="<?= Util::encodeHtml($key) ?>"
+                data-tab-promotion="<?= Util::encodeHtml($key) ?>"
                 class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
             </div>
@@ -71,7 +71,7 @@
 </div>
 
 <!-- Chăm sóc khách hàng -->
-<div x-data="accordionState('productNavState', true)" class="mb-2 mt-1">
+<div x-data="accordionState('customerNavState', true)" class="mb-2 mt-1">
     <div class="flex justify-start gap-3 items-center pb-2 select-none cursor-pointer"
         @click="toggle()">
         <div class="text-lg font-semibold">Chăm sóc khách hàng</div>
@@ -80,13 +80,13 @@
         </div>
     </div>
     <nav
-        id="tab-product-sidebar"
+        id="tab-customer-care-sidebar"
         class="space-y-1 overflow-hidden transition-all duration-500"
         :class="isOpen ? 'max-h-screen' : 'max-h-0'">
         <?php $listCustomerCare = Other::listCustomerCare(); ?>
         <?php foreach ($listCustomerCare as $key => $label): ?>
             <div
-                data-tab-product="<?= Util::encodeHtml($key) ?>"
+                data-tab-customer-care="<?= Util::encodeHtml($key) ?>"
                 class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
             </div>
@@ -95,7 +95,7 @@
 </div>
 
 <!-- Dữ liệu -->
-<div x-data="accordionState('productNavState', true)" class="mb-2 mt-1">
+<div x-data="accordionState('dataNavState', true)" class="mb-2 mt-1">
     <div class="flex justify-start gap-3 items-center pb-2 select-none cursor-pointer"
         @click="toggle()">
         <div class="text-lg font-semibold">Dữ liệu</div>
@@ -104,13 +104,13 @@
         </div>
     </div>
     <nav
-        id="tab-product-sidebar"
+        id="tab-data-sale-sidebar"
         class="space-y-1 overflow-hidden transition-all duration-500"
         :class="isOpen ? 'max-h-screen' : 'max-h-0'">
         <?php $listDataSale = Other::listDataSale(); ?>
         <?php foreach ($listDataSale as $key => $label): ?>
             <div
-                data-tab-product="<?= Util::encodeHtml($key) ?>"
+                data-tab-data-sale="<?= Util::encodeHtml($key) ?>"
                 class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
             </div>
@@ -119,7 +119,7 @@
 </div>
 
 <!-- Quản lý cửa hàng -->
-<div x-data="accordionState('productNavState', true)" class="mb-2 mt-1">
+<div x-data="accordionState('adminNavState', true)" class="mb-2 mt-1">
     <div class="flex justify-start gap-3 items-center pb-2 select-none cursor-pointer"
         @click="toggle()">
         <div class="text-lg font-semibold">Quản lý cửa hàng</div>
@@ -128,13 +128,13 @@
         </div>
     </div>
     <nav
-        id="tab-product-sidebar"
+        id="tab-admin-sidebar"
         class="space-y-1 overflow-hidden transition-all duration-500"
         :class="isOpen ? 'max-h-screen' : 'max-h-0'">
         <?php $listAdmin = Other::listAdmin(); ?>
         <?php foreach ($listAdmin as $key => $label): ?>
             <div
-                data-tab-product="<?= Util::encodeHtml($key) ?>"
+                data-tab-admin="<?= Util::encodeHtml($key) ?>"
                 class="px-4 py-2 select-none cursor-pointer rounded-md linear duration-200 hover:bg-blue-400 hover:text-white">
                 <?= Util::encodeHtml($label) ?>
             </div>
@@ -154,8 +154,9 @@
     }
 
     $(document).ready(function() {
+        // Order
         loadTabAjax('<?= Redirect::to('api/seller/order/tab')->getUrl() ?>', {
-            contentId: 'tab-content-order',
+            contentId: 'order-content',
             dataName: 'tab-order',
             loadingId: 'loadingId',
             noContentId: 'noContentId',
@@ -170,9 +171,9 @@
             }]
         });
 
-
+        // Product
         loadTabAjax('<?= Redirect::to('api/seller/product/tab')->getUrl() ?>', {
-            contentId: 'tab-content-product',
+            contentId: 'product-content',
             dataName: 'tab-product',
             loadingId: 'loadingId',
             noContentId: 'noContentId',
@@ -183,6 +184,74 @@
                 activeClass: 'bg-blue-400 font-semibold text-white'
             }, {
                 selectorId: 'tab-product-content',
+                activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
+            }]
+        });
+
+        // Promotion
+        loadTabAjax('<?= Redirect::to('api/seller/promotion/tab')->getUrl() ?>', {
+            contentId: 'promotion-content',
+            dataName: 'tab-promotion',
+            loadingId: 'loadingId',
+            noContentId: 'noContentId',
+            errorId: 'errorId',
+            urlActive: '<?= Redirect::seller('promotion')->getUrl() ?>',
+            tabContainers: [{
+                selectorId: 'tab-promotion-sidebar',
+                activeClass: 'bg-blue-400 font-semibold text-white'
+            }, {
+                selectorId: 'tab-promotion-content',
+                activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
+            }]
+        });
+
+        // Dữ liệu
+        loadTabAjax('<?= Redirect::to('api/seller/customer-care/tab')->getUrl() ?>', {
+            contentId: 'customer-care-content',
+            dataName: 'tab-customer-care',
+            loadingId: 'loadingId',
+            noContentId: 'noContentId',
+            errorId: 'errorId',
+            urlActive: '<?= Redirect::seller('customer-care')->getUrl() ?>',
+            tabContainers: [{
+                selectorId: 'tab-customer-care-sidebar',
+                activeClass: 'bg-blue-400 font-semibold text-white'
+            }, {
+                selectorId: 'tab-customer-care-content',
+                activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
+            }]
+        });
+
+        // Dữ liệu
+        loadTabAjax('<?= Redirect::to('api/seller/data-sale/tab')->getUrl() ?>', {
+            contentId: 'data-sale-content',
+            dataName: 'tab-data-sale',
+            loadingId: 'loadingId',
+            noContentId: 'noContentId',
+            errorId: 'errorId',
+            urlActive: '<?= Redirect::seller('data-sale')->getUrl() ?>',
+            tabContainers: [{
+                selectorId: 'tab-data-sale-sidebar',
+                activeClass: 'bg-blue-400 font-semibold text-white'
+            }, {
+                selectorId: 'tab-data-sale-content',
+                activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
+            }]
+        });
+
+        // Quản lý cửa hàng
+        loadTabAjax('<?= Redirect::to('api/seller/admin/tab')->getUrl() ?>', {
+            contentId: 'admin-content',
+            dataName: 'tab-admin',
+            loadingId: 'loadingId',
+            noContentId: 'noContentId',
+            errorId: 'errorId',
+            urlActive: '<?= Redirect::seller('admin')->getUrl() ?>',
+            tabContainers: [{
+                selectorId: 'tab-admin-sidebar',
+                activeClass: 'bg-blue-400 font-semibold text-white'
+            }, {
+                selectorId: 'tab-admin-content',
                 activeClass: 'border-b-2 border-blue-500 font-semibold text-blue-500'
             }]
         });

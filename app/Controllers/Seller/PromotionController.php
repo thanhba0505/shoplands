@@ -10,22 +10,14 @@ class PromotionController
 
         $data = [
             'title' => 'Khuyến mãi',
-            'group' => 'product',
             'listPromotion' => $listPromotion
         ];
 
-        return View::make('Seller/Product/index', $data, 'layout/layout-sidebar');
+        return View::make('Seller/Promotion/index', $data, sidebar: 'seller');
     }
 
     public function apiHandleTab()
     {
-        $response = [];
-
-        $response = [
-            'status' => 'success',
-            'content' => View::make('Seller/Product/tab-product', [], 'layout/no-layout'),
-        ];
-
-        return $response;
+        return Api::view('Seller/Promotion/tab', []);
     }
 }

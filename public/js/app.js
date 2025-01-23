@@ -112,8 +112,14 @@ async function loadTabAjax(url, options = {}) {
         );
     });
 
-    // Lấy trạng thái tab từ localStorage
-    const activeTab = localStorage.getItem(settings.dataName) || "all";
+    // Lấy trạng thái tab từ localStorage hoặc mặc định là thẻ đầu tiên
+    const activeTab =
+        localStorage.getItem(settings.dataName) ||
+        $(
+            `#${settings.tabContainers[0].selectorId} [data-${settings.dataName}]`
+        )
+            .first()
+            .data(settings.dataName);
 
     settings.tabContainers.forEach((tabContainer) => {
         setActiveTab(activeTab, tabContainer);
