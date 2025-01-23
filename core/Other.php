@@ -24,11 +24,9 @@ class Other
     {
         return [
             'product-all' => 'Tất cả',
-            'in-stock' => 'Còn hàng',
-            'out-of-stock' => 'Hết hàng',
-            'hidden' => 'Đã ẩn',
+            'active' => 'Đang bán',
             'deleted' => 'Đã xóa',
-            'locked' => 'Đã khóa',
+            'locked' => 'Đã bị khóa',
         ];
     }
 

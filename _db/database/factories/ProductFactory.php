@@ -14,7 +14,7 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-        $statuses = ['active', 'locked', 'hidden', 'deleted'];
+        $statuses = ['active', 'locked', 'deleted'];
 
         $rand = rand(1, 100);
 

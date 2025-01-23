@@ -29,15 +29,12 @@ class OrderController
 
     public function apiHandleTab()
     {
-        $response = [];
-
         $listOrderStatus = Other::listOrderStatus();
 
         $page = Request::post('page');
 
         if (!array_key_exists($page, $listOrderStatus)) {
-            $response['status'] = 'error';
-            return $response;
+            return Api::encode('Trang khônng tốn tại', 404);
         }
 
         $user = Auth::getUser();

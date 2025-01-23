@@ -1,6 +1,7 @@
 <?php
 
 require_once 'app/Models/ConnectDatabase.php';
+require_once 'app/Models/Product.php';
 
 class ProductController
 {
@@ -18,6 +19,23 @@ class ProductController
 
     public function apiHandleTab()
     {
-        return Api::view('Seller/Product/tab-product', []);
+        $listProductStatus = Other::listProductStatus();
+
+        $page = Request::post('page');
+
+        if (!array_key_exists($page, $listProductStatus)) {
+            return Api::encode('Trang khônng tốn tại', 404);
+        }
+
+        $user = Auth::getUser();
+        $sellerModel = new Seller();
+        $seller = $sellerModel->findByUserId($user['id']);
+
+        $product = new Product();
+        $products = $product->getProductsBySellerId($seller['id'], $page == 'product-all' ? null : $page, 12);
+
+        $data = ['products' => $products, 'listProductStatus' => $listProductStatus];
+
+        return Api::view('Seller/Product/tab', $data);
     }
 }

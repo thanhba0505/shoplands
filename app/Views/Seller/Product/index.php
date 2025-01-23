@@ -17,10 +17,12 @@
     <table class="table-auto w-full mt-5 border-collapse text-sm">
         <thead>
             <tr class="bg-blue-200 text-center font-semibold">
+                <th class="border border-blue-300 px-4 py-2">Mã</th>
                 <th class="border border-blue-300 px-4 py-2">Sản phẩm</th>
-                <th class="border border-blue-300 px-4 py-2">Doanh thu đơn hàng</th>
-                <th class="border border-blue-300 px-4 py-2">Đơn vị vận chuyển</th>
-                <th class="border border-blue-300 px-4 py-2">Thời gian tạo đơn</th>
+                <th class="border border-blue-300 px-4 py-2">Danh mục</th>
+                <th class="border border-blue-300 px-4 py-2">Giá</th>
+                <th class="border border-blue-300 px-4 py-2">Đã bán</th>
+                <th class="border border-blue-300 px-4 py-2">Tồn kho</th>
                 <th class="border border-blue-300 px-4 py-2">Trạng thái</th>
                 <th class="border border-blue-300 px-4 py-2">Thao tác</th>
             </tr>

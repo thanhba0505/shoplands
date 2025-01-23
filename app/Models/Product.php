@@ -36,4 +36,53 @@ class Product
 
         return $result;
     }
+
+    public function getProductsBySellerId($seller_id, $status = null, $limit = 12)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name AS product_name,
+                pi.image_path AS product_image,
+                c.name AS category,
+                p.status AS product_status,
+                MIN(pv.price) AS min_product_price,
+                MAX(pv.price) AS max_product_price,
+                SUM(pv.quantity) AS quantity,
+                SUM(pv.sold_quantity) AS sold_quantity
+            FROM
+                products p
+                JOIN product_variants pv ON pv.product_id = p.id
+                JOIN product_images pi ON pi.product_id = p.id
+                JOIN sellers s ON s.id = p.seller_id
+                LEFT JOIN categories c ON c.id = p.category_id
+            WHERE
+                s.id = :seller_id
+                AND pi.default = :default
+                " . ($status ? "AND p.status = :status" : "") . " 
+            GROUP BY
+                p.id,
+                p.name,
+                pi.image_path,
+                c.name,
+                p.status
+            LIMIT
+                $limit
+        ";
+
+        // Gắn tham số truy vấn
+        $params = [
+            'seller_id' => $seller_id,
+            'default' => 1
+        ];
+        if ($status) {
+            $params['status'] = $status;
+        }
+
+        $result = $query->query($sql, $params)->fetchAll();
+
+        return $result;
+    }
 }

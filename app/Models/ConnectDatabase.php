@@ -23,13 +23,10 @@ class ConnectDatabase
     {
         try {
             $stmt = $this->connection->prepare($sql);
-            // Console::log('SQL: ' . $sql);
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
-            // throw new Exception("Query failed: " . $e->getMessage());
-            Console::error('Query failed: ' . $e->getMessage());
-            return null;
+            throw new Exception("Query failed: " . $e->getMessage());
         }
     }
 
