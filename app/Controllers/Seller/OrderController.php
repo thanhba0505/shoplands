@@ -7,11 +7,18 @@ class OrderController
 {
     public function show()
     {
-        $listOrderStatus = Other::listOrderStatus();
+        $user = Auth::getUser();
+        $sellerModel = new Seller();
+        $seller = $sellerModel->findByUserId($user['id']);
+
+
+        $orderModel = new Order();
+        $result = $orderModel->getListOrderQuantity($seller['id']);
 
         $data = [
             'title' => 'Quản lý đơn hàng',
-            'listOrderStatus' => $listOrderStatus,
+            'listOrderStatus' => Other::listOrderStatus(),
+            'listOrderQuantity' => $result
         ];
 
         return View::make('Seller/Order/index', $data, sidebar: 'seller');

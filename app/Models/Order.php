@@ -91,4 +91,44 @@ class Order
 
         return $result;
     }
+
+    public function getListOrderQuantity($seller_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                os.status,
+                COUNT(*) AS order_count
+            FROM
+                orders o
+                JOIN (
+                    SELECT
+                        order_id,
+                        status,
+                        date_time
+                    FROM
+                        order_status
+                    WHERE
+                        (order_id, date_time) IN (
+                            SELECT
+                                order_id,
+                                MAX(date_time)
+                            FROM
+                                order_status
+                            GROUP BY
+                                order_id
+                        )
+                ) os ON os.order_id = o.id
+            WHERE
+                o.seller_id = :seller_id
+            GROUP BY
+                os.status
+        ";
+
+        // Thực thi truy vấn
+        $result = $query->query($sql, ['seller_id' => $seller_id])->fetchAll();
+
+        return $result;
+    }
 }

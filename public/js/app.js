@@ -1,26 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {});
 
-function showNotification(duration = 3000) {
-    const notification = document.getElementById("notification");
-    // Cập nhật lớp CSS
-    notification.hidden = false;
+function showNotification(message, type = "success", duration = 3000) {
+    const $notification = $("#notification");
+    const $notificationMessage = $("#notification-message");
 
-    // Hiển thị với hiệu ứng
-    setTimeout(() => {
-        notification.classList.remove("right-8");
-        notification.classList.remove("opacity-0");
-        notification.classList.add("right-10");
-        notification.classList.add("opacity-1");
-    }, 50);
+    // Cập nhật nội dung thông báo
+    $notificationMessage.text(message);
+
+    // Thêm và xóa lớp CSS theo loại thông báo
+    if (type === "error") {
+        $notification.addClass("bg-red-400").removeClass("bg-blue-400");
+    } else {
+        $notification.addClass("bg-blue-400").removeClass("bg-red-400");
+    }
+
+    // Hiển thị thông báo với hiệu ứng
+    $notification
+        .removeAttr("hidden") // Hiển thị thông báo
+        .removeClass("right-8 opacity-0")
+        .addClass("right-10 opacity-1");
 
     // Ẩn thông báo sau thời gian quy định
     setTimeout(() => {
-        notification.classList.add("right-8");
-        notification.classList.add("opacity-0");
-        notification.classList.remove("opacity-1");
-        notification.classList.remove("right-10");
+        $notification
+            .addClass("right-8 opacity-0")
+            .removeClass("right-10 opacity-1");
+
         setTimeout(() => {
-            notification.hidden = true; // Ẩn hoàn toàn
+            $notification.attr("hidden", true); // Ẩn hoàn toàn
         }, 500); // Thời gian cho hiệu ứng
     }, duration);
 }

@@ -17,13 +17,13 @@
 
     <!-- // Xử lý request -->
     <?= $response ?? '' ?>
-
+    <!-- <?= Session::get('notification.type') === 'error' ? 'bg-red-400' : 'bg-blue-400' ?> -->
     <!-- Thông báo -->
-    <div id="notification" class="fixed <?= Session::get('notification.type') === 'error' ? 'bg-red-400' : 'bg-blue-400' ?> text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">
-        <span class="" id="notification-message"><?= Session::get('notification.message') ?></span>
+    <div id="notification" class="fixed text-white max-w-72 bottom-8 right-8 px-4 py-3 rounded-lg shadow-lg border opacity-0 transition-all linear duration-300">
+        <span class="" id="notification-message"></span>
     </div>
 
-    <?php Notification::show(); ?>
+    <?php Notification::show() ?>
     <script src="<?= Asset::url('js/alpine.min.js', true) ?>"></script>
     <script src="<?= Asset::url('js/app.js', true) ?>"></script>
     <title><?= $title ?? 'Shopee' ?></title>
