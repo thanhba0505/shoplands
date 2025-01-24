@@ -35,7 +35,7 @@
 </div>
 
 
-<div class="grid grid-cols-12 gap-4 mt-4">
+<div class="grid grid-cols-10 gap-4 mt-4">
     <!-- Product Item -->
     <?php if (!empty($products)): ?>
         <?php foreach ($products as $product): ?>
@@ -68,22 +68,5 @@
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
+</div>
 
-    <!-- Chuyển đỏ nút khi bấm -->
-    <script>
-        // JavaScript để quản lý nút active
-        const buttons = document.querySelectorAll(".sort-btn");
-
-        buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-                // Xóa lớp active khỏi tất cả các nút
-                buttons.forEach((btn) => {
-                    btn.classList.remove("bg-red-500", "text-white");
-                    btn.classList.add("bg-white", "text-gray-700"); // Trả lại màu trắng cho các nút khác
-                });
-                // Thêm lớp active cho nút được chọn
-                button.classList.remove("bg-white", "text-gray-700"); // Xóa màu trắng
-                button.classList.add("bg-red-500", "text-white"); // Thêm màu đỏ
-            });
-        });
-    </script>
