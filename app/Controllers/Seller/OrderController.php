@@ -24,16 +24,6 @@ class OrderController
         return View::make('Seller/Order/index', $data, sidebar: 'seller');
     }
 
-    public function showDetail()
-    {
-
-        $data = [
-            'title' => 'Chi tiết đơn hàng'
-        ];
-
-        return View::make('Seller/Order/detail', $data, sidebar: 'seller');;
-    }
-
     public function apiHandleTab()
     {
         $listOrderStatus = Other::listOrderStatus();
@@ -93,5 +83,27 @@ class OrderController
         $data = ['orders' => $orders, 'listOrderStatus' => $listOrderStatus];
 
         return Api::view('Seller/Order/tab-order', $data);
+    }
+
+    public function showDetail()
+    {
+        $order_id = Request::get('id');
+
+        $orderModel = new Order();
+        $order = $orderModel->getOrderDetail($order_id);
+
+        if (!$order) {
+            Redirect::error()->redirect();
+        }
+
+        $status = $orderModel->getOrderStatus($order_id);
+
+        $data = [
+            'title' => 'Chi tiết đơn hàng',
+            'order' => $order,
+            'status' => $status
+        ];
+
+        return View::make('Seller/Order/detail', $data, sidebar: 'seller');
     }
 }

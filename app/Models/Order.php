@@ -4,6 +4,7 @@ require_once 'app/Models/QueryCustom.php';
 
 class Order
 {
+    // Lấy danh sách đơn hàng theo người bán và trạng thái
     public function getOrdersBySellerId($seller_id, $status = null)
     {
         $query = new ConnectDatabase();
@@ -92,6 +93,7 @@ class Order
         return $result;
     }
 
+    // Lấy danh sách số lượng đơn hàng theo trạng thái
     public function getListOrderQuantity($seller_id)
     {
         $query = new ConnectDatabase();
@@ -128,6 +130,66 @@ class Order
 
         // Thực thi truy vấn
         $result = $query->query($sql, ['seller_id' => $seller_id])->fetchAll();
+
+        return $result;
+    }
+
+    // Lấy thông tin chi tiết 1 đơn hàng
+    public function getOrderDetail($order_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                o.id AS order_id,
+                o.payment_method AS payment_method,
+                o.subtotal_price AS subtotal_price,
+                o.discount_amount AS discount_amount,
+                o.final_price AS final_price,
+                o.revenue AS revenue,
+                o.cancel_reason AS cancel_reason,
+                u.name AS user_name,
+                a_from.address_line AS from_address,
+                a_to.address_line AS to_address,
+                p_from.name AS from_province,
+                p_to.name AS to_province
+            FROM
+                orders o
+                JOIN users u ON u.id = o.user_id
+                JOIN addresses a_from ON a_from.id = o.from_address_id
+                JOIN provinces p_from ON p_from.id = a_from.province_id
+                JOIN addresses a_to ON a_to.id = o.to_address_id
+                JOIN provinces p_to ON p_to.id = a_to.province_id
+            WHERE
+                o.id = :order_id
+        ";
+
+        // Thực thi truy vấn
+        $result = $query->query($sql, ['order_id' => $order_id])->fetch();
+
+        return $result;
+    }
+
+    // Lấy tất cả trạng thái của 1 hóa đơn
+    public function getOrderStatus($order_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                os.id AS order_status_id,
+                os.status AS order_status,
+                os.date_time AS order_status_date
+            FROM
+                order_status os
+            WHERE
+                os.order_id = :order_id
+            ORDER BY
+                os.date_time
+        ";
+
+        // Thực thi truy vấn
+        $result = $query->query($sql, ['order_id' => $order_id])->fetchAll();
 
         return $result;
     }
