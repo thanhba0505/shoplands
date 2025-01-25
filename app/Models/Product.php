@@ -22,6 +22,8 @@ class Product
                 JOIN product_variants pv ON pv.product_id = p.id
                 JOIN product_images pi ON pi.product_id = p.id
                 LEFT JOIN reviews r ON r.product_variant_id = pv.id
+            WHERE
+                pi.default = :default
             GROUP BY
                 p.id,
                 p.name,
@@ -32,7 +34,7 @@ class Product
                 $limit
         ";
 
-        $result = $query->query($sql)->fetchAll();
+        $result = $query->query($sql, ['default' => 1])->fetchAll();
 
         return $result;
     }

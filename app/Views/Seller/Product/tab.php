@@ -4,8 +4,8 @@
         <td class="border border-blue-300 px-4 py-2">
             <div class="gap-3 py-2 flex flex-col">
                 <div class="flex items-center gap-x-4">
-                    <img src="<?= BASE_URL ?>/public/uploads/img/cap-sac.webp" alt="" class="w-10 h-10 border border-blue-300">
-                    <span class="line-clamp-2 w-20 flex-1 pe-4 text-start"><?= Util::encodeHtml($product['product_name']) ?></span>
+                    <img src="<?= Asset::getProduct($product['product_image']) ?>" alt="" class="size-20 border border-blue-300">
+                    <span class="line-clamp-3 w-40 flex-1 pe-4 text-start"><?= Util::encodeHtml($product['product_name']) ?></span>
                 </div>
             </div>
         </td>

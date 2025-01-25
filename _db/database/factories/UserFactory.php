@@ -17,7 +17,7 @@ class UserFactory extends Factory
             'password' => password_hash('123', PASSWORD_ARGON2I),
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'avatar' => 'https://th.bing.com/th/id/OIP.NWY_ywjL5lqFqUN-J4p1ggHaHa?rs=1&pid=ImgDetMain', // URL ảnh đại diện giả lập
+            'avatar' => 'avatar.png', // URL ảnh đại diện giả lập
         ];
     }
 }

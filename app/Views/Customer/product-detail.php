@@ -1,2 +1,520 @@
-<h1>Product Detail</h1>
-<?php echo $id; ?>
+<!-- Breadcrumb -->
+<nav class="text-sm text-gray-600 mb-4">
+    <a href="#" class="text-blue-500 hover:underline">Shopee</a> &gt;
+    <a href="#" class="text-blue-500 hover:underline">Mẹ & Bé</a> &gt;
+    <a href="#" class="text-blue-500 hover:underline">Đồ chơi</a> &gt;
+    <a href="#" class="text-blue-500 hover:underline">Đồ chơi cho trẻ sơ sinh & trẻ nhỏ</a> &gt;
+    <span>Đồ chơi thảm đàn Piano nằm phát nhạc Choice 9BB9 hình thú ngộ nghĩnh cho bé</span>
+</nav>
+
+
+<div class=" mx-auto bg-white  rounded-lg p-6">
+    <!-- Product Images and Details -->
+    <div class="grid grid-cols-5 gap-6">
+        <!-- Images -->
+        <div class="col-span-2">
+            <img class="w-full h-full object-cover max-w-[550px] max-h-[550px] rounded-md" src="product-image.jpg" alt="Product Image">
+            <div class="relative mt-4">
+                <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div class="grid grid-cols-5 gap-2">
+                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail1.jpg" alt="Thumbnail">
+                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail2.jpg" alt="Thumbnail">
+                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail3.jpg" alt="Thumbnail">
+                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail4.jpg" alt="Thumbnail">
+                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail5.jpg" alt="Thumbnail">
+                </div>
+                <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-span-3">
+            <h1 class="text-2xl mb-2">Đồ chơi thảm đàn Piano nằm phát nhạc Choice 9BB9 hình thú ngộ nghĩnh cho bé</h1>
+
+            <!-- Đánh giá -->
+            <div class="flex items-center justify-between text-gray-700 text-sm mb-4">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1">
+                        <span class="text-lg font-semibold">4.8</span>
+                        <div class="flex text-yellow-500">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
+                            </svg>
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
+                            </svg>
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
+                            </svg>
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
+                            </svg>
+                            <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>2k Đánh Giá</div>
+                    <div>6,5k Sold</div>
+                </div>
+            </div>
+
+            <div class="bg-gray-100 p-4 rounded-lg mb-4 flex items-center gap-4 w-full">
+                <span class="text-2xl font-semibold text-red-500">đ109.200</span>
+                <span class="text-gray-500 line-through">đ170.000</span>
+                <span class="bg-red-100 text-red-500 text-sm font-medium px-2 py-1 rounded">-36%</span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+                <!-- Combo Khuyến Mãi -->
+                <div class="col-span-3 text-gray-600 font-medium">Combo Khuyến <br> Mãi</div>
+                <div class="col-span-9">
+                    <button class="text-red-500 border border-red-500 px-3 py-1 rounded-md hover:bg-red-100">
+                        Mua 2 & giảm 5%
+                    </button>
+                </div>
+
+                <!-- Vận Chuyển -->
+                <div class="col-span-3 text-gray-600 font-medium">Vận Chuyển</div>
+                <div class="col-span-9 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16V8a1 1 0 011-1h10l5 5v4a1 1 0 01-1 1H4a1 1 0 01-1-1z" />
+                        <circle cx="6" cy="18" r="2" />
+                        <circle cx="18" cy="18" r="2" />
+                    </svg>
+                    <p class="text-gray-800">
+                        Nhận hàng vào ngày mai, phí giao <span class="text-green-600 font-semibold">0₫</span>
+                    </p>
+                </div>
+
+                <!-- An Tâm Mua Sắm -->
+                <div class="col-span-3 text-gray-600 font-medium leading-6">An Tâm Mua<br>Sắm Cùng<br>Shopee</div>
+                <div class="col-span-9 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C9.243 2 6.485 3.71 4.91 6.36 3.33 9.02 3.48 12.2 5.24 14.3 6.45 15.8 8.25 17.44 11.8 20.5l.2.2.2-.2c3.55-3.06 5.35-4.7 6.56-6.2 1.76-2.1 1.91-5.28.33-7.94C17.515 3.71 14.757 2 12 2z" />
+                    </svg>
+                    <p class="text-gray-800">
+                        Trả hàng miễn phí 15 ngày · <span class="hover:underline cursor-pointer">Bảo hiểm Thời trang</span>
+                    </p>
+                    <span class="text-gray-400 ml-2 cursor-pointer">▼</span>
+                </div>
+
+                <!-- Màu -->
+                <div class="col-span-3 text-gray-600 font-medium">Màu</div>
+                <div class="col-span-9 flex flex-wrap gap-4">
+                    <!-- Các option của sản phẩm -->
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Đen</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Xám</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Xanh</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Vàng</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Đỏ</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Nâu</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Tím</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Xanh dương</span>
+                    </button>
+                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        <span class="text-gray-800">Gấu xanh</span>
+                    </button>
+                </div>
+
+                <!-- Size -->
+                <div class="col-span-3 text-gray-600 font-medium">Size</div>
+                <div class="col-span-9 flex flex-wrap gap-4">
+                    <!-- Các tùy chọn size -->
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        36 (form 37)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        37 (form 38)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        38 (form 39)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        39 (form 40)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        40 (form 41)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        41 (form 42)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        42 (form 43)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        43 (form 44)
+                    </button>
+                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                        44 (form 45)
+                    </button>
+                </div>
+
+                <!-- Số lượng -->
+                <div class="col-span-3 text-gray-600 font-medium">Số lượng</div>
+                <div class="col-span-6 flex items-center gap-2">
+                    <div class="flex items-center border rounded-md">
+                        <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 border-r">
+                            -
+                        </button>
+                        <input
+                            type="text"
+                            value="1"
+                            class="w-12 h-10 text-center focus:outline-none text-gray-800"
+                            readonly />
+                        <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 border-l">
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="mt-6 flex gap-4">
+                <button class="flex items-center justify-center gap-2 border border-blue-500 text-gray-500 bg-blue-50 px-4 py-2 rounded hover:bg-blue-100 w-52">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2 6h14m-2-6a2 2 0 11-4 0m4 0a2 2 0 11-4 0" />
+                    </svg>
+                    <span class="text-sm">Thêm Vào Giỏ Hàng</span>
+                </button>
+
+                <button class="flex flex-col justify-center items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-52">
+                    <span class="text-sm">Mua Với Voucher</span>
+                    <span class="text-lg font-bold">₫204.000</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sản phẩm gợi ý -->
+<div class="mx-auto bg-white  rounded-lg p-6 mt-6">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Sản phẩm gợi ý cho bạn</h2>
+        <a href="#" class="text-red-500 hover:underline text-sm flex items-center">
+            Xem Tất Cả &nbsp; &gt;
+        </a>
+    </div>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="grid grid-cols-6 gap-4">
+        <div class="border border-red-200 p-2 rounded hover:border-red-500">
+            <img src="product1.jpg" alt="Product 1" class="w-full h-40 object-cover rounded">
+            <h3 class="text-sm font-medium mt-2">
+                Dép quai ngang unisex NEWBALANCE CAMPIN...
+            </h3>
+            <div class="flex items-center justify-between mt-1">
+                <span class="text-gray-400 text-sm line-through">₫250.000</span>
+                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
+            </div>
+        </div>
+
+        <div class="border border-red-200 p-2 rounded hover:border-red-500">
+            <img src="product2.jpg" alt="Product 2" class="w-full h-40 object-cover rounded">
+            <h3 class="text-sm font-medium mt-2">
+                Dép quai ngang PM BIG SEAN, unisex, mang siêu...
+            </h3>
+            <div class="flex items-center justify-between mt-1">
+                <span class="text-gray-400 text-sm line-through">₫280.000</span>
+                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
+            </div>
+        </div>
+
+        <div class="border border-red-200 p-2 rounded hover:border-red-500">
+            <img src="product3.jpg" alt="Product 3" class="w-full h-40 object-cover rounded">
+            <h3 class="text-sm font-medium mt-2">
+                Dép quai ngang Puma nam nữ, êm chân, dễ mix đồ...
+            </h3>
+            <div class="flex items-center justify-between mt-1">
+                <span class="text-gray-400 text-sm line-through">₫280.000</span>
+                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
+            </div>
+        </div>
+
+        <div class="border border-red-200 p-2 rounded hover:border-red-500">
+            <img src="product4.jpg" alt="Product 4" class="w-full h-40 object-cover rounded">
+            <h3 class="text-sm font-medium mt-2">
+                Dép Quai Ngang P.u.m.a Suede Animal Crossing...
+            </h3>
+            <div class="flex items-center justify-between mt-1">
+                <span class="text-gray-400 text-sm line-through">₫280.000</span>
+                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
+            </div>
+        </div>
+
+        <div class="border border-red-200 p-2 rounded hover:border-red-500">
+            <img src="product5.jpg" alt="Product 5" class="w-full h-40 object-cover rounded">
+            <h3 class="text-sm font-medium mt-2">
+                Dép Moover Crossing mẫu mới chống trơn đế cao 4...
+            </h3>
+            <div class="flex items-center justify-between mt-1">
+                <span class="text-gray-400 text-sm line-through">₫250.000</span>
+                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
+            </div>
+        </div>
+
+        <div class="border border-red-200 p-2 rounded hover:border-red-500">
+            <img src="product6.jpg" alt="Product 6" class="w-full h-40 object-cover rounded">
+            <h3 class="text-sm font-medium mt-2">
+                Dép quai ngang nữ NewBalance 1102, màu s...
+            </h3>
+            <div class="flex items-center justify-between mt-1">
+                <span class="text-gray-400 text-sm line-through">₫250.000</span>
+                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="p-4 bg-white rounded-md flex items-center justify-between mt-6 grid-cols-12">
+    <!-- Thông tin cửa hàng -->
+    <div class="flex items-center gap-4 grid-cols-4">
+        <!-- Logo -->
+        <img src="store-logo.jpg" alt="Store Logo" class="w-16 h-16 rounded-full object-cover">
+        <!-- Chi tiết cửa hàng -->
+        <div>
+            <h2 class="text-lg font-semibold">MOOVER STORE</h2>
+            <p class="text-sm text-gray-500">Online 9 Phút Trước</p>
+            <div class="flex gap-2 mt-2">
+                <!-- Nút Chat -->
+                <button class="flex items-center gap-1 px-4 py-1 text-red-500 border border-red-500 rounded-md text-sm hover:bg-red-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2h2m2-5h6m-3 0v6" />
+                    </svg>
+                    Chat Ngay
+                </button>
+                <!-- Nút Xem Shop -->
+                <button class="flex items-center gap-1 px-4 py-1 text-gray-500 border border-gray-300 rounded-md text-sm hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M10 14h4m-7 4h10" />
+                    </svg>
+                    Xem Shop
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-9 gap-y-4 gap-x-4 text-sm text-gray-500">
+            <!-- Hàng 1 -->
+            <div class="flex justify-between items-center col-span-3 mr-12">
+                <p>Đánh Giá</p>
+                <p class="text-red-500 font-semibold">8,3k</p>
+            </div>
+            <div class="flex justify-between items-center col-span-3 mr-12">
+                <p>Tỉ Lệ Phản Hồi</p>
+                <p class="text-red-500 font-semibold">100%</p>
+            </div>
+            <div class="flex justify-between items-center col-span-3">
+                <p>Tham Gia</p>
+                <p class="text-red-500 font-semibold">5 năm trước</p>
+            </div>
+            <!-- Hàng 2 -->
+            <div class="flex justify-between items-center col-span-3 mr-12">
+                <p>Sản Phẩm</p>
+                <p class="text-red-500 font-semibold">179</p>
+            </div>
+            <div class="flex justify-between items-center col-span-3 mr-12">
+                <p>Thời Gian Phản Hồi</p>
+                <p class="text-red-500 font-semibold ml-12">trong vài giờ</p>
+            </div>
+            <div class="flex justify-between items-center col-span-3">
+                <p>Người Theo Dõi</p>
+                <p class="text-red-500 font-semibold">38,7k</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chi tiết sản phẩm -->
+<div class="mx-auto bg-white  rounded-lg p-6 mt-6">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">CHI TIẾT SẢN PHẨM</h2>
+    </div>
+
+    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Danh Mục</div>
+        <div class="col-span-9 flex items-center gap-2">
+            <nav class="text-sm text-gray-600 mb-4">
+                <a href="#" class="text-blue-500 hover:underline">Shopee</a> &gt;
+                <a href="#" class="text-blue-500 hover:underline">Mẹ & Bé</a> &gt;
+                <a href="#" class="text-blue-500 hover:underline">Đồ chơi</a> &gt;
+                <a href="#" class="text-blue-500 hover:underline">Đồ chơi cho trẻ sơ sinh & trẻ nhỏ</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Kho</div>
+        <div class="col-span-9 flex items-center gap-2">
+            <p class="text-gray-800">
+                33072
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Xuất xứ</div>
+        <div class="col-span-9 flex items-center gap-2">
+            <p class="text-gray-800">
+                Việt Nam
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Tên tổ chức chịu trách nhiệm sản xuất</div>
+        <div class="col-span-9 flex items-center gap-2">
+            <p class="text-gray-800">
+                BGHOUSE
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Địa chỉ tổ chức chịu trách nhiệm sản xuất</div>
+        <div class="col-span-9 flex items-center gap-2">
+            <p class="text-gray-800">
+                QUẬN 11, TPHCM
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Gửi từ</div>
+        <div class="col-span-9 flex items-center gap-2">
+            <p class="text-gray-800">
+                TP. Hồ Chí Minh
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Mô tả sản phẩm -->
+<div class="mx-auto bg-white  rounded-lg p-6 mt-6">
+    <h2 class="text-xl font-bold mb-4">MÔ TẢ SẢN PHẨM</h2>
+    <div class="space-y-4">
+        <div>
+            <h3 class="text-lg font-semibold">Thông Tin Sản Phẩm</h3>
+            <p class="text-gray-700">
+                <strong>Tên sản phẩm:</strong> Thảm đàn Piano nằm chơi nhạc Choice 9BB9 hình thú ngộ nghĩnh cho bé
+            </p>
+        </div>
+        <ul class="list-disc pl-5 text-gray-700 space-y-2">
+            <li>Giúp các bé nhanh vận động để phát triển chân tay, cơ thể, thị giác, thính giác và trí tuệ</li>
+            <li>Phù hợp cho lứa tuổi: 0 - 36 tháng</li>
+            <li>Chất liệu nhựa hoàn toàn thân thiện với môi trường và làn da nhạy cảm của trẻ nhỏ</li>
+            <li>Phím đàn với các bản nhạc vui nhộn, giúp bé thích thú chơi đùa</li>
+            <li>Vị trí của mặt đàn có thể dễ dàng dựng đứng khi bé nằm chơi hoặc ngửa lên khi bé ngồi</li>
+        </ul>
+        <p class="text-gray-700">
+            <strong>Lưu ý khi mua hàng:</strong> Khách tham khảo kỹ bảng size, mô tả sản phẩm và ảnh cận chất liệu để lựa chọn sản phẩm phù hợp với mình (tránh trường hợp mua không hợp ý thích). Mọi thắc mắc khác vui lòng liên hệ qua Shopee chat để được trả lời nhanh nhất.
+        </p>
+        <div class="flex flex-wrap space-x-2 mt-4">
+            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">#shopeechoice</span>
+            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">#shopeechoicevietnam</span>
+            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">#choicevietnam</span>
+        </div>
+    </div>
+</div>
+
+<!-- Đánh giá sản phẩm -->
+<div class="mx-auto bg-white  rounded-lg p-6 mt-6">
+    <!-- Header -->
+    <h2 class="text-2xl font-bold mb-4">ĐÁNH GIÁ SẢN PHẨM</h2>
+
+    <!-- Rating Overview -->
+    <div class="grid grid-cols-6 gap-4 items-center border border-blue-500 text-gray-500 bg-blue-50 rounded-lg py-10">
+        <div class="col-span-1 text-center">
+            <p class="text-4xl font-bold text-red-500">4.8/5</p>
+            <div class="flex justify-center mt-2">
+                <span class="text-yellow-400 text-xl">★★★★★</span>
+            </div>
+        </div>
+        <div class="col-span-5 flex flex-wrap gap-2">
+            <button class="px-4 py-2 bg-red-100 text-red-500 rounded-md hover:bg-red-100">Tất Cả</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">5 Sao (1,8k)</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">4 Sao (104)</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">3 Sao (62)</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">2 Sao (21)</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">1 Sao (26)</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">Có Bình Luận (1,2k)</button>
+        </div>
+    </div>
+
+    <!-- Review List -->
+    <div class="mt-6 space-y-6">
+        <!-- Single Review -->
+        <div class="border-t pt-4">
+            <div class="flex items-center space-x-4">
+                <img src="https://via.placeholder.com/50" alt="User avatar" class="w-12 h-12 rounded-full">
+                <div>
+                    <p class="font-bold">nhungnguyen121017070919</p>
+                    <div class="flex items-center text-yellow-400">★★★★★</div>
+                    <p class="text-sm text-gray-500">2024-06-27 20:04 | Phân loại hàng: THẢM VOI XANH</p>
+                </div>
+            </div>
+            <div class="mt-2 text-gray-700">
+                <p>Sp ưng ý nhất sau khi đặt 4 đơn hàng 10đ cho shop</p>
+            </div>
+            <div class="mt-2 flex justify-start gap-2">
+                <img src="https://via.placeholder.com/100" alt="Image 1" class="rounded-md size-40">
+                <img src="https://via.placeholder.com/100" alt="Image 2" class="rounded-md size-40">
+
+            </div>
+            <div class="mt-2 text-sm text-gray-500">58 lượt thích</div>
+        </div>
+
+        <!-- Another Review -->
+        <div class="border-t pt-4">
+            <div class="flex items-center space-x-4">
+                <img src="https://via.placeholder.com/50" alt="User avatar" class="w-12 h-12 rounded-full">
+                <div>
+                    <p class="font-bold">duongthuy140714</p>
+                    <div class="flex items-center text-yellow-400">★★★★★</div>
+                    <p class="text-sm text-gray-500">2024-07-05 10:35 | Phân loại hàng: THẢM VOI XANH</p>
+                </div>
+            </div>
+            <div class="mt-2 text-gray-700">
+                <p>Đóng gói cẩn thận. Mua Shopee Choice 3 món tính ra món này có 50k. Chưa mua pin lắp thử nên k biết phát nhạc ổn k.</p>
+            </div>
+            <div class="mt-2 grid grid-cols-3 gap-2">
+                <img src="https://via.placeholder.com/100" alt="Image 1" class="rounded-md size-40">
+                <img src="https://via.placeholder.com/100" alt="Image 2" class="rounded-md size-40">
+            </div>
+            <div class="mt-2 text-sm text-gray-500">18 lượt thích</div>
+        </div>
+    </div>
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-center items-center space-x-2">
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">&lt;</button>
+        <button class="px-3 py-1 bg-red-500 text-white rounded">1</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">2</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">3</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">4</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">5</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">...</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">&gt;</button>
+    </div>
+</div>

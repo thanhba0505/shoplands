@@ -13,9 +13,9 @@
     <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $category): ?>
             <div class="col-span-2">
-                <a href="<?= Redirect::product()->getUrl() . '?category=' . $category['slug'] ?>" class="flex flex-col items-center">
+                <a href="<?= Redirect::product("detail")->getUrl() . '?category=' . $category['slug'] ?>" class="flex flex-col items-center">
                     <div class="w-full h-32">
-                        <img class="object-cover w-full h-full" src="<?= Asset::img($category['slug'] . '.webp') ?>" alt="">
+                        <img class="object-cover w-full h-full" src="<?= Asset::getImgApp($category['slug'] . '.webp') ?>" alt="">
                     </div>
                     <span class="text-center text-sm truncate w-full max-w-[150px] mt-2"><?= Util::encodeHtml($category['name']) ?></span>
                 </a>
@@ -34,7 +34,7 @@
             <?php foreach ($products as $product): ?>
                 <div class="col-span-2">
                     <a href="<?= Redirect::product('detail')->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                        <img class="mb-3 w-full h-48 object-cover" src="<?= Util::encodeHtml($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
+                        <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
                         <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
                         <div class="flex items-center mt-2">
                             <?php
@@ -82,7 +82,7 @@
     <div class="grid grid-cols-12 gap-4 mt-4">
         <div class="col-span-3">
             <a href="#" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::uploadImg('cap-sac.webp') ?>" alt="">
+                <img class="mb-3 w-full h-32 object-cover" src="<?= Asset::getImgUpload('cap-sac.webp') ?>" alt="">
                 <span class="line-clamp-2 w-full font-bold text-sm leading-tight">20w Sạc Nhanh Thông Minh USB C PD US Cắm Dữ Liệu Sạc Nhanh 1Meter PD Cáp Adapter USB-C Dây Cắm</span>
                 <div class="flex items-center mt-2">
                     <i class="fa-solid fa-star text-yellow-400"></i>

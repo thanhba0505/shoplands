@@ -16,9 +16,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products');
-
-            // Ràng buộc unique chỉ áp dụng khi default = true
-            // $table->unique(['product_id', 'default'], 'unique_default_image_per_product');
         });
     }
 

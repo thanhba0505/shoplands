@@ -13,14 +13,29 @@ class Asset
         return rtrim($baseUrl, '/') . '/public/' . ltrim($path, '/') . $version;
     }
 
-    public static function img($file_name, $v = false)
+    public static function getImgApp($file_name, $v = false)
     {
         return self::url('img/' . $file_name, $v);
     }
 
-    public static function uploadImg($file_name, $v = false)
+    public static function getImgUpload($file_name, $v = false)
     {
         return self::url('uploads/img/' . $file_name, $v);
+    }
+
+    public static function getAvatar($file_name, $v = false)
+    {
+        return self::getImgUpload('/avatar/' . $file_name, $v);
+    }
+
+    public static function getBackground($file_name, $v = false)
+    {
+        return self::getImgUpload('/background/' . $file_name, $v);
+    }
+
+    public static function getProduct($file_name, $v = false)
+    {
+        return self::getImgUpload('/product/' . $file_name, $v);
     }
 
     public static function logoSvg($fill = 'fill-white', $width = 120)
