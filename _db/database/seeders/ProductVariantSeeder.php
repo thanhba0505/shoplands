@@ -16,11 +16,10 @@ class ProductVariantSeeder extends Seeder
     {
         $data = [
             1 => [
-                'variants' => [
-                    ['70000', '65000', 1320, 184, ['Màu sắc' => 'Kem be', 'Size' => 'S']],
-                    ['72000', '64000', 967, 127, ['Màu sắc' => 'Kem be', 'Size' => 'M']],
-                    ['75000', null, 1634, 234, ['Màu sắc' => 'Đen', 'Size' => 'S']],
-                    ['75000', null, 345, 235, ['Màu sắc' => 'Đen', 'Size' => 'M']],
+                'price' => 70000,
+                'attributes' => [
+                    'Màu sắc' => ['Kem be', 'Đen'],
+                    'Size' => ['S', 'M'],
                 ],
                 'image_count' => 3,
                 'details' => [
@@ -35,11 +34,10 @@ class ProductVariantSeeder extends Seeder
                 ],
             ],
             2 => [
-                'variants' => [
-                    ['179000', null, 323, 123, ['Màu sắc' => 'Nâu', 'Size' => 'S']],
-                    ['164000', null, 745, 96, ['Màu sắc' => 'Nâu', 'Size' => 'M']],
-                    ['182000', null, 427, 13, ['Màu sắc' => 'Đen', 'Size' => 'S']],
-                    ['170000', null, 234, 52, ['Màu sắc' => 'Đen', 'Size' => 'M']],
+                'price' => 179000,
+                'attributes' => [
+                    'Màu sắc' => ['Nâu', 'Đen'],
+                    'Size' => ['S', 'M'],
                 ],
                 'image_count' => 5,
                 'details' => [
@@ -47,10 +45,9 @@ class ProductVariantSeeder extends Seeder
                 ],
             ],
             3 => [
-                'variants' => [
-                    ['285000', 223000, 327, 96, ['Size' => 'S']],
-                    ['285000', 223000, 427, 13, ['Size' => 'M']],
-                    ['285000', 223000, 234, 52, ['Size' => 'XL']],
+                'price' => 285000,
+                'attributes' => [
+                    'Size' => ['S', 'M', 'L'],
                 ],
                 'image_count' => 4,
                 'details' => [
@@ -62,24 +59,157 @@ class ProductVariantSeeder extends Seeder
                     ['Mẫu', 'Sọc'],
                 ],
             ],
+            4 => [
+                'price' => 175000,
+                'attributes' => [
+                    'Màu' => ['Đen', 'Trắng'],
+                ],
+                'image_count' => 3,
+                'details' => [
+                    ['Kiểu váy', 'Váy chữ A'],
+                    ['Tên tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Mùa', 'Mùa hè'],
+                    ['Chất liệu', 'Cotton, kaki'],
+                    ['Địa chỉ tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Rất lớn', 'Không'],
+                    ['Petite', 'Không'],
+                    ['Bản eo', 'Khác'],
+                    ['Xuất xứ', 'Việt Nam'],
+                    ['Mẫu', 'Trơn'],
+                ],
+            ],
+            5 => [
+                'price' => 179000,
+                'attributes' => [
+                    'Màu' => ['Trắng tinh', 'Trắng ngà'],
+                    'Size' => ['S', 'M', 'L', 'XL'],
+                ],
+                'image_count' => 2,
+                'details' => [
+                    ['Chất liệu', 'Cotton'],
+                    ['Tên tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Phong cách', 'Cơ bản, Hàn Quốc, Công sở'],
+                    ['Địa chỉ tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Xuất xứ', 'Việt Nam'],
+                    ['Mẫu', 'Trơn'],
+                    ['Chiều dài tay áo', 'Dài tay'],
+                    ['Cropped Top', 'Không'],
+                ],
+            ],
+            6 => [
+                'price' => 149000,
+                'attributes' => [
+                    'Màu' => ['Đen', 'Hồng nhạt', 'Đỏ', 'Trắng', 'Xám', 'Nâu'],
+                ],
+                'image_count' => 6,
+                'details' => [
+                    ['Thương hiệu', 'SUNTEE'],
+                    ['Chiều dài áo', 'Dài'],
+                    ['Xuất xứ', 'Việt Nam'],
+                    ['Cổ áo', 'Cổ tròn'],
+                    ['Chiều dài tay áo', 'Tay ngắn'],
+                    ['Chất liệu', 'Cotton'],
+                    ['Rất lớn', 'Có'],
+                    ['Sản phẩm đặt theo yêu cầu', 'Không'],
+                    ['Mẫu', 'In'],
+                    ['Dịp', 'Hằng Ngày'],
+                    ['Phong cách', 'Thể thao, Cơ bản, Hàn Quốc, Tối giản'],
+                    ['Cropped Top', 'Không'],
+                    ['Petite', 'Có'],
+                    ['Mùa', '4 mùa'],
+                    ['Tên tổ chức chịu trách nhiệm sản xuất', 'Xưởng may SUNTEE'],
+                ],
+            ],
+            7 => [
+                'price' => 149000,
+                'attributes' => [
+                    'Màu' => ['Trắng hồng', 'Xanh đậm', 'Xanh dương', 'Đỏ'],
+                    'Size' => ['S', 'M', 'L', 'XL'],
+                ],
+                'image_count' => 4,
+                'details' => [
+                    ['Chiều dài áo', 'Ngắn'],
+                    ['Xuất xứ', 'Việt Nam'],
+                    ['Cổ áo', 'Cổ tròn'],
+                    ['Chiều dài tay áo', 'Tay ngắn'],
+                    ['Chất liệu', 'Cotton'],
+                    ['Cropped Top', 'Không'],
+                ],
+            ],
+            8 => [
+                'price' => 790000,
+                'attributes' => [
+                    'Màu' => ['Ghi tiêu', 'Ghi sữa', 'Đen', 'Xanh than'],
+                    'Size' => ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
+                ],
+                'image_count' => 4,
+                'details' => [
+                    ['Chiều dài tay áo', 'Dài tay'],
+                    ['Địa chỉ tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Mùa', 'Mùa đông'],
+                    ['Chất liệu', 'Nỉ'],
+                    ['Phong cách', 'Cơ bản, Hàn Quốc, Tối giản'],
+                ],
+            ],
+            9 => [
+                'price' => 710000,
+                'attributes' => [
+                    'Màu' => ['Đen', 'Kaki đậm', 'Kaki nâu nhạt'],
+                    'Size' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+                ],
+                'image_count' => 4,
+                'details' => [
+                    ['Tên tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Chiều dài tay áo', 'Dài tay'],
+                    ['Petite', 'Không'],
+                    ['Chất liệu', 'Khác'],
+                    ['Địa chỉ tổ chức chịu trách nhiệm sản xuất', 'Đang cập nhật'],
+                    ['Rất lớn', 'Không'],
+                    ['Sản phẩm đặt theo yêu cầu', 'Không'],
+                    ['Phong cách', 'Hàn Quốc'],
+                    ['Mẫu', 'Trơn'],
+                    ['Xuất xứ', 'Trung Quốc'],
+                ],
+            ],
+            10 => [
+                'price' => 136000,
+                'attributes' => [
+                    'Màu' => ['Hồng', 'Đen'],
+                    'Size' => ['S', 'M', 'L', 'XL'],
+                ],
+                'image_count' => 4,
+                'details' => [
+                    ['Thương hiệu', 'Lovito'],
+                    ['Dịp', 'Hằng Ngày'],
+                    ['Rất lớn', 'Không'],
+                    ['Kiểu váy', 'Váy chữ A'],
+                    ['Chiều dài váy', 'Mini'],
+                    ['Chất liệu', '100% Polyester'],
+                    ['Mẫu', 'Ditsy Floral'],
+                ],
+            ],
         ];
 
-        foreach ($data as $productId => $productData) {
-            // Xử lý biến thể
-            foreach ($productData['variants'] as $variant) {
-                [$price, $promotion_price, $quantity, $sold_quantity, $attributes] = $variant;
 
-                // Tạo ProductVariant
+
+        foreach ($data as $productId => $productData) {
+            $price = $productData['price'];
+            $attributes = $productData['attributes'];
+
+            // Lấy tổ hợp thuộc tính
+            $attributeCombinations = $this->generateCombinations($attributes);
+
+            foreach ($attributeCombinations as $combination) {
                 $productVariant = ProductVariant::create([
                     'product_id' => $productId,
                     'price' => $price,
-                    'promotion_price' => $promotion_price,
-                    'quantity' => $quantity,
-                    'sold_quantity' => $sold_quantity,
+                    'promotion_price' => null,
+                    'quantity' => rand(10, 200),
+                    'sold_quantity' => rand(10, 150),
                 ]);
 
-                // Tạo thuộc tính và giá trị
-                foreach ($attributes as $name => $value) {
+                // Lưu các thuộc tính và giá trị
+                foreach ($combination as $name => $value) {
                     $attribute = ProductAttribute::firstOrCreate(['name' => $name]);
                     $attributeValue = ProductAttributeValue::firstOrCreate([
                         'product_attribute_id' => $attribute->id,
@@ -113,5 +243,27 @@ class ProductVariantSeeder extends Seeder
                 ]);
             }
         }
+    }
+    
+    private function generateCombinations(array $attributes): array
+    {
+        $keys = array_keys($attributes);
+        $values = array_values($attributes);
+
+        $combinations = [[]];
+
+        foreach ($values as $keyIndex => $valueGroup) {
+            $newCombinations = [];
+            foreach ($combinations as $combination) {
+                foreach ($valueGroup as $value) {
+                    $newCombination = $combination;
+                    $newCombination[$keys[$keyIndex]] = $value;
+                    $newCombinations[] = $newCombination;
+                }
+            }
+            $combinations = $newCombinations;
+        }
+
+        return $combinations;
     }
 }

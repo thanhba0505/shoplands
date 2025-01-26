@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" version="26.0.7">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0" version="26.0.8">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="1282" dy="549" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="610" dy="261" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -578,7 +578,7 @@
         <mxCell id="ofAZB1A1xBXTMgq2kkwl-226" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;fontStyle=0;swimlaneLine=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="ofAZB1A1xBXTMgq2kkwl-188" target="ofAZB1A1xBXTMgq2kkwl-197" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="1EyDuikL_Rh4mhYkpojK-64" value="2..5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="ofAZB1A1xBXTMgq2kkwl-226" vertex="1" connectable="0">
+        <mxCell id="1EyDuikL_Rh4mhYkpojK-64" value="2..10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="ofAZB1A1xBXTMgq2kkwl-226" vertex="1" connectable="0">
           <mxGeometry x="0.7714" y="-2" relative="1" as="geometry">
             <mxPoint x="-6" y="14" as="offset" />
           </mxGeometry>
@@ -920,16 +920,16 @@
         <mxCell id="PU1UScnhJkJXrWozJf2H-15" value="Hủy đặt hàng" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1045" y="1360" width="90" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="WMM8fyJ7tmCobWZm3hnP-0" value="Tổng tiền từ các sản phẩm" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="WMM8fyJ7tmCobWZm3hnP-0" value="Tổng tiền từ các sản phẩm" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1675" y="468" width="170" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="WMM8fyJ7tmCobWZm3hnP-1" value="Tổng giảm giá" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="WMM8fyJ7tmCobWZm3hnP-1" value="Tổng giảm giá" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1685" y="498" width="100" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="WMM8fyJ7tmCobWZm3hnP-2" value="Thành tiền cuối cùng" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="WMM8fyJ7tmCobWZm3hnP-2" value="Thành tiền cuối cùng" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1675" y="528" width="130" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="WMM8fyJ7tmCobWZm3hnP-3" value="Doanh thu của seller" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="WMM8fyJ7tmCobWZm3hnP-3" value="Doanh thu của seller" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1675" y="560" width="130" height="30" as="geometry" />
         </mxCell>
       </root>
