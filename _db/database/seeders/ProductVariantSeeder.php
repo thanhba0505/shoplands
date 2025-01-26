@@ -199,11 +199,20 @@ class ProductVariantSeeder extends Seeder
             // Lấy tổ hợp thuộc tính
             $attributeCombinations = $this->generateCombinations($attributes);
 
+            $isPromotion = rand(0, 10) >= 7;
+
             foreach ($attributeCombinations as $combination) {
+
+                $promotionPrice = null;
+
+                if ($isPromotion && rand(0, 10) >= 8) {
+                    $promotionPrice = max(round($price * rand(80, 95) / 100, -3), $price -  50000);
+                }
+
                 $productVariant = ProductVariant::create([
                     'product_id' => $productId,
                     'price' => $price,
-                    'promotion_price' => null,
+                    'promotion_price' => $promotionPrice,
                     'quantity' => rand(10, 200),
                     'sold_quantity' => rand(10, 150),
                 ]);
@@ -244,7 +253,7 @@ class ProductVariantSeeder extends Seeder
             }
         }
     }
-    
+
     private function generateCombinations(array $attributes): array
     {
         $keys = array_keys($attributes);
