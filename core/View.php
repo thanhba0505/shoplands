@@ -14,13 +14,13 @@ class View
         $content = ob_get_clean();
 
         // Header
-        $header = self::loadPartial("header/$header");
+        $header = self::loadPartial("header/$header", $data);
 
         // Sidebar
-        $sidebar = self::loadPartial("sidebar/$sidebar");
+        $sidebar = self::loadPartial("sidebar/$sidebar", $data);
 
         // Footer
-        $footer = self::loadPartial("footer/$footer");
+        $footer = self::loadPartial("footer/$footer", $data);
 
         // Render template chính
         ob_start();
@@ -28,11 +28,13 @@ class View
         return ob_get_clean();
     }
 
+
     // Hàm hỗ trợ load từng phần (header, sidebar, footer)
-    private static function loadPartial($path)
+    private static function loadPartial($path, $data = [])
     {
         $filePath = "./app/Views/layout/$path.php";
         if (file_exists($filePath)) {
+            extract($data); // Giải nén dữ liệu để sử dụng trong partial
             ob_start();
             include $filePath;
             return ob_get_clean();

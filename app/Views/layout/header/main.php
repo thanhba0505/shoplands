@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <div class="text-lg font-semibold">
                 <a href="<?= Redirect::home()->getUrl() ?>" style="width: 120px">
-                    <?= Asset::logoSvg('fill-white', 120) ?>
+                    <?= Other::logoSvg('fill-white', 120) ?>
                 </a>
             </div>
             <div>

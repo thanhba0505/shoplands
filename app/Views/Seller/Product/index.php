@@ -33,7 +33,7 @@
 
         <tfoot>
             <tr id="loadingId" class="hidden">
-                <td colspan="10" class="py-20"><?= Asset::loading() ?></td>
+                <td colspan="10" class="py-20"><?= Other::loading() ?></td>
             </tr>
             <tr id="noContentId" class="hidden">
                 <td colspan="10" class="py-20 border border-blue-300 align-middle">
