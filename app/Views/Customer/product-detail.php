@@ -16,9 +16,7 @@
             <img class="w-full h-full object-cover max-w-[550px] max-h-[550px] rounded-md" src="product-image.jpg" alt="Product Image">
             <div class="relative mt-4">
                 <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
+                    <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <div class="grid grid-cols-5 gap-2">
                     <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail1.jpg" alt="Thumbnail">
@@ -28,9 +26,7 @@
                     <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail5.jpg" alt="Thumbnail">
                 </div>
                 <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
+                    <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
         </div>
@@ -45,21 +41,11 @@
                     <div class="flex items-center gap-1">
                         <span class="text-lg font-semibold">4.8</span>
                         <div class="flex text-yellow-500">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
-                            </svg>
-                            <svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.09 3.17 1.54-6.36L2 7.75l6.59-.56L10 1l1.41 6.19 6.59.56-4.45 4.06 1.54 6.36L10 15z"></path>
-                            </svg>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
                         </div>
                     </div>
                     <div>2k Đánh Giá</div>
@@ -85,11 +71,7 @@
                 <!-- Vận Chuyển -->
                 <div class="col-span-3 text-gray-600 font-medium">Vận Chuyển</div>
                 <div class="col-span-9 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16V8a1 1 0 011-1h10l5 5v4a1 1 0 01-1 1H4a1 1 0 01-1-1z" />
-                        <circle cx="6" cy="18" r="2" />
-                        <circle cx="18" cy="18" r="2" />
-                    </svg>
+                    <i class="fa-solid fa-truck-fast text-green-600"></i>
                     <p class="text-gray-800">
                         Nhận hàng vào ngày mai, phí giao <span class="text-green-600 font-semibold">0₫</span>
                     </p>
@@ -98,9 +80,7 @@
                 <!-- An Tâm Mua Sắm -->
                 <div class="col-span-3 text-gray-600 font-medium leading-6">An Tâm Mua<br>Sắm Cùng<br>Shopee</div>
                 <div class="col-span-9 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C9.243 2 6.485 3.71 4.91 6.36 3.33 9.02 3.48 12.2 5.24 14.3 6.45 15.8 8.25 17.44 11.8 20.5l.2.2.2-.2c3.55-3.06 5.35-4.7 6.56-6.2 1.76-2.1 1.91-5.28.33-7.94C17.515 3.71 14.757 2 12 2z" />
-                    </svg>
+                    <i class="fa-solid fa-location-pin text-red-600"></i>
                     <p class="text-gray-800">
                         Trả hàng miễn phí 15 ngày · <span class="hover:underline cursor-pointer">Bảo hiểm Thời trang</span>
                     </p>
@@ -195,9 +175,7 @@
             <!-- Buttons -->
             <div class="mt-6 flex gap-4">
                 <button class="flex items-center justify-center gap-2 border border-blue-500 text-gray-500 bg-blue-50 px-4 py-2 rounded hover:bg-blue-100 w-52">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2 6h14m-2-6a2 2 0 11-4 0m4 0a2 2 0 11-4 0" />
-                    </svg>
+                    <i class="fa-solid fa-cart-plus"></i>
                     <span class="text-sm">Thêm Vào Giỏ Hàng</span>
                 </button>
 
@@ -300,17 +278,13 @@
             <p class="text-sm text-gray-500">Online 9 Phút Trước</p>
             <div class="flex gap-2 mt-2">
                 <!-- Nút Chat -->
-                <button class="flex items-center gap-1 px-4 py-1 text-red-500 border border-red-500 rounded-md text-sm hover:bg-red-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2h2m2-5h6m-3 0v6" />
-                    </svg>
+                <button class="flex items-center gap-1 px-4 py-1 text-blue-500 border border-blue-500 rounded-md text-sm hover:bg-red-100">
+                    <i class="fa-brands fa-rocketchat text-blue-600"></i>
                     Chat Ngay
                 </button>
                 <!-- Nút Xem Shop -->
                 <button class="flex items-center gap-1 px-4 py-1 text-gray-500 border border-gray-300 rounded-md text-sm hover:bg-gray-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M10 14h4m-7 4h10" />
-                    </svg>
+                    <i class="fa-solid fa-store text-blue-600"></i>
                     Xem Shop
                 </button>
             </div>
@@ -499,7 +473,7 @@
             <div class="mt-2 text-gray-700">
                 <p>Đóng gói cẩn thận. Mua Shopee Choice 3 món tính ra món này có 50k. Chưa mua pin lắp thử nên k biết phát nhạc ổn k.</p>
             </div>
-            <div class="mt-2 grid grid-cols-3 gap-2">
+            <div class="mt-2 flex justify-start gap-2">
                 <img src="https://via.placeholder.com/100" alt="Image 1" class="rounded-md size-40">
                 <img src="https://via.placeholder.com/100" alt="Image 2" class="rounded-md size-40">
             </div>
