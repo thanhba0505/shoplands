@@ -37,7 +37,7 @@
 
         <!-- Product Details -->
         <div class="col-span-3">
-            <h1 class="text-2xl mb-2">Đồ chơi thảm đàn Piano nằm phát nhạc Choice 9BB9 hình thú ngộ nghĩnh cho bé</h1>
+            <h1 class="text-2xl mb-2"><?= Util::encodeHtml($product['product_name']) ?></h1>
 
             <!-- Đánh giá -->
             <div class="flex items-center justify-between text-gray-700 text-sm mb-4">
@@ -68,9 +68,9 @@
             </div>
 
             <div class="bg-gray-100 p-4 rounded-lg mb-4 flex items-center gap-4 w-full">
-                <span class="text-2xl font-semibold text-red-500">đ109.200</span>
-                <span class="text-gray-500 line-through">đ170.000</span>
-                <span class="bg-red-100 text-red-500 text-sm font-medium px-2 py-1 rounded">-36%</span>
+                <span id="price" class="text-2xl font-semibold text-red-500"></span>
+                <span id="old-price" class="text-gray-500 line-through"></span>
+                <span id="discount" class="bg-red-100 text-red-500 text-sm font-medium px-2 py-1 rounded"></span>
             </div>
 
             <div class="mt-4 grid grid-cols-12 gap-4 items-start">
@@ -107,71 +107,27 @@
                     <span class="text-gray-400 ml-2 cursor-pointer">▼</span>
                 </div>
 
-                <!-- Màu -->
-                <div class="col-span-3 text-gray-600 font-medium">Màu</div>
-                <div class="col-span-9 flex flex-wrap gap-4">
-                    <!-- Các option của sản phẩm -->
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Đen</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Xám</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Xanh</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Vàng</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Đỏ</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Nâu</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Tím</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Xanh dương</span>
-                    </button>
-                    <button class="flex flex-col items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        <span class="text-gray-800">Gấu xanh</span>
-                    </button>
-                </div>
+                <?php foreach ($attributes as $attributeId => $attribute): ?>
+                    <div class="col-span-3 text-gray-600 font-medium"><?= $attribute['name'] ?></div>
+                    <div class="col-span-9 flex flex-wrap gap-4">
+                        <?php foreach ($attribute['values'] as $valueId => $value): ?>
+                            <button
+                                data-attribute-id="<?= $attributeId ?>"
+                                data-value-id="<?= $valueId ?>"
+                                class="attribute-option flex flex-col text-gray-800 items-center border px-4 py-2 rounded-md text-center hover:border-blue-500">
+                                <?= $value ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
 
-                <!-- Size -->
-                <div class="col-span-3 text-gray-600 font-medium">Size</div>
-                <div class="col-span-9 flex flex-wrap gap-4">
-                    <!-- Các tùy chọn size -->
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        36 (form 37)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        37 (form 38)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        38 (form 39)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        39 (form 40)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        40 (form 41)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        41 (form 42)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        42 (form 43)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        43 (form 44)
-                    </button>
-                    <button class="border px-4 py-2 rounded-md text-center hover:border-blue-500">
-                        44 (form 45)
-                    </button>
-                </div>
+                <script>
+                    var productVariants = <?= json_encode($productVariant) ?>;
+
+                    $(document).ready(function() {
+                        showPriceProductDeatil(productVariants);
+                    });
+                </script>
 
                 <!-- Số lượng -->
                 <div class="col-span-3 text-gray-600 font-medium">Số lượng</div>
@@ -414,28 +370,8 @@
 <!-- Mô tả sản phẩm -->
 <div class="mx-auto bg-white  rounded-lg p-6 mt-6">
     <h2 class="text-xl font-bold mb-4">MÔ TẢ SẢN PHẨM</h2>
-    <div class="space-y-4">
-        <div>
-            <h3 class="text-lg font-semibold">Thông Tin Sản Phẩm</h3>
-            <p class="text-gray-700">
-                <strong>Tên sản phẩm:</strong> Thảm đàn Piano nằm chơi nhạc Choice 9BB9 hình thú ngộ nghĩnh cho bé
-            </p>
-        </div>
-        <ul class="list-disc pl-5 text-gray-700 space-y-2">
-            <li>Giúp các bé nhanh vận động để phát triển chân tay, cơ thể, thị giác, thính giác và trí tuệ</li>
-            <li>Phù hợp cho lứa tuổi: 0 - 36 tháng</li>
-            <li>Chất liệu nhựa hoàn toàn thân thiện với môi trường và làn da nhạy cảm của trẻ nhỏ</li>
-            <li>Phím đàn với các bản nhạc vui nhộn, giúp bé thích thú chơi đùa</li>
-            <li>Vị trí của mặt đàn có thể dễ dàng dựng đứng khi bé nằm chơi hoặc ngửa lên khi bé ngồi</li>
-        </ul>
-        <p class="text-gray-700">
-            <strong>Lưu ý khi mua hàng:</strong> Khách tham khảo kỹ bảng size, mô tả sản phẩm và ảnh cận chất liệu để lựa chọn sản phẩm phù hợp với mình (tránh trường hợp mua không hợp ý thích). Mọi thắc mắc khác vui lòng liên hệ qua Shopee chat để được trả lời nhanh nhất.
-        </p>
-        <div class="flex flex-wrap space-x-2 mt-4">
-            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">#shopeechoice</span>
-            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">#shopeechoicevietnam</span>
-            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full">#choicevietnam</span>
-        </div>
+    <div>
+        <?= Util::nl2br($product['product_description']) ?>
     </div>
 </div>
 

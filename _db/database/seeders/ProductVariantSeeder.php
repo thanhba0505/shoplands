@@ -204,14 +204,19 @@ class ProductVariantSeeder extends Seeder
             foreach ($attributeCombinations as $combination) {
 
                 $promotionPrice = null;
+                $price_temp = $price;
 
-                if ($isPromotion && rand(0, 10) >= 8) {
-                    $promotionPrice = max(round($price * rand(80, 95) / 100, -3), $price -  50000);
+                if (rand(0, 10) >= 6) {
+                    $price_temp = max(round($price * rand(80, 100) / 100, -3), $price -  50000);
+                }
+
+                if ($isPromotion && rand(0, 10) >= 5) {
+                    $promotionPrice = max(round($price_temp * rand(80, 95) / 100, -3), $price -  50000);
                 }
 
                 $productVariant = ProductVariant::create([
                     'product_id' => $productId,
-                    'price' => $price,
+                    'price' => $price_temp,
                     'promotion_price' => $promotionPrice,
                     'quantity' => rand(10, 200),
                     'sold_quantity' => rand(10, 150),

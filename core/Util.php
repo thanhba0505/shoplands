@@ -7,6 +7,13 @@ class Util
     {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
+    
+    // Mã hóa chuỗi bằng htmlspecialchars
+    public static function nl2br($string)
+    {
+        $string = self::encodeHtml($string);
+        return nl2br($string);
+    }
 
     // Định dạng số thành tiền tệ (VD: 1,000,000đ)
     public static function formatCurrency($number, $currency = 'đ')
@@ -67,5 +74,13 @@ class Util
         } else {
             return date('d/m/Y', $timestamp);
         }
+    }
+
+    // In ra mảng
+    public static function printArray($array)
+    {
+        echo '<pre>';
+        print_r($array);
+        echo '</pre>';
     }
 }

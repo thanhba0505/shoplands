@@ -87,4 +87,25 @@ class Product
 
         return $result;
     }
+
+    public function getByProductId($product_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name AS product_name,
+                p.description AS product_description,
+                p.status AS product_status
+            FROM
+                products p
+            WHERE
+                p.id = :product_id
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id])->fetch();
+
+        return $result;
+    }
 }

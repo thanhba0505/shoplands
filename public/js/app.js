@@ -138,3 +138,120 @@ async function loadTabAjax(url, options = {}) {
             .trigger("click");
     }
 }
+
+function showPriceProductDeatil(productVariants) {
+    var selectedAttributes = {}; // Lưu các thuộc tính đã chọn
+    var totalAttributes = $(".attribute-option")
+        .map(function () {
+            return $(this).data("attribute-id");
+        })
+        .get();
+    totalAttributes = [...new Set(totalAttributes)]; // Lấy danh sách ID thuộc tính duy nhất
+
+    // Khi click vào thuộc tính
+    $(".attribute-option").click(function () {
+        var attributeId = $(this).data("attribute-id");
+        var valueId = $(this).data("value-id");
+
+        // Nếu đã chọn trước đó, thì xóa lựa chọn
+        if (selectedAttributes[attributeId] === valueId) {
+            delete selectedAttributes[attributeId];
+            $(this).removeClass("bg-blue-400 text-white");
+        } else {
+            // Nếu chưa chọn, cập nhật thuộc tính đã chọn
+            selectedAttributes[attributeId] = valueId;
+            $(this).siblings().removeClass("bg-blue-400 text-white");
+            $(this).addClass("bg-blue-400 text-white");
+        }
+
+        // Cập nhật giá theo biến thể
+        updatePrice();
+    });
+
+    function updatePrice() {
+        var matchingVariant = null;
+        var minPrice = Infinity,
+            maxPrice = 0;
+        var minPromo = Infinity,
+            maxPromo = 0;
+
+        // Nếu chưa chọn đủ tất cả thuộc tính thì chỉ hiển thị min-max
+        if (Object.keys(selectedAttributes).length < totalAttributes.length) {
+            $.each(productVariants, function (variantId, variant) {
+                var promoPrice = variant.promotion_price
+                    ? parseFloat(variant.promotion_price)
+                    : parseFloat(variant.price);
+                minPrice = Math.min(minPrice, parseFloat(variant.price));
+                maxPrice = Math.max(maxPrice, parseFloat(variant.price));
+                minPromo = Math.min(minPromo, promoPrice);
+                maxPromo = Math.max(maxPromo, promoPrice);
+            });
+
+            if (minPromo === maxPromo) {
+                $("#price").text(formatCurrency(minPromo));
+            } else {
+                $("#price").text(
+                    formatCurrency(minPromo) + " - " + formatCurrency(maxPromo)
+                );
+            }
+            $("#old-price").hide();
+            $("#discount").hide();
+            return;
+        }
+
+        // Nếu đã chọn đủ thuộc tính, tìm biến thể phù hợp
+        $.each(productVariants, function (variantId, variant) {
+            var isMatch = true;
+            $.each(selectedAttributes, function (attrId, valueId) {
+                if (variant.attributes[attrId] != valueId) {
+                    isMatch = false;
+                    return false; // Dừng vòng lặp
+                }
+            });
+
+            if (isMatch) {
+                matchingVariant = variant;
+                return false; // Dừng vòng lặp
+            }
+        });
+
+        if (matchingVariant) {
+            var finalPrice = matchingVariant.promotion_price
+                ? parseFloat(matchingVariant.promotion_price)
+                : parseFloat(matchingVariant.price);
+            $("#price").text(formatCurrency(finalPrice));
+
+            if (matchingVariant.promotion_price) {
+                $("#old-price")
+                    .text(formatCurrency(parseFloat(matchingVariant.price)))
+                    .show();
+                $("#discount")
+                    .text(
+                        "-" +
+                            (
+                                ((parseFloat(matchingVariant.price) -
+                                    finalPrice) /
+                                    parseFloat(matchingVariant.price)) *
+                                100
+                            ).toFixed(0) +
+                            "%"
+                    )
+                    .show();
+            } else {
+                $("#old-price").hide();
+                $("#discount").hide();
+            }
+        }
+    }
+
+    // Định dạng tiền tệ
+    function formatCurrency(value) {
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(value);
+    }
+
+    // Hiển thị giá min-max khi load trang
+    updatePrice();
+}
