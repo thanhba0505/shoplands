@@ -57,10 +57,6 @@ class ProductDetailController
             }
         }
 
-
-        Util::printArray($attributes);
-        Util::printArray($productVariant);
-
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,
