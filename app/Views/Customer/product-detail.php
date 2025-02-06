@@ -144,82 +144,48 @@
     </div>
 </div>
 
-<!-- Sản phẩm gợi ý -->
-<div class="mx-auto bg-white  rounded-lg p-6 mt-6">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">Sản phẩm gợi ý cho bạn</h2>
-        <a href="#" class="text-red-500 hover:underline text-sm flex items-center">
-            Xem Tất Cả &nbsp; &gt;
-        </a>
+<div class="mt-10">
+    <div class="text-center text-xl font-bold py-3 bg-gray-100 text-gray-800">Gợi ý cho bạn</div>
+    <div class="grid grid-cols-12 gap-4 mt-4">
+
+        <!-- Product Item -->
+        <?php if (!empty($similarProducts)): ?>
+            <?php foreach ($similarProducts as $product): ?>
+                <div class="col-span-2">
+                    <a href="<?= Redirect::product('detail')->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                        <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
+                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
+                        <div class="flex items-center mt-2">
+                            <?php
+                            $rating = round($product['rating'] ?? 0);
+                            for ($star = 1; $star <= 5; $star++):
+                            ?>
+                                <?php if ($star <= $rating): ?>
+                                    <i class="fa-solid fa-star text-yellow-400"></i>
+                                <?php else: ?>
+                                    <i class="fa-regular fa-star text-gray-400"></i>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between w-full">
+                            <?php if ($product['promotion_price']): ?>
+                                <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['price']) ?></span>
+                                <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price']) ?></span>
+                            <?php else: ?>
+                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['price']) ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['sold_quantity']) ?? 0 ?></span>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+
+        <!-- Thêm các sản phẩm khác tương tự -->
     </div>
-
-    <!-- Danh sách sản phẩm -->
-    <div class="grid grid-cols-6 gap-4">
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product1.jpg" alt="Product 1" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang unisex NEWBALANCE CAMPIN...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫250.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product2.jpg" alt="Product 2" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang PM BIG SEAN, unisex, mang siêu...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫280.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product3.jpg" alt="Product 3" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang Puma nam nữ, êm chân, dễ mix đồ...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫280.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product4.jpg" alt="Product 4" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép Quai Ngang P.u.m.a Suede Animal Crossing...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫280.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product5.jpg" alt="Product 5" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép Moover Crossing mẫu mới chống trơn đế cao 4...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫250.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product6.jpg" alt="Product 6" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang nữ NewBalance 1102, màu s...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫250.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
-            </div>
-        </div>
+    <div class="flex justify-center mt-5">
+        <a href="#" class="px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Xem thêm</a>
     </div>
 </div>
 

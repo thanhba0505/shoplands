@@ -244,14 +244,15 @@ function showPriceProductDeatil(productVariants) {
         }
     }
 
-    // Định dạng tiền tệ
-    function formatCurrency(value) {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        }).format(value);
-    }
-
     // Hiển thị giá min-max khi load trang
     updatePrice();
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+    })
+        .format(value)
+        .replace(/\s₫/, "₫");
 }

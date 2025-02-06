@@ -9,6 +9,7 @@ class ProductDetailController
     {
         $id = Request::get('id');
 
+        // Lấy thông tin chi tiêt sản phẩm
         $productModel = new Product();
         $product = $productModel->getByProductId($id);
 
@@ -57,12 +58,16 @@ class ProductDetailController
             }
         }
 
+        // Lấy danh sách sản phẩm gợi ý
+        $similarProducts = $productModel->getProducts(6);
+
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,
             'product' => $product,
             'productVariant' => $productVariant,
-            'attributes' => $attributes
+            'attributes' => $attributes,
+            'similarProducts' => $similarProducts
         ];
 
         return View::make('Customer/product-detail', $data);
