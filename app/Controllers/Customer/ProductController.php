@@ -8,7 +8,7 @@ class ProductController
     {
         // Gọi model đến sản phẩm
         $productModel = new Product();
-        $products = $productModel->getProducts();
+        $products = $productModel->getProducts(100);
         
         // Gọi model đến danh mục
         $categoryModel = new Category();
