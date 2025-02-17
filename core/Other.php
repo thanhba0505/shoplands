@@ -47,6 +47,44 @@ class Other
                 </div>';
     }
 
+    public static function ratingStar($rating)
+    {
+        $fullStars = floor(Util::encodeHtml($rating)); // Số sao đầy đủ (làm tròn xuống)
+        $decimalPart = round(Util::encodeHtml($rating) - $fullStars, 1); // Phần thập phân của số rating
+        $halfStars = 0;
+        $emptyStars = 0;
+
+        if ($decimalPart >= 0.4 && $decimalPart <= 0.8) {
+            $halfStars = 1; // Nếu phần thập phân từ 0.4 đến 0.8, thêm 1 sao nửa
+        } elseif ($decimalPart > 0.8) {
+            $fullStars += 1; // Nếu phần thập phân từ 0.9 trở lên, làm tròn lên thành sao vàng
+        }
+
+        $emptyStars = 5 - ($fullStars + $halfStars); // Số sao rỗng còn lại
+
+        $output = '<div class="flex justify-center">';
+
+        // Sao đầy đủ
+        for ($i = 0; $i < $fullStars; $i++) {
+            $output .= '<span class="text-yellow-400 text-xl"><i class="fas fa-star"></i></span>';
+        }
+
+        // Sao nửa
+        if ($halfStars) {
+            $output .= '<span class="text-yellow-400 text-xl"><i class="fas fa-star-half-alt"></i></span>';
+        }
+
+        // Sao rỗng
+        for ($i = 0; $i < $emptyStars; $i++) {
+            $output .= '<span class="text-gray-300 text-xl"><i class="far fa-star"></i></span>';
+        }
+
+        $output .= '</div>';
+
+        return $output;
+    }
+
+
 
     public static function listOrderStatus()
     {

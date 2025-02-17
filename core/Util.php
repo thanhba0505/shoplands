@@ -21,6 +21,13 @@ class Util
         $number = self::encodeHtml($number);
         return number_format($number, 0, ',', '.') . $currency;
     }
+    
+    // Định dạng số (VD: 2.4)
+    public static function formatNumber($number, $decimal = 2)
+    {
+        $number = self::encodeHtml($number);
+        return number_format($number, $decimal, '.', '');
+    }
 
     // Định dạng thời gian theo định dạng tùy chỉnh
     public static function formatDateTime($date, $format = 'd/m/Y H:i:s')

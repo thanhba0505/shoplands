@@ -5,6 +5,7 @@ require_once 'app/Models/ProductVariant.php';
 require_once 'app/Models/ProductImage.php';
 require_once 'app/Models/ProductDetail.php';
 require_once 'app/Models/Category.php';
+require_once 'app/Models/Review.php';
 
 class ProductDetailController
 {
@@ -76,6 +77,12 @@ class ProductDetailController
         $categoryModel = new Category();
         $category = $categoryModel->getCategoryByProductId($id);
 
+        // Lấy danh sách đánh giá
+        $reviewModel = new Review();
+        $reviews['list'] = $reviewModel->getReviewsByProductId($id);
+
+        $reviews['averageRating'] = $reviewModel->getAverageRatingByProductId($id);
+
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,
@@ -85,7 +92,8 @@ class ProductDetailController
             'similarProducts' => $similarProducts,
             'images' => $images,
             'productDetail' => $productDetail,
-            'category' => $category
+            'category' => $category,
+            'reviews' => $reviews
         ];
 
         return View::make('Customer/product-detail', $data);

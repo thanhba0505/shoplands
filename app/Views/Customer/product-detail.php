@@ -317,11 +317,12 @@
     <!-- Rating Overview -->
     <div class="grid grid-cols-6 gap-4 items-center border border-blue-500 text-gray-500 bg-blue-50 rounded-lg py-10">
         <div class="col-span-1 text-center">
-            <p class="text-4xl font-bold text-red-500">4.8/5</p>
+            <p class="text-4xl font-bold text-red-500"><?= Util::formatNumber($reviews['averageRating'], 1) ?: 0 ?>/5</p>
             <div class="flex justify-center mt-2">
-                <span class="text-yellow-400 text-xl">★★★★★</span>
+                <?= Other::ratingStar($reviews['averageRating']) ?>
             </div>
         </div>
+
         <div class="col-span-5 flex flex-wrap gap-2">
             <button class="px-4 py-2 bg-red-100 text-red-500 rounded-md hover:bg-red-100">Tất Cả</button>
             <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">5 Sao (1,8k)</button>
