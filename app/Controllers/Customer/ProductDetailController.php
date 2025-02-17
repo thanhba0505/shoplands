@@ -2,6 +2,9 @@
 
 require_once 'app/Models/Product.php';
 require_once 'app/Models/ProductVariant.php';
+require_once 'app/Models/ProductImage.php';
+require_once 'app/Models/ProductDetail.php';
+require_once 'app/Models/Category.php';
 
 class ProductDetailController
 {
@@ -9,6 +12,7 @@ class ProductDetailController
     {
         $id = Request::get('id');
 
+        // Lấy thông tin chi tiêt sản phẩm
         $productModel = new Product();
         $product = $productModel->getByProductId($id);
 
@@ -57,12 +61,31 @@ class ProductDetailController
             }
         }
 
+        // Lấy danh sách sản phẩm tương tự
+        $similarProducts = $productModel->getProducts(6);
+
+        // Lấy hình ảnh sản phẩm
+        $imageModel = new ProductImage();
+        $images = $imageModel->getImagesByProductId($id);
+
+        // Lấy chi tiết sản phẩm
+        $productDetailModel = new ProductDetail();
+        $productDetail = $productDetailModel->getDetailByProductId($id);
+
+        // Lấy danh mục của sản phẩm
+        $categoryModel = new Category();
+        $category = $categoryModel->getCategoryByProductId($id);
+
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,
             'product' => $product,
             'productVariant' => $productVariant,
-            'attributes' => $attributes
+            'attributes' => $attributes,
+            'similarProducts' => $similarProducts,
+            'images' => $images,
+            'productDetail' => $productDetail,
+            'category' => $category
         ];
 
         return View::make('Customer/product-detail', $data);
