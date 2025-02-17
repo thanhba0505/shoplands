@@ -13,17 +13,44 @@
     <div class="grid grid-cols-5 gap-6">
         <!-- Images -->
         <div class="col-span-2">
-            <img class="w-full h-full object-cover max-w-[550px] max-h-[550px] rounded-md" src="product-image.jpg" alt="Product Image">
+
+            <!-- Mặc định hiển thị -->
+            <?php
+            $defaultImage = null;
+
+            // Kiểm tra danh sách ảnh và tìm ảnh mặc định
+            if (!empty($images)) {
+                foreach ($images as $image) {
+                    if (!empty($image['is_default']) && $image['is_default'] == 1) {
+                        $defaultImage = $image['path'];
+                        break;
+                    }
+                }
+            }
+            ?>
+
+            <?php if ($defaultImage): ?>
+                <img class="w-full h-full object-cover max-w-[550px] max-h-[550px] rounded-md"
+                    src="<?= Asset::getProduct($defaultImage) ?>"
+                    alt="<?= Asset::getProduct($defaultImage) ?>">
+            <?php else: ?>
+                <img class="w-full h-16 rounded-md cursor-pointer" src="" alt="error">
+            <?php endif; ?>
+
+
+            <!-- Danh sách ảnh -->
             <div class="relative mt-4">
                 <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
                 <div class="grid grid-cols-5 gap-2">
-                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail1.jpg" alt="Thumbnail">
-                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail2.jpg" alt="Thumbnail">
-                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail3.jpg" alt="Thumbnail">
-                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail4.jpg" alt="Thumbnail">
-                    <img class="w-full h-16 rounded-md cursor-pointer" src="product-thumbnail5.jpg" alt="Thumbnail">
+                    <?php if (!empty($images)): ?>
+                        <?php foreach ($images as $image): ?>
+                            <img class="w-full h-16 rounded-md cursor-pointer" src="<?= Asset::getProduct($image['path']) ?>" alt="<?= Asset::getProduct($image['path']) ?>">
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <img class="w-full h-16 rounded-md cursor-pointer" src="" alt="error">
+                    <?php endif; ?>
                 </div>
                 <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
                     <i class="fa-solid fa-chevron-right"></i>
@@ -145,19 +172,19 @@
 </div>
 
 <div class="mt-10">
-    <div class="text-center text-xl font-bold py-3 bg-gray-100 text-gray-800">Gợi ý cho bạn</div>
-    <div class="grid grid-cols-12 gap-4 mt-4">
+    <div class="text-center text-xl font-bold py-3 bg-gray-100 text-gray-800">Sản phẩm tương tự</div>
+    <div class="grid grid-cols-12 gap-4 mt-10">
 
         <!-- Product Item -->
         <?php if (!empty($similarProducts)): ?>
-            <?php foreach ($similarProducts as $product): ?>
+            <?php foreach ($similarProducts as $sProduct): ?>
                 <div class="col-span-2">
-                    <a href="<?= Redirect::product('detail')->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                        <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
-                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
+                    <a href="<?= Redirect::product('detail')->withQuery(['id' => $sProduct['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                        <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($sProduct['image_path']) ?>" alt="<?= Util::encodeHtml($sProduct['name']) ?>">
+                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($sProduct['name']) ?></span>
                         <div class="flex items-center mt-2">
                             <?php
-                            $rating = round($product['rating'] ?? 0);
+                            $rating = round($sProduct['rating'] ?? 0);
                             for ($star = 1; $star <= 5; $star++):
                             ?>
                                 <?php if ($star <= $rating): ?>
@@ -168,14 +195,14 @@
                             <?php endfor; ?>
                         </div>
                         <div class="mt-2 flex items-center justify-between w-full">
-                            <?php if ($product['promotion_price']): ?>
-                                <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['price']) ?></span>
-                                <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price']) ?></span>
+                            <?php if ($sProduct['promotion_price']): ?>
+                                <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($sProduct['price']) ?></span>
+                                <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($sProduct['promotion_price']) ?></span>
                             <?php else: ?>
-                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['price']) ?></span>
+                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($sProduct['price']) ?></span>
                             <?php endif; ?>
                         </div>
-                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['sold_quantity']) ?? 0 ?></span>
+                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($sProduct['sold_quantity']) ?? 0 ?></span>
                     </a>
                 </div>
             <?php endforeach; ?>
@@ -185,11 +212,11 @@
         <!-- Thêm các sản phẩm khác tương tự -->
     </div>
     <div class="flex justify-center mt-5">
-        <a href="#" class="px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Xem thêm</a>
+        <a href="<?= Redirect::product()->getUrl() ?>" class="px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Xem thêm</a>
     </div>
 </div>
 
-<div class="p-4 bg-white rounded-md flex items-center justify-between mt-6 grid-cols-12">
+<div class="p-4 mt-10 bg-white rounded-md flex items-center justify-between grid-cols-12">
     <!-- Thông tin cửa hàng -->
     <div class="flex items-center gap-4 grid-cols-4">
         <!-- Logo -->
@@ -250,61 +277,28 @@
     </div>
 
     <div class="mt-4 grid grid-cols-12 gap-4 items-start">
-        <div class="col-span-3 text-gray-600 font-medium leading-6">Danh Mục</div>
-        <div class="col-span-9 flex items-center gap-2">
-            <nav class="text-sm text-gray-600 mb-4">
-                <a href="#" class="text-blue-500 hover:underline">Shopee</a> &gt;
-                <a href="#" class="text-blue-500 hover:underline">Mẹ & Bé</a> &gt;
-                <a href="#" class="text-blue-500 hover:underline">Đồ chơi</a> &gt;
-                <a href="#" class="text-blue-500 hover:underline">Đồ chơi cho trẻ sơ sinh & trẻ nhỏ</a>
-            </nav>
-        </div>
-    </div>
-
-    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
-        <div class="col-span-3 text-gray-600 font-medium leading-6">Kho</div>
+        <div class="col-span-3 text-gray-600 font-medium leading-6">Danh mục</div>
         <div class="col-span-9 flex items-center gap-2">
             <p class="text-gray-800">
-                33072
+                <?= Util::encodeHtml($category['name']) ?>
             </p>
         </div>
     </div>
 
-    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
-        <div class="col-span-3 text-gray-600 font-medium leading-6">Xuất xứ</div>
-        <div class="col-span-9 flex items-center gap-2">
-            <p class="text-gray-800">
-                Việt Nam
-            </p>
-        </div>
-    </div>
+    <?php if (!empty($productDetail)): ?>
+        <?php foreach ($productDetail as $detail): ?>
+            <div class="mt-4 grid grid-cols-12 gap-4 items-start">
+                <div class="col-span-3 text-gray-600 font-medium leading-6"><?= Util::encodeHtml($detail['name']) ?></div>
+                <div class="col-span-9 flex items-center gap-2">
+                    <p class="text-gray-800">
+                        <?= Util::encodeHtml($detail['description']) ?>
+                    </p>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
 
-    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
-        <div class="col-span-3 text-gray-600 font-medium leading-6">Tên tổ chức chịu trách nhiệm sản xuất</div>
-        <div class="col-span-9 flex items-center gap-2">
-            <p class="text-gray-800">
-                BGHOUSE
-            </p>
-        </div>
-    </div>
 
-    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
-        <div class="col-span-3 text-gray-600 font-medium leading-6">Địa chỉ tổ chức chịu trách nhiệm sản xuất</div>
-        <div class="col-span-9 flex items-center gap-2">
-            <p class="text-gray-800">
-                QUẬN 11, TPHCM
-            </p>
-        </div>
-    </div>
-
-    <div class="mt-4 grid grid-cols-12 gap-4 items-start">
-        <div class="col-span-3 text-gray-600 font-medium leading-6">Gửi từ</div>
-        <div class="col-span-9 flex items-center gap-2">
-            <p class="text-gray-800">
-                TP. Hồ Chí Minh
-            </p>
-        </div>
-    </div>
 </div>
 
 <!-- Mô tả sản phẩm -->
