@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {});
+document.addEventListener("DOMContentLoaded", () => { });
 
 function showNotification(message, type = "success", duration = 3000) {
     const $notification = $("#notification");
@@ -228,13 +228,13 @@ function showPriceProductDeatil(productVariants) {
                 $("#discount")
                     .text(
                         "-" +
-                            (
-                                ((parseFloat(matchingVariant.price) -
-                                    finalPrice) /
-                                    parseFloat(matchingVariant.price)) *
-                                100
-                            ).toFixed(0) +
-                            "%"
+                        (
+                            ((parseFloat(matchingVariant.price) -
+                                finalPrice) /
+                                parseFloat(matchingVariant.price)) *
+                            100
+                        ).toFixed(0) +
+                        "%"
                     )
                     .show();
             } else {
@@ -255,4 +255,63 @@ function formatCurrency(value) {
     })
         .format(value)
         .replace(/\s₫/, "₫");
+}
+
+// Hàm chuyển ảnh trong trang productDetails
+function imgTransfer() {
+    const mainImg = $("#main-img");
+    const thumbnails = $("#thumbnails img");
+    const prevButton = $("#prev-btn");
+    const nextButton = $("#next-btn");
+    let currentIndex = 0;
+
+    // Cập nhật hình ảnh chính và đánh dấu ảnh được chọn
+    function updateMainImage(index) {
+        if (thumbnails.length > 0) {
+            currentIndex = index;
+            const newSrc = thumbnails.eq(currentIndex).attr("src");
+            mainImg.attr("src", newSrc);
+
+            // Xóa viền ở tất cả ảnh nhỏ
+            thumbnails.removeClass("border-2 border-blue-500");
+
+            // Thêm viền cho ảnh đang được chọn
+            thumbnails.eq(currentIndex).addClass("border-2 border-blue-500");
+        }
+    }
+
+    // Lắng nghe sự kiện click trên ảnh nhỏ
+    thumbnails.each(function (index) {
+        $(this).on("click", function () {
+            updateMainImage(index);
+        });
+    });
+
+    // Xử lý nút prev
+    prevButton.on("click", function () {
+        if (thumbnails.length > 0) {
+            currentIndex = (currentIndex - 1 + thumbnails.length) % thumbnails.length;
+            updateMainImage(currentIndex);
+        }
+    });
+
+    // Xử lý nút next
+    nextButton.on("click", function () {
+        if (thumbnails.length > 0) {
+            currentIndex = (currentIndex + 1) % thumbnails.length;
+            updateMainImage(currentIndex);
+        }
+    });
+
+    // Đặt hình ảnh mặc định ban đầu (nếu có ảnh mặc định)
+    const defaultImageSrc = mainImg.attr("src");
+    const defaultIndex = thumbnails.toArray().findIndex(img => $(img).attr("src") === defaultImageSrc);
+
+    if (defaultIndex !== -1) {
+        currentIndex = defaultIndex;
+    } else {
+        currentIndex = 0;
+    }
+
+    updateMainImage(currentIndex);
 }

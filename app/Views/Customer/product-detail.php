@@ -30,7 +30,7 @@
             ?>
 
             <?php if ($defaultImage): ?>
-                <img class="w-full h-full object-cover max-w-[550px] max-h-[550px] rounded-md"
+                <img id="main-img" class="w-full h-full object-cover max-w-[550px] max-h-[550px] rounded-md"
                     src="<?= Asset::getProduct($defaultImage) ?>"
                     alt="<?= Asset::getProduct($defaultImage) ?>">
             <?php else: ?>
@@ -40,22 +40,27 @@
 
             <!-- Danh sách ảnh -->
             <div class="relative mt-4">
-                <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
+                <button id="prev-btn" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
-                <div class="grid grid-cols-5 gap-2">
+                <div id="thumbnails" class="grid grid-cols-5 gap-2 px-10">
                     <?php if (!empty($images)): ?>
                         <?php foreach ($images as $image): ?>
-                            <img class="w-full h-16 rounded-md cursor-pointer" src="<?= Asset::getProduct($image['path']) ?>" alt="<?= Asset::getProduct($image['path']) ?>">
+                            <img class="size-24 border border-1 border-gray rounded-md cursor-pointer object-contain" src="<?= Asset::getProduct($image['path']) ?>" alt="<?= Asset::getProduct($image['path']) ?>">
                         <?php endforeach; ?>
                     <?php else: ?>
                         <img class="w-full h-16 rounded-md cursor-pointer" src="" alt="error">
                     <?php endif; ?>
                 </div>
-                <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
+                <button id="next-btn" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
+            <script>
+                $(document).ready(function() {
+                    imgTransfer()
+                })
+            </script>
         </div>
 
         <!-- Product Details -->
