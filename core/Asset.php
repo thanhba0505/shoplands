@@ -20,6 +20,7 @@ class Asset
 
     public static function getImgUpload($file_name, $v = false)
     {
+        $file_name = ltrim($file_name, '/');
         return self::url('uploads/img/' . $file_name, $v);
     }
 

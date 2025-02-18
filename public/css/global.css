@@ -2,6 +2,10 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+img {
+    user-select: none;
+}
+
 /* Checkbox */
 .custom-checkbox * {
     box-sizing: border-box;

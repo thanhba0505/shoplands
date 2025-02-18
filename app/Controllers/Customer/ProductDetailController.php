@@ -6,6 +6,7 @@ require_once 'app/Models/ProductImage.php';
 require_once 'app/Models/ProductDetail.php';
 require_once 'app/Models/Category.php';
 require_once 'app/Models/Review.php';
+require_once 'app/Models/ReviewImage.php';
 
 class ProductDetailController
 {
@@ -79,10 +80,37 @@ class ProductDetailController
 
         // Lấy danh sách đánh giá
         $reviewModel = new Review();
-        $reviews['list'] = $reviewModel->getReviewsByProductId($id);
+        $reviews['content'] = $reviewModel->getReviewsByProductId($id);
+
+        if (!empty($reviews['content'])) {
+            $reviewImageModel = new ReviewImage();
+            foreach ($reviews['content'] as $key => $value) {
+                $reviews['content'][$key]['images'] = $reviewImageModel->getImagesByReviewId($value['review_id']);
+                $reviews['content'][$key]['variants'] = $productVariantModel->getVariantValueByProductVariantId($value['product_variant_id']);
+            }
+        }
 
         $reviews['averageRating'] = $reviewModel->getAverageRatingByProductId($id);
+        $reviews['total'] = $reviewModel->getTotalReviewsByProductId($id);
+        $reviews['totalWithComments'] = $reviewModel->getReviewCountWithCommentByProductId($id);
+        $reviews['totalWithImages'] = $reviewModel->getReviewCountWithImagesByProductId($id);
 
+        $ratingCounts = $reviewModel->getRatingCountsByProductId($id);
+
+        $ratings = [];
+
+        for ($i = 5; $i >= 1; $i--) {
+            $ratings[$i] = 0; 
+        }
+
+        foreach ($ratingCounts as $row) {
+            $ratings[$row['rating']] = $row['count'];
+        }
+
+        $reviews['ratingCounts'] = $ratings;
+
+
+        Console::log($reviews);
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,

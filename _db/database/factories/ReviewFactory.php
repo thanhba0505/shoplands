@@ -13,9 +13,16 @@ class ReviewFactory extends Factory
 
     public function definition(): array
     {
+        $comment = '';
+
+        if ($this->faker->boolean()) {
+            $comment = $this->faker->text(200);
+        }
+
         return [
             'rating' => $this->faker->numberBetween(1, 5), // Đánh giá ngẫu nhiên từ 1 đến 5
-            'comment' => $this->faker->text(200), // Câu bình luận ngẫu nhiên
+            'comment' => $comment, // Câu bình luận ngẫu nhiên
+            'date_time' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'user_id' => User::inRandomOrder()->first()->id, // Lấy ngẫu nhiên user từ bảng users
             'product_variant_id' => ProductVariant::inRandomOrder()->first()->id, // Lấy ngẫu nhiên product_variant từ bảng product_variants
         ];

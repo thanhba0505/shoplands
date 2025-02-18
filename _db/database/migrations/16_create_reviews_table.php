@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->integer('rating');
-            $table->text('comment')->nullable();
+            $table->integer('rating')->nullable();
+            $table->text('comment');
+            $table->dateTime('date_time')->nullable();
             $table->unsignedBigInteger('user_id'); // Foreign key
             $table->unsignedBigInteger('product_variant_id');  // Foreign key
             $table->timestamps();
