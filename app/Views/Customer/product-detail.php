@@ -322,74 +322,63 @@
     <!-- Rating Overview -->
     <div class="grid grid-cols-6 gap-4 items-center border border-blue-500 text-gray-500 bg-blue-50 rounded-lg py-10">
         <div class="col-span-1 text-center">
-            <p class="text-4xl font-bold text-red-500">4.8/5</p>
+            <p class="text-4xl font-bold text-red-500"><?= Util::formatNumber($reviews['averageRating'], 1) ?: 0 ?>/5</p>
             <div class="flex justify-center mt-2">
-                <span class="text-yellow-400 text-xl">★★★★★</span>
+                <?= Other::ratingStar($reviews['averageRating']) ?>
             </div>
         </div>
+
         <div class="col-span-5 flex flex-wrap gap-2">
-            <button class="px-4 py-2 bg-red-100 text-red-500 rounded-md hover:bg-red-100">Tất Cả</button>
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">5 Sao (1,8k)</button>
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">4 Sao (104)</button>
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">3 Sao (62)</button>
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">2 Sao (21)</button>
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">1 Sao (26)</button>
-            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">Có Bình Luận (1,2k)</button>
+            <button class="px-4 py-2 bg-red-100 text-red-500 rounded-md hover:bg-red-100">Tất Cả (<?= Util::formatNumberShort($reviews['total']) ?>)</button>
+            <?php foreach ($reviews['ratingCounts'] as $rating => $count): ?>
+                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100"><?= Util::encodeHtml($rating) ?> Sao (<?= Util::formatNumberShort($count) ?>)</button>
+            <?php endforeach; ?>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">Có Bình Luận (<?= Util::formatNumberShort($reviews['totalWithComments']) ?>)</button>
+            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-red-100">Có Hình Ảnh (<?= Util::formatNumberShort($reviews['totalWithImages']) ?>)</button>
         </div>
     </div>
 
     <!-- Review List -->
     <div class="mt-6 space-y-6">
-        <!-- Single Review -->
-        <div class="border-t pt-4">
-            <div class="flex items-center space-x-4">
-                <img src="https://via.placeholder.com/50" alt="User avatar" class="w-12 h-12 rounded-full">
-                <div>
-                    <p class="font-bold">nhungnguyen121017070919</p>
-                    <div class="flex items-center text-yellow-400">★★★★★</div>
-                    <p class="text-sm text-gray-500">2024-06-27 20:04 | Phân loại hàng: THẢM VOI XANH</p>
+        <?php if (!empty($reviews['content'])): ?>
+            <?php foreach ($reviews['content'] as $review): ?>
+                <div class="border-t pt-4">
+                    <div class="flex items-center space-x-4">
+                        <img src="<?= Asset::getAvatar($review['avatar']) ?>" alt="avatar" class="w-12 h-12 rounded-full">
+                        <div>
+                            <p class="font-bold"><?= Util::encodeHtml($review['username']) ?></p>
+                            <div class="flex items-center text-yellow-400"><?= Other::ratingStar($review['rating'], 'text-xs') ?></div>
+                            <p class="text-sm text-gray-500"><?= Util::formatDateTime($review['date_time']) ?>
+                                | Phân loại hàng:
+                                <?= implode(', ', array_map(fn($variant) => Util::encodeHtml($variant['value']), $review['variants'])) ?>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-gray-700">
+                        <p><?= Util::encodeHtml($review['comment']) ?></p>
+                    </div>
+
+                    <?php if (!empty($review['images'])): ?>
+                        <?php foreach ($review['images'] as $image): ?>
+                            <div class="mt-2 flex justify-start gap-2">
+                                <img src="<?= Asset::getProduct($image['path']) ?>" alt="review image" class="rounded-md size-40">
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div>
+                <div class="border-t pt-4">
+                    Không có đánh giá nào
                 </div>
             </div>
-            <div class="mt-2 text-gray-700">
-                <p>Sp ưng ý nhất sau khi đặt 4 đơn hàng 10đ cho shop</p>
-            </div>
-            <div class="mt-2 flex justify-start gap-2">
-                <img src="https://via.placeholder.com/100" alt="Image 1" class="rounded-md size-40">
-                <img src="https://via.placeholder.com/100" alt="Image 2" class="rounded-md size-40">
-
-            </div>
-            <div class="mt-2 text-sm text-gray-500">58 lượt thích</div>
-        </div>
-
-        <!-- Another Review -->
-        <div class="border-t pt-4">
-            <div class="flex items-center space-x-4">
-                <img src="https://via.placeholder.com/50" alt="User avatar" class="w-12 h-12 rounded-full">
-                <div>
-                    <p class="font-bold">duongthuy140714</p>
-                    <div class="flex items-center text-yellow-400">★★★★★</div>
-                    <p class="text-sm text-gray-500">2024-07-05 10:35 | Phân loại hàng: THẢM VOI XANH</p>
-                </div>
-            </div>
-            <div class="mt-2 text-gray-700">
-                <p>Đóng gói cẩn thận. Mua Shopee Choice 3 món tính ra món này có 50k. Chưa mua pin lắp thử nên k biết phát nhạc ổn k.</p>
-            </div>
-            <div class="mt-2 flex justify-start gap-2">
-                <img src="https://via.placeholder.com/100" alt="Image 1" class="rounded-md size-40">
-                <img src="https://via.placeholder.com/100" alt="Image 2" class="rounded-md size-40">
-            </div>
-            <div class="mt-2 text-sm text-gray-500">18 lượt thích</div>
-        </div>
+        <?php endif; ?>
     </div>
-    <!-- Pagination -->
-    <div class="mt-6 flex justify-center items-center space-x-2">
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">&lt;</button>
-        <button class="px-3 py-1 bg-red-500 text-white rounded">1</button>
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">2</button>
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">3</button>
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">4</button>
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">5</button>
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">...</button>
-        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">&gt;</button>
-    </div>
+
+    <?php if (!empty($reviews['content'])): ?>
+        <div>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Xem thêm</button>
+        </div>
+    <?php endif; ?>
 </div>

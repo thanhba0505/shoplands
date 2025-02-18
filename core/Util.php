@@ -7,7 +7,7 @@ class Util
     {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
-    
+
     // Mã hóa chuỗi bằng htmlspecialchars
     public static function nl2br($string)
     {
@@ -20,6 +20,33 @@ class Util
     {
         $number = self::encodeHtml($number);
         return number_format($number, 0, ',', '.') . $currency;
+    }
+
+    // Định dạng số (VD: 2.4)
+    public static function formatNumber($number, $decimal = 2)
+    {
+        $number = self::encodeHtml($number);
+        return number_format($number, $decimal, '.', '');
+    }
+
+    // Định dạng số thành 1k, 3.3k
+    public static function formatNumberShort($number, $decimal = 1)
+    {
+        $number = self::encodeHtml($number);
+
+        if ($number < 1000) {
+            return number_format($number); // Số nhỏ hơn 1000 giữ nguyên
+        }
+
+        $units = ['k', 'M', 'B', 'T']; // Đơn vị: nghìn, triệu, tỷ, nghìn tỷ
+        $unitIndex = 0;
+
+        while ($number >= 1000 && $unitIndex < count($units)) {
+            $number /= 1000;
+            $unitIndex++;
+        }
+
+        return number_format($number, $decimal, '.', '') . $units[$unitIndex - 1];
     }
 
     // Định dạng thời gian theo định dạng tùy chỉnh

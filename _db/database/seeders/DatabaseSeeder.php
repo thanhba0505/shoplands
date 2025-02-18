@@ -20,12 +20,10 @@ class DatabaseSeeder extends Seeder
         $this->call([ProductSeeder::class]); // ------------ y = 60
         // $this->call([ProductImageSeeder::class]); // product
         // $this->call([ProductDetailSeeder::class]); // product
-        // $this->call([FlashSaleTimeSeeder::class]); // 6
         $this->call([ProductVariantSeeder::class]); // product
         // $this->call([ProductAttributeSeeder::class]); // product
         // $this->call([ProductAttributeValueSeeder::class]); // product
         // $this->call([ProductVariantValueSeeder::class]); // product
-        // $this->call([FlashSaleProductSeeder::class]); // product_variant
         $this->call([ReviewSeeder::class]);  // user
         // $this->call([CartSeeder::class]); // user
         // $this->call([OrderSeeder::class]); // user

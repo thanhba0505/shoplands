@@ -12,6 +12,7 @@ class Review extends Model
     protected $fillable = [
         'rating',
         'comment',
+        'date_time',
         'user_id',
         'product_variant_id',
     ];
