@@ -23,15 +23,16 @@ class Other
                 </div>';
     }
 
-    public static function checkbox($name, $value, $label = '')
+    public static function checkbox($name, $value, $label = '', $checked = false)
     {
         $label = Util::encodeHtml($label);
         $name = Util::encodeHtml($name);
         $value = Util::encodeHtml($value);
+        $checkedAttr = $checked ? ' checked="checked"' : '';
 
         return '<div class="custom-checkbox">
-                    <input class="inp-cbx" id="' . $value . '" name="' . $name . '" value="' . $value . '" type="checkbox"/>
-                    <label class="cbx" for="' . $value . '">
+                    <input class="inp-cbx" id="' . $name . $value . '" name="' . $name . '" value="' . $value . '" type="checkbox"' . $checkedAttr . '/>
+                    <label class="cbx w-full h-full" for="' . $name .  $value . '">
                         <span>
                             <svg width="12px" height="10px">
                                 <use xlink:href="#check-4"></use>
@@ -46,6 +47,7 @@ class Other
                     </svg>
                 </div>';
     }
+
 
     public static function ratingStar($rating, $fontSize = 'text-xl')
     {

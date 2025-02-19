@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => { });
+document.addEventListener("DOMContentLoaded", () => {});
 
 function showNotification(message, type = "success", duration = 3000) {
     const $notification = $("#notification");
@@ -228,13 +228,13 @@ function showPriceProductDeatil(productVariants) {
                 $("#discount")
                     .text(
                         "-" +
-                        (
-                            ((parseFloat(matchingVariant.price) -
-                                finalPrice) /
-                                parseFloat(matchingVariant.price)) *
-                            100
-                        ).toFixed(0) +
-                        "%"
+                            (
+                                ((parseFloat(matchingVariant.price) -
+                                    finalPrice) /
+                                    parseFloat(matchingVariant.price)) *
+                                100
+                            ).toFixed(0) +
+                            "%"
                     )
                     .show();
             } else {
@@ -290,7 +290,8 @@ function imgTransfer() {
     // Xử lý nút prev
     prevButton.on("click", function () {
         if (thumbnails.length > 0) {
-            currentIndex = (currentIndex - 1 + thumbnails.length) % thumbnails.length;
+            currentIndex =
+                (currentIndex - 1 + thumbnails.length) % thumbnails.length;
             updateMainImage(currentIndex);
         }
     });
@@ -305,7 +306,9 @@ function imgTransfer() {
 
     // Đặt hình ảnh mặc định ban đầu (nếu có ảnh mặc định)
     const defaultImageSrc = mainImg.attr("src");
-    const defaultIndex = thumbnails.toArray().findIndex(img => $(img).attr("src") === defaultImageSrc);
+    const defaultIndex = thumbnails
+        .toArray()
+        .findIndex((img) => $(img).attr("src") === defaultImageSrc);
 
     if (defaultIndex !== -1) {
         currentIndex = defaultIndex;
@@ -314,4 +317,14 @@ function imgTransfer() {
     }
 
     updateMainImage(currentIndex);
+}
+
+// Xóa input text rỗng khi submit
+function removeEmptyFields(form) {
+    let inputs = form.querySelectorAll("input[type='text']");
+    inputs.forEach((input) => {
+        if (input.value.trim() === "") {
+            input.removeAttribute("name"); // Xóa input rỗng để không gửi lên server
+        }
+    });
 }

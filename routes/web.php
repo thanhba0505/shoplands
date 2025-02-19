@@ -18,6 +18,7 @@ $router->get('/register', 'Auth/RegisterController@show');
 
 // Trang sản phẩm ---------------------------------------------------------------------
 $router->get('/product', 'Customer/ProductController@show');
+$router->post('/product', 'Customer/ProductController@show');
 
 // Trang chi tiết sản phẩm ---------------------------------------------------------------------
 $router->get('/product/detail', 'Customer/ProductDetailController@show');

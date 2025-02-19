@@ -13,7 +13,7 @@
     <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $category): ?>
             <div class="col-span-2">
-                <a href="<?= Redirect::product("detail")->getUrl() . '?category=' . $category['slug'] ?>" class="flex flex-col items-center">
+                <a href="<?= Redirect::product()->withQuery(['categories[]' => $category['id']])->getUrl() ?>" class="flex flex-col items-center">
                     <div class="w-full h-32">
                         <img class="object-cover w-full h-full" src="<?= Asset::getImgApp($category['slug'] . '.webp') ?>" alt="">
                     </div>

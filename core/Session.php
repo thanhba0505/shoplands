@@ -24,15 +24,30 @@ class Session
     }
 
     // Lấy từ session
-    public static function get($key)
+    public static function get($key, $default = null)
     {
-        return $_SESSION[$key] ?? null;
+        return $_SESSION[$key] ?? $default;
+    }
+
+    // Dùng 1 lần
+    public static function getOnce($key, $default = null)
+    {
+        $value = self::get($key, $default);
+        self::remove($key);
+        return $value;
     }
 
     // Xóa khỏi session
     public static function remove($key)
     {
         unset($_SESSION[$key]);
+        return true;
+    }
+
+    // Xóa all session
+    public static function removeAll()
+    {
+        $_SESSION = [];
         return true;
     }
 
