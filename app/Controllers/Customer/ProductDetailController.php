@@ -7,6 +7,7 @@ require_once 'app/Models/ProductDetail.php';
 require_once 'app/Models/Category.php';
 require_once 'app/Models/Review.php';
 require_once 'app/Models/ReviewImage.php';
+require_once 'app/Models/Seller.php';
 
 class ProductDetailController
 {
@@ -17,6 +18,8 @@ class ProductDetailController
         // Lấy thông tin chi tiêt sản phẩm
         $productModel = new Product();
         $product = $productModel->getByProductId($id);
+        $product['quantity'] = $productModel->getQuantityByProductId($id);
+        $product['sold_quantity'] = $productModel->getSoldQuantityByProductId($id);
 
         $productVariantModel = new ProductVariant();
         $productVariantResult = $productVariantModel->getByProductId($id);
@@ -66,6 +69,12 @@ class ProductDetailController
         // Lấy danh sách sản phẩm tương tự
         $similarProducts = $productModel->getProducts(6);
 
+        // Lấy danh sách sản phẩm của shop
+        $shopProducts = $productModel->getProducts(6, sellerId: $product['seller_id']);
+
+        // Lấy danh sách sản phẩm gợi ý
+        $relatedProducts = $productModel->getProducts(30);
+
         // Lấy hình ảnh sản phẩm
         $imageModel = new ProductImage();
         $images = $imageModel->getImagesByProductId($id);
@@ -81,6 +90,7 @@ class ProductDetailController
         // Lấy danh sách đánh giá
         $reviewModel = new Review();
         $reviews['content'] = $reviewModel->getReviewsByProductId($id);
+
 
         if (!empty($reviews['content'])) {
             $reviewImageModel = new ReviewImage();
@@ -100,7 +110,7 @@ class ProductDetailController
         $ratings = [];
 
         for ($i = 5; $i >= 1; $i--) {
-            $ratings[$i] = 0; 
+            $ratings[$i] = 0;
         }
 
         foreach ($ratingCounts as $row) {
@@ -109,19 +119,31 @@ class ProductDetailController
 
         $reviews['ratingCounts'] = $ratings;
 
+        // Lấy thông tin shop
+        $sellerModel = new Seller();
+        $seller = $sellerModel->findBySellerId($product['seller_id']);
+
+        $reviewInfo = $sellerModel->getReviewInfoBySellerId($product['seller_id']);
+        $seller['countReviews'] = $reviewInfo['count'];
+        $seller['averageRating'] = $reviewInfo['rating'];
+
+        $seller['countProducts'] = $sellerModel->getProductCountBySellerId($product['seller_id']);
 
         Console::log($reviews);
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,
             'product' => $product,
+            'shopProducts' => $shopProducts,
+            'relatedProducts' => $relatedProducts,
             'productVariant' => $productVariant,
             'attributes' => $attributes,
             'similarProducts' => $similarProducts,
             'images' => $images,
             'productDetail' => $productDetail,
             'category' => $category,
-            'reviews' => $reviews
+            'reviews' => $reviews,
+            'seller' => $seller
         ];
 
         return View::make('Customer/product-detail', $data);

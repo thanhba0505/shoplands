@@ -4,9 +4,18 @@ require_once 'app/Models/ConnectDatabase.php';
 
 class Product
 {
-    public function getProducts($limit = 12)
+    // Lấy đanh sách sản phẩm
+    public function getProducts($limit = 12, $sellerId = null)
     {
         $query = new ConnectDatabase();
+
+        $sqlWhere = '';
+        $params = ['default' => 1];
+
+        if ($sellerId !== null) {
+            $sqlWhere = "AND p.seller_id = :sellerId";
+            $params['sellerId'] = $sellerId;
+        }
 
         $sql = "
             SELECT
@@ -23,7 +32,7 @@ class Product
                 JOIN product_images pi ON pi.product_id = p.id
                 LEFT JOIN reviews r ON r.product_variant_id = pv.id
             WHERE
-                pi.default = :default
+                pi.default = :default " . $sqlWhere . "
             GROUP BY
                 p.id,
                 p.name,
@@ -34,11 +43,12 @@ class Product
                 $limit
         ";
 
-        $result = $query->query($sql, ['default' => 1])->fetchAll();
+        $result = $query->query($sql, $params)->fetchAll();
 
         return $result;
     }
 
+    // Lấy danh sách sản phẩm theo người bán (cho người bán)
     public function getProductsBySellerId($seller_id, $status = null, $limit = 12)
     {
         $query = new ConnectDatabase();
@@ -88,6 +98,45 @@ class Product
         return $result;
     }
 
+    // Lấy số sản phẩm đã bán
+    public function getSoldQuantityByProductId($product_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                sum(pv.sold_quantity) AS sold_quantity
+            FROM
+                product_variants pv
+            WHERE
+                pv.product_id = :product_id
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id])->fetch();
+
+        return $result['sold_quantity'] ?? 0;
+    }
+
+    // Lấy số sản phẩm tồn kho
+    public function getQuantityByProductId($product_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                sum(pv.quantity) AS quantity
+            FROM
+                product_variants pv
+            WHERE
+                pv.product_id = :product_id
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id])->fetch();
+
+        return $result['quantity'] ?? 0;
+    }
+
+    // Lấy đanh sách thông tin sản phẩm sử dụng product_id 
     public function getByProductId($product_id)
     {
         $query = new ConnectDatabase();
@@ -97,7 +146,8 @@ class Product
                 p.id AS product_id,
                 p.name AS product_name,
                 p.description AS product_description,
-                p.status AS product_status
+                p.status AS product_status,
+                p.seller_id AS seller_id
             FROM
                 products p
             WHERE
