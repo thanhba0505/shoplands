@@ -1,6 +1,6 @@
-<!-- SIDEBAR -->
 <form method="GET" action="<?= Redirect::product()->getUrl() ?>" onsubmit="removeEmptyFields(this)">
     <div class="grid grid-cols-6 gap-4">
+        <!-- SIDEBAR -->
         <div class="col-span-1 ">
             <!-- Bộ lọc tìm kiếm -->
 

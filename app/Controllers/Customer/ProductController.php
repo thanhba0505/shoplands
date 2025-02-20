@@ -37,14 +37,4 @@ class ProductController
 
         return View::make('Customer/products', $data);
     }
-
-    // xử lý lọc sản phẩm
-    public function filter()
-    {
-
-
-
-
-        return 'xử lý lọc sản phẩm';
-    }
 }

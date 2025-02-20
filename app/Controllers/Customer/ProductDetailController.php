@@ -15,6 +15,10 @@ class ProductDetailController
     {
         $id = Request::get('id');
 
+        if (!$id) {
+            Redirect::error()->notification('Không tìm thấy sản phẩm', 'error')->redirect();
+        }
+
         // Lấy thông tin chi tiêt sản phẩm
         $productModel = new Product();
         $product = $productModel->getByProductId($id);
@@ -129,7 +133,6 @@ class ProductDetailController
 
         $seller['countProducts'] = $sellerModel->getProductCountBySellerId($product['seller_id']);
 
-        Console::log($reviews);
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,

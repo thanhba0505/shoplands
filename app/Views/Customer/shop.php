@@ -1,262 +1,231 @@
 <div class="p-4 bg-white rounded-md flex items-center justify-between mt-6 grid-cols-12">
     <!-- Thông tin cửa hàng -->
-    <div class="flex items-center gap-4 grid-cols-4">
+    <div class="flex items-center gap-4 grid-cols-4 w-full">
         <!-- Logo -->
-        <img src="store-logo.jpg" alt="Store Logo" class="w-16 h-16 rounded-full object-cover">
+        <img src="<?= Asset::getAvatar($seller['logo']) ?>" alt="store-logo" class="size-20 rounded-full object-cover">
         <!-- Chi tiết cửa hàng -->
-        <div class="bg-white border-blue-500 p-4 rounded-md border">
-            <h2 class="text-lg font-semibold">MOOVER STORE</h2>
-            <p class="text-sm text-gray-500">Online 9 Phút Trước</p>
+        <div class="mr-12">
+            <h2 class="text-lg font-semibold"><?= Util::encodeHtml($seller['name']) ?></h2>
             <div class="flex gap-2 mt-2">
                 <!-- Nút Chat -->
-                <button class="flex items-center gap-1 px-4 py-1 text-blue-500 border border-blue-500 rounded-md text-sm hover:bg-blue-100">
-                    <i class="fas fa-comment"></i>
+                <!-- <button class="flex items-center gap-1 px-4 py-1 text-blue-500 border border-blue-500 rounded-md text-sm hover:bg-red-100">
+                    <i class="fa-brands fa-rocketchat text-blue-600"></i>
                     Chat Ngay
-                </button>
+                </button> -->
                 <!-- Nút Xem Shop -->
-                <button class="flex items-center gap-1 px-4 py-1 text-gray-500 border border-gray-300 rounded-md text-sm hover:bg-gray-100">
-                    <i class="fa-solid fa-plus"></i>
-                    Theo dõi
-                </button>
+                <a href="<?= Redirect::shop()->withQuery(['id' => $seller['id']])->getUrl() ?>" class="flex items-center gap-1 px-4 py-1 text-gray-500 border border-gray-300 rounded-md text-sm hover:bg-gray-100">
+                    <i class="fa-solid fa-store text-blue-600"></i>
+                    Xem Shop
+                </a>
             </div>
         </div>
 
-        <div class="grid grid-cols-9 gap-y-4 gap-x-4 text-sm text-gray-500">
+        <div class="grid grid-cols-6 gap-y-4 gap-x-8  text-gray-500">
             <!-- Hàng 1 -->
-            <div class="flex justify-between items-center col-span-3 mr-12">
-                <p>Đánh Giá</p>
-                <p class="text-red-500 font-semibold">8,3k</p>
+            <div class="flex justify-between items-center gap-10 col-span-3 mr-12">
+                <p>Xếp hạng</p>
+                <p class="text-red-500 font-semibold"><?= Util::formatNumber($seller['averageRating'], 1) ?></p>
             </div>
-            <div class="flex justify-between items-center col-span-3 mr-12">
-                <p>Tỉ Lệ Phản Hồi</p>
-                <p class="text-red-500 font-semibold">100%</p>
+            <div class="flex justify-between items-center gap-10 col-span-3">
+                <p>Lượt đánh giá</p>
+                <p class="text-red-500 font-semibold"><?= Util::formatNumberShort($seller['countReviews']) ?></p>
             </div>
-            <div class="flex justify-between items-center col-span-3">
-                <p>Tham Gia</p>
-                <p class="text-red-500 font-semibold">5 năm trước</p>
-            </div>
+
             <!-- Hàng 2 -->
-            <div class="flex justify-between items-center col-span-3 mr-12">
+            <div class="flex justify-between items-center gap-10 col-span-3 mr-12">
                 <p>Sản Phẩm</p>
-                <p class="text-red-500 font-semibold">179</p>
+                <p class="text-red-500 font-semibold"><?= Util::formatNumberShort($seller['countProducts']) ?></p>
             </div>
-            <div class="flex justify-between items-center col-span-3 mr-12">
-                <p>Thời Gian Phản Hồi</p>
-                <p class="text-red-500 font-semibold ml-12">trong vài giờ</p>
-            </div>
-            <div class="flex justify-between items-center col-span-3">
+            <!-- <div class="flex justify-between items-center gap-10 col-span-3">
                 <p>Người Theo Dõi</p>
                 <p class="text-red-500 font-semibold">38,7k</p>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
 
-<!-- Sản phẩm gợi ý -->
-<div class="mx-auto bg-white  rounded-lg p-6 mt-6">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">Sản phẩm gợi ý cho bạn</h2>
-        <a href="#" class="text-red-500 hover:underline text-sm flex items-center">
-            Xem Tất Cả &nbsp; &gt;
-        </a>
-    </div>
+<!-- Sản phẩm tương tự -->
+<div class="mt-10">
+    <div class="text-center text-xl font-bold py-3 bg-gray-100 text-gray-800">Sản phẩm bán chạy</div>
+    <div class="grid grid-cols-12 gap-4 mt-10">
 
-    <!-- Danh sách sản phẩm -->
-    <div class="grid grid-cols-6 gap-4">
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product1.jpg" alt="Product 1" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang unisex NEWBALANCE CAMPIN...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫250.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product2.jpg" alt="Product 2" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang PM BIG SEAN, unisex, mang siêu...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫280.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product3.jpg" alt="Product 3" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang Puma nam nữ, êm chân, dễ mix đồ...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫280.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product4.jpg" alt="Product 4" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép Quai Ngang P.u.m.a Suede Animal Crossing...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫280.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫224.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product5.jpg" alt="Product 5" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép Moover Crossing mẫu mới chống trơn đế cao 4...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫250.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
-            </div>
-        </div>
-
-        <div class="border border-red-200 p-2 rounded hover:border-red-500">
-            <img src="product6.jpg" alt="Product 6" class="w-full h-40 object-cover rounded">
-            <h3 class="text-sm font-medium mt-2">
-                Dép quai ngang nữ NewBalance 1102, màu s...
-            </h3>
-            <div class="flex items-center justify-between mt-1">
-                <span class="text-gray-400 text-sm line-through">₫250.000</span>
-                <span class="text-red-500 text-sm font-semibold">₫200.000</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="grid grid-cols-6 mt-6 gap-4">
-    <div class="col-span-1">
-        <div>
-            <h3 class="text-lg font-semibold text-gray-700 mb-2">Danh Mục</h3>
-            <ul class="space-y-2 text-sm text-gray-600">
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Thời trang nam
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Thời trang nữ
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Thời trang trẻ em
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Điện thoại và phụ kiện
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Đồng hồ
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Máy tính
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Nhà cửa đời sống
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Nhà sách online
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Phụ kiện trang sức
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Thể thao và du lịch
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Thiết bị điện tử
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 rounded text-red-500 focus:ring-red-400">
-                        Thiết bị gia dụng
-                    </label>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-span-5">
-        <div class="grid grid-cols-10 gap-4 mt-4">
-            <!-- Product Item -->
-            <?php if (!empty($products)): ?>
-                <?php foreach ($products as $product): ?>
-                    <div class="col-span-2">
-                        <a href="<?= Redirect::product("detail")->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                            <img class="mb-3 w-full h-48 object-cover" src="<?= Util::encodeHtml($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
-                            <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
-                            <div class="flex items-center mt-2">
-                                <?php
-                                $rating = round($product['rating'] ?? 0);
-                                for ($star = 1; $star <= 5; $star++):
-                                ?>
-                                    <?php if ($star <= $rating): ?>
-                                        <i class="fa-solid fa-star text-yellow-400"></i>
-                                    <?php else: ?>
-                                        <i class="fa-regular fa-star text-gray-400"></i>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
-                            </div>
-                            <div class="mt-2 flex items-center justify-between w-full">
-                                <?php if ($product['promotion_price']): ?>
-                                    <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['price']) ?></span>
-                                    <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price']) ?></span>
+        <!-- Product Item -->
+        <?php if (!empty($bestSellingProducts)): ?>
+            <?php foreach ($bestSellingProducts as $sProduct): ?>
+                <div class="col-span-2">
+                    <a href="<?= Redirect::product('detail')->withQuery(['id' => $sProduct['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                        <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($sProduct['image_path']) ?>" alt="<?= Util::encodeHtml($sProduct['name']) ?>">
+                        <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($sProduct['name']) ?></span>
+                        <div class="flex items-center mt-2">
+                            <?php
+                            $rating = round($sProduct['rating'] ?? 0);
+                            for ($star = 1; $star <= 5; $star++):
+                            ?>
+                                <?php if ($star <= $rating): ?>
+                                    <i class="fa-solid fa-star text-yellow-400"></i>
                                 <?php else: ?>
-                                    <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['price']) ?></span>
+                                    <i class="fa-regular fa-star text-gray-400"></i>
                                 <?php endif; ?>
-                            </div>
-                            <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['sold_quantity']) ?? 0 ?></span>
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-
-        <!-- Pagination -->
-        <div class="mt-6 flex justify-center items-center space-x-2">
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">&lt;</button>
-            <button class="px-3 py-1 bg-blue-500 text-white rounded">1</button>
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">2</button>
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">3</button>
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">4</button>
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">5</button>
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">...</button>
-            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">&gt;</button>
-        </div>
+                            <?php endfor; ?>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between w-full">
+                            <?php if ($sProduct['promotion_price']): ?>
+                                <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($sProduct['price']) ?></span>
+                                <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($sProduct['promotion_price']) ?></span>
+                            <?php else: ?>
+                                <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($sProduct['price']) ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($sProduct['sold_quantity']) ?? 0 ?></span>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
+
+<!-- Danh mục -->
+<form method="GET" action="<?= Redirect::shop()->getUrl() ?>" onsubmit="removeEmptyFields(this)">
+    <input type="text" name="id" value="<?= $seller['id'] ?>" hidden>
+    <div class="grid grid-cols-6 gap-4">
+        <!-- SIDEBAR -->
+        <div class="col-span-1 ">
+            <!-- Bộ lọc tìm kiếm -->
+
+            <div class="text-lg font-semibold">
+                Bộ lọc tìm kiếm
+            </div>
+
+            <!-- Khoảng giá -->
+            <div class="mt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Khoảng Giá</h3>
+                <div class="flex items-center space-x-2 mt-3">
+
+                    <?php
+                    $minPrice = $filter['min_price'];
+                    $maxPrice = $filter['max_price'];
+                    ?>
+
+                    <div class="relative w-80 max-w-md">
+                        <input
+                            type="text"
+                            name="min_price"
+                            value="<?= $minPrice ?? '' ?>"
+                            placeholder="Từ..."
+                            class="w-full px-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <span>-</span>
+                    <div class="relative w-80 max-w-md">
+                        <input
+                            type="text"
+                            name="max_price"
+                            value="<?= $maxPrice ?? '' ?>"
+                            placeholder="Đến..."
+                            class="w-full px-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Theo danh mục -->
+            <div class="mt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Theo Danh Mục</h3>
+                <ul class="space-y-1 pl-2 text-sm text-gray-600">
+                    <?php $filteredCategories = $filter['categories'] ?? []; ?>
+                    <?php foreach ($categories as $category) : ?>
+                        <li>
+                            <?php $checked = in_array($category['id'], $filteredCategories); ?>
+                            <?= Other::checkbox('categories[]', $category['id'], $category['name'], $checked); ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <!-- Đánh giá -->
+            <div class="mt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Theo Đánh Giá</h3>
+                <ul class="space-y-1 pl-2 text-sm text-gray-600">
+                    <?php $filteredRatings = $filter['ratings']; ?>
+                    <li><?= Other::checkbox('ratings[]', 5, '5 Sao', in_array('5', $filteredRatings)) ?></li>
+                    <li><?= Other::checkbox('ratings[]', 4, '4 Sao', in_array('4', $filteredRatings)) ?></li>
+                    <li><?= Other::checkbox('ratings[]', 3, '3 Sao', in_array('3', $filteredRatings)) ?></li>
+                    <li><?= Other::checkbox('ratings[]', 2, '2 Sao', in_array('2', $filteredRatings)) ?></li>
+                    <li><?= Other::checkbox('ratings[]', 1, '1 Sao', in_array('1', $filteredRatings)) ?></li>
+                </ul>
+            </div>
+
+
+
+            <!-- Xóa tất cả -->
+            <div class="mt-4 flex items-center space-x-2 bg-white sticky bottom-0 pb-6 pt-2">
+                <a href="<?= Redirect::product()->getUrl() ?>" type="submit" class="text-center w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50">
+                    LÀM LẠI
+                </a>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600">
+                    LỌC
+                </button>
+            </div>
+        </div>
+
+
+
+        <!-- CONTENT -->
+        <div class="col-span-5">
+            <div class="">
+                <div class="flex items-center justify-between px-4 py-3 bg-gray-100">
+                    <!-- Bộ lọc sắp xếp -->
+                    <div class="flex items-center space-x-4 text-sm font-medium text-gray-700">
+                        <div class="bg-white border border-gray-300 rounded-lg flex items"><?= Other::checkbox('latest', 1, 'Mới nhất', $arrange['latest']); ?></div>
+                        <div class="bg-white border border-gray-300 rounded-lg flex items"><?= Other::checkbox('popular', 1, 'Bán chạy', $arrange['popular']); ?></div>
+
+
+                        <!-- Select option -->
+                        <select name="price" class="px-4 py-2 h-full border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="" disabled <?= $arrange['price'] === '' ? 'selected' : '' ?>>Sắp xếp theo giá</option>
+                            <option value="asc" <?= $arrange['price'] === 'asc' ? 'selected' : '' ?>>Tăng dần</option>
+                            <option value="desc" <?= $arrange['price'] === 'desc' ? 'selected' : '' ?>>Giảm dần</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="grid grid-cols-10 gap-4 mt-4">
+                <!-- Product Item -->
+                <?php if (!empty($products)): ?>
+                    <?php foreach ($products as $product): ?>
+                        <div class="col-span-2">
+                            <a href="<?= Redirect::product("detail")->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                                <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
+                                <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
+                                <div class="flex items-center mt-2">
+                                    <?php
+                                    $rating = round($product['rating'] ?? 0);
+                                    for ($star = 1; $star <= 5; $star++):
+                                    ?>
+                                        <?php if ($star <= $rating): ?>
+                                            <i class="fa-solid fa-star text-yellow-400"></i>
+                                        <?php else: ?>
+                                            <i class="fa-regular fa-star text-gray-400"></i>
+                                        <?php endif; ?>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="mt-2 flex items-center justify-between w-full">
+                                    <?php if ($product['promotion_price']): ?>
+                                        <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['price']) ?></span>
+                                        <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price']) ?></span>
+                                    <?php else: ?>
+                                        <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['price']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['sold_quantity']) ?? 0 ?></span>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+
+        </div>
+    </div>
+</form>

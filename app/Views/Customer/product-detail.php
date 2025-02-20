@@ -195,6 +195,53 @@
     </div>
 </div>
 
+<!-- Chi tiết cửa hàng -->
+<div class="p-4 mt-10 bg-white rounded-md flex items-center justify-between grid-cols-12">
+    <!-- Thông tin cửa hàng -->
+    <div class="flex items-center gap-4 grid-cols-4 w-full">
+        <!-- Logo -->
+        <img src="<?= Asset::getAvatar($seller['logo']) ?>" alt="store-logo" class="size-20 rounded-full object-cover">
+        <!-- Chi tiết cửa hàng -->
+        <div class="mr-12">
+            <h2 class="text-lg font-semibold"><?= Util::encodeHtml($seller['name']) ?></h2>
+            <div class="flex gap-2 mt-2">
+                <!-- Nút Chat -->
+                <!-- <button class="flex items-center gap-1 px-4 py-1 text-blue-500 border border-blue-500 rounded-md text-sm hover:bg-red-100">
+                    <i class="fa-brands fa-rocketchat text-blue-600"></i>
+                    Chat Ngay
+                </button> -->
+                <!-- Nút Xem Shop -->
+                <a href="<?= Redirect::shop()->withQuery(['id' => $seller['id']])->getUrl() ?>" class="flex items-center gap-1 px-4 py-1 text-gray-500 border border-gray-300 rounded-md text-sm hover:bg-gray-100">
+                    <i class="fa-solid fa-store text-blue-600"></i>
+                    Xem Shop
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-6 gap-y-4 gap-x-8  text-gray-500">
+            <!-- Hàng 1 -->
+            <div class="flex justify-between items-center gap-10 col-span-3 mr-12">
+                <p>Xếp hạng</p>
+                <p class="text-red-500 font-semibold"><?= Util::formatNumber($seller['averageRating'], 1) ?></p>
+            </div>
+            <div class="flex justify-between items-center gap-10 col-span-3">
+                <p>Lượt đánh giá</p>
+                <p class="text-red-500 font-semibold"><?= Util::formatNumberShort($seller['countReviews']) ?></p>
+            </div>
+
+            <!-- Hàng 2 -->
+            <div class="flex justify-between items-center gap-10 col-span-3 mr-12">
+                <p>Sản Phẩm</p>
+                <p class="text-red-500 font-semibold"><?= Util::formatNumberShort($seller['countProducts']) ?></p>
+            </div>
+            <!-- <div class="flex justify-between items-center gap-10 col-span-3">
+                <p>Người Theo Dõi</p>
+                <p class="text-red-500 font-semibold">38,7k</p>
+            </div> -->
+        </div>
+    </div>
+</div>
+
 <!-- Chi tiết sản phẩm -->
 <div class="mx-auto bg-white  rounded-lg p-6 mt-6">
     <div class="flex justify-between items-center mb-4">
@@ -319,53 +366,6 @@
             <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Xem thêm</button>
         </div>
     <?php endif; ?>
-</div>
-
-<!-- Chi tiết cửa hàng -->
-<div class="p-4 mt-10 bg-white rounded-md flex items-center justify-between grid-cols-12">
-    <!-- Thông tin cửa hàng -->
-    <div class="flex items-center gap-4 grid-cols-4 w-full">
-        <!-- Logo -->
-        <img src="<?= Asset::getAvatar($seller['logo']) ?>" alt="store-logo" class="size-20 rounded-full object-cover">
-        <!-- Chi tiết cửa hàng -->
-        <div class="mr-12">
-            <h2 class="text-lg font-semibold"><?= Util::encodeHtml($seller['name']) ?></h2>
-            <div class="flex gap-2 mt-2">
-                <!-- Nút Chat -->
-                <!-- <button class="flex items-center gap-1 px-4 py-1 text-blue-500 border border-blue-500 rounded-md text-sm hover:bg-red-100">
-                    <i class="fa-brands fa-rocketchat text-blue-600"></i>
-                    Chat Ngay
-                </button> -->
-                <!-- Nút Xem Shop -->
-                <a href="<?= Redirect::shop($seller['id'])->getUrl() ?>" class="flex items-center gap-1 px-4 py-1 text-gray-500 border border-gray-300 rounded-md text-sm hover:bg-gray-100">
-                    <i class="fa-solid fa-store text-blue-600"></i>
-                    Xem Shop
-                </a>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-6 gap-y-4 gap-x-8  text-gray-500">
-            <!-- Hàng 1 -->
-            <div class="flex justify-between items-center gap-10 col-span-3 mr-12">
-                <p>Xếp hạng</p>
-                <p class="text-red-500 font-semibold"><?= Util::formatNumber($seller['averageRating'], 1) ?></p>
-            </div>
-            <div class="flex justify-between items-center gap-10 col-span-3">
-                <p>Lượt đánh giá</p>
-                <p class="text-red-500 font-semibold"><?= Util::formatNumberShort($seller['countReviews']) ?></p>
-            </div>
-
-            <!-- Hàng 2 -->
-            <div class="flex justify-between items-center gap-10 col-span-3 mr-12">
-                <p>Sản Phẩm</p>
-                <p class="text-red-500 font-semibold"><?= Util::formatNumberShort($seller['countProducts']) ?></p>
-            </div>
-            <!-- <div class="flex justify-between items-center gap-10 col-span-3">
-                <p>Người Theo Dõi</p>
-                <p class="text-red-500 font-semibold">38,7k</p>
-            </div> -->
-        </div>
-    </div>
 </div>
 
 <!-- Sản phẩm theo shop -->
