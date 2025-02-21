@@ -6,6 +6,13 @@ img {
     user-select: none;
 }
 
+/* Ẩn nút tăng giảm trên Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 /* Checkbox */
 .custom-checkbox * {
     box-sizing: border-box;

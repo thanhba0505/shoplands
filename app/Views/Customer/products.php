@@ -19,21 +19,11 @@
                     ?>
 
                     <div class="relative w-80 max-w-md">
-                        <input
-                            type="text"
-                            name="min_price"
-                            value="<?= $minPrice ?? '' ?>"
-                            placeholder="Từ..."
-                            class="w-full px-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <?= Other::inputField('min_price', $minPrice, ['placeholder' => 'Từ...']) ?>
                     </div>
                     <span>-</span>
                     <div class="relative w-80 max-w-md">
-                        <input
-                            type="text"
-                            name="max_price"
-                            value="<?= $maxPrice ?? '' ?>"
-                            placeholder="Đến..."
-                            class="w-full px-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <?= Other::inputField('max_price', $maxPrice, ['placeholder' => 'Đến...']) ?>
                     </div>
 
                 </div>
@@ -70,12 +60,8 @@
 
             <!-- Xóa tất cả -->
             <div class="mt-4 flex items-center space-x-2 bg-white sticky bottom-0 pb-6 pt-2">
-                <a href="<?= Redirect::product()->getUrl() ?>" type="submit" class="text-center w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50">
-                    LÀM LẠI
-                </a>
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600">
-                    LỌC
-                </button>
+                <?= Other::buttonLink('LÀM LẠI', Redirect::product()->getUrl(), 'linght', ['type' => 'submit']) ?>
+                <?= Other::button('LỌC', 'dark', ['type' => 'submit']) ?>
             </div>
         </div>
 

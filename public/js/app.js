@@ -1,12 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {});
 
 // Hiển thị thông báo
-let currentTimeout = null; // Lưu trữ timeout hiện tại
-let currentHideTimeout = null; // Lưu trữ timeout ẩn hiện tại
-let notificationStartTime = null; // Thời điểm bắt đầu hiển thị thông báo
-const MIN_DISPLAY_DURATION = 1000; // Thời gian tối thiểu thông báo phải hiển thị (1 giây)
-const DELAY_BETWEEN_NOTIFICATIONS = 500; // Khoảng delay giữa hai thông báo (0.5 giây)
-
 function showNotification(message, type = "success", duration = 3000) {
     const title = "Thông báo";
 
@@ -17,7 +11,7 @@ function showNotification(message, type = "success", duration = 3000) {
         icon: true,
         duration: duration,
         dismissable: true,
-        location:'bottom-right',
+        location: "bottom-right",
 
         // primaryButton: {
         //     text: "Approve",
@@ -423,5 +417,34 @@ function counter() {
             let value = parseInt(input.val(), 10);
             input.val(value + 1);
         });
+    });
+}
+
+// Xử lý checkbox group
+function checkboxGroup() {
+    // Lắng nghe sự kiện change trên checkbox group (s_ids[])
+    $('input[name="s_ids[]"]').on("change", function () {
+        const groupId = $(this).data("group"); // Lấy giá trị data-group
+        const isChecked = $(this).is(":checked"); // Kiểm tra trạng thái check
+
+        // Check/uncheck tất cả checkbox product (c_ids[]) trong cùng nhóm
+        $(`input[name="c_ids[]"][data-group="${groupId}"]`).prop(
+            "checked",
+            isChecked
+        );
+    });
+
+    // Lắng nghe sự kiện change trên checkbox product (c_ids[])
+    $('input[name="c_ids[]"]').on("change", function () {
+        const groupId = $(this).data("group"); // Lấy giá trị data-group
+        const groupCheckbox = $(
+            `input[name="s_ids[]"][data-group="${groupId}"]`
+        ); // Tìm checkbox group tương ứng
+        const allChecked =
+            $(`input[name="c_ids[]"][data-group="${groupId}"]`).length ===
+            $(`input[name="c_ids[]"][data-group="${groupId}"]:checked`).length;
+
+        // Nếu tất cả checkbox product trong nhóm được check, check checkbox group
+        groupCheckbox.prop("checked", allChecked);
     });
 }

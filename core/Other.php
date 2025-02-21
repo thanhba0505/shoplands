@@ -3,6 +3,7 @@
 class Other
 {
 
+    // Logo
     public static function logoSvg($fill = 'fill-white', $width = 120)
     {
         $fill = Util::encodeHtml($fill);
@@ -14,6 +15,7 @@ class Other
                 </svg>';
     }
 
+    // Loading
     public static function loading($size = 'size-10')
     {
         $size = Util::encodeHtml($size);
@@ -23,29 +25,115 @@ class Other
                 </div>';
     }
 
-    public static function checkbox($name, $value, $label = '', $checked = false)
+    // Input text
+    public static function inputField($name, $value = '', $attributes = [])
+    {
+        $name = Util::encodeHtml($name);
+        $value = Util::encodeHtml($value);
+        $attrString = '';
+        foreach ($attributes as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+        return '<input
+                    type="text"
+                    name="' . $name . '"
+                    value="' . $value . '"
+                    ' . $attrString . '
+                    class="w-full px-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300">
+                ';
+    }
+
+    // Input text
+    public static function inputNumber($name, $value = '', $attributes = [])
+    {
+        $name = Util::encodeHtml($name);
+        $value = Util::encodeHtml($value);
+        $attrString = '';
+        foreach ($attributes as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+        return '<input
+                    type="number"
+                    name="' . $name . '"
+                    value="' . $value . '"
+                    ' . $attrString . '
+                    class="w-full px-4 py-2 h-10 text-base text-center text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300">
+                ';
+    }
+
+    // Checkbox
+    public static function checkbox($name, $value, $label = '', $checked = false, $attributes = [])
     {
         $label = Util::encodeHtml($label);
         $name = Util::encodeHtml($name);
         $value = Util::encodeHtml($value);
         $checkedAttr = $checked ? ' checked="checked"' : '';
 
+        // Xử lý các thuộc tính tùy chỉnh
+        $attrString = '';
+        foreach ($attributes as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+
         return '<div class="custom-checkbox">
-                    <input class="inp-cbx" id="' . $name . $value . '" name="' . $name . '" value="' . $value . '" type="checkbox"' . $checkedAttr . '/>
-                    <label class="cbx ' . ($label == '' ? 'w-11' : 'w-full') . ' h-full" for="' . $name .  $value . '">
-                        <span>
-                            <svg width="12px" height="10px">
-                                <use xlink:href="#check-4"></use>
-                            </svg>
-                        </span>
-                        ' . (!empty($label) ? '<span>' . $label . '</span>' : '') . '
-                    </label>
-                    <svg class="inline-svg">
-                        <symbol id="check-4" viewbox="0 0 12 10">
-                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                        </symbol>
-                    </svg>
-                </div>';
+                <input class="inp-cbx" id="' . $name . $value . '" name="' . $name . '" value="' . $value . '" type="checkbox"' . $checkedAttr . $attrString . '/>
+                <label class="cbx ' . ($label == '' ? 'w-11' : 'w-full') . ' h-full" for="' . $name .  $value . '">
+                    <span>
+                        <svg width="12px" height="10px">
+                            <use xlink:href="#check-4"></use>
+                        </svg>
+                    </span>
+                    ' . (!empty($label) ? '<span>' . $label . '</span>' : '') . '
+                </label>
+                <svg class="inline-svg">
+                    <symbol id="check-4" viewbox="0 0 12 10">
+                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                    </symbol>
+                </svg>
+            </div>';
+    }
+
+    // Button
+    public static function button($text, $theme = 'light', $attributes = [])
+    {
+        $text = Util::encodeHtml($text);
+        $attrString = '';
+        foreach ($attributes as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+
+        if ($theme == 'light') {
+            $attrString .= ' class="w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50"';
+        } else {
+            $attrString .= ' class="w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600 transition-all duration-300";';
+        }
+
+        return '<button
+                    ' . $attrString . '>
+                    ' . $text . '
+                </button>';
+    }
+
+    // a
+    public static function buttonLink($text, $href = '#', $theme = 'light', $attributes = [])
+    {
+        $text = Util::encodeHtml($text);
+        $attrString = '';
+        foreach ($attributes as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+
+        if ($theme == 'light') {
+            $attrString .= ' class="text-center w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50"';
+        } else {
+            $attrString .= ' class="text-center w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600 transition-all duration-300";';
+        }
+
+        return '<a
+                    href="' . $href . '"
+                    ' . $attrString . '>
+                    ' . $text . '
+                </a>';
     }
 
 

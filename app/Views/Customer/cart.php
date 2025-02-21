@@ -6,7 +6,7 @@
                 <tr class="border-b border-gray-300 bg-blue-50">
                     <td class="w-24 py-4">
 
-                        <?= Other::checkbox('s_ids[]', $group['s_id']); ?>
+                        <?= Other::checkbox('s_ids[]', $group['s_id'], '', false, ['data-group' => $group['s_id']]); ?>
 
                     </td>
                     <td colspan="2">
@@ -25,7 +25,7 @@
                     <tr>
                         <td class="w-24">
 
-                            <?= Other::checkbox('c_ids[]', $product['c_id']); ?>
+                            <?= Other::checkbox('c_ids[]', $product['c_id'], '', false, ['data-group' => $group['s_id']]); ?>
 
                         </td>
                         <td class="w-24">
@@ -55,7 +55,10 @@
                             <?= Util::formatCurrency($product['pv_price']) ?>
                         </td>
                         <td class="text-center">
-
+                            <div class="flex items-center">
+                                <?= Other::button('-') ?>
+                                <?= Other::inputNumber('quantity', $product['c_quantity'], ['min' => 1, 'max' => $product['pv_quantity']]) ?>
+                            </div>
                         </td>
                         <td class="text-center">
                             <?= Util::formatCurrency($product['pv_price']) ?>
@@ -87,3 +90,9 @@
 <div class="w-full mt-8">
     <h2 class="text-center text-xl text-gray-700 " style="height: 1000px;">Có thể bạn cũng thích</h2>
 </div>
+
+<script>
+    $(document).ready(function() {
+        checkboxGroup();
+    });
+</script>
