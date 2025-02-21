@@ -12,8 +12,8 @@ class ProductVariantApi
             $productVariantModel = new ProductVariant();
             $quantity = $productVariantModel->getQuantityByProductVariantId($product_variant_id);
 
-            return Api::encode($quantity, 'success');
+            return Api::encode($quantity, 'Check stock successfully', 'success');
         }
-        return Api::encode(null, 'error');
+        return Api::encode(null, 'Check stock failed', 'error');
     }
 }

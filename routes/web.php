@@ -41,7 +41,6 @@ $router->post('api/cart', 'Customer/CartController@apiAdd', [AuthMiddleware::cla
 
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/order', 'Customer/OrderController@show', [AuthMiddleware::class]);
-$router->post('/api/ajax', 'Api/Ajax/Tab@testAjax');
 
 
 // Trang thiết lập thông tin ---------------------------------------------------------------------

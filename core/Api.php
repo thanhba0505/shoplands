@@ -2,11 +2,12 @@
 
 class Api
 {
-    public static function encode($data, $status = 'success')
+    public static function encode($data, $message = '', $status = 'success')
     {
         header('Content-Type: application/json');
         $response = [
             'status' => $status,
+            'message' => $message,
             'data' => $data
         ];
         return json_encode($response);
@@ -22,6 +23,6 @@ class Api
         require "./app/Views/$view.php";
         $content = ob_get_clean();
 
-        return self::encode($content, $status);
+        return self::encode($content, 'Yêu cầu thành công', $status);
     }
 }

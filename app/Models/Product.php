@@ -4,7 +4,7 @@ require_once 'app/Models/ConnectDatabase.php';
 
 class Product
 {
-    // Lấy đanh sách sản phẩm
+    // Lấy danh sách sản phẩm
     public function getProducts($limit = 12, $sellerId = null)
     {
         $query = new ConnectDatabase();
@@ -47,53 +47,38 @@ class Product
 
         return $result;
     }
-
-    // Lấy danh sách sản phẩm theo người bán (cho người bán)
-    public function getProductsBySellerId($seller_id, $status = null, $limit = 12)
+    public function getProductsShop($sellerId = null, $limit = 12)
     {
         $query = new ConnectDatabase();
 
         $sql = "
             SELECT
-                p.id AS product_id,
-                p.name AS product_name,
-                pi.image_path AS product_image,
-                c.name AS category,
-                p.status AS product_status,
-                MIN(pv.price) AS min_product_price,
-                MAX(pv.price) AS max_product_price,
-                SUM(pv.quantity) AS quantity,
-                SUM(pv.sold_quantity) AS sold_quantity
+                p.id,
+                p.name,
+                min(pv.price) AS price,
+                min(pv.promotion_price) AS promotion_price,
+                sum(pv.sold_quantity) AS sold_quantity,
+                avg(r.rating) AS rating,
+                pi.image_path
             FROM
                 products p
                 JOIN product_variants pv ON pv.product_id = p.id
                 JOIN product_images pi ON pi.product_id = p.id
-                JOIN sellers s ON s.id = p.seller_id
-                LEFT JOIN categories c ON c.id = p.category_id
+                LEFT JOIN reviews r ON r.product_variant_id = pv.id
             WHERE
-                s.id = :seller_id
-                AND pi.default = :default
-                " . ($status ? "AND p.status = :status" : "") . " 
+                pi.default = :default 
+                AND p.seller_id = :sellerId
             GROUP BY
                 p.id,
                 p.name,
-                pi.image_path,
-                c.name,
-                p.status
+                pi.image_path
+            ORDER BY
+                p.id
             LIMIT
                 $limit
         ";
 
-        // Gắn tham số truy vấn
-        $params = [
-            'seller_id' => $seller_id,
-            'default' => 1
-        ];
-        if ($status) {
-            $params['status'] = $status;
-        }
-
-        $result = $query->query($sql, $params)->fetchAll();
+        $result = $query->query($sql, ['default' => 1, 'sellerId' => $sellerId])->fetchAll();
 
         return $result;
     }
@@ -155,6 +140,57 @@ class Product
         ";
 
         $result = $query->query($sql, ['product_id' => $product_id])->fetch();
+
+        return $result;
+    }
+
+    // SELLER
+    // Lấy danh sách sản phẩm theo người bán
+    public function getProductsBySellerId($seller_id, $status = null, $limit = 12)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name AS product_name,
+                pi.image_path AS product_image,
+                c.name AS category,
+                p.status AS product_status,
+                MIN(pv.price) AS min_product_price,
+                MAX(pv.price) AS max_product_price,
+                SUM(pv.quantity) AS quantity,
+                SUM(pv.sold_quantity) AS sold_quantity
+            FROM
+                products p
+                JOIN product_variants pv ON pv.product_id = p.id
+                JOIN product_images pi ON pi.product_id = p.id
+                JOIN sellers s ON s.id = p.seller_id
+                LEFT JOIN categories c ON c.id = p.category_id
+            WHERE
+                s.id = :seller_id
+                AND pi.default = :default
+                " . ($status ? "AND p.status = :status" : "") . " 
+            GROUP BY
+                p.id,
+                p.name,
+                pi.image_path,
+                c.name,
+                p.status
+            LIMIT
+                $limit
+        ";
+
+        // Gắn tham số truy vấn
+        $params = [
+            'seller_id' => $seller_id,
+            'default' => 1
+        ];
+        if ($status) {
+            $params['status'] = $status;
+        }
+
+        $result = $query->query($sql, $params)->fetchAll();
 
         return $result;
     }

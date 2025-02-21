@@ -24,7 +24,7 @@ class ProductController
         $page = Request::post('page');
 
         if (!array_key_exists($page, $listProductStatus)) {
-            return Api::encode('Trang khônng tốn tại', 'error');
+            return Api::encode(null, 'Trang không tốn tại', 'error');
         }
 
         $user = Auth::getUser();

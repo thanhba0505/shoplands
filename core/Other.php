@@ -32,7 +32,7 @@ class Other
 
         return '<div class="custom-checkbox">
                     <input class="inp-cbx" id="' . $name . $value . '" name="' . $name . '" value="' . $value . '" type="checkbox"' . $checkedAttr . '/>
-                    <label class="cbx w-full h-full" for="' . $name .  $value . '">
+                    <label class="cbx ' . ($label == '' ? 'w-11' : 'w-full') . ' h-full" for="' . $name .  $value . '">
                         <span>
                             <svg width="12px" height="10px">
                                 <use xlink:href="#check-4"></use>

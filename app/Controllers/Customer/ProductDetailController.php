@@ -75,7 +75,7 @@ class ProductDetailController
         $similarProducts = $productModel->getProducts(6);
 
         // Lấy danh sách sản phẩm của shop
-        $shopProducts = $productModel->getProducts(6, sellerId: $product['seller_id']);
+        $shopProducts = $productModel->getProductsShop($product['seller_id'], 6);
 
         // Lấy danh sách sản phẩm gợi ý
         $relatedProducts = $productModel->getProducts(30);

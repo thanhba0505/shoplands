@@ -31,7 +31,7 @@ class OrderController
         $page = Request::post('page');
 
         if (!array_key_exists($page, $listOrderStatus)) {
-            return Api::encode('Trang khônng tốn tại', 'error');
+            return Api::encode(null, 'Trang khônng tốn tại', 'error');
         }
 
         $user = Auth::getUser();

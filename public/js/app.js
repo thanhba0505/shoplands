@@ -288,9 +288,9 @@ function addToCart(
             });
         }
 
-        console.log(selectedAttributes, selectedVariantId);
+        console.log(productVariants, selectedAttributes, selectedVariantId);
 
-        if (selectedVariantId) {
+        if (selectedVariantId || totalAttributes.length === 0) {
             // Gửi thông tin qua AJAX POST
             $.ajax({
                 url: urlAddToCart, // Địa chỉ endpoint server của bạn
@@ -300,7 +300,7 @@ function addToCart(
                     quantity: selectedQuantity,
                 },
                 success: function (response) {
-                    showNotification("Thêm vào giỏ hàng thành công", "success");
+                    showNotification(response.message, response.status);
                 },
                 error: function (error) {
                     showNotification(
