@@ -35,6 +35,7 @@ class ProductDetailController
 
             if (!isset($productVariant[$productVariantId])) {
                 $productVariant[$productVariantId] = [
+                    'id' => $row['product_variant_id'],
                     'price' => $row['product_variant_price'],
                     'promotion_price' => $row['product_variant_promotion_price'],
                     'quantity' => $row['product_variant_quantity'],

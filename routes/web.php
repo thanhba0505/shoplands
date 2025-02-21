@@ -18,7 +18,6 @@ $router->get('/register', 'Auth/RegisterController@show');
 
 // Trang sản phẩm ---------------------------------------------------------------------
 $router->get('/product', 'Customer/ProductController@show');
-$router->post('/product', 'Customer/ProductController@show');
 
 // Trang chi tiết sản phẩm ---------------------------------------------------------------------
 $router->get('/product/detail', 'Customer/ProductDetailController@show');
@@ -30,13 +29,15 @@ $router->get('/post', 'Customer/PostController@show');
 $router->get('/shop', 'Customer/ShopController@show');
 
 
-
+// API
+$router->get('/api/product-variant/check-stock', 'Api/ProductVariantApi@checkStock');
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // CẦN ĐĂNG NHẬP KHÁCH HÀNG ================================================================================================================================================
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
+$router->post('api/cart', 'Customer/CartController@apiAdd', [AuthMiddleware::class]);
 
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/order', 'Customer/OrderController@show', [AuthMiddleware::class]);

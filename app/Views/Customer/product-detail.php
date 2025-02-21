@@ -113,40 +113,52 @@
                     var productVariants = <?= json_encode($productVariant) ?>;
 
                     $(document).ready(function() {
-                        showPriceProductDeatil(productVariants);
+                        showPriceAndAddToCartProductDetail(productVariants, '<?= Redirect::cart(api: true)->getUrl() ?>');
                     });
                 </script>
 
                 <!-- Số lượng -->
                 <div class="col-span-3 text-gray-600 font-medium">Số lượng</div>
-                <div class="col-span-6 flex items-center gap-2">
-                    <div class="flex items-center border rounded-md">
+                <div class=" col-span-6 flex items-center gap-2">
+                    <div class="counter-container flex items-center border rounded-md">
                         <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 border-r">
                             -
                         </button>
                         <input
+                            id="quantity"
                             type="text"
+                            name="quantity"
                             value="1"
-                            class="w-12 h-10 text-center focus:outline-none text-gray-800"
-                            readonly />
+                            class="w-12 h-10 text-center focus:outline-none text-gray-800" />
                         <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 border-l">
                             +
                         </button>
                     </div>
                 </div>
+                <script>
+                    $(document).ready(function() {
+                        counter();
+                    });
+                </script>
             </div>
 
             <!-- Buttons -->
-            <div class="mt-6 flex gap-4">
-                <button class="flex items-center justify-center gap-2 border border-blue-500 text-gray-500 bg-blue-50 px-4 py-2 rounded hover:bg-blue-100 w-52">
-                    <i class="fa-solid fa-cart-plus"></i>
-                    <span class="text-sm">Thêm Vào Giỏ Hàng</span>
-                </button>
+            <div class="mt-8 flex gap-4 w-full">
+                <?php if (Auth::checkAuth()): ?>
+                    <button id="addToCart" class="flex items-center justify-center gap-2 border border-blue-500 text-gray-500 bg-blue-50 px-4 py-2 rounded hover:bg-blue-100 w-52">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <span class="text-base">Thêm Vào Giỏ Hàng</span>
+                    </button>
 
-                <button class="flex flex-col justify-center items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-52">
-                    <span class="text-sm">Mua Với Voucher</span>
-                    <span class="text-lg font-bold">₫204.000</span>
-                </button>
+                    <button class="flex flex-col justify-center items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-52">
+                        <span class="text-base">Mua Với Voucher</span>
+                        <span class="text-lg font-bold">₫204.000</span>
+                    </button>
+                <?php else: ?>
+                    <a href="<?= Redirect::login()->getUrl() ?>" class="text-center flex items-center justify-center gap-2 border border-blue-500 text-gray-500 bg-blue-50 px-4 py-2 rounded hover:bg-blue-100 w-52">
+                        <span class="text-base">Đăng nhập để thêm vào giỏ hàng</span>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

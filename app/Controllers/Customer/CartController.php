@@ -18,4 +18,20 @@ class CartController
 
         return View::make('Customer/cart', $data);
     }
+
+    public function apiAdd() {
+
+        $user = Auth::getUser() ?? null;
+        $product_variant_id = Request::post('product_variant_id');
+        $quantity = Request::post('quantity');
+
+        $cart = new Cart();
+        $result = $cart->addCart($user['id'], $product_variant_id, $quantity);
+
+        if (!$result) {
+            return Api::encode('Thêm vào giỏ hàng khônng thành công', 'error');
+        } 
+
+        return Api::encode('Thêm vào giỏ hàng thành công', 'success');
+    }
 }

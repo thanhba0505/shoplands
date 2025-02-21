@@ -104,9 +104,9 @@ class Redirect
         return new self(trim('register/' . $action, '/'));
     }
 
-    public static function cart($action = '')
+    public static function cart($action = '', $api = false)
     {
-        return new self(trim('cart/' . $action, '/'));
+        return new self(trim(($api ? 'api/' : '') . 'cart/' . $action, '/'));
     }
 
     public static function order($action = '')

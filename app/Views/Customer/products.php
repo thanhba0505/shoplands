@@ -102,7 +102,7 @@
             </div>
 
 
-            <div class="grid grid-cols-10 gap-4 mt-4">
+            <div class="grid grid-cols-10 gap-4 mt-4" id="product-list">
                 <!-- Product Item -->
                 <?php if (!empty($products)): ?>
                     <?php foreach ($products as $product): ?>

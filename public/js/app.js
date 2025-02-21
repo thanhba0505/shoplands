@@ -1,37 +1,40 @@
 document.addEventListener("DOMContentLoaded", () => {});
 
+// Hiển thị thông báo
+let currentTimeout = null; // Lưu trữ timeout hiện tại
+let currentHideTimeout = null; // Lưu trữ timeout ẩn hiện tại
+let notificationStartTime = null; // Thời điểm bắt đầu hiển thị thông báo
+const MIN_DISPLAY_DURATION = 1000; // Thời gian tối thiểu thông báo phải hiển thị (1 giây)
+const DELAY_BETWEEN_NOTIFICATIONS = 500; // Khoảng delay giữa hai thông báo (0.5 giây)
+
 function showNotification(message, type = "success", duration = 3000) {
-    const $notification = $("#notification");
-    const $notificationMessage = $("#notification-message");
+    const title = "Thông báo";
 
-    // Cập nhật nội dung thông báo
-    $notificationMessage.text(message);
+    butterup.toast({
+        title: title,
+        message: message,
+        type: type,
+        icon: true,
+        duration: duration,
+        dismissable: true,
+        location:'bottom-right',
 
-    // Thêm và xóa lớp CSS theo loại thông báo
-    if (type === "error") {
-        $notification.addClass("bg-red-400").removeClass("bg-blue-400");
-    } else {
-        $notification.addClass("bg-blue-400").removeClass("bg-red-400");
-    }
-
-    // Hiển thị thông báo với hiệu ứng
-    $notification
-        .removeAttr("hidden") // Hiển thị thông báo
-        .removeClass("right-8 opacity-0")
-        .addClass("right-10 opacity-1");
-
-    // Ẩn thông báo sau thời gian quy định
-    setTimeout(() => {
-        $notification
-            .addClass("right-8 opacity-0")
-            .removeClass("right-10 opacity-1");
-
-        setTimeout(() => {
-            $notification.attr("hidden", true); // Ẩn hoàn toàn
-        }, 500); // Thời gian cho hiệu ứng
-    }, duration);
+        // primaryButton: {
+        //     text: "Approve",
+        //     onClick: function () {
+        //         console.log("Approved!");
+        //     },
+        // },
+        // secondaryButton: {
+        //     text: "Reject",
+        //     onClick: function () {
+        //         console.log("Rejected!");
+        //     },
+        // },
+    });
 }
 
+// Funtion load tab ajax
 async function loadTabAjax(url, options = {}) {
     const defaults = {
         tabContainers: [], // Danh sách các container tab, sử dụng id
@@ -139,7 +142,8 @@ async function loadTabAjax(url, options = {}) {
     }
 }
 
-function showPriceProductDeatil(productVariants) {
+// Hiển thị giá trong chi tiết sản phẩm
+function showPriceAndAddToCartProductDetail(productVariants, urlAddToCart) {
     var selectedAttributes = {}; // Lưu các thuộc tính đã chọn
     var totalAttributes = $(".attribute-option")
         .map(function () {
@@ -246,8 +250,72 @@ function showPriceProductDeatil(productVariants) {
 
     // Hiển thị giá min-max khi load trang
     updatePrice();
+    addToCart(
+        selectedAttributes,
+        totalAttributes,
+        productVariants,
+        urlAddToCart
+    );
 }
 
+// Thêm vào giỏ hàng
+function addToCart(
+    selectedAttributes,
+    totalAttributes,
+    productVariants,
+    urlAddToCart
+) {
+    $("#addToCart").click(function () {
+        var selectedQuantity = $("#quantity").val(); // Lấy số lượng
+        var selectedVariantId = null;
+
+        // Kiểm tra xem đã chọn đủ thuộc tính chưa
+        if (Object.keys(selectedAttributes).length === totalAttributes.length) {
+            // Tìm ID của biến thể đã chọn
+            $.each(productVariants, function (variantId, variant) {
+                var isMatch = true;
+                $.each(selectedAttributes, function (attrId, valueId) {
+                    if (variant.attributes[attrId] != valueId) {
+                        isMatch = false;
+                        return false; // Dừng vòng lặp
+                    }
+                });
+
+                if (isMatch) {
+                    selectedVariantId = variant.id; // Lưu ID của biến thể đã chọn
+                    return false; // Dừng vòng lặp khi tìm thấy biến thể khớp
+                }
+            });
+        }
+
+        console.log(selectedAttributes, selectedVariantId);
+
+        if (selectedVariantId) {
+            // Gửi thông tin qua AJAX POST
+            $.ajax({
+                url: urlAddToCart, // Địa chỉ endpoint server của bạn
+                type: "POST",
+                data: {
+                    product_variant_id: selectedVariantId,
+                    quantity: selectedQuantity,
+                },
+                success: function (response) {
+                    showNotification("Thêm vào giỏ hàng thành công", "success");
+                },
+                error: function (error) {
+                    showNotification(
+                        "Có lỗi xảy ra, vui lòng thử lại sau",
+                        "error"
+                    );
+                },
+            });
+        } else {
+            showNotification("Vui lòng chọn đủ thuộc tính", "error");
+        }
+    });
+}
+
+// Hàm format giá tiền
 function formatCurrency(value) {
     return new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -326,5 +394,34 @@ function removeEmptyFields(form) {
         if (input.value.trim() === "") {
             input.removeAttribute("name"); // Xóa input rỗng để không gửi lên server
         }
+    });
+}
+
+// Hàm tăng giảm số lượng
+function counter() {
+    $(".counter-container").each(function () {
+        const container = $(this);
+        const minusBtn = container.find("button:first-child");
+        const plusBtn = container.find("button:last-child");
+        const input = container.find("input");
+
+        input.on("input", function () {
+            let value = parseInt(input.val(), 10);
+            if (value < 1) {
+                input.val(1);
+            }
+        });
+
+        minusBtn.on("click", function () {
+            let value = parseInt(input.val(), 10);
+            if (value > 1) {
+                input.val(value - 1);
+            }
+        });
+
+        plusBtn.on("click", function () {
+            let value = parseInt(input.val(), 10);
+            input.val(value + 1);
+        });
     });
 }

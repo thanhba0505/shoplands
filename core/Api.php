@@ -2,18 +2,17 @@
 
 class Api
 {
-    public static function encode($data, $statusCode = 200)
+    public static function encode($data, $status = 'success')
     {
-        http_response_code($statusCode);
         header('Content-Type: application/json');
         $response = [
-            'status' => $statusCode == 200 || $statusCode == 201 ? 'success' : 'error',
+            'status' => $status,
             'data' => $data
         ];
         return json_encode($response);
     }
 
-    public static function view($view, $data = [], $statusCode = 200)
+    public static function view($view, $data = [], $status = 'success')
     {
         // Giải nén biến để có thể sử dụng trực tiếp trong view
         extract($data);
@@ -23,6 +22,6 @@ class Api
         require "./app/Views/$view.php";
         $content = ob_get_clean();
 
-        return self::encode($content, $statusCode);
+        return self::encode($content, $status);
     }
 }

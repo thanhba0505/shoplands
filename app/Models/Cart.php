@@ -1,6 +1,7 @@
 <?php
 
 require_once 'app/Models/ConnectDatabase.php';
+require_once 'app/Models/QueryCustom.php';
 
 class Cart
 {
@@ -38,6 +39,16 @@ class Cart
         ";
 
         $result = $query->query($sql, ['userId' => $userId, "default" => '1'])->fetchAll();
+
+        return $result;
+    }
+
+    public function addCart($userId, $productVariantId, $quantity)
+    {
+        $query = new QueryCustom();
+
+        $result = $query
+            ->insert('carts', ['user_id' => $userId, 'product_variant_id' => $productVariantId, 'quantity' => $quantity]);
 
         return $result;
     }

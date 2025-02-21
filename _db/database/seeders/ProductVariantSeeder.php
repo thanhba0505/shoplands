@@ -1853,7 +1853,7 @@ class ProductVariantSeeder extends Seeder
                 }
 
                 if ($isPromotion && rand(0, 10) >= 5) {
-                    $promotionPrice = max(round($price_temp * rand(80, 95) / 100, -3), $price -  50000);
+                    $promotionPrice = max(round($price_temp * rand(80, 95) / 100, -3), $price_temp -  50000);
                 }
 
                 $productVariant = ProductVariant::create([
