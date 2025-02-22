@@ -1,3 +1,10 @@
+<?php
+$images = $product['images'];
+$reviews = $product['reviews'];
+$seller = $product['seller'];
+$variants = $product['variants'];
+?>
+
 <!-- Sản phẩm -->
 <div class=" mx-auto bg-white  rounded-lg p-6">
     <!-- Product Images and Details -->
@@ -47,11 +54,6 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
             </div>
-            <script>
-                $(document).ready(function() {
-                    imgTransfer()
-                })
-            </script>
         </div>
 
         <!-- Product Details -->
@@ -95,10 +97,10 @@
                     </p>
                 </div>
 
-                <?php foreach ($attributes as $attributeId => $attribute): ?>
+                <?php foreach ($product['groupedAttributes'] as $attributeId => $attribute): ?>
                     <div class="col-span-3 text-gray-600 font-medium"><?= $attribute['name'] ?></div>
                     <div class="col-span-9 flex flex-wrap gap-4">
-                        <?php foreach ($attribute['values'] as $valueId => $value): ?>
+                    <?php foreach ($attribute['values'] as $valueId => $value): ?>
                             <button
                                 data-attribute-id="<?= $attributeId ?>"
                                 data-value-id="<?= $valueId ?>"
@@ -108,14 +110,6 @@
                         <?php endforeach; ?>
                     </div>
                 <?php endforeach; ?>
-
-                <script>
-                    var productVariants = <?= json_encode($productVariant) ?>;
-
-                    $(document).ready(function() {
-                        showPriceAndAddToCartProductDetail(productVariants, '<?= Redirect::cart('add', api: true)->getUrl() ?>');
-                    });
-                </script>
 
                 <!-- Số lượng -->
                 <div class="col-span-3 text-gray-600 font-medium">Số lượng</div>
@@ -135,11 +129,6 @@
                         </button>
                     </div>
                 </div>
-                <script>
-                    $(document).ready(function() {
-                        // counter('.cart-quantity', 1, <?= $product['quantity'] ?>);
-                    });
-                </script>
             </div>
 
             <!-- Buttons -->
@@ -465,3 +454,12 @@
         <a href="<?= Redirect::product()->getUrl() ?>" class="px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Xem thêm</a>
     </div>
 </div>
+
+<script>
+    var variants = <?= json_encode($variants) ?>;
+
+    $(document).ready(function() {
+        imgTransfer()
+        showPriceAndAddToCartProductDetail(variants, '<?= Redirect::cart('add', api: true)->getUrl() ?>');
+    });
+</script>

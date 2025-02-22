@@ -1,41 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {});
 
 // Hiển thị thông báo
-// function showToast(
-//     message,
-//     type = "success",
-//     duration = 3000,
-//     primaryButtonConfig = null,
-//     secondaryButtonConfig = null
-// ) {
-//     const title = "Thông báo";
-
-//     // Cấu hình toast
-//     const toastConfig = {
-//         title: title,
-//         message: message,
-//         type: type,
-//         icon: true,
-//         duration: duration,
-//         dismissable: true,
-//         location: "bottom-right",
-//     };
-
-//     // Thêm primaryButton nếu có cấu hình
-//     if (primaryButtonConfig && typeof primaryButtonConfig === "object") {
-//         toastConfig.primaryButton = primaryButtonConfig; // Sử dụng cấu hình nút
-//     }
-
-//     // Thêm secondaryButton nếu có cấu hình
-//     if (secondaryButtonConfig && typeof secondaryButtonConfig === "object") {
-//         toastConfig.secondaryButton = secondaryButtonConfig; // Sử dụng cấu hình nút
-//     }
-
-//     // Hiển thị toast và trả về toastId
-//     butterup.toast(toastConfig);
-//     return "butterupToast-" + butterup.options.currentToasts; // Trả về ID của toast
-// }
-
 function showToast(config) {
     // Thiết lập cấu hình mặc định
     const defaultConfig = {
@@ -173,6 +138,7 @@ async function loadTabAjax(url, options = {}) {
 
 // Hiển thị giá trong chi tiết sản phẩm
 function showPriceAndAddToCartProductDetail(productVariants, urlAddToCart) {
+    // console.log(productVariants);
     var selectedAttributes = {}; // Lưu các thuộc tính đã chọn
     var totalAttributes = $(".attribute-option")
         .map(function () {

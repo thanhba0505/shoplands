@@ -19,57 +19,52 @@ class ProductDetailController
             Redirect::error()->notification('Không tìm thấy sản phẩm', 'error')->redirect();
         }
 
-        // Lấy thông tin chi tiêt sản phẩm
         $productModel = new Product();
         $product = $productModel->getByProductId($id);
+
+        $productVariantModel = new ProductVariant();
+        $product['product_description'] = '';
         $product['quantity'] = $productModel->getQuantityByProductId($id);
         $product['sold_quantity'] = $productModel->getSoldQuantityByProductId($id);
 
-        $productVariantModel = new ProductVariant();
-        $productVariantResult = $productVariantModel->getByProductId($id);
+        $product['variants'] = $productVariantModel->getVariantProductId($id);
 
-        $productVariant = [];
+        $groupedAttributes = [];
 
-        foreach ($productVariantResult as $row) {
-            $productVariantId = $row['product_variant_id'];
+        foreach ($product['variants'] as $key => $variant) {
+            $attributes = $productVariantModel->getVariantValueByProductVariantId($variant['id']);
 
-            if (!isset($productVariant[$productVariantId])) {
-                $productVariant[$productVariantId] = [
-                    'id' => $row['product_variant_id'],
-                    'price' => $row['product_variant_price'],
-                    'promotion_price' => $row['product_variant_promotion_price'],
-                    'quantity' => $row['product_variant_quantity'],
-                    'sold_quantity' => $row['product_variant_sold_quantity'],
-                ];
+            $transformed_attributes = [];
+
+            foreach ($attributes as $attribute) {
+                $transformed_attributes[$attribute["pa_id"]] = $attribute["pav_id"];
             }
 
-            $attributeId = $row['product_attribute_id'];
-            $attributeValueId = $row['product_attribute_value_id'];
+            $product['variants'][$key]['attributes'] = $transformed_attributes;
 
-            $productVariant[$productVariantId]['attributes'][$attributeId] = $attributeValueId;
-        }
+            foreach ($attributes as $attribute) {
+                $pa_id = $attribute['pa_id'];
+                $pav_id = $attribute['pav_id'];
+                $value = $attribute['value'];
+                $name = $attribute['name'];
 
-        $attributes = [];
+                // Nếu chưa tồn tại nhóm thuộc tính này, khởi tạo nó
+                if (!isset($groupedAttributes[$pa_id])) {
+                    $groupedAttributes[$pa_id] = [
+                        'name' => $name,
+                        'values' => []
+                    ];
+                }
 
-        foreach ($productVariantResult as $row) {
-            $attributeId = $row['product_attribute_id'];
-            $attributeName = $row['product_attribute_name'];
-            $attributeValueId = $row['product_attribute_value_id'];
-            $attributeValue = $row['product_attribute_value'];
-
-            // Nếu attribute chưa tồn tại, khởi tạo
-            if (!isset($attributes[$attributeId])) {
-                $attributes[$attributeId] = [
-                    'name' => $attributeName,
-                    'values' => []
-                ];
-            }
-
-            // Chỉ thêm giá trị nếu chưa tồn tại trong mảng values
-            if (!in_array($attributeValue, $attributes[$attributeId]['values'])) {
-                $attributes[$attributeId]['values'][$attributeValueId] = $attributeValue;
+                // Thêm giá trị vào nhóm thuộc tính
+                if (!isset($groupedAttributes[$pa_id]['values'][$pav_id])) {
+                    $groupedAttributes[$pa_id]['values'][$pav_id] = $value;
+                }
             }
         }
+
+        $product['groupedAttributes'] = $groupedAttributes;
+
 
         // Lấy danh sách sản phẩm tương tự
         $similarProducts = $productModel->getProducts(6);
@@ -82,15 +77,15 @@ class ProductDetailController
 
         // Lấy hình ảnh sản phẩm
         $imageModel = new ProductImage();
-        $images = $imageModel->getImagesByProductId($id);
+        $product['images'] = $imageModel->getImagesByProductId($id);
 
         // Lấy chi tiết sản phẩm
         $productDetailModel = new ProductDetail();
-        $productDetail = $productDetailModel->getDetailByProductId($id);
+        $product['details'] = $productDetailModel->getDetailByProductId($id);
 
         // Lấy danh mục của sản phẩm
         $categoryModel = new Category();
-        $category = $categoryModel->getCategoryByProductId($id);
+        $product['category'] = $categoryModel->getCategoryByProductId($id);
 
         // Lấy danh sách đánh giá
         $reviewModel = new Review();
@@ -124,6 +119,8 @@ class ProductDetailController
 
         $reviews['ratingCounts'] = $ratings;
 
+        $product['reviews'] = $reviews;
+
         // Lấy thông tin shop
         $sellerModel = new Seller();
         $seller = $sellerModel->findBySellerId($product['seller_id']);
@@ -134,20 +131,15 @@ class ProductDetailController
 
         $seller['countProducts'] = $sellerModel->getProductCountBySellerId($product['seller_id']);
 
+        $product['seller'] = $seller;
+
         $data = [
             'title' => 'Product Detail Page',
             'id' => $id,
             'product' => $product,
-            'shopProducts' => $shopProducts,
-            'relatedProducts' => $relatedProducts,
-            'productVariant' => $productVariant,
-            'attributes' => $attributes,
             'similarProducts' => $similarProducts,
-            'images' => $images,
-            'productDetail' => $productDetail,
-            'category' => $category,
-            'reviews' => $reviews,
-            'seller' => $seller
+            'shopProducts' => $shopProducts,
+            'relatedProducts' => $relatedProducts
         ];
 
         return View::make('Customer/product-detail', $data);

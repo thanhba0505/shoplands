@@ -63,6 +63,31 @@ class ProductVariant
         return $result;
     }
 
+    // Lấy thuộc tính theo product_variant_id
+    public function getVariantProductId($product_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                pv.id AS id,
+                pv.price AS price,
+                pv.promotion_price AS promotion_price,
+                pv.quantity AS quantity,
+                pv.sold_quantity AS sold_quantity
+            FROM
+                product_variants pv
+            WHERE
+                pv.product_id = :product_id
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id])->fetchAll();
+
+        return $result;
+    }
+
+
+
     // Lấy tồn kho theo product_variant_id
     public function getQuantityByProductVariantId($product_variant_id)
     {

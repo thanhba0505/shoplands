@@ -2,6 +2,11 @@
 
 class Other
 {
+    // In ra json
+    public static function json($data)
+    {
+        echo json_encode($data);
+    }
 
     // Logo
     public static function logoSvg($fill = 'fill-white', $width = 120)

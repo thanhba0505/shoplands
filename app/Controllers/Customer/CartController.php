@@ -46,9 +46,6 @@ class CartController
             'groupedCarts' => $groupedCarts
         ];
 
-        Console::log($data);
-        // return 'end';
-
         return View::make('Customer/cart', $data);
     }
 
