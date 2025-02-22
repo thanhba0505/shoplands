@@ -2,7 +2,7 @@
 
 class Notification
 {
-    public static function show($duration = 3000)
+    public static function show()
     {
         $message = Session::get('notification.message');
         $type = Session::get('notification.type') ?? 'success';
@@ -15,11 +15,11 @@ class Notification
         $escapedMessage = addslashes($message);
         $escapedType = addslashes($type);
 
-        // In đoạn script để gọi showNotification trên trình duyệt
+        // In đoạn script để gọi showToast trên trình duyệt
         echo "
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    showNotification('$escapedMessage', '$escapedType', $duration);
+                    showToast('$escapedMessage', '$escapedType');
                 });
             </script>
         ";

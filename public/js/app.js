@@ -1,31 +1,66 @@
 document.addEventListener("DOMContentLoaded", () => {});
 
 // Hiển thị thông báo
-function showNotification(message, type = "success", duration = 3000) {
-    const title = "Thông báo";
+// function showToast(
+//     message,
+//     type = "success",
+//     duration = 3000,
+//     primaryButtonConfig = null,
+//     secondaryButtonConfig = null
+// ) {
+//     const title = "Thông báo";
 
-    butterup.toast({
-        title: title,
-        message: message,
-        type: type,
-        icon: true,
-        duration: duration,
-        dismissable: true,
-        location: "bottom-right",
+//     // Cấu hình toast
+//     const toastConfig = {
+//         title: title,
+//         message: message,
+//         type: type,
+//         icon: true,
+//         duration: duration,
+//         dismissable: true,
+//         location: "bottom-right",
+//     };
 
-        // primaryButton: {
-        //     text: "Approve",
-        //     onClick: function () {
-        //         console.log("Approved!");
-        //     },
-        // },
-        // secondaryButton: {
-        //     text: "Reject",
-        //     onClick: function () {
-        //         console.log("Rejected!");
-        //     },
-        // },
-    });
+//     // Thêm primaryButton nếu có cấu hình
+//     if (primaryButtonConfig && typeof primaryButtonConfig === "object") {
+//         toastConfig.primaryButton = primaryButtonConfig; // Sử dụng cấu hình nút
+//     }
+
+//     // Thêm secondaryButton nếu có cấu hình
+//     if (secondaryButtonConfig && typeof secondaryButtonConfig === "object") {
+//         toastConfig.secondaryButton = secondaryButtonConfig; // Sử dụng cấu hình nút
+//     }
+
+//     // Hiển thị toast và trả về toastId
+//     butterup.toast(toastConfig);
+//     return "butterupToast-" + butterup.options.currentToasts; // Trả về ID của toast
+// }
+
+function showToast(config) {
+    // Thiết lập cấu hình mặc định
+    const defaultConfig = {
+        message: "", // Nội dung thông báo
+        type: "success", // Loại thông báo (success, error, warning, info)
+        duration: 3000, // Thời gian hiển thị (ms)
+        title: "Thông báo", // Tiêu đề thông báo
+        icon: true, // Hiển thị biểu tượng
+        dismissable: true, // Cho phép đóng thủ công
+        location: "bottom-right", // Vị trí hiển thị
+        primaryButton: null, // Cấu hình nút chính
+        secondaryButton: null, // Cấu hình nút phụ
+    };
+
+    // Kết hợp cấu hình mặc định với cấu hình được truyền vào
+    const toastConfig = { ...defaultConfig, ...config };
+
+    // Hiển thị toast và trả về toastId
+    butterup.options.toastLife = toastConfig.duration;
+    butterup.toast(toastConfig);
+    return "butterupToast-" + butterup.options.currentToasts; // Trả về ID của toast
+}
+
+function hideToast(toastId) {
+    butterup.despawnToast(toastId);
 }
 
 // Funtion load tab ajax
@@ -297,19 +332,133 @@ function addToCart(
                     quantity: selectedQuantity,
                 },
                 success: function (response) {
-                    showNotification(response.message, response.status);
+                    showToast({
+                        message: response.message,
+                        type: response.status,
+                    });
                 },
                 error: function (error) {
-                    showNotification(
-                        "Có lỗi xảy ra, vui lòng thử lại sau",
-                        "error"
-                    );
+                    showToast({
+                        message: "Có lỗi xảy ra, vui lòng thử lại sau",
+                        type: "error",
+                    });
                 },
             });
         } else {
-            showNotification("Vui lòng chọn đủ thuộc tính", "error");
+            showToast({
+                message: "Vui lòng chọn đủ thuộc tính",
+                type: "warning",
+            });
         }
     });
+}
+
+// Xóa khỏi giỏ hàng
+function deleteCart(url, csrf) {
+    // Gắn sự kiện click cho nút "Xóa"
+    $(".delete-cart-button").on("click", function () {
+        var cartId = $(this).data("cart-id"); // Lấy cartId từ thuộc tính data-cart-id
+        var groupId = $(this)
+            .closest("tr")
+            .find('input[name="c_ids[]"]')
+            .data("group"); // Lấy groupId từ thuộc tính data-group
+
+        // Hiển thị thông báo xác nhận
+        const toastId = showToast({
+            message:
+                "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?",
+            type: "warning", // Loại thông báo (warning để cảnh báo)
+            duration: 5000,
+            primaryButton: {
+                text: "Đồng ý", // Văn bản cho nút "Đồng ý"
+                onClick: function () {
+                    // Xử lý xóa sản phẩm khi người dùng chọn "Đồng ý"
+                    deleteCartHadle(cartId, groupId);
+                    hideToast(toastId);
+                },
+            },
+            secondaryButton: {
+                text: "Từ chối", // Văn bản cho nút "Từ chối"
+                onClick: function () {
+                    // Đóng thông báo khi người dùng chọn "Từ chối"
+                    hideToast(toastId);
+                },
+            },
+        });
+    });
+
+    // Hàm xóa sản phẩm khỏi giỏ hàng
+    function deleteCartHadle(cartId, groupId) {
+        var data = {
+            cart_id: cartId,
+            csrf: csrf,
+        };
+
+        // Gửi yêu cầu xóa sản phẩm đến server (ví dụ sử dụng AJAX)
+        $.ajax({
+            url: url, // Đường dẫn đến file xử lý xóa
+            method: "POST",
+            data: data,
+            success: function (response) {
+                // Xử lý phản hồi từ server
+                if (response.status === "success") {
+                    // Xóa hàng khỏi bảng
+                    $(`button[data-cart-id="${cartId}"]`)
+                        .closest("tr")
+                        .remove();
+
+                    // Kiểm tra số lượng sản phẩm còn lại trong nhóm
+                    const remainingProducts = $(
+                        `input[data-group="${groupId}"]`
+                    ).length;
+
+                    // Nếu không còn sản phẩm nào trong nhóm, xóa luôn nhóm đó
+                    if (remainingProducts === 1) {
+                        $(`input[data-group="${groupId}"]`)
+                            .closest("tr.border-b")
+                            .remove();
+                    }
+
+                    // Hiển thị thông báo thành công
+                    showToast({
+                        message: response.message,
+                        type: "success",
+                    });
+                    checkTable();
+                } else {
+                    showToast({
+                        message: response.message,
+                        type: "error",
+                    });
+                }
+            },
+            error: function () {
+                showToast({
+                    message: "Có lỗi xảy ra, vui lòng thử lại sau",
+                    type: "error",
+                });
+            },
+        });
+    }
+}
+
+// Kiểm tra giỏ hàng trống
+function checkTable() {
+    const table = $("#cart-table");
+    const footer = $("#cart-footer");
+    const emptyMessage = $("#empty-cart-message");
+
+    // Đếm số lượng dòng (<tr>) trong bảng, không tính dòng tiêu đề
+    const rowCount = table.find("tr").length;
+
+    // Nếu không có dòng nào, hiển thị thông báo
+    if (rowCount === 0) {
+        emptyMessage.show();
+        footer.hide();
+    } else {
+        emptyMessage.hide();
+        footer.show();
+    }
 }
 
 // Hàm format giá tiền

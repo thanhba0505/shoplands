@@ -38,7 +38,7 @@ $router->get('/api/product-variant/check-stock', 'Api/ProductVariantApi@checkSto
 // Trang giỏ hàng ---------------------------------------------------------------------
 $router->get('/cart', 'Customer/CartController@show', [AuthMiddleware::class]);
 $router->post('/api/cart/add', 'Customer/CartController@apiAdd', [AuthMiddleware::class]);
-$router->get('/api/cart/delete', 'Customer/CartController@apiDelete', [AuthMiddleware::class]);
+$router->post('/api/cart/delete', 'Customer/CartController@apiDelete', [AuthMiddleware::class]);
 
 // Trang xác nhận đặt hàng ---------------------------------------------------------------------
 $router->get('/order/confirm', 'Customer/OrderController@showConfirm', [AuthMiddleware::class]);

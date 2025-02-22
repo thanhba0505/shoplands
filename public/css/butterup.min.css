@@ -208,10 +208,10 @@ ol.rack.lowerstack {
     border: 1px solid #81c2f8;
 }
 .toastUp {
-    animation: 0.5s ease-in-out forwards slideUp;
+    animation: 0.3s ease-in-out forwards slideUp;
 }
 .toastDown {
-    animation: 0.5s ease-in-out forwards slideDown;
+    animation: 0.3s ease-in-out forwards slideDown;
 }
 @keyframes slideDown {
     0% {

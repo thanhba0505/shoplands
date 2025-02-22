@@ -18,7 +18,7 @@
 
     <!-- // Xử lý request -->
     <?= $response ?? '' ?>
-    <!-- <?= Session::get('notification.type') === 'error' ? 'bg-red-400' : 'bg-blue-400' ?> -->
+    
     <!-- Thông báo -->
     <?php Notification::show() ?>
 

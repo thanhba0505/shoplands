@@ -124,9 +124,9 @@ class Other
         }
 
         if ($theme == 'light') {
-            $attrString .= ' class="text-center w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50"';
+            $attrString .= ' class="text-center block w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50"';
         } else {
-            $attrString .= ' class="text-center w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600 transition-all duration-300";';
+            $attrString .= ' class="text-center block w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600 transition-all duration-300";';
         }
 
         return '<a

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'app/Models/Cart.php';
+require_once 'app/Models/Product.php';
 require_once 'app/Models/ProductVariant.php';
 
 class CartController
@@ -34,9 +35,14 @@ class CartController
             }
         }
 
+        // Lấy sản phẩm gợi ý
+        $productModel = new Product();
+        $products = $productModel->getProducts();
+
 
         $data = [
             'title' => 'Giỏ hàng',
+            'products' => $products,
             'groupedCarts' => $groupedCarts
         ];
 
@@ -50,7 +56,7 @@ class CartController
     public function apiDelete()
     {
         $user = Auth::getUser() ?? null;
-        $cart_id = Request::get('cart_id');
+        $cart_id = Request::post('cart_id');
 
         $cart = new Cart();
         $result = $cart->deleteCart($user['id'], $cart_id);
