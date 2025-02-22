@@ -214,6 +214,9 @@ function showPriceAndAddToCartProductDetail(productVariants, urlAddToCart) {
         });
 
         if (matchingVariant) {
+            $(".cart-quantity input").val(1);
+            counter(".cart-quantity", 1, matchingVariant.quantity);
+
             var finalPrice = matchingVariant.promotion_price
                 ? parseFloat(matchingVariant.promotion_price)
                 : parseFloat(matchingVariant.price);
@@ -392,35 +395,89 @@ function removeEmptyFields(form) {
 }
 
 // Hàm tăng giảm số lượng
-function counter() {
-    $(".counter-container").each(function () {
+function counter(selector, min = 1, max = Infinity) {
+    $(selector).each(function () {
         const container = $(this);
         const minusBtn = container.find("button:first-child");
         const plusBtn = container.find("button:last-child");
         const input = container.find("input");
 
+        // Xóa các sự kiện click cũ trước khi gắn sự kiện mới
+        minusBtn.off("click");
+        plusBtn.off("click");
+        input.off("input");
+
+        // Đặt giá trị ban đầu của input trong khoảng [min, max]
+        let currentValue = parseInt(input.val(), 10);
+        if (currentValue < min) {
+            input.val(min);
+        } else if (currentValue > max) {
+            input.val(max);
+        }
+
+        // Kiểm tra giá trị input khi người dùng nhập
         input.on("input", function () {
+            console.log("input" + input.val());
             let value = parseInt(input.val(), 10);
-            if (value < 1) {
-                input.val(1);
+
+            // Nếu giá trị không hợp lệ (NaN), đặt về min
+            if (isNaN(value)) {
+                input.val(min);
+            }
+            // Nếu giá trị nhỏ hơn min, đặt về min
+            else if (value < min) {
+                input.val(min);
+            }
+            // Nếu giá trị lớn hơn max, đặt về max
+            else if (value > max) {
+                input.val(max);
             }
         });
 
+        // Xử lý khi nhấn nút giảm
         minusBtn.on("click", function () {
             let value = parseInt(input.val(), 10);
-            if (value > 1) {
+            if (value > min) {
                 input.val(value - 1);
             }
         });
 
+        // Xử lý khi nhấn nút tăng
         plusBtn.on("click", function () {
             let value = parseInt(input.val(), 10);
-            input.val(value + 1);
+            if (value < max) {
+                input.val(value + 1);
+            }
+        });
+
+        // Ngăn chặn việc nhập giá trị không hợp lệ từ bàn phím
+        input.on("keydown", function (e) {
+            // Cho phép các phím: backspace, delete, mũi tên trái/phải
+            if ([8, 46, 37, 39].includes(e.keyCode)) {
+                return;
+            }
+
+            // Ngăn chặn nhập ký tự không phải số
+            if (e.key.length === 1 && isNaN(Number(e.key))) {
+                e.preventDefault();
+            }
+        });
+
+        // Ngăn chặn việc dán giá trị không hợp lệ
+        input.on("paste", function (e) {
+            e.preventDefault(); // Ngăn chặn hành vi dán mặc định
+            const pasteData = e.originalEvent.clipboardData.getData("text");
+            const pasteValue = parseInt(pasteData, 10);
+
+            // Chỉ cho phép dán giá trị hợp lệ
+            if (!isNaN(pasteValue) && pasteValue >= min && pasteValue <= max) {
+                input.val(pasteValue);
+            }
         });
     });
 }
 
-// Xử lý checkbox group
+// Xử lý checkbox group và quantity
 function checkboxGroup() {
     // Lắng nghe sự kiện change trên checkbox group (s_ids[])
     $('input[name="s_ids[]"]').on("change", function () {
@@ -440,11 +497,35 @@ function checkboxGroup() {
         const groupCheckbox = $(
             `input[name="s_ids[]"][data-group="${groupId}"]`
         ); // Tìm checkbox group tương ứng
+
+        // Kiểm tra xem tất cả checkbox product trong nhóm có được check không
         const allChecked =
             $(`input[name="c_ids[]"][data-group="${groupId}"]`).length ===
             $(`input[name="c_ids[]"][data-group="${groupId}"]:checked`).length;
 
         // Nếu tất cả checkbox product trong nhóm được check, check checkbox group
         groupCheckbox.prop("checked", allChecked);
+    });
+}
+
+// // Xử lý sự kiện submit form cart
+function submitFormCart() {
+    $("form").on("submit", function (e) {
+        // Duyệt qua tất cả các checkbox product
+        $('input[name="c_ids[]"]').each(function () {
+            const cartId = $(this).data("cart-id"); // Lấy cartId
+            const quantityInput = $(
+                `input[name="quantity[]"][data-cart-id="${cartId}"]`
+            ); // Tìm input quantity tương ứng
+
+            // Nếu checkbox không được tích, xóa giá trị quantity
+            if (!$(this).is(":checked")) {
+                // quantityInput.val(""); // Xóa giá trị quantity
+                quantityInput.prop("disabled", true);
+            }
+        });
+
+        // Tiếp tục submit form
+        return true;
     });
 }

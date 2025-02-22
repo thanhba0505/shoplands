@@ -11,7 +11,7 @@
                 <a href="<?= Redirect::post()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Bài viết</a>
                 <?php if (Auth::checkAuth()) : ?>
                     <a href="<?= Redirect::cart()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Giỏ hàng</a>
-                    <a href="<?= Redirect::order()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Lịch sử đơn hàng</a>
+                    <a href="<?= Redirect::order('history')->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Lịch sử đơn hàng</a>
                 <?php else : ?>
                     <a href="<?= Redirect::login()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Đăng nhập</a>
                     <a href="<?= Redirect::register()->getUrl() ?>" class="px-4 py-2 hover:bg-blue-700">Đăng ký</a>

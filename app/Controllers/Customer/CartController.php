@@ -34,45 +34,6 @@ class CartController
             }
         }
 
-        // foreach ($cart_result as $cart) {
-        //     $sellerId = $cart['seller_id'];
-        //     $variantId = $cart['variant_id'];
-
-        //     // Tạo nhóm theo seller_id và product_variant_id
-        //     if (!isset($groupedCarts[$sellerId])) {
-        //         $groupedCarts[$sellerId] = [
-        //             'seller_id' => $cart['seller_id'],
-        //             'seller_name' => $cart['seller_name'],
-        //             'products' => [],
-        //         ];
-        //     }
-
-        //     // Nếu product_variant_id đã tồn tại, chỉ cần thêm phân loại
-        //     if (isset($groupedCarts[$sellerId]['products'][$variantId])) {
-        //         $groupedCarts[$sellerId]['products'][$variantId]['attributes'][] = [
-        //             'attribute_name' => $cart['product_attribute'],
-        //             'attribute_value' => $cart['product_attribute_value'],
-        //         ];
-        //     } else {
-        //         // Nếu product_variant_id chưa tồn tại, thêm sản phẩm mới
-        //         $groupedCarts[$sellerId]['products'][$variantId] = [
-        //             'product_id' => $cart['product_id'],
-        //             'product_name' => $cart['product_name'],
-        //             'product_image' => $cart['product_image'],
-        //             'cart_quantity' => $cart['cart_quantity'],
-        //             'cart_id' => $cart['cart_id'],
-        //             'product_price' => $cart['product_price'],
-        //             'product_promotion_price' => $cart['product_promotion_price'],
-        //             'attributes' => [
-        //                 [
-        //                     'attribute_name' => $cart['product_attribute'],
-        //                     'attribute_value' => $cart['product_attribute_value'],
-        //                 ]
-        //             ],
-        //         ];
-        //     }
-        // }
-
 
         $data = [
             'title' => 'Giỏ hàng',
@@ -85,12 +46,33 @@ class CartController
         return View::make('Customer/cart', $data);
     }
 
+    // Api xóa giỏ hàng
+    public function apiDelete()
+    {
+        $user = Auth::getUser() ?? null;
+        $cart_id = Request::get('cart_id');
+
+        $cart = new Cart();
+        $result = $cart->deleteCart($user['id'], $cart_id);
+
+        if (!$result || $result == 0 || $cart_id == null) {
+            return Api::encode(null, 'Xóa giỏ hàng không thành công', 'error');
+        }
+
+        return Api::encode($cart_id, 'Xóa giỏ hàng thành công', 'success');
+    }
+
+    // Api thêm vào giỏ hàng
     public function apiAdd()
     {
 
         $user = Auth::getUser() ?? null;
         $product_variant_id = Request::post('product_variant_id');
         $quantity = Request::post('quantity');
+
+        if ($product_variant_id == null || $quantity == null) {
+            return Api::encode(null, 'Thêm vào giỏ hàng không thành công', 'error');
+        }
 
         $cart = new Cart();
         $check = $cart->checkCartByUserIdAndProductVariantId($user['id'], $product_variant_id);
@@ -103,7 +85,7 @@ class CartController
         }
 
         if (!$result) {
-            return Api::encode(null, 'Thêm vào giỏ hàng khônng thành công', 'error');
+            return Api::encode(null, 'Thêm vào giỏ hàng không thành công', 'error');
         }
 
         return Api::encode(null, 'Thêm vào giỏ hàng thành công', 'success');

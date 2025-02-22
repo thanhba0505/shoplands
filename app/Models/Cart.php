@@ -151,6 +151,7 @@ class Cart
         return $result;
     }
 
+    // Cập nhật cart
     public function updateCart($userId, $productVariantId, $quantity)
     {
         $query = new QueryCustom();
@@ -171,12 +172,13 @@ class Cart
         return $result;
     }
 
-    public function deleteCart($userId, $productVariantId)
+    // Xóa cart
+    public function deleteCart($userId, $cartId)
     {
         $query = new QueryCustom();
 
         $result = $query
-            ->delete('carts', ['user_id' => $userId, 'product_variant_id' => $productVariantId]);
+            ->delete('carts', 'id = :id AND user_id = :user_id', ['user_id' => $userId, 'id' => $cartId]);
 
         return $result;
     }

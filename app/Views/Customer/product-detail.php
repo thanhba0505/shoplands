@@ -113,14 +113,14 @@
                     var productVariants = <?= json_encode($productVariant) ?>;
 
                     $(document).ready(function() {
-                        showPriceAndAddToCartProductDetail(productVariants, '<?= Redirect::cart(api: true)->getUrl() ?>');
+                        showPriceAndAddToCartProductDetail(productVariants, '<?= Redirect::cart('add', api: true)->getUrl() ?>');
                     });
                 </script>
 
                 <!-- Số lượng -->
                 <div class="col-span-3 text-gray-600 font-medium">Số lượng</div>
                 <div class=" col-span-6 flex items-center gap-2">
-                    <div class="counter-container flex items-center border rounded-md">
+                    <div class="cart-quantity flex items-center border rounded-md">
                         <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 border-r">
                             -
                         </button>
@@ -137,7 +137,7 @@
                 </div>
                 <script>
                     $(document).ready(function() {
-                        counter();
+                        // counter('.cart-quantity', 1, <?= $product['quantity'] ?>);
                     });
                 </script>
             </div>

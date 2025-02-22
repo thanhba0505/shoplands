@@ -99,8 +99,9 @@ class QueryCustom extends ConnectDatabase
         $placeholders = ':' . implode(', :', array_keys($data));
         $this->sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
         $this->params = $data;
-        $this->execute();
-        return $this;
+
+        $stmt = $this->execute();
+        return $stmt->rowCount(); // Trả về số dòng bị ảnh hưởng
     }
 
     public function update($table, $data, $condition, $params = [])
@@ -108,16 +109,18 @@ class QueryCustom extends ConnectDatabase
         $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
         $this->sql = "UPDATE $table SET $setClause WHERE $condition";
         $this->params = array_merge($data, $params);
-        $this->execute();
-        return $this;
+
+        $stmt = $this->execute();
+        return $stmt->rowCount(); // Trả về số dòng bị ảnh hưởng
     }
 
     public function delete($table, $condition, $params = [])
     {
         $this->sql = "DELETE FROM $table WHERE $condition";
         $this->params = $params;
-        $this->execute();
-        return $this;
+
+        $stmt = $this->execute();
+        return $stmt->rowCount(); // Trả về số dòng bị ảnh hưởng
     }
 
     private function execute()
