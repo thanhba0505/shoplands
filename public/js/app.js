@@ -138,6 +138,7 @@ async function loadTabAjax(url, options = {}) {
 
 // Hiển thị giá trong chi tiết sản phẩm
 function showPriceAndAddToCartProductDetail(productVariants, urlAddToCart) {
+    counter(".cart-quantity", 1, 1);
     // console.log(productVariants);
     var selectedAttributes = {}; // Lưu các thuộc tính đã chọn
     var totalAttributes = $(".attribute-option")
@@ -154,6 +155,7 @@ function showPriceAndAddToCartProductDetail(productVariants, urlAddToCart) {
 
         // Nếu đã chọn trước đó, thì xóa lựa chọn
         if (selectedAttributes[attributeId] === valueId) {
+            counter(".cart-quantity", 1, 1);
             delete selectedAttributes[attributeId];
             $(this).removeClass("bg-blue-400 text-white");
         } else {
@@ -532,7 +534,6 @@ function counter(selector, min = 1, max = Infinity) {
 
         // Kiểm tra giá trị input khi người dùng nhập
         input.on("input", function () {
-            console.log("input" + input.val());
             let value = parseInt(input.val(), 10);
 
             // Nếu giá trị không hợp lệ (NaN), đặt về min

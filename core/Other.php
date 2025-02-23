@@ -3,10 +3,67 @@
 class Other
 {
     // In ra json
-    public static function json($data)
+    public static function json($data, $name = '')
     {
-        echo json_encode($data);
+        echo $name ? ('<div class="font-bold text-2xl">------------------------ ' . $name . ' ------------------------</div>') : '';
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
     }
+
+    // In tiêu đề 1 nội dung
+    public static function renderTitle($title)
+    {
+        return '<div class="text-center text-xl font-bold py-3 bg-blue-100 text-gray-800">' . Util::encodeHtml($title) . '</div>';
+    }
+
+    // In danh sách sản phẩm
+    public static function renderProducts($products = [], $title, $numberOnRow = 6, $textBtn = '', $url = ''): string
+    {
+        $numberOnRow = Util::encodeHtml($numberOnRow);
+        ob_start(); ?>
+        <!-- <?= $title != '' ? self::renderTitle($title) : ''; ?> -->
+        <?php if ($title != '') : ?>
+            <div class="mb-2 pt-2">
+                <?= self::renderTitle($title) ?>
+            </div>
+        <?php endif; ?>
+        <div class="grid grid-cols-<?= $numberOnRow ?> gap-4 py-4">
+            <?php if (!empty($products)) : ?>
+                <?php foreach ($products as $product) : ?>
+                    <div class="col-span-1">
+                        <a href="<?= Redirect::product('detail')->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
+                            <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($product['image']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
+                            <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
+                            <div class="flex items-center mt-2">
+                                <?= self::ratingStar($product['average_rating']); ?>
+                            </div>
+                            <div class="mt-2 flex items-center justify-between w-full">
+                                <?php if ($product['promotion_price_for_min']) : ?>
+                                    <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['min_price']) ?></span>
+                                    <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price_for_min']) ?></span>
+                                <?php else : ?>
+                                    <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['min_price']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['total_sold_quantity'] ?? 0) ?></span>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <div class="col-span-<?= $numberOnRow ?>">
+                    <div class="text-center text-gray-500 py-3">Không có sản phẩm nào</div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php if ($textBtn != '') : ?>
+            <div class="flex justify-center mt-2 pb-2">
+                <div class="w-48"><?= Other::buttonLink(Util::encodeHtml($textBtn), Util::encodeHtml($url), 'light') ?></div>
+            </div>
+        <?php endif; ?>
+        <?php return ob_get_clean(); ?>
+<?php }
+
 
     // Logo
     public static function logoSvg($fill = 'fill-white', $width = 120)

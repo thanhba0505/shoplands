@@ -88,40 +88,7 @@
             </div>
 
 
-            <div class="grid grid-cols-10 gap-4 mt-4" id="product-list">
-                <!-- Product Item -->
-                <?php if (!empty($products)): ?>
-                    <?php foreach ($products as $product): ?>
-                        <div class="col-span-2">
-                            <a href="<?= Redirect::product("detail")->withQuery(['id' => $product['id']])->getUrl() ?>" class="flex flex-col items-start p-4 border rounded-lg hover:shadow-md">
-                                <img class="mb-3 w-full h-48 object-cover" src="<?= Asset::getProduct($product['image_path']) ?>" alt="<?= Util::encodeHtml($product['name']) ?>">
-                                <span class="line-clamp-2 h-10 w-full font-bold leading-tight"><?= Util::encodeHtml($product['name']) ?></span>
-                                <div class="flex items-center mt-2">
-                                    <?php
-                                    $rating = round($product['rating'] ?? 0);
-                                    for ($star = 1; $star <= 5; $star++):
-                                    ?>
-                                        <?php if ($star <= $rating): ?>
-                                            <i class="fa-solid fa-star text-yellow-400"></i>
-                                        <?php else: ?>
-                                            <i class="fa-regular fa-star text-gray-400"></i>
-                                        <?php endif; ?>
-                                    <?php endfor; ?>
-                                </div>
-                                <div class="mt-2 flex items-center justify-between w-full">
-                                    <?php if ($product['promotion_price']): ?>
-                                        <span class="line-through text-sm text-gray-500"><?= Util::formatCurrency($product['price']) ?></span>
-                                        <span class="text-red-500 font-bold text-lg"><?= Util::formatCurrency($product['promotion_price']) ?></span>
-                                    <?php else: ?>
-                                        <span class="text-red-500 font-bold text-lg text-end w-full"><?= Util::formatCurrency($product['price']) ?></span>
-                                    <?php endif; ?>
-                                </div>
-                                <span class="text-sm w-full text-gray-600 text-end">Đã bán <?= Util::encodeHtml($product['sold_quantity']) ?? 0 ?></span>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+            <?= Other::renderProducts($products,'', 5, '', Redirect::product()->getUrl()); ?>
 
 
         </div>

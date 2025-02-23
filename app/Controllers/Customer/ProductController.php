@@ -1,8 +1,9 @@
 <?php
 require_once 'app/Models/Product.php';
 require_once 'app/Models/Category.php';
+require_once 'app/Controllers/Controller.php';
 
-class ProductController
+class ProductController extends Controller
 {
     public function show()
     {
@@ -20,8 +21,7 @@ class ProductController
         ];
 
         // Gọi model đến sản phẩm
-        $productModel = new Product();
-        $products = $productModel->getProducts(20);
+        $products = $this->getProducts(20);
 
         // Gọi model đến danh mục
         $categoryModel = new Category();

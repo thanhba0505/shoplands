@@ -3,6 +3,8 @@ $images = $product['images'];
 $reviews = $product['reviews'];
 $seller = $product['seller'];
 $variants = $product['variants'];
+$category = $product['category'];
+$details = $product['details'];
 ?>
 
 <!-- Sản phẩm -->
@@ -276,8 +278,8 @@ $variants = $product['variants'];
         </div>
     </div>
 
-    <?php if (!empty($productDetail)): ?>
-        <?php foreach ($productDetail as $detail): ?>
+    <?php if (!empty($details)): ?>
+        <?php foreach ($details as $detail): ?>
             <div class="mt-4 grid grid-cols-12 gap-4 items-start">
                 <div class="col-span-3 text-gray-600 font-medium leading-6"><?= Util::encodeHtml($detail['name']) ?></div>
                 <div class="col-span-9 flex items-center gap-2">

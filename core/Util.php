@@ -2,6 +2,17 @@
 
 class Util
 {
+
+    // Array to string cho attribute HTML
+    public static function arrayToAttribute($array)
+    {
+        $attrString = '';
+        foreach ($array as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+        return $attrString;
+    }
+
     // Mã hóa chuỗi bằng htmlspecialchars
     public static function encodeHtml($string)
     {

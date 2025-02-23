@@ -23,4 +23,24 @@ class ProductImage
 
         return $result;
     }
+
+    // Lấy ảnh"default" cơ bản
+    public function getDefaultImage($product_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                pi.image_path AS path
+            FROM
+                product_images pi
+            WHERE
+                pi.product_id = :product_id
+                AND pi.default = :default
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id, 'default' => 1])->fetch();
+
+        return $result['path'] ?? null;
+    }
 }

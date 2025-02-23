@@ -1,23 +1,22 @@
 <?php
 
+require_once 'app/Controllers/Controller.php';
 require_once 'app/Models/Product.php';
 require_once 'app/Models/Category.php';
 
-class HomeController
+class HomeController extends Controller
 {
     public function show()
     {
-        // GỌI MODEL ĐẾN SẢN PHẨM
-        $product = new Product();
-        $product_result = $product->getProducts();
+        $categoryModel = new Category();
+        $categories = $categoryModel->getAll();
 
-        $category = new Category();
-        $category_result = $category->getAll();
+        $products = $this->getProducts();
 
         $data = [
             'title' => 'Trang chủ',
-            'products' => $product_result ? $product_result : [],
-            'categories' => $category_result ? $category_result : [],
+            'products' => $products,
+            'categories' => $categories,
         ];
 
         return View::make('Customer/home', $data);

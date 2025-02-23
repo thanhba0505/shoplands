@@ -4,6 +4,31 @@ require_once 'app/Models/ConnectDatabase.php';
 
 class Product
 {
+    // Lấy danh sách thông tin sản phẩm theo product_id
+    public function getAll($limit = 12)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS id,
+                p.name AS name,
+                -- p.description AS description,
+                p.status AS status,
+                p.seller_id AS seller_id
+            FROM
+                products p
+            WHERE
+                p.status = :status
+            LIMIT 
+                $limit
+        ";
+
+        $result = $query->query($sql, ['status' => 'active'])->fetchAll();
+
+        return $result;
+    }
+
     // Lấy danh sách sản phẩm
     public function getProducts($limit = 12, $sellerId = null)
     {
