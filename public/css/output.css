@@ -653,6 +653,14 @@ video {
   top: 0.5rem;
 }
 
+.bottom-10 {
+  bottom: 2.5rem;
+}
+
+.bottom-36 {
+  bottom: 9rem;
+}
+
 .isolate {
   isolation: isolate;
 }
@@ -735,11 +743,6 @@ video {
 .my-3 {
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
-}
-
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
 }
 
 .-ml-px {
@@ -1411,8 +1414,10 @@ video {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
-.overflow-auto {
-  overflow: auto;
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
 
 .overflow-hidden {

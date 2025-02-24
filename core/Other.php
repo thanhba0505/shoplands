@@ -88,21 +88,39 @@ class Other
     }
 
     // Input text
-    public static function inputField($name, $value = '', $attributes = [])
+    public static function inputField($attributes = [], $icon = '')
     {
-        $name = Util::encodeHtml($name);
-        $value = Util::encodeHtml($value);
+        $icon = Util::encodeHtml($icon);
+
         $attrString = '';
         foreach ($attributes as $key => $val) {
             $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
         }
-        return '<input
-                    type="text"
-                    name="' . $name . '"
-                    value="' . $value . '"
+
+        $iconClass = '';
+        $iconHtml = '';
+
+        if ($icon !== '') {
+            if ($icon == 'search') {
+                $iconClass = 'fas fa-search';
+            } else if ($icon == 'dollar') {
+                $iconClass = 'fas fa-dollar-sign';
+            }
+
+
+            $iconHtml = '<span class="absolute w-8 justify-center inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <i class="' . $iconClass . '"></i>
+                    </span>';
+        }
+
+        return '
+                <div class="relative">
+                    ' . $iconHtml . '
+                    <input
+                    type="text" 
                     ' . $attrString . '
-                    class="w-full px-4 py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300">
-                ';
+                    class="w-full ' . ($icon !== '' ? 'pl-10 pr-4' : 'px-4') . ' py-2 h-10 text-base text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300">
+                </div>';
     }
 
     // Input text
@@ -139,7 +157,7 @@ class Other
 
         return '<div class="custom-checkbox">
                 <input class="inp-cbx" id="' . $name . $value . '" name="' . $name . '" value="' . $value . '" type="checkbox"' . $checkedAttr . $attrString . '/>
-                <label class="cbx ' . ($label == '' ? 'w-11' : 'w-full') . ' h-full" for="' . $name .  $value . '">
+                <label class="cbx ' . ($label == '' ? 'w-11' : 'w-full') . '" for="' . $name .  $value . '">
                     <span>
                         <svg width="12px" height="10px">
                             <use xlink:href="#check-4"></use>
@@ -206,10 +224,14 @@ class Other
         $halfStars = 0;
         $emptyStars = 0;
 
-        if ($decimalPart >= 0.4 && $decimalPart <= 0.8) {
-            $halfStars = 1; // Nếu phần thập phân từ 0.4 đến 0.8, thêm 1 sao nửa
-        } elseif ($decimalPart > 0.8) {
-            $fullStars += 1; // Nếu phần thập phân từ 0.9 trở lên, làm tròn lên thành sao vàng
+        // if ($decimalPart >= 0.4 && $decimalPart <= 0.8) {
+        //     $halfStars = 1; // Nếu phần thập phân từ 0.4 đến 0.8, thêm 1 sao nửa
+        // } elseif ($decimalPart > 0.8) {
+        //     $fullStars += 1; // Nếu phần thập phân từ 0.9 trở lên, làm tròn lên thành sao vàng
+        // }
+
+        if ($decimalPart >= 0.5) {
+            $halfStars = 1;
         }
 
         $emptyStars = 5 - ($fullStars + $halfStars); // Số sao rỗng còn lại

@@ -121,4 +121,23 @@ class Util
         print_r($array);
         echo '</pre>';
     }
+
+    // Xử lý chuỗi tìm kiếm thành sql
+    public static function buildSearchCondition($search, &$params)
+    {
+        if (empty($search)) {
+            return '';
+        }
+
+        $keywords = explode(' ', trim($search));
+
+        $conditions = [];
+        foreach ($keywords as $index => $keyword) {
+            $paramKey = ":search$index";
+            $conditions[] = "p.name LIKE $paramKey";
+            $params[$paramKey] = "%$keyword%"; // Thay đổi trực tiếp mảng $params bên ngoài hàm
+        }
+
+        return '(' . implode(' AND ', $conditions) . ')';
+    }
 }

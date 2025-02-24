@@ -7,13 +7,15 @@ require_once 'app/Models/ProductImage.php';
 
 class Controller
 {
-    public function getProducts($limit = 12)
+    public function getProducts($limit = 12, $filter = [], $arrange = [])
     {
         $productModel = new Product();
         $productVariantModel = new ProductVariant();
         $reviewModel = new Review();
 
-        $products = $productModel->getAll($limit);
+        $products = $productModel->getAllByOptions($limit, $filter, $arrange);
+
+        // Nhóm dữ liệu
 
         foreach ($products as $key1 => $product) {
             $variants = $productVariantModel->getVariantProductId($product['id']);
@@ -65,6 +67,10 @@ class Controller
             $productImageModel = new ProductImage();
             $products[$key1]['image'] = $productImageModel->getDefaultImage($product['id']);
         }
+
+
+
+        Console::log($products);
 
         return $products;
     }

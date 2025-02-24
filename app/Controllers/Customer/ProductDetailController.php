@@ -23,7 +23,6 @@ class ProductDetailController
         $product = $productModel->getByProductId($id);
 
         $productVariantModel = new ProductVariant();
-        $product['product_description'] = '';
         $product['quantity'] = $productModel->getQuantityByProductId($id);
         $product['sold_quantity'] = $productModel->getSoldQuantityByProductId($id);
 

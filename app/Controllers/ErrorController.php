@@ -19,14 +19,14 @@ class ErrorController
 
         if ($products) {
             // Bắt đầu bảng
-            echo "<div class='overflow-auto w-full'>";
+            echo "<div class=' w-full'>";
             echo "<table class='min-w-full table-auto border-collapse border border-gray-200'>";
 
             // Tạo tiêu đề bảng (dựa trên các tên cột trong cơ sở dữ liệu)
-            echo "<thead class='bg-gray-100'>";
+            echo "<thead class='bg-gray-300 sticky top-0'>";
             echo "<tr>";
             foreach ($products[0] as $key => $value) {
-                echo "<th class='px-4 py-2 border border-gray-300 text-left'>" . htmlspecialchars($key) . "</th>";
+                echo "<th class='px-4 py-2 border border-gray-300 bg-gray-300 text-left'>" . htmlspecialchars($key) . "</th>";
             }
             echo "</tr>";
             echo "</thead>";

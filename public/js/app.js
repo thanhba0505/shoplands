@@ -509,6 +509,18 @@ function removeEmptyFields(form) {
             input.removeAttribute("name"); // Xóa input rỗng để không gửi lên server
         }
     });
+    let textareas = form.querySelectorAll("textarea");
+    textareas.forEach((textarea) => {
+        if (textarea.value.trim() === "") {
+            textarea.removeAttribute("name"); // Xoa textarea rongyang
+        }
+    });
+    let selects = form.querySelectorAll("select");
+    selects.forEach((select) => {
+        if (select.value === "") {
+            select.removeAttribute("name"); // Xoa select rongyang
+        }
+    });
 }
 
 // Hàm tăng giảm số lượng

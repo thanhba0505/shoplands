@@ -40,7 +40,7 @@ class Review
 
         $sql = "
             SELECT
-                AVG(r.rating) AS average_rating
+                ROUND(AVG(r.rating), 1) AS average_rating
             FROM
                 reviews r
                 JOIN product_variants pv ON pv.id = r.product_variant_id
