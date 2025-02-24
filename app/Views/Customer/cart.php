@@ -7,7 +7,7 @@
                     <?php foreach ($groupedCarts as $group): ?>
                         <tr class="border-b border-gray-300 bg-blue-50">
                             <td class="w-24 py-4">
-                                <?= Other::checkbox('s_ids[]', $group['s_id'], '', false, ['data-group' => $group['s_id']]); ?>
+                                <?= Other::checkbox('', ['name' => 's_ids[]', 'value' => $group['s_id'], 'data-group' => $group['s_id']]); ?>
                             </td>
                             <td colspan="2">
                                 <a href="<?= Redirect::shop()->withQuery(['id' => $group['s_id']])->getUrl() ?>" class="text-blue-600 hover:underline">
@@ -24,9 +24,12 @@
                         <?php foreach ($group['products'] as $product): ?>
                             <tr>
                                 <td class="w-24">
-                                    <?= Other::checkbox('c_ids[]', $product['c_id'], '', false, [
+                                    <?= Other::checkbox('', [
+                                        'id' => 'checkbox-' . $product['c_id'],
                                         'data-group' => $group['s_id'],
-                                        'data-cart-id' => $product['c_id'], // Đổi thành data-cart-id
+                                        'data-cart-id' => $product['c_id'],
+                                        'name' => 'c_ids[]',
+                                        'value' => $product['c_id'],
                                     ]); ?>
                                 </td>
                                 <td class="w-24">
@@ -53,24 +56,33 @@
                                     ?>
                                 </td>
                                 <td class="text-center">
-                                    <?= Util::formatCurrency($product['pv_price']) ?>
+                                    <?php if ($product['pv_promotion_price'] != null): ?>
+                                        <del class="text-xs"><?= Util::formatCurrency($product['pv_price']) ?></del>
+                                        <br>
+                                        <div class="font-bold text-red-600" id="price-<?= $product['c_id'] ?>"><?= Util::formatCurrency($product['pv_promotion_price']) ?></div>
+                                    <?php else: ?>
+                                        <div class="font-bold text-red-600" id="price-<?= $product['c_id'] ?>"><?= Util::formatCurrency($product['pv_price']) ?></div>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-center">
                                     <div class="flex items-center" id="counter-<?= $product['c_id'] ?>">
                                         <?= Other::button('-', 'light', ['type' => 'button']) ?>
                                         <?= Other::inputNumber('quantity[]', $product['c_quantity'], [
-                                            'data-cart-id' => $product['c_id'], // Đổi thành data-cart-id
+                                            'data-cart-id' => $product['c_id'],
+                                            'id' => 'quantity-' . $product['c_id'],
                                         ]) ?>
                                         <?= Other::button('+', 'light', ['type' => 'button']) ?>
                                     </div>
                                     <script>
                                         $(document).ready(function() {
-                                            counter("#counter-<?= $product['c_id'] ?>", 1, <?= $product['pv_quantity'] ?>);
+                                            counter("#counter-<?= $product['c_id'] ?>", 1, <?= $product['pv_quantity'] ?>, () => {
+                                                updateTotalPrice();
+                                            });
                                         });
                                     </script>
                                 </td>
-                                <td class="text-center">
-                                    <?= Util::formatCurrency($product['pv_price']) ?>
+                                <td class="text-center" id="total-price-<?= $product['c_id'] ?>">
+                                    <?= Util::formatCurrency($product['pv_price'] * $product['c_quantity']) ?>
                                 </td>
                                 <td class="text-center">
                                     <button type="button" data-cart-id="<?= $product['c_id'] ?>" class="delete-cart-button text-red-600 hover:underline">Xóa</button>
@@ -88,10 +100,19 @@
         </div>
 
         <!-- Phần tử sticky -->
-        <div id="cart-footer" class="flex items-center justify-between py-4 px-6 sticky bottom-0  bg-white border-t-2 mt-4">
-            <button class="btn btn-outline border px-6 py-2">Xóa tất cả</button>
+        <div id="cart-footer" class="grid grid-cols-3 py-4 px-6 sticky bottom-0 mt-6 bg-white border-t-2">
 
-            <button type="submit" class="btn px-6 py-2 bg-blue-500 text-white">Mua hàng</button>
+            <div class="col-span-1">
+                <div class="w-48"><?= Other::button('Xóa tất cả (chưa làm)', 'light', ['type' => 'button']) ?></div>
+            </div>
+
+            <div class="col-span-1 text-center">
+                Thành tiền: <span id="total-price" class="text-red-600 font-bold text-2xl"></span>
+            </div>
+
+            <div class="col-span-1">
+                <div class="ml-auto w-48"><?= Other::button('Mua ngay', 'dark', ['type' => 'submit']) ?></div>
+            </div>
         </div>
     </div>
 </form>
@@ -148,5 +169,6 @@
         submitFormCart();
         checkTable();
         deleteCart('<?= Redirect::cart('delete', true)->getUrl() ?>', '<?= CSRF::getToken() ?>');
+        updateTotalPrice();
     });
 </script>

@@ -2,8 +2,10 @@
 require_once 'app/Models/Product.php';
 require_once 'app/Models/Seller.php';
 require_once 'app/Models/Category.php';
+require_once 'app/Models/Product.php';
+require_once 'app/Controllers/Controller.php';
 
-class ShopController
+class ShopController extends Controller
 {
     public function show()
     {
@@ -27,34 +29,34 @@ class ShopController
         $productModel = new Product();
         $bestSellingProducts = $productModel->getProducts(6);
 
-        // Gọi model đến sản phẩm
-        $product = new Product();
-        $product_result = $product->getProducts();
-
         // Lọc sản phẩm
         $filter = [
             'min_price' => Request::get('min_price'),
             'max_price' => Request::get('max_price'),
             'categories' => Request::get('categories', []),
-            'ratings' => Request::get('ratings', [])
+            'ratings' => Request::get('ratings', []),
+            'search' => Request::get('search'),
         ];
-        
+
 
         $arrange = [
-            'latest' => Request::get('latest'),
-            'popular' => Request::get('popular'),
-            'price' => in_array(Request::get('price'), ['asc', 'desc']) ? Request::get('price') : '',
+            'top-rated' => Request::get('top-rated'),
+            'top-seller' => Request::get('top-seller'),
+            'price' => in_array(Request::get('price'), ['asc', 'desc']) ? Request::get('price') : null,
         ];
+
+        // Gọi model đến sản phẩm
+        $products = $this->getProducts(20, $filter, $arrange);
 
         // Gọi model đến danh mục
         $categoryModel = new Category();
-        $categories = $categoryModel->getAll();
+        $categories = $categoryModel->getBySellerId($id);
 
         $data = [
             'title' => 'Shop Page',
             'seller' => $seller,
             'bestSellingProducts' => $bestSellingProducts,
-            'products' => $product_result,
+            'products' => $products,
             'categories' => $categories,
             'arrange' => $arrange,
             'filter' => $filter

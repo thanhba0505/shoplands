@@ -13,7 +13,7 @@ class Controller
         $productVariantModel = new ProductVariant();
         $reviewModel = new Review();
 
-        $products = $productModel->getAllByOptions($limit, $filter, $arrange);
+        $products = $productModel->getAllByOptions(['filter' => $filter, 'arrange' => $arrange], $limit);
 
         // Nhóm dữ liệu
 

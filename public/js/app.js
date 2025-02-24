@@ -393,6 +393,7 @@ function deleteCart(url, csrf) {
                         type: "success",
                     });
                     checkTable();
+                    updateTotalPrice();
                 } else {
                     showToast({
                         message: response.message,
@@ -430,13 +431,8 @@ function checkTable() {
 }
 
 // Hàm format giá tiền
-function formatCurrency(value) {
-    return new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-    })
-        .format(value)
-        .replace(/\s₫/, "₫");
+function formatCurrency(value = 0) {
+    return new Intl.NumberFormat("vi-VN").format(value) + "đ";
 }
 
 // Hàm chuyển ảnh trong trang productDetails
@@ -524,7 +520,7 @@ function removeEmptyFields(form) {
 }
 
 // Hàm tăng giảm số lượng
-function counter(selector, min = 1, max = Infinity) {
+function counter(selector, min = 1, max = Infinity, onChange = null) {
     $(selector).each(function () {
         const container = $(this);
         const minusBtn = container.find("button:first-child");
@@ -534,7 +530,7 @@ function counter(selector, min = 1, max = Infinity) {
         // Xóa các sự kiện click cũ trước khi gắn sự kiện mới
         minusBtn.off("click");
         plusBtn.off("click");
-        input.off("input");
+        input.off("input keydown paste");
 
         // Đặt giá trị ban đầu của input trong khoảng [min, max]
         let currentValue = parseInt(input.val(), 10);
@@ -544,22 +540,24 @@ function counter(selector, min = 1, max = Infinity) {
             input.val(max);
         }
 
+        // Gọi callback khi có thay đổi
+        function triggerChange() {
+            if (typeof onChange === "function") {
+                onChange(input.val());
+            }
+        }
+
         // Kiểm tra giá trị input khi người dùng nhập
         input.on("input", function () {
             let value = parseInt(input.val(), 10);
 
-            // Nếu giá trị không hợp lệ (NaN), đặt về min
-            if (isNaN(value)) {
+            if (isNaN(value) || value < min) {
                 input.val(min);
-            }
-            // Nếu giá trị nhỏ hơn min, đặt về min
-            else if (value < min) {
-                input.val(min);
-            }
-            // Nếu giá trị lớn hơn max, đặt về max
-            else if (value > max) {
+            } else if (value > max) {
                 input.val(max);
             }
+
+            triggerChange(); // Gọi callback
         });
 
         // Xử lý khi nhấn nút giảm
@@ -567,6 +565,7 @@ function counter(selector, min = 1, max = Infinity) {
             let value = parseInt(input.val(), 10);
             if (value > min) {
                 input.val(value - 1);
+                triggerChange();
             }
         });
 
@@ -575,17 +574,15 @@ function counter(selector, min = 1, max = Infinity) {
             let value = parseInt(input.val(), 10);
             if (value < max) {
                 input.val(value + 1);
+                triggerChange();
             }
         });
 
-        // Ngăn chặn việc nhập giá trị không hợp lệ từ bàn phím
+        // Ngăn chặn nhập ký tự không hợp lệ
         input.on("keydown", function (e) {
-            // Cho phép các phím: backspace, delete, mũi tên trái/phải
             if ([8, 46, 37, 39].includes(e.keyCode)) {
                 return;
             }
-
-            // Ngăn chặn nhập ký tự không phải số
             if (e.key.length === 1 && isNaN(Number(e.key))) {
                 e.preventDefault();
             }
@@ -593,13 +590,13 @@ function counter(selector, min = 1, max = Infinity) {
 
         // Ngăn chặn việc dán giá trị không hợp lệ
         input.on("paste", function (e) {
-            e.preventDefault(); // Ngăn chặn hành vi dán mặc định
+            e.preventDefault();
             const pasteData = e.originalEvent.clipboardData.getData("text");
             const pasteValue = parseInt(pasteData, 10);
 
-            // Chỉ cho phép dán giá trị hợp lệ
             if (!isNaN(pasteValue) && pasteValue >= min && pasteValue <= max) {
                 input.val(pasteValue);
+                triggerChange();
             }
         });
     });
@@ -612,28 +609,75 @@ function checkboxGroup() {
         const groupId = $(this).data("group"); // Lấy giá trị data-group
         const isChecked = $(this).is(":checked"); // Kiểm tra trạng thái check
 
-        // Check/uncheck tất cả checkbox product (c_ids[]) trong cùng nhóm
-        $(`input[name="c_ids[]"][data-group="${groupId}"]`).prop(
-            "checked",
-            isChecked
-        );
+        // Nếu checkbox group này được check
+        if (isChecked) {
+            // Bỏ chọn tất cả các checkbox group khác
+            $('input[name="s_ids[]"]').not(this).prop("checked", false);
+
+            // Check tất cả các checkbox sản phẩm trong nhóm này
+            $(`input[name="c_ids[]"][data-group="${groupId}"]`).prop(
+                "checked",
+                true
+            );
+        } else {
+            // Nếu checkbox group này bị bỏ chọn, bỏ chọn tất cả các checkbox sản phẩm trong nhóm này
+            $(`input[name="c_ids[]"][data-group="${groupId}"]`).prop(
+                "checked",
+                false
+            );
+        }
+
+        updateTotalPrice();
     });
 
     // Lắng nghe sự kiện change trên checkbox product (c_ids[])
     $('input[name="c_ids[]"]').on("change", function () {
         const groupId = $(this).data("group"); // Lấy giá trị data-group
-        const groupCheckbox = $(
-            `input[name="s_ids[]"][data-group="${groupId}"]`
-        ); // Tìm checkbox group tương ứng
 
-        // Kiểm tra xem tất cả checkbox product trong nhóm có được check không
+        // Kiểm tra trạng thái của tất cả các checkbox sản phẩm trong nhóm hiện tại
         const allChecked =
             $(`input[name="c_ids[]"][data-group="${groupId}"]`).length ===
             $(`input[name="c_ids[]"][data-group="${groupId}"]:checked`).length;
 
-        // Nếu tất cả checkbox product trong nhóm được check, check checkbox group
+        // Cập nhật checkbox group tương ứng
+        const groupCheckbox = $(
+            `input[name="s_ids[]"][data-group="${groupId}"]`
+        );
         groupCheckbox.prop("checked", allChecked);
+
+        updateTotalPrice();
     });
+}
+
+// Cập nhật tổng tiền giỏ hàng
+function updateTotalPrice() {
+    let total = 0;
+
+    // Lặp qua tất cả các sản phẩm (dù có checked hay không)
+    $("input[name='c_ids[]']").each(function () {
+        let cartId = $(this).val();
+        let priceText = $("#price-" + cartId)
+            .text()
+            .trim();
+        let quantity = parseInt($("#quantity-" + cartId).val()) || 1;
+
+        // Chuyển giá từ dạng "100.000đ" về số (loại bỏ ký tự không phải số)
+        let price = parseFloat(priceText.replace(/\D/g, ""));
+
+        // Tính tổng tiền của sản phẩm
+        let productTotal = price * quantity;
+
+        // Cập nhật giá của từng sản phẩm vào #total-price-{cartId}
+        $("#total-price-" + cartId).text(formatCurrency(productTotal));
+
+        // Kiểm tra nếu checkbox sản phẩm này được chọn
+        if ($(this).is(":checked")) {
+            total += productTotal;
+        }
+    });
+
+    // Cập nhật tổng tiền hiển thị
+    $("#total-price").text(formatCurrency(total));
 }
 
 // // Xử lý sự kiện submit form cart

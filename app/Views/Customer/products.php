@@ -37,7 +37,13 @@
                     <?php foreach ($categories as $category) : ?>
                         <li>
                             <?php $checked = in_array($category['id'], $filteredCategories); ?>
-                            <?= Other::checkbox('categories[]', $category['id'], $category['name'], $checked); ?>
+                            <?= Other::checkbox($category['name'], [
+                                'id'  => 'categories[]' . $category['id'],
+                                'name' => 'categories[]',
+                                'value' => $category['id'],
+                                'checked' => $checked
+                            ]); ?>
+
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -48,11 +54,12 @@
                 <h3 class="text-sm font-semibold text-gray-700 mb-2">Theo Đánh Giá</h3>
                 <ul class="space-y-1 pl-2 text-sm text-gray-600">
                     <?php $filteredRatings = $filter['ratings']; ?>
-                    <li class="sticky bottom-36"><?= Other::checkbox('ratings[]', 5, '5 Sao', in_array('5', $filteredRatings)) ?></li>
-                    <li><?= Other::checkbox('ratings[]', 4, '4 Sao', in_array('4', $filteredRatings)) ?></li>
-                    <li><?= Other::checkbox('ratings[]', 3, '3 Sao', in_array('3', $filteredRatings)) ?></li>
-                    <li><?= Other::checkbox('ratings[]', 2, '2 Sao', in_array('2', $filteredRatings)) ?></li>
-                    <li><?= Other::checkbox('ratings[]', 1, '1 Sao', in_array('1', $filteredRatings)) ?></li>
+
+                    <li><?= Other::checkbox('5 Sao', ['name' => 'ratings[]', 'value' => 5, 'checked' => in_array('5', $filteredRatings)]) ?></li>
+                    <li><?= Other::checkbox('4 Sao', ['name' => 'ratings[]', 'value' => 4, 'checked' => in_array('4', $filteredRatings)]) ?></li>
+                    <li><?= Other::checkbox('3 Sao', ['name' => 'ratings[]', 'value' => 3, 'checked' => in_array('3', $filteredRatings)]) ?></li>
+                    <li><?= Other::checkbox('2 Sao', ['name' => 'ratings[]', 'value' => 2, 'checked' => in_array('2', $filteredRatings)]) ?></li>
+                    <li><?= Other::checkbox('1 Sao', ['name' => 'ratings[]', 'value' => 1, 'checked' => in_array('1', $filteredRatings)]) ?></li>
                 </ul>
             </div>
 
@@ -84,15 +91,19 @@
                             </select>
                         </div>
 
-                        <div class="bg-white border border-gray-300 rounded-lg flex" style="height: 46px;"><?= Other::checkbox('top-rated', 1, 'Đánh giá cao nhất', $arrange['top-rated']); ?></div>
-                        <div class="bg-white border border-gray-300 rounded-lg flex" style="height: 46px;"><?= Other::checkbox('top-seller', 1, 'Lượt bán nhiều nhất', $arrange['top-seller']); ?></div>
+                        <div class="bg-white border border-gray-300 rounded-lg flex" style="height: 46px;">
+                            <?= Other::checkbox('Đánh giá cao nhất', ['name' => 'top-rated', 'value' => 1, 'checked' => $arrange['top-rated']]); ?>
+                        </div>
+                        <div class="bg-white border border-gray-300 rounded-lg flex" style="height: 46px;">
+                            <?= Other::checkbox('Lượt bán nhiều nhất', ['name' => 'top-seller', 'value' => 1, 'checked' => $arrange['top-seller']]); ?>
+                        </div>
 
                     </div>
                 </div>
             </div>
 
 
-            <?= Other::renderProducts($products, '', 5, '', Redirect::product()->getUrl()); ?>
+            <?= Other::renderProducts($products, '', 5); ?>
 
 
         </div>

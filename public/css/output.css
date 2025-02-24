@@ -633,6 +633,10 @@ video {
   bottom: 0px;
 }
 
+.bottom-36 {
+  bottom: 9rem;
+}
+
 .left-0 {
   left: 0px;
 }
@@ -651,14 +655,6 @@ video {
 
 .top-2 {
   top: 0.5rem;
-}
-
-.bottom-10 {
-  bottom: 2.5rem;
-}
-
-.bottom-36 {
-  bottom: 9rem;
 }
 
 .isolate {
@@ -703,6 +699,14 @@ video {
 
 .col-span-9 {
   grid-column: span 9 / span 9;
+}
+
+.col-end-2 {
+  grid-column-end: 2;
+}
+
+.float-end {
+  float: inline-end;
 }
 
 .mx-1 {
@@ -807,6 +811,10 @@ video {
 
 .ml-6 {
   margin-left: 1.5rem;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
 
 .mr-1 {
@@ -1402,6 +1410,12 @@ video {
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
+
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1414,10 +1428,8 @@ video {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
-.space-y-3 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+.self-end {
+  align-self: flex-end;
 }
 
 .overflow-hidden {
@@ -1849,6 +1861,10 @@ video {
 
 .pt-8 {
   padding-top: 2rem;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
 }
 
 .text-left {

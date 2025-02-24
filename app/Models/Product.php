@@ -30,8 +30,17 @@ class Product
     }
 
     // Lấy danh sách thông tin sản phẩm theo các lựa chọn
-    public function getAllByOptions($limit = 12, $filter = [], $arrange = [])
+    public function getAllByOptions($options = [], $limit = 12)
     {
+        $defaultOptions = [
+            'filter' => [],
+            'arrange' => []
+        ];
+
+        $options = array_merge($defaultOptions, $options);
+        $filter = $options['filter'];
+        $arrange = $options['arrange'];
+
         $query = new ConnectDatabase();
 
         // ----------------------------LỌC
