@@ -61,40 +61,35 @@ class Cart
         return $result;
     }
 
-
-    public function getAllByUserId($userId)
+    // Lấy product_variant có trong cart theo cart id
+    public function getProductVariandByCartId($cartId, $userId)
     {
         $query = new ConnectDatabase();
 
-        $sql =  "
+        $sql = "
             SELECT
-                c.id AS cart_id,
-                c.quantity AS cart_quantity,
-                p.id AS product_id,
-                p.name AS product_name,
-                pv.id AS variant_id,
-                pv.price AS product_price,
-                pv.promotion_price AS product_promotion_price,
-                s.id AS seller_id,
-                s.name AS seller_name,
-                pa.name AS product_attribute,
-                pav.value AS product_attribute_value,
-                pi.image_path AS product_image
+                c.id AS c_id,
+                c.quantity AS c_quantity,
+                pv.id AS pv_id,
+                pv.price AS pv_price,
+                pv.promotion_price AS pv_promotion_price,
+                pv.quantity AS pv_quantity,
+                pv.sold_quantity AS pv_sold_quantity,
+                p.id AS p_id,
+                p.name AS p_name,
+                i.image_path AS i_path
             FROM
                 carts c
                 JOIN product_variants pv ON pv.id = c.product_variant_id
                 JOIN products p ON p.id = pv.product_id
-                LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
-                LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
-                LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
-                JOIN sellers s ON s.id = p.seller_id
-                JOIN product_images pi ON pi.product_id = p.id
+                JOIN product_images i ON i.product_id = p.id
             WHERE
                 c.user_id = :userId
-                AND pi.default = :default
+                AND c.id = :cartId
+                AND i.default = :default
         ";
 
-        $result = $query->query($sql, ['userId' => $userId, "default" => '1'])->fetchAll();
+        $result = $query->query($sql, ['userId' => $userId, "cartId" => $cartId, "default" => '1'])->fetch();
 
         return $result;
     }
@@ -181,5 +176,26 @@ class Cart
             ->delete('carts', 'id = :id AND user_id = :user_id', ['user_id' => $userId, 'id' => $cartId]);
 
         return $result;
+    }
+
+    public function getSellerIdByCartId($cartId)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                s.id AS s_id
+            FROM
+                carts c
+                JOIN product_variants pv ON pv.id = c.product_variant_id
+                JOIN products p ON p.id = pv.product_id
+                JOIN sellers s ON s.id = p.seller_id
+            WHERE
+                c.id = :cartId
+        ";
+
+        $result = $query->query($sql, ['cartId' => $cartId])->fetch();
+
+        return $result['s_id'] ?? null;
     }
 }

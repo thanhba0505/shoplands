@@ -1,4 +1,5 @@
-<form action="<?= Redirect::order('confirm')->getUrl() ?>" method="GET">
+<form action="<?= Redirect::order('confirm')->getUrl() ?>" method="POST">
+    <?= CSRF::input() ?>
 
     <div class="flex flex-col">
         <div class="w-full">

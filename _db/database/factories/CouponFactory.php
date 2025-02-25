@@ -21,10 +21,10 @@ class CouponFactory extends Factory
         $usageLimit = $this->faker->numberBetween(1, 100);
 
         // Ngẫu nhiên chọn ngày trong vòng 1 tháng trước và 1 tháng sau
-        $startDate = $this->faker->dateTimeBetween('-1 month', '+1 month');
+        $startDate = $this->faker->dateTimeBetween('-1 month', 'now');
 
         // Thêm ngẫu nhiên từ 1 đến 30 ngày vào $startDate để tạo $endDate
-        $endDate = \Carbon\Carbon::instance($startDate)->addDays($this->faker->numberBetween(1, 30));
+        $endDate = \Carbon\Carbon::instance($startDate)->addDays($this->faker->numberBetween(1, 90));
 
         return [
             'code' => Str::upper(Str::random(10)),

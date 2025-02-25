@@ -41,11 +41,11 @@ $router->post('/api/cart/add', 'Customer/CartController@apiAdd', [AuthMiddleware
 $router->post('/api/cart/delete', 'Customer/CartController@apiDelete', [AuthMiddleware::class]);
 
 // Trang xác nhận đặt hàng ---------------------------------------------------------------------
-$router->get('/order/confirm', 'Customer/OrderController@showConfirm', [AuthMiddleware::class]);
-$router->post('/order/confirm', 'Customer/OrderController@showConfirm', [AuthMiddleware::class]);
+$router->get('/order/confirm', 'Customer/OrderConfirmController@show', [AuthMiddleware::class]);
+$router->post('/order/confirm', 'Customer/OrderConfirmController@handle', [AuthMiddleware::class]);
 
 // Trang đơn hàng ---------------------------------------------------------------------
-$router->get('/order/history', 'Customer/OrderController@showHistory', [AuthMiddleware::class]);
+$router->get('/order/history', 'Customer/OrderHistoryController@show', [AuthMiddleware::class]);
 
 
 // Trang thiết lập thông tin ---------------------------------------------------------------------

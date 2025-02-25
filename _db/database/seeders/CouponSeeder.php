@@ -14,7 +14,7 @@ class CouponSeeder extends Seeder
         $sellers = Seller::all();
 
         foreach ($sellers as $seller) {
-            $couponCount = rand(-3, 5);
+            $couponCount = rand(5, 10);
 
             for ($i = 0; $i < $couponCount; $i++) {
                 Coupon::factory()->create([
