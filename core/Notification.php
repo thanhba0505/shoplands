@@ -19,7 +19,7 @@ class Notification
         echo "
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    showToast('$escapedMessage', '$escapedType');
+                    showToast({message: '$escapedMessage', type: '$escapedType'});
                 });
             </script>
         ";

@@ -184,6 +184,48 @@ class Other
             </div>';
     }
 
+    // Radio
+    public static function radio($label, $attributes = [])
+    {
+        $label = Util::encodeHtml($label);
+
+        // Nếu không có ID, tạo ID duy nhất
+        if (empty($attributes['id'])) {
+            $attributes['id'] = 'radio_' . uniqid();
+        }
+
+        $id = Util::encodeHtml($attributes['id']);
+
+        // Kiểm tra nếu có 'checked' và nó bằng true thì thêm thuộc tính checked
+        if (!empty($attributes['checked']) && $attributes['checked'] === true) {
+            $attributes['checked'] = 'checked';
+        } else {
+            unset($attributes['checked']); // Xóa nếu không phải true
+        }
+
+        // Xử lý các thuộc tính tùy chỉnh
+        $attrString = '';
+        foreach ($attributes as $key => $val) {
+            $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
+        }
+
+        return '<div class="custom-checkbox">
+                <input class="inp-cbx" ' . $attrString . ' type="radio" />
+                <label class="cbx mx-auto ' . ($label === '' ? 'w-11' : 'w-full') . '" for="' . $id . '">
+                    <span style="border-radius: 8px;">
+                        <svg width="12px" height="10px">
+                            <use xlink:href="#check-4"></use>
+                        </svg>
+                    </span>
+                    ' . (!empty($label) ? '<span>' . $label . '</span>' : '') . '
+                </label>
+                <svg class="inline-svg">
+                    <symbol id="check-4" viewBox="0 0 12 10">
+                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                    </symbol>
+                </svg>
+            </div>';
+    }
 
 
 

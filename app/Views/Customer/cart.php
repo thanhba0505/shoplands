@@ -1,5 +1,5 @@
-<form action="<?= Redirect::order('confirm')->getUrl() ?>" method="post">
-    <?= CSRF::input(); ?>
+<form action="<?= Redirect::order('confirm')->getUrl() ?>" method="GET">
+
     <div class="flex flex-col">
         <div class="w-full">
             <table id="cart-table" class="table-auto border-separate border-spacing-y-2 w-full">
