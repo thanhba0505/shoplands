@@ -140,4 +140,20 @@ class Util
 
         return '(' . implode(' AND ', $conditions) . ')';
     }
+
+    // Hàm tạo QR code
+    public static function generateQRCodeBase64($data)
+    {
+        ob_start();
+        QRcode::png($data, null, QR_ECLEVEL_H, 10, 2);
+        $qrCodeImage = ob_get_clean();
+        return base64_encode($qrCodeImage);
+    }
+
+    // Hàm tạo và lưu QR code
+    public static function saveQRCode($data, $filename)
+    {
+        QRcode::png($data, Asset::getQR($filename), QR_ECLEVEL_H, 10, 2);
+        return Asset::getQR($filename);
+    }
 }

@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {});
 function showToast(config) {
     // Thiết lập cấu hình mặc định
     const defaultConfig = {
-        message: "", // Nội dung thông báo
+        message: "Thông báo chưa có nội dung", // Nội dung thông báo
         type: "success", // Loại thông báo (success, error, warning, info)
         duration: 3000, // Thời gian hiển thị (ms)
         title: "Thông báo", // Tiêu đề thông báo

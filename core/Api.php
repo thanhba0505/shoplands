@@ -2,6 +2,7 @@
 
 class Api
 {
+    // Cái cũ
     public static function encode($data, $message = '', $status = 'success')
     {
         header('Content-Type: application/json');
@@ -10,6 +11,22 @@ class Api
             'message' => $message,
             'data' => $data
         ];
+        return json_encode($response);
+    }
+
+    // Cái mới
+    public static function response($res = [])
+    {
+        header('Content-Type: application/json');
+
+        $default = [
+            'success' => true,
+            'message' => '',
+            'data' => null
+        ];
+
+        $response = array_merge($default, $res);
+
         return json_encode($response);
     }
 

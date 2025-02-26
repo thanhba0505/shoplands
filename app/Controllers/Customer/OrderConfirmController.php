@@ -64,8 +64,6 @@ class OrderConfirmController
             'coupons' => $coupons
         ];
 
-        Console::log($data);
-
         // Render view với layout
         return View::make('Customer/order-confirm', $data);
     }

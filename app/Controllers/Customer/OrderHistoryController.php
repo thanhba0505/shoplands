@@ -5,7 +5,7 @@ require_once 'app/Models/Address.php';
 
 class OrderHistoryController
 {
-    public function show()
+    public function show($id)
     {
         $data = [
             'title' => 'Lịch sử đơn hàng',

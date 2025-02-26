@@ -227,8 +227,6 @@ class Other
             </div>';
     }
 
-
-
     // Button
     public static function button($text, $theme = 'light', $attributes = [])
     {
@@ -271,8 +269,6 @@ class Other
             </button>';
     }
 
-
-
     // a
     public static function buttonLink($text, $href = '#', $theme = 'light', $attributes = [])
     {
@@ -295,7 +291,7 @@ class Other
                 </a>';
     }
 
-
+    // Rating
     public static function ratingStar($rating, $fontSize = 'text-xl')
     {
         $fullStars = floor(Util::encodeHtml($rating)); // Số sao đầy đủ (làm tròn xuống)
@@ -336,6 +332,44 @@ class Other
 
         return $output;
     }
+
+    // Hiển thị QR code trong HTML
+    public static function displayQRCode($qrCodeImage)
+    {
+        echo '<img class="w-full h-full" src="data:image/png;base64,' . $qrCodeImage . '" alt="QR Code">';
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

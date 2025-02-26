@@ -24,3 +24,10 @@ Bật câu lệnh css : npm run watch
 Làm việc liên quan tới jquery và js sử dụng thư viện
 - alpine (ưu tiên)
 - jquery
+
+
+
+
+
+
+;extension=gd

@@ -44,8 +44,14 @@ $router->post('/api/cart/delete', 'Customer/CartController@apiDelete', [AuthMidd
 $router->get('/order/confirm', 'Customer/OrderConfirmController@show', [AuthMiddleware::class]);
 $router->post('/order/confirm', 'Customer/OrderConfirmController@handle', [AuthMiddleware::class]);
 
-// Trang đơn hàng ---------------------------------------------------------------------
+// Trang thanh toán ---------------------------------------------------------------------
+$router->get('/order/checkout', 'Customer/OrderCheckoutController@show', [AuthMiddleware::class]);
+$router->post('/order/checkout', 'Customer/OrderCheckoutController@handle', [AuthMiddleware::class]);
+$router->post('/order/checkout/check-payment', 'Customer/OrderCheckoutController@checkPayment', [AuthMiddleware::class]);
+
+// Trang lịch sử đơn hàng ---------------------------------------------------------------------
 $router->get('/order/history', 'Customer/OrderHistoryController@show', [AuthMiddleware::class]);
+$router->get('/order/history/{id}', 'Customer/OrderHistoryController@show', [AuthMiddleware::class]);
 
 
 // Trang thiết lập thông tin ---------------------------------------------------------------------

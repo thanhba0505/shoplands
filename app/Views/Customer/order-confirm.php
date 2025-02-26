@@ -6,7 +6,7 @@
         <?= Util::encodeHtml($address['a_province'] . ' - ' . $address['a_line']) ?>
     <?php endif; ?>
 </div>
-<form action="" method="POST">
+<form action="<?= Redirect::order('checkout')->getUrl() ?>" method="POST">
     <?= CSRF::input() ?>
     <div class="mt-6">
         Sản phẩm:
@@ -70,7 +70,7 @@
 
     <div class="mt-6">
         <p>Mã giảm giá:</p>
-        <div class="overflow-y-auto h-72 w-full p-1 scroll scroll-smooth">
+        <div class="overflow-y-auto max-h-72 w-full p-1 scroll scroll-smooth">
             <div class="grid grid-cols-2 gap-4">
                 <?php foreach ($coupons as $coupon) : ?>
                     <?php
