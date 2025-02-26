@@ -4,7 +4,7 @@ require_once 'app/Models/ConnectDatabase.php';
 
 class Coupon
 {
-// Lấy danh sách coupon theo seller id
+    // Lấy danh sách coupon theo seller id
     public function getCouponBySellerId($sellerId)
     {
         $query = new ConnectDatabase();
@@ -25,7 +25,9 @@ class Coupon
             FROM
                 coupons cp
             WHERE
-                cp.seller_id = :sellerId
+                cp.seller_id = :sellerId 
+                AND cp.start_date <= NOW()
+                AND cp.end_date >= NOW()
         ";
 
         $result = $query->query($sql, ['sellerId' => $sellerId])->fetchAll();

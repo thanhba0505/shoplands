@@ -25,20 +25,23 @@ class OrderConfirmController
 
         // Lấy địa chỉ
         $user = Auth::getUser();
-        $userAddress = $addressModel->getAddressByUserId($user['id']);
+        $userId = $user['id'];
+        $userAddress = $addressModel->getAddressByUserId($userId);
 
 
         // Lấy danh sách sản phẩm
         $productVariantModel = new ProductVariant();
         $products = [];
+        $subtotalPrice = 0;
 
         for ($i = 0; $i < count($cartIds); $i++) {
-            $products[] = $cartModel->getProductVariandByCartId($cartIds[$i], $user['id']);
+            $products[] = $cartModel->getProductVariandByCartId($cartIds[$i], $userId);
             $attributes = $productVariantModel->getVariantValueByProductVariantId($products[$i]['pv_id']);
             $products[$i]['attributes'] = $attributes;
+
+            $subtotalPrice += floatval($products[$i]['pv_promotion_price'] ? $products[$i]['pv_promotion_price'] : $products[$i]['pv_price']) * floatval($products[$i]['c_quantity']);
         }
         $sellerId = $cartModel->getSellerIdByCartId($cartIds[0]);
-        $userId = $user['id'];
 
         // Lấy phương thức vận chuyển
         $shippingFees = [];
@@ -56,9 +59,12 @@ class OrderConfirmController
             'title' => 'Xác nhận đặt hàng',
             'address' => $userAddress,
             'products' => $products,
+            'subtotalPrice' => $subtotalPrice,
             'shippingFees' => $shippingFees,
             'coupons' => $coupons
         ];
+
+        Console::log($data);
 
         // Render view với layout
         return View::make('Customer/order-confirm', $data);

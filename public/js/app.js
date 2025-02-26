@@ -701,3 +701,66 @@ function submitFormCart() {
         return true;
     });
 }
+
+// Xử lý áp mã giảm giá, phí vận chuyển
+function applyCouponAndShippingFee(subtotalPrice) {
+    let subtotal = subtotalPrice;
+    let shippingFee = 0;
+    let discount = 0;
+    let selectedCouponId = "";
+
+    // Tính toán tổng tiền
+    function updateTotal() {
+        let total = subtotal + shippingFee - discount;
+        if (total < 0) total = 0;
+        $("#shipping-fee").text(formatCurrency(shippingFee));
+        $("#discount").text(formatCurrency(discount));
+        $("#total").text(formatCurrency(total));
+    }
+
+    // Chọn phương thức vận chuyển
+    $('input[name="sf_id"]').change(function () {
+        shippingFee = parseFloat($(this).data("fee")) || 0;
+        updateTotal();
+    });
+
+    // Chọn voucher
+    $(".coupon-item").click(function () {
+        if ($(this).hasClass("cursor-default")) return;
+
+        let isSelected = $(this).hasClass("border-blue-500");
+        $(".coupon-item").removeClass("border-blue-500 bg-blue-50");
+        discount = 0;
+        selectedCouponId = "";
+
+        if (!isSelected) {
+            $(this).addClass("border-blue-500 bg-blue-50");
+
+            let discountType = $(this).data("discount-type");
+            let discountValue = parseFloat($(this).data("discount-value")) || 0;
+            let maxDiscount = parseFloat($(this).data("max-discount")) || 0;
+            selectedCouponId = $(this).data("coupon-id");
+
+            if (discountType === "fixed") {
+                discount = discountValue;
+            } else {
+                let percentDiscount = (subtotal * discountValue) / 100;
+                discount =
+                    maxDiscount > 0
+                        ? Math.min(percentDiscount, maxDiscount)
+                        : percentDiscount;
+            }
+        }
+
+        // Cập nhật input ẩn với ID voucher
+        $("#selected-coupon-id").val(selectedCouponId);
+        updateTotal();
+    });
+
+    // Cập nhật mặc định nếu có phương thức vận chuyển
+    let defaultShipping = $('input[name="sf_id"]:checked').data("fee");
+    if (defaultShipping) {
+        shippingFee = parseFloat(defaultShipping) || 0;
+        updateTotal();
+    }
+}

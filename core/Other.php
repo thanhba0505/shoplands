@@ -234,21 +234,44 @@ class Other
     {
         $text = Util::encodeHtml($text);
         $attrString = '';
+        $disabledClass = '';
+        $disabledAttribute = '';
+
+        // Kiểm tra nếu có thuộc tính disabled trong $attributes
+        if (isset($attributes['disabled']) && $attributes['disabled'] === true) {
+            // Thêm class disabled vào nút
+            if ($theme == 'light') {
+                // Theme light khi disabled
+                $disabledClass = ' text-gray-500 cursor-default bg-gray-50 hover:bg-gray-100';
+            } else {
+                // Theme dark khi disabled
+                $disabledClass = ' text-gray-500 cursor-default bg-gray-400 hover:bg-gray-500';
+            }
+            // Thêm thuộc tính disabled vào nút
+            $disabledAttribute = 'disabled';
+        }
+
         foreach ($attributes as $key => $val) {
+            if ($key == 'disabled') {
+                continue;
+            }
             $attrString .= ' ' . $key . '="' . Util::encodeHtml($val) . '"';
         }
 
         if ($theme == 'light') {
-            $attrString .= ' class="w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500  hover:bg-blue-50"';
+            $attrString .= ' class="w-full bg-white text-blue-500 py-2 rounded text-sm font-semibold border border-blue-500 hover:bg-blue-50' . $disabledClass . '"';
         } else {
-            $attrString .= ' class="w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600 transition-all duration-300";';
+            $attrString .= ' class="w-full bg-blue-500 text-white py-2 rounded text-sm font-semibold hover:bg-blue-600 transition-all duration-300' . $disabledClass . '"';
         }
 
+        // Thêm thuộc tính disabled vào phần mở thẻ button nếu có
         return '<button
-                    ' . $attrString . '>
-                    ' . $text . '
-                </button>';
+                ' . $attrString . ' ' . $disabledAttribute . '>
+                ' . $text . '
+            </button>';
     }
+
+
 
     // a
     public static function buttonLink($text, $href = '#', $theme = 'light', $attributes = [])
