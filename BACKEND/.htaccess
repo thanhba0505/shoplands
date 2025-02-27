@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /code-php/shopee/
+RewriteBase /code-php/shopee/BACKEND
 
 # Tài nguyên tĩnh
 RewriteRule ^public/(.*)$ public/$1 [L]

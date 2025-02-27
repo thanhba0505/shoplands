@@ -31,3 +31,7 @@ Làm việc liên quan tới jquery và js sử dụng thư viện
 
 
 ;extension=gd
+
+bên frontend
+npm install
+npm update
