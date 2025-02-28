@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controllers\Auth;
+namespace App\Controllers;
 
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\JwtHelper;
-use App\Models\Account;
+use App\Models\AccountModel;
 
-class Auth
+class AuthController
 {
     public function login()
     {
@@ -15,7 +15,7 @@ class Auth
         $password = Request::post('password');
 
         // Kiểm tra thông tin tài khoản
-        $account = Account::findByPhone($phone);
+        $account = AccountModel::findByPhone($phone);
         if (!$account || !password_verify($password, $account['password'])) {
             Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
         }
@@ -25,7 +25,7 @@ class Auth
         $refreshToken = JwtHelper::generateToken($account['id'], true);
 
         // Cập nhật token vào CSDL
-        Account::updateTokens($account['id'], $accessToken, $refreshToken);
+        AccountModel::updateTokens($account['id'], $accessToken, $refreshToken);
 
         Response::json([
             'access_token' => $accessToken,
@@ -43,7 +43,7 @@ class Auth
             Response::json(['message' => 'Refresh token không hợp lệ'], 401);
         }
 
-        $account = Account::findById($decoded->sub);
+        $account = AccountModel::findById($decoded->account_id);
         if (!$account || $account['refresh_token'] !== $refreshToken) {
             Response::json(['message' => 'Refresh token không hợp lệ'], 401);
         }
@@ -53,7 +53,7 @@ class Auth
         $newRefreshToken = JwtHelper::generateToken($account['id'], true);
 
         // Cập nhật token vào CSDL
-        Account::updateTokens($account['id'], $newAccessToken, $newRefreshToken);
+        AccountModel::updateTokens($account['id'], $newAccessToken, $newRefreshToken);
 
         Response::json([
             'access_token' => $newAccessToken,
@@ -79,11 +79,24 @@ class Auth
             Response::json(['message' => 'Access token không hợp lệ'], 401);
         }
 
+        $account = AccountModel::findById($decoded->account_id);
+        if (!$account) {
+            Response::json(['message' => 'Access token không hợp lệ'], 401);
+        }
+
+        if (!$account['access_token']) {
+            Response::json(['message' => 'Tài khoản đã đăng xuất'], 401);
+        }
+
+        if ($account['access_token'] !== $accessToken) {
+            Response::json(['message' => 'Access token không hợp lệ'], 401);
+        }
+
         // Lấy ID từ access token
-        $id = $decoded->sub;
+        $id = $decoded->account_id;
 
         // Xóa access_token và refresh_token khỏi database
-        Account::updateTokens($id, null, null);
+        AccountModel::updateTokens($id, null, null);
 
         Response::json(['message' => 'Đăng xuất thành công']);
     }

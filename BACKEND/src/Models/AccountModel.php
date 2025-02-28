@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class Account
+class AccountModel
 {
     public static function findById($id)
     {

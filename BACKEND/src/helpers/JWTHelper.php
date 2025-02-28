@@ -24,7 +24,7 @@ class JwtHelper
         self::init();
 
         $payload = [
-            'sub' => $account_ID,
+            'account_id' => $account_ID,
             'iat' => time(),
             'exp' => time() + ($isRefreshToken ? self::$refresh_expire_time : self::$expire_time)
         ];

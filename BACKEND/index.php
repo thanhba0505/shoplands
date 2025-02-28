@@ -3,9 +3,10 @@
 require 'vendor/autoload.php';
 
 use App\Core\Router;
+use Dotenv\Dotenv;
 
 // Lấy thông tin env
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 // Lấy config

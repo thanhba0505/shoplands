@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-class Validator
+class Validate
 {
     /**
      * Kiểm tra số điện thoại hợp lệ (hỗ trợ số Việt Nam +84 và định dạng quốc tế)

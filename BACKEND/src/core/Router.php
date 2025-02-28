@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Helpers\Response;
+
 class Router
 {
     protected $routes = [];
@@ -10,30 +12,41 @@ class Router
     // Định nghĩa route
     public function get($uri, $action, $middlewares = [])
     {
-        $uri = trim($uri, '/');
-        $this->routes['GET'][$uri] = $action;
-        $this->middlewares['GET'][$uri] = $middlewares;
+        $this->addRoute('GET', $uri, $action, $middlewares);
     }
 
     public function post($uri, $action, $middlewares = [])
     {
+        $this->addRoute('POST', $uri, $action, $middlewares);
+    }
+
+    public function put($uri, $action, $middlewares = [])
+    {
+        $this->addRoute('PUT', $uri, $action, $middlewares);
+    }
+
+    public function delete($uri, $action, $middlewares = [])
+    {
+        $this->addRoute('DELETE', $uri, $action, $middlewares);
+    }
+
+    // Hàm chung để thêm route
+    private function addRoute($method, $uri, $action, $middlewares = [])
+    {
         $uri = trim($uri, '/');
-        $this->routes['POST'][$uri] = $action;
-        $this->middlewares['POST'][$uri] = $middlewares;
+        $this->routes[$method][$uri] = $action;
+        $this->middlewares[$method][$uri] = $middlewares;
     }
 
     // Xử lý route
     public function dispatch()
     {
-        // Lấy base path (thư mục gốc của ứng dụng)
         $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-        // Chuyển basePath và URI thành chữ thường để tránh lỗi phân biệt hoa thường
         $basePath = strtolower($basePath);
         $uri = strtolower($uri);
 
-        // Kiểm tra và loại bỏ base path khỏi URI
         if (!empty($basePath) && strpos($uri, $basePath) === 0) {
             $uri = substr($uri, strlen($basePath));
         }
@@ -41,16 +54,27 @@ class Router
         $uri = trim($uri, '/');
         $method = $_SERVER['REQUEST_METHOD'];
 
-        // Kiểm tra route và gọi action tương ứng
+        if (!isset($this->routes[$method])) {
+            Response::json(['success' => false, 'message' => 'Method not allowed'], 405);
+        }
+
         foreach ($this->routes[$method] as $route => $action) {
             $routePattern = preg_replace('/\{(\w+)\}/', '(?P<\1>[^/]+)', strtolower($route));
             if (preg_match('#^' . $routePattern . '$#', $uri, $matches)) {
 
-                // Middleware
+                // Xử lý Middleware
                 if (!empty($this->middlewares[$method][$route])) {
                     foreach ($this->middlewares[$method][$route] as $middleware) {
-                        $middlewareInstance = new $middleware();
-                        $middlewareInstance->handle();
+                        if (is_callable($middleware)) {
+                            // Nếu middleware là function
+                            $middleware();
+                        } elseif (class_exists($middleware)) {
+                            // Nếu middleware là class
+                            $middlewareInstance = new $middleware();
+                            $middlewareInstance->handle();
+                        } else {
+                            Response::json(['success' => false, 'message' => "Middleware không hợp lệ: $middleware"], 500);
+                        }
                     }
                 }
 
@@ -59,13 +83,11 @@ class Router
                 $controllerName = $actionParts[0];
                 $methodName = $actionParts[1];
 
-                // Thêm use cho controller
                 $controllerNamespace = "App\\Controllers\\" . $controllerName;
 
                 if (class_exists($controllerNamespace)) {
                     $controller = new $controllerNamespace();
 
-                    // Lấy tham số từ route
                     $params = [];
                     foreach ($matches as $key => $value) {
                         if (!is_int($key)) {
@@ -76,15 +98,11 @@ class Router
                     call_user_func_array([$controller, $methodName], $params);
                     return;
                 } else {
-                    header('Content-Type: application/json');
-                    echo json_encode(['controllerNamespace' => "Controller not found: $controllerNamespace"]);
-                    return;
+                    Response::json(['success' => false, 'message' => "Controller không tồn tại: $controllerNamespace"], 404);
                 }
             }
         }
 
-        // Nếu không tìm thấy route
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => "Route not found"]);
+        Response::json(['success' => false, 'message' => 'Route không tìm thấy'], 404);
     }
 }
