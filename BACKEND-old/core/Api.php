@@ -1,0 +1,60 @@
+<?php
+
+class Api
+{
+    // Cái cũ
+    public static function encode($data, $message = '', $status = 'success')
+    {
+        header('Content-Type: application/json');
+        $response = [
+            'status' => $status,
+            'message' => $message,
+            'data' => $data
+        ];
+        return json_encode($response);
+    }
+
+    // Cái mới
+    public static function response($res = [])
+    {
+        header('Content-Type: application/json');
+
+        $default = [
+            'success' => true,
+            'message' => '',
+            'data' => null
+        ];
+
+        $response = array_merge($default, $res);
+
+        return json_encode($response);
+    }
+
+    public static function responseImage($imagePath)
+    {
+        if (!file_exists($imagePath)) {
+            self::response([
+                'success' => false,
+                'message' => 'Image not found'
+            ]);
+        }
+
+        $mimeType = mime_content_type($imagePath);
+        header("Content-Type: $mimeType");
+        readfile($imagePath);
+        exit;
+    }
+
+    public static function view($view, $data = [], $status = 'success')
+    {
+        // Giải nén biến để có thể sử dụng trực tiếp trong view
+        extract($data);
+
+        // Lấy nội dung của view
+        ob_start();
+        require "./app/Views/$view.php";
+        $content = ob_get_clean();
+
+        return self::encode($content, 'Yêu cầu thành công', $status);
+    }
+}

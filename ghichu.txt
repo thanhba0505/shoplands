@@ -25,13 +25,20 @@ Làm việc liên quan tới jquery và js sử dụng thư viện
 - alpine (ưu tiên)
 - jquery
 
-
-
-
-
-
 ;extension=gd
 
-bên frontend
+-----------------------------------------------------------
+BACKEND
+composer install
+composer update
+
+-----------------------------------------------------------
+FRONTEND
 npm install
 npm update
+
+-----------------------------------------------------------
+DATABASE
+php artisan migrate:fresh --seed
+
+
