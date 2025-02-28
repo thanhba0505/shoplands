@@ -9,12 +9,12 @@ class Seller extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'background', 'logo', 'user_id'];
+    protected $fillable = ['store_name', 'owner_name', 'bank_name', 'bank_number', 'status', 'description', 'background', 'logo', 'account_id'];
 
     // Mối quan hệ với bảng users
-    public function user()
+    public function account()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Account::class);
     }
 
     // Mối quan hệ với bảng addresses

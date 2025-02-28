@@ -10,21 +10,25 @@ return new class extends Migration
     {
         Schema::create('sellers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('store_name');
+            $table->string('owner_name');
+            $table->string('bank_name');
+            $table->string('bank_number');
+            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->text('description')->nullable();
             $table->string('background')->nullable();
             $table->string('logo')->nullable();
-            $table->unsignedBigInteger('user_id'); // Foreign key
+            $table->unsignedBigInteger('account_id'); // Foreign key
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('account_id')->references('id')->on('accounts');
         });
     }
 
     public function down(): void
     {
         Schema::table('sellers', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
+            $table->dropForeign(['account_id']);
         });
 
         Schema::dropIfExists('sellers');

@@ -12,72 +12,64 @@ class SellerSeeder extends Seeder
     {
         $sellers = [
             [
-                'name' => 'Thế Giới Thời Trang',
+                'store_name' => 'Thế Giới Thời Trang',
+                'owner_name' => 'Phạm Thị Ngọc',
+                'bank_name' => 'MB bank',
+                'bank_number' => '83659834',
+                'status' => 'approved',
                 'description' => 'Cung cấp các sản phẩm thời trang cao cấp dành cho nam, nữ và trẻ em.',
                 'background' => 'seller-1.jpg',
                 'logo' => 'logo-1.jpg',
-                'user_id' => 2,
+                'account_id' => 2,
             ],
             [
-                'name' => 'Phụ Kiện Sành Điệu',
+                'store_name' => 'Phụ Kiện Sành Điệu',
+                'owner_name' => 'Hoàng Văn Bình',
+                'bank_name' => 'TP bank',
+                'bank_number' => '73257326',
+                'status' => 'approved',
                 'description' => 'Chuyên phụ kiện thời trang, trang sức và đồng hồ.',
                 'background' => 'seller-2.jpg',
                 'logo' => 'logo-2.jpg',
-                'user_id' => 4,
+                'account_id' => 3,
             ],
             [
-                'name' => 'Công Nghệ Số',
+                'store_name' => 'Công Nghệ Số',
+                'owner_name' => 'Nguyễn Thị Hạnh',
+                'bank_name' => 'HD bank',
+                'bank_number' => '93658993',
+                'status' => 'approved',
                 'description' => 'Nhà cung cấp thiết bị điện tử, điện thoại và máy tính hàng đầu.',
                 'background' => 'seller-3.jpg',
                 'logo' => 'logo-3.jpg',
-                'user_id' => 6,
+                'account_id' => 4,
             ],
             [
-                'name' => 'Nhà Cửa Online',
+                'store_name' => 'Nhà Cửa Online',
+                'owner_name' => 'Trần Văn Minh',
+                'bank_name' => 'TP bank',
+                'bank_number' => '43658934',
+                'status' => 'pending',
                 'description' => 'Đầy đủ các sản phẩm phục vụ cho cuộc sống gia đình và nhà cửa.',
                 'background' => 'seller-4.jpg',
                 'logo' => 'logo-4.jpg',
-                'user_id' => 8,
+                'account_id' => 5,
             ],
             [
-                'name' => 'Thể Thao và Sách',
+                'store_name' => 'Thể Thao và Sách',
+                'owner_name' => 'Phạm Thị Lan',
+                'bank_name' => 'MP bank',
+                'bank_number' => '27358923',
+                'status' => 'rejected',
                 'description' => 'Các sản phẩm thể thao và sách phục vụ nhu cầu giải trí và rèn luyện.',
                 'background' => 'seller-5.jpg',
                 'logo' => 'logo-5.jpg',
-                'user_id' => 10,
+                'account_id' => 6,
             ],
         ];
 
         foreach ($sellers as $seller) {
             Seller::create($seller);
         }
-
-
-        // // Tỷ lệ phần trăm user sẽ trở thành seller
-        // $percentage = 0.3; // 80% user trở thành seller
-
-        // // Lấy danh sách user
-        // $users = User::all();
-
-        // // Lặp qua user và tạo seller
-        // foreach ($users as $user) {
-        //     // Random dựa trên tỷ lệ
-        //     if ($user->id == 1) {
-        //         Seller::factory()->create([
-        //             'user_id' => 1,
-        //         ]);
-        //         continue;
-        //     }
-
-        //     if ($user->id == 2) {
-        //         continue;
-        //     }
-
-        //     if (rand(0, 100) <= $percentage * 100) {
-        //         Seller::factory()->create([
-        //             'user_id' => $user->id,
-        //         ]);
-        //     }
-        // }
     }
 }

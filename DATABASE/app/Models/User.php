@@ -9,7 +9,7 @@ class User extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['phone', 'password', 'name', 'email', 'avatar'];
+    protected $fillable = ['name', 'avatar', 'account_id'];
 
     // Nếu cần mã hóa mật khẩu
     // protected static function booted()
@@ -20,7 +20,12 @@ class User extends Model
     //         }
     //     });
     // }
-
+    // Mối quan hệ với bảng users
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
+    
     public function orders()
     {
         return $this->hasMany(Order::class);
