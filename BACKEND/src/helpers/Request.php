@@ -5,36 +5,35 @@ namespace App\Helpers;
 class Request
 {
     // Phương thức kiểm tra request method
-    public static function method()
+    public static function getMethod()
     {
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    // Phương thức để lấy giá trị từ $_POST
+    // Lấy giá trị từ $_POST
     public static function post($value, $default = null)
     {
         if (isset($_POST[$value])) {
             $data = $_POST[$value];
-            // Nếu là mảng và không có dữ liệu, trả về mảng rỗng
-            if (is_array($data) && empty($data)) {
-                return $default ?? [];
-            }
-            return $data;
+            return is_array($data) && empty($data) ? ($default ?? []) : $data;
         }
         return $default;
     }
 
-    // Phương thức để lấy giá trị từ $_GET
+    // Lấy giá trị từ $_GET
     public static function get($value, $default = null)
     {
         if (isset($_GET[$value])) {
             $data = $_GET[$value];
-            // Nếu là mảng và không có dữ liệu, trả về mảng rỗng
-            if (is_array($data) && empty($data)) {
-                return $default ?? [];
-            }
-            return $data;
+            return is_array($data) && empty($data) ? ($default ?? []) : $data;
         }
         return $default;
+    }
+
+    // ✅ Lấy giá trị từ HTTP headers
+    public static function getHeader($name, $default = null)
+    {
+        $headers = getallheaders();
+        return $headers[$name] ?? $default;
     }
 }

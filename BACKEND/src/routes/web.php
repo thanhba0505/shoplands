@@ -1,7 +1,5 @@
 <?php
-
-$router->get('/', 'Customer\HomeController@index');
-$router->get('/cart', 'Customer\CartController@index');
+$router->get('api/sql', 'Controller@sql');
 
 $router->post('api/auth/login', 'Auth\Auth@login');
 $router->post('api/auth/refresh-token', 'Auth\Auth@refreshToken');

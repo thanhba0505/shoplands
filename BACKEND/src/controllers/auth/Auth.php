@@ -4,96 +4,87 @@ namespace App\Controllers\Auth;
 
 use App\Helpers\Request;
 use App\Helpers\Response;
-use App\Models\User; 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-use Exception;
+use App\Helpers\JwtHelper;
+use App\Models\Account;
 
 class Auth
 {
-    private $secretKey = $_ENV['JWT_SECRET_KEY']; // Thay bằng key mạnh hơn (lưu trong .env)
-
-    // 🔹 API LOGIN
     public function login()
     {
         $phone = Request::post('phone');
         $password = Request::post('password');
-        $role = Request::post('role');
 
-        // Kiểm tra dữ liệu đầu vào
-        if (!$phone || !$password || !$role) {
-            return Response::json(["success" => false, "message" => "Thiếu thông tin đăng nhập"], 400);
+        // Kiểm tra thông tin tài khoản
+        $account = Account::findByPhone($phone);
+        if (!$account || !password_verify($password, $account['password'])) {
+            Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
         }
 
-        // Xử lý kiểm tra tài khoản trong database (viết logic trong model)
-        $user = User::findByPhoneAndRole($phone, $role);
-        if (!$user || !password_verify($password, $user['password'])) {
-            return Response::json(["success" => false, "message" => "Sai tài khoản hoặc mật khẩu"], 401);
-        }
+        // Tạo Access Token và Refresh Token
+        $accessToken = JwtHelper::generateToken($account['id']);
+        $refreshToken = JwtHelper::generateToken($account['id'], true);
 
-        // Tạo accessToken & refreshToken
-        $accessToken = $this->generateToken($user, 3600); // 1 tiếng
-        $refreshToken = $this->generateToken($user, 604800); // 7 ngày
+        // Cập nhật token vào CSDL
+        Account::updateTokens($account['id'], $accessToken, $refreshToken);
 
-        // Lưu refreshToken vào DB (tự xử lý trong model)
-        User::storeRefreshToken($user['id'], $refreshToken);
-
-        return Response::json([
-            "success" => true,
-            "accessToken" => $accessToken,
-            "refreshToken" => $refreshToken
+        Response::json([
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken
         ]);
     }
 
-    // 🔹 API REFRESH TOKEN
     public function refreshToken()
     {
-        $refreshToken = Request::post('refreshToken');
+        $refreshToken = Request::post('refresh_token');
 
-        if (!$refreshToken) {
-            return Response::json(["success" => false, "message" => "Thiếu refreshToken"], 400);
+        // Kiểm tra token hợp lệ
+        $decoded = JwtHelper::verifyToken($refreshToken);
+        if (!$decoded) {
+            Response::json(['message' => 'Refresh token không hợp lệ'], 401);
         }
 
-        try {
-            $decoded = JWT::decode($refreshToken, new Key($this->secretKey, 'HS256'));
-            $user = User::findById($decoded->id);
-
-            if (!$user || !User::isRefreshTokenValid($user['id'], $refreshToken)) {
-                return Response::json(["success" => false, "message" => "Refresh Token không hợp lệ"], 401);
-            }
-
-            // Cấp token mới
-            $newAccessToken = $this->generateToken($user, 3600);
-            return Response::json(["success" => true, "accessToken" => $newAccessToken]);
-        } catch (Exception $e) {
-            return Response::json(["success" => false, "message" => "Token không hợp lệ"], 401);
+        $account = Account::findById($decoded->sub);
+        if (!$account || $account['refresh_token'] !== $refreshToken) {
+            Response::json(['message' => 'Refresh token không hợp lệ'], 401);
         }
+
+        // Tạo token mới
+        $newAccessToken = JwtHelper::generateToken($account['id']);
+        $newRefreshToken = JwtHelper::generateToken($account['id'], true);
+
+        // Cập nhật token vào CSDL
+        Account::updateTokens($account['id'], $newAccessToken, $newRefreshToken);
+
+        Response::json([
+            'access_token' => $newAccessToken,
+            'refresh_token' => $newRefreshToken
+        ]);
     }
 
-    // 🔹 API LOGOUT
     public function logout()
     {
-        $userId = Request::post('userId');
+        // Lấy access token từ request
+        $accessToken = Request::getHeader('Authorization');
 
-        if (!$userId) {
-            return Response::json(["success" => false, "message" => "Thiếu userId"], 400);
+        if (!$accessToken) {
+            Response::json(['message' => 'Không tìm thấy access token'], 401);
         }
 
-        // Xóa refreshToken khỏi DB
-        User::clearRefreshToken($userId);
-        
-        return Response::json(["success" => true, "message" => "Đăng xuất thành công"]);
-    }
+        // Loại bỏ 'Bearer ' nếu có
+        $accessToken = str_replace('Bearer ', '', $accessToken);
 
-    // 📌 Hàm tạo JWT Token
-    private function generateToken($user, $expiry)
-    {
-        $payload = [
-            "id" => $user['id'],
-            "phone" => $user['phone'],
-            "role" => $user['role'],
-            "exp" => time() + $expiry
-        ];
-        return JWT::encode($payload, $this->secretKey, 'HS256');
+        // Xác thực token
+        $decoded = JwtHelper::verifyToken($accessToken);
+        if (!$decoded) {
+            Response::json(['message' => 'Access token không hợp lệ'], 401);
+        }
+
+        // Lấy ID từ access token
+        $id = $decoded->sub;
+
+        // Xóa access_token và refresh_token khỏi database
+        Account::updateTokens($id, null, null);
+
+        Response::json(['message' => 'Đăng xuất thành công']);
     }
 }
