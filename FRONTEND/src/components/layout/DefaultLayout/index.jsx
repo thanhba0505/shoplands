@@ -6,7 +6,7 @@ function DefaultLayout({ children }) {
     return (
         <>
             <Header />
-            <Container>
+            <Container sx={{ height: "100vh" }}>
                 <Typography variant="h3">{children}</Typography>
             </Container>
             <Footer />
