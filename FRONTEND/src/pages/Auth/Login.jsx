@@ -4,6 +4,7 @@ import { loginSuccess } from "~/redux/authSlice";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import { useSnackbar } from "notistack";
+import { Button } from "@mui/material";
 
 const Login = () => {
     const [phone, setPhone] = useState("");
@@ -51,9 +52,13 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
             />
-            <button onClick={handleLogin} disabled={isLoading}>
-                {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-            </button>
+            <Button
+                variant="contained"
+                onClick={handleLogin}
+                loading={isLoading}
+            >
+                Đăng nhập
+            </Button>
         </div>
     );
 };
