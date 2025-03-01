@@ -14,25 +14,20 @@ const Login = () => {
     const isLoading = useSelector((state) => state.loading.isLoading);
 
     const handleLogin = async () => {
+        dispatch(startLoading());
         try {
-            dispatch(startLoading()); // Bật hiệu ứng loading
             const response = await axiosDefault.post("/auth/login", {
                 phone,
                 password,
             });
+
             const { access_token, refresh_token, account } = response.data;
-
-            // Cập nhật Redux với token và account
             dispatch(loginSuccess({ access_token, refresh_token, account }));
-
-            // Hiển thị thông báo thành công
             enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
         } catch (error) {
-            enqueueSnackbar(error.response.data.message, {
-                variant: "error",
-            });
+            //
         } finally {
-            dispatch(stopLoading()); // Tắt hiệu ứng loading
+            dispatch(stopLoading());
         }
     };
 
@@ -55,7 +50,7 @@ const Login = () => {
             <Button
                 variant="contained"
                 onClick={handleLogin}
-                loading={isLoading}
+                disabled={isLoading} // Sửa lại vì MUI Button không hỗ trợ `loading`
             >
                 Đăng nhập
             </Button>

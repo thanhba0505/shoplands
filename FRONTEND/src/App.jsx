@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { publicRoutes, userRoutes, sellerRoutes, adminRoutes } from "~/routes";
 import DefaultLayout from "~/components/layout/DefaultLayout";
 import ProtectedRoute from "~/components/ProtectedRoute"; // Import ProtectedRoute
-import LoadingScreen from "./components/LoadingScreen";
+import LoadingScreen from "~/components/LoadingScreen";
 
 const App = () => {
     const renderRoutes = (routes, role = null) => {

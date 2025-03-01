@@ -34,18 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 // Log dữ liệu nhận được từ frontend
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Kiểm tra xem dữ liệu có được gửi lên không
-    $data = json_decode(file_get_contents('php://input'), true);
+// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//     // Kiểm tra xem dữ liệu có được gửi lên không
+//     $data = json_decode(file_get_contents('php://input'), true);
 
-    if ($data) {
-        // Bạn có thể lưu log vào một file riêng nếu muốn:
-        $logData = print_r($data, true);
-        file_put_contents('data.log', $logData . PHP_EOL, FILE_APPEND);
-    } else {
-        error_log("No data received or data is not valid JSON.");
-    }
-}
+//     if ($data) {
+//         // Bạn có thể lưu log vào một file riêng nếu muốn:
+//         $logData = print_r($data, true);
+//         file_put_contents('data.log', $logData . PHP_EOL, FILE_APPEND);
+//     } else {
+//         error_log("No data received or data is not valid JSON.");
+//     }
+// }
 
 // Khởi tạo Router
 $router = new Router();
