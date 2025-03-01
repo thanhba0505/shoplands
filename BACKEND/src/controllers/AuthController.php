@@ -6,16 +6,19 @@ use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\JwtHelper;
 use App\Models\AccountModel;
+use App\Models\SellerModel;
+use App\Models\UserModel;
 
 class AuthController
 {
     public function login()
     {
-        $phone = Request::post('phone');
-        $password = Request::post('password');
+        $phone = Request::json('phone');
+        $password = Request::json('password');
 
         // Kiểm tra thông tin tài khoản
         $account = AccountModel::findByPhone($phone);
+
         if (!$account || !password_verify($password, $account['password'])) {
             Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
         }
@@ -27,15 +30,23 @@ class AuthController
         // Cập nhật token vào CSDL
         AccountModel::updateTokens($account['id'], $accessToken, $refreshToken);
 
+        // Thông tin tài khoản
+        if ($account['role'] == 'user') {
+            $account = UserModel::findById($account['id']);
+        } else if ($account['role'] == 'seller') {
+            $account = SellerModel::findById($account['id']);
+        }
+
         Response::json([
             'access_token' => $accessToken,
-            'refresh_token' => $refreshToken
+            'refresh_token' => $refreshToken,
+            'account' => $account
         ]);
     }
 
     public function refreshToken()
     {
-        $refreshToken = Request::post('refresh_token');
+        $refreshToken = Request::json('refresh_token');
 
         // Kiểm tra token hợp lệ
         $decoded = JwtHelper::verifyToken($refreshToken);
@@ -55,9 +66,17 @@ class AuthController
         // Cập nhật token vào CSDL
         AccountModel::updateTokens($account['id'], $newAccessToken, $newRefreshToken);
 
+        // Thông tin tài khoản
+        if ($account['role'] == 'user') {
+            $account = UserModel::findById($account['id']);
+        } else if ($account['role'] == 'seller') {
+            $account = SellerModel::findById($account['id']);
+        }
+
         Response::json([
             'access_token' => $newAccessToken,
-            'refresh_token' => $newRefreshToken
+            'refresh_token' => $newRefreshToken,
+            'account' => $account
         ]);
     }
 

@@ -1,33 +1,45 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { routes } from "~/routes";
+import { publicRoutes, userRoutes, sellerRoutes, adminRoutes } from "~/routes";
 import DefaultLayout from "~/components/layout/DefaultLayout";
+import ProtectedRoute from "~/components/ProtectedRoute"; // Import ProtectedRoute
+import LoadingScreen from "./components/LoadingScreen";
 
 const App = () => {
-    return (
-        <Router>
-            <Routes>
-                {routes.map((route, index) => {
-                    const Page = route.component;
-                    let Layout = DefaultLayout;
+    const renderRoutes = (routes, role = null) => {
+        return routes.map((route, index) => {
+            const Page = route.component;
+            const Layout = route.layout || DefaultLayout;
 
-                    if (route.layout) {
-                        Layout = route.layout;
-                    }
-
-                    return (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={
+            return (
+                <Route
+                    key={index}
+                    path={route.path}
+                    element={
+                        role ? (
+                            <ProtectedRoute role={role}>
                                 <Layout>
                                     <Page />
                                 </Layout>
-                            }
-                            // Sử dụng future flag v7_startTransition
-                            future={{ v7_startTransition: true }}
-                        />
-                    );
-                })}
+                            </ProtectedRoute>
+                        ) : (
+                            <Layout>
+                                <Page />
+                            </Layout>
+                        )
+                    }
+                />
+            );
+        });
+    };
+
+    return (
+        <Router>
+            <LoadingScreen />
+            <Routes>
+                {renderRoutes(publicRoutes)}
+                {renderRoutes(userRoutes, "user")}
+                {renderRoutes(sellerRoutes, "seller")}
+                {renderRoutes(adminRoutes, "admin")}
             </Routes>
         </Router>
     );

@@ -36,4 +36,22 @@ class Request
         $headers = getallheaders();
         return $headers[$name] ?? $default;
     }
+
+    // Lấy dữ liệu JSON từ body của request theo key hoặc tất cả nếu key là null
+    public static function json($key = null, $default = null)
+    {
+        // Đảm bảo chỉ lấy dữ liệu khi content-type là application/json
+        if (self::getHeader('Content-Type') === 'application/json') {
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            // Nếu không có dữ liệu hoặc dữ liệu rỗng, trả về default
+            if (empty($data)) {
+                return $default;
+            }
+
+            // Nếu có key, trả về giá trị tương ứng với key, nếu không trả về toàn bộ dữ liệu
+            return $key === null ? $data : ($data[$key] ?? $default);
+        }
+        return $default;
+    }
 }

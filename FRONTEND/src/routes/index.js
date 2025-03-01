@@ -4,9 +4,24 @@
 // import NoLayout from "~/components/Layout/NoLayout";
 
 // Pages
-import Home from "~/pages/Home";
+
+// Public
+import Home from "~/pages/Public/Home";
+import Login from "~/pages/Auth/Login";
+
+// User
+import Cart from "~/pages/User/Cart";
 
 // public routes
-const routes = [{ path: "/", component: Home }];
+const publicRoutes = [
+    { path: "/", component: Home },
+    { path: "/login", component: Login },
+];
 
-export { routes };
+const userRoutes = [{ path: "/cart", component: Cart }];
+
+const sellerRoutes = [{ path: "/seller", component: Cart }];
+
+const adminRoutes = [{ path: "/admin", component: Cart }];
+
+export { publicRoutes, userRoutes, sellerRoutes, adminRoutes };
