@@ -1,7 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import "./global.css";
-@import "./tuan.css";
-@import "./ba.css";
