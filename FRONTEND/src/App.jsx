@@ -1,8 +1,28 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+} from "react-router-dom";
 import { publicRoutes, userRoutes, sellerRoutes, adminRoutes } from "~/routes";
 import DefaultLayout from "~/components/layout/DefaultLayout";
 import ProtectedRoute from "~/components/ProtectedRoute"; // Import ProtectedRoute
 import LoadingScreen from "~/components/LoadingScreen";
+import Url from "./helpers/Url";
+import { useSnackbar } from "notistack";
+import { useEffect } from "react";
+
+const NotFoundRedirect = () => {
+    const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        enqueueSnackbar("Trang bạn yêu cầu không tồn tại!", {
+            variant: "error",
+        });
+    }, [enqueueSnackbar]);
+
+    return <Navigate to={Url.home()} replace />;
+};
 
 const App = () => {
     const renderRoutes = (routes, role = null) => {
@@ -40,6 +60,9 @@ const App = () => {
                 {renderRoutes(userRoutes, "user")}
                 {renderRoutes(sellerRoutes, "seller")}
                 {renderRoutes(adminRoutes, "admin")}
+
+                {/* Route không tồn tại */}
+                <Route path="*" element={<NotFoundRedirect />} />
             </Routes>
         </Router>
     );

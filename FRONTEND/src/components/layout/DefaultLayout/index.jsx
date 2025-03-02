@@ -1,13 +1,16 @@
 import Header from "../Header";
 import Footer from "../Footer";
-import { Container, Typography } from "@mui/material";
+import { Container } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 function DefaultLayout({ children }) {
+    const theme = useTheme();
+
     return (
         <>
             <Header />
-            <Container sx={{ height: "100vh" }}>
-                <Typography variant="h3">{children}</Typography>
+            <Container sx={{ paddingY: theme.custom.paddingYContainer }}>
+                {children}
             </Container>
             <Footer />
         </>
