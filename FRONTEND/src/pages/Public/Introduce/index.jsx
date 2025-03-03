@@ -1,5 +1,5 @@
-function Introduce() {
-    return <>Introduce</>;
-}
+const Introduce = () => {
+  return <>Introduce</>;
+};
 
 export default Introduce;

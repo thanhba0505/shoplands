@@ -8,7 +8,7 @@ import { publicRoutes, userRoutes, sellerRoutes, adminRoutes } from "~/routes";
 import DefaultLayout from "~/components/layout/DefaultLayout";
 import ProtectedRoute from "~/components/ProtectedRoute"; // Import ProtectedRoute
 import LoadingScreen from "~/components/LoadingScreen";
-import Url from "./helpers/Url";
+import Path from "./helpers/Path";
 import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 
@@ -21,7 +21,7 @@ const NotFoundRedirect = () => {
         });
     }, [enqueueSnackbar]);
 
-    return <Navigate to={Url.home()} replace />;
+    return <Navigate to={Path.home()} replace />;
 };
 
 const App = () => {

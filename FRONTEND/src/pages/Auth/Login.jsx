@@ -8,7 +8,7 @@ import { Box, TextField, Typography, Paper } from "@mui/material";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
-import Url from "~/helpers/Url";
+import Path from "~/helpers/Path";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -30,7 +30,7 @@ const Login = () => {
             const { access_token, refresh_token, account } = response.data;
             dispatch(loginSuccess({ access_token, refresh_token, account }));
             enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
-            navigate(Url.home());
+            navigate(Path.home());
         } catch (error) {
             console.error("Đăng nhập thất bại: " + error.response.data.message);
         } finally {

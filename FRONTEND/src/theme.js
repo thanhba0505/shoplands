@@ -5,6 +5,7 @@ const theme = extendTheme({
     custom: {
         headerHeight: "74px",
         paddingYContainer: "20px",
+        boxShadow: "0px 3px 8px #bfe2ff"
     },
 });
 
