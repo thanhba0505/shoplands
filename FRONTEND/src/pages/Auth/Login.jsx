@@ -9,6 +9,8 @@ import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
 import Path from "~/helpers/Path";
+import PaperCustom from "~/components/PaperCustom";
+import { useTheme } from "@emotion/react";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -17,6 +19,8 @@ const Login = () => {
     const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
     const [isLoading, setIsLoading] = useState(false);
+
+    const theme = useTheme();
 
     const handleLogin = async () => {
         dispatch(startLoading());
@@ -40,26 +44,24 @@ const Login = () => {
     };
 
     return (
-        <Paper
-            elevation={2}
-            sx={(theme) => ({
-                height: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.paddingYContainer})`,
+        <Box
+            sx={{
+                minHeight: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: "12px",
-            })}
+            }}
         >
-            <Box
+            <PaperCustom
+                elevation={2}
                 sx={{
+                    textAlign: "center",
                     paddingX: 6,
                     paddingY: 8,
                     width: 450,
-                    border: "2px dashed ",
+                    border: "1px solid",
                     borderColor: "primary.light",
-                    textAlign: "center",
-                    borderRadius: "12px",
-                    backgroundColor: "#fff",
                 }}
             >
                 <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
@@ -109,8 +111,8 @@ const Login = () => {
                 >
                     Quên mật khẩu?
                 </Typography>
-            </Box>
-        </Paper>
+            </PaperCustom>
+        </Box>
     );
 };
 

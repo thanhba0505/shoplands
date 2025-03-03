@@ -12,7 +12,7 @@ const Header = () => {
         <AppBar
             position="sticky"
             sx={{
-                height: theme.custom?.headerHeight || "74px",
+                height: theme.custom?.headerHeight,
                 backgroundColor: theme.palette.common.white,
                 color: "#333",
                 padding: "5px 0",

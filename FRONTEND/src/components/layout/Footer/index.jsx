@@ -7,8 +7,7 @@ const Footer = () => {
         <Box
             sx={{
                 backgroundColor: theme.palette.primary.light,
-                padding: "40px 0",
-                marginTop: "40px",
+                paddingY: theme.spacing(4),
                 color: theme.palette.common.white,
             }}
         >

@@ -1,19 +1,29 @@
 import Header from "../Header";
 import Footer from "../Footer";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 function DefaultLayout({ children }) {
     const theme = useTheme();
 
     return (
-        <>
+        <Box minWidth={"1100px"}>
             <Header />
-            <Container sx={{ paddingY: theme.custom.paddingYContainer }}>
+
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    paddingY: theme.custom?.containerGap,
+                    gap: 2,
+                    backgroundColor: theme.palette.common.white,
+                }}
+            >
                 {children}
-            </Container>
+            </Box>
+
             <Footer />
-        </>
+        </Box>
     );
 }
 
