@@ -7,103 +7,156 @@ import {
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "~/redux/authSlice";
 import Path from "~/helpers/Path";
+import { startLoading, stopLoading } from "~/redux/loadingSlice";
+import axiosWithAuth from "~/utils/axiosWithAuth";
+import Api from "~/helpers/Api";
+import { useSnackbar } from "notistack";
+import Auth from "~/helpers/Auth";
 
-const HeaderIcons = () => {
+// 🔹 Component Menu Icon chung
+const MenuIcon = ({ icon, menuItems }) => {
     const theme = useTheme();
-    const navigate = useNavigate();
-
-    // State để quản lý menu đang mở
     const [menuAnchor, setMenuAnchor] = useState(null);
-    const [activeMenu, setActiveMenu] = useState(null);
 
-    // Mở menu
-    const handleOpenMenu = (event, menuType) => {
+    const handleOpenMenu = (event) => {
         setMenuAnchor(event.currentTarget);
-        setActiveMenu(menuType);
     };
 
-    // Đóng menu
     const handleCloseMenu = () => {
         setMenuAnchor(null);
-        setActiveMenu(null);
-    };
-
-    // Chuyển hướng
-    const handleNavigate = (path) => {
-        handleCloseMenu(); 
-        navigate(path);
     };
 
     return (
+        <>
+            <IconButton
+                onClick={handleOpenMenu}
+                sx={{ color: theme.palette.primary.light }}
+            >
+                {icon}
+            </IconButton>
+            <Menu
+                anchorEl={menuAnchor}
+                open={Boolean(menuAnchor)}
+                onClose={handleCloseMenu}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                {menuItems.map((item, index) => (
+                    <MenuItem
+                        key={index}
+                        sx={{ minWidth: "150px" }}
+                        onClick={(event) => {
+                            handleCloseMenu();
+                            if (item.onClick) {
+                                item.onClick(event);
+                            }
+                        }}
+                    >
+                        {item.label}
+                    </MenuItem>
+                ))}
+            </Menu>
+        </>
+    );
+};
+
+// 🔹 Notifications Menu
+const NotificationsMenu = () => {
+    return (
+        <MenuIcon
+            icon={<Notifications />}
+            menuItems={[
+                { label: "Thông báo 1" },
+                { label: "Thông báo 2" },
+                { label: "Xem tất cả thông báo" },
+            ]}
+        />
+    );
+};
+
+// 🔹 Shopping Cart Menu
+const ShoppingCartMenu = () => {
+    return (
+        <MenuIcon
+            icon={<ShoppingCart />}
+            menuItems={[
+                { label: "Sản phẩm 1" },
+                { label: "Sản phẩm 2" },
+                { label: "Xem giỏ hàng" },
+            ]}
+        />
+    );
+};
+
+// 🔹 User Account Menu
+const UserAccountMenu = () => {
+    const isUser = Auth.checkUser(); // 🔥 Kiểm tra user đăng nhập
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { enqueueSnackbar } = useSnackbar();
+
+    // 🔥 Hàm xử lý logout
+    const handleLogout = async () => {
+        dispatch(startLoading());
+
+        try {
+            const response = await axiosWithAuth.post(Api.auth("logout"), {});
+            dispatch(logout());
+            enqueueSnackbar(response.data.message, { variant: "success" });
+            navigate(Path.login());
+        } catch (error) {
+            dispatch(logout());
+            navigate(Path.login());
+            console.error(
+                "Đăng xuất thất bại: " + error.response?.data?.message
+            );
+        } finally {
+            dispatch(stopLoading());
+        }
+    };
+
+    // 🔹 Nếu có user, hiển thị menu tài khoản
+    const userMenuItems = [
+        {
+            label: "Tài khoản của tôi",
+            onClick: () => navigate(Path.userProfile()),
+        },
+        {
+            label: "Sổ địa chỉ",
+            onClick: () => navigate(Path.userAddressBook()),
+        },
+        {
+            label: "Lịch sử đơn hàng",
+            onClick: () => navigate(Path.userOrders()),
+        },
+        { label: "Đăng xuất", onClick: handleLogout },
+    ];
+
+    // 🔹 Nếu chưa đăng nhập, chỉ hiển thị đăng nhập & đăng ký
+    const guestMenuItems = [
+        { label: "Đăng nhập", onClick: () => navigate(Path.login()) },
+        { label: "Đăng ký", onClick: () => navigate(Path.register()) },
+    ];
+
+    return (
+        <MenuIcon
+            icon={<AccountCircle />}
+            menuItems={isUser ? userMenuItems : guestMenuItems}
+        />
+    );
+};
+
+// 🔹 HeaderIcons (Tổng hợp)
+const HeaderIcons = () => {
+    return (
         <Box sx={{ display: "flex", gap: 1 }}>
-            {/* 🔹 Notifications Menu */}
-            <IconButton
-                onClick={(event) => handleOpenMenu(event, "notifications")}
-                sx={{ color: theme.palette.primary.light }}
-            >
-                <Notifications />
-            </IconButton>
-            <Menu
-                anchorEl={menuAnchor}
-                open={activeMenu === "notifications"}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-            >
-                <MenuItem onClick={handleCloseMenu}>Thông báo 1</MenuItem>
-                <MenuItem onClick={handleCloseMenu}>Thông báo 2</MenuItem>
-                <MenuItem onClick={handleCloseMenu}>
-                    Xem tất cả thông báo
-                </MenuItem>
-            </Menu>
-
-            {/* 🔹 Shopping Cart Menu */}
-            <IconButton
-                onClick={(event) => handleOpenMenu(event, "cart")}
-                sx={{ color: theme.palette.primary.light }}
-            >
-                <ShoppingCart />
-            </IconButton>
-            <Menu
-                anchorEl={menuAnchor}
-                open={activeMenu === "cart"}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-            >
-                <MenuItem onClick={handleCloseMenu}>Sản phẩm 1</MenuItem>
-                <MenuItem onClick={handleCloseMenu}>Sản phẩm 2</MenuItem>
-                <MenuItem onClick={handleCloseMenu}>Xem giỏ hàng</MenuItem>
-            </Menu>
-
-            {/* 🔹 User Account Menu */}
-            <IconButton
-                onClick={(event) => handleOpenMenu(event, "account")}
-                sx={{ color: theme.palette.primary.light }}
-            >
-                <AccountCircle />
-            </IconButton>
-            <Menu
-                anchorEl={menuAnchor}
-                open={activeMenu === "account"}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-            >
-                <MenuItem onClick={() => handleNavigate(Path.userProfile())}>
-                    Tài khoản của tôi
-                </MenuItem>
-                <MenuItem
-                    onClick={() => handleNavigate(Path.userAddressBook())}
-                >
-                    Sổ địa chỉ
-                </MenuItem>
-                <MenuItem onClick={() => handleNavigate(Path.userOrders())}>
-                    Lịch sử đơn hàng
-                </MenuItem>
-                <MenuItem onClick={handleCloseMenu}>Đăng xuất</MenuItem>
-            </Menu>
+            <NotificationsMenu />
+            <ShoppingCartMenu />
+            <UserAccountMenu />
         </Box>
     );
 };
