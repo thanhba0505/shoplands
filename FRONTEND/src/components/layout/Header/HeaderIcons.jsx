@@ -79,13 +79,17 @@ const NotificationsMenu = () => {
 
 // 🔹 Shopping Cart Menu
 const ShoppingCartMenu = () => {
+    const navigate = useNavigate();
     return (
         <MenuIcon
             icon={<ShoppingCart />}
             menuItems={[
                 { label: "Sản phẩm 1" },
                 { label: "Sản phẩm 2" },
-                { label: "Xem giỏ hàng" },
+                {
+                    label: "Xem giỏ hàng",
+                    onClick: () => navigate(Path.userCart()),
+                },
             ]}
         />
     );
@@ -104,12 +108,11 @@ const UserAccountMenu = () => {
         dispatch(startLoading());
 
         try {
-            const response = await axiosWithAuth.post(Api.auth("logout"), {});
+            const response = await axiosWithAuth.post(Api.logout(), {});
             dispatch(logout());
             enqueueSnackbar(response.data.message, { variant: "success" });
             navigate(Path.login());
         } catch (error) {
-            dispatch(logout());
             navigate(Path.login());
             console.error(
                 "Đăng xuất thất bại: " + error.response?.data?.message

@@ -15,14 +15,18 @@ require './config.php';
 
 // Kiểm tra và thêm header CORS chỉ cho phép frontend từ một địa chỉ cụ thể
 $allowedOrigin = $_ENV['FRONTEND_URL']; // Đọc từ file .env
+$isDevelopment = $_ENV['ENVIRONMENT'] === "DEVELOPMENT";
+
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-// Chỉ cho phép frontend từ địa chỉ cho trước
-if ($origin && $origin === $allowedOrigin) {
+// Chỉ cho phép frontend từ địa chỉ cho trước  ( || để cho test api )
+if (($origin && $origin === $allowedOrigin)) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-} else {
+}
+
+if (!$isDevelopment) {
     // Nếu không phải từ địa chỉ frontend cho phép, từ chối yêu cầu (hoặc trả về lỗi)
     Response::json(['success' => false, 'message' => 'Không có quyền truy cập'], 401);
 }

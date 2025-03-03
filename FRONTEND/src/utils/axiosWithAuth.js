@@ -2,10 +2,18 @@ import axios from "axios";
 import store from "~/redux/store";
 import { logout, refreshTokenSuccess } from "~/redux/authSlice";
 import { enqueueSnackbar } from "notistack"; // Hiển thị thông báo lỗi
+import Api from "~/helpers/Api";
 
 // Tạo axios instance với base URL
 const axiosWithAuth = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: import.meta.env.VITE_API_URL + "/api",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+const axiosRefresh = axios.create({
+    baseURL: import.meta.env.VITE_API_URL + "/api",
     headers: {
         "Content-Type": "application/json",
     },
@@ -46,10 +54,9 @@ axiosWithAuth.interceptors.response.use(
                 }
 
                 // 🔄 Refresh token
-                const res = await axios.post(
-                    import.meta.env.VITE_API_URL + "/auth/refresh-token",
-                    { refresh_token: refreshToken }
-                );
+                const res = await axiosRefresh.post(Api.refreshToken(), {
+                    refresh_token: refreshToken,
+                });
 
                 // 🔥 Cập nhật Redux với token mới
                 store.dispatch(refreshTokenSuccess(res.data));
@@ -60,15 +67,18 @@ axiosWithAuth.interceptors.response.use(
                 ] = `Bearer ${res.data.access_token}`;
                 return axiosWithAuth(originalRequest);
             } catch (refreshError) {
-                enqueueSnackbar("Lỗi xác thực. Vui lòng đăng nhập lại!", {
-                    variant: "error",
-                });
+                enqueueSnackbar(
+                    "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!",
+                    {
+                        variant: "error",
+                    }
+                );
                 store.dispatch(logout());
                 return Promise.reject(refreshError);
             }
         }
 
-        // 🔴 Tự động hiển thị lỗi từ API (không cần liệt kê mã lỗi)
+        // 🔴 Tự động hiển thị lỗi từ API
         if (error.response?.data?.message) {
             enqueueSnackbar(error.response.data.message, { variant: "error" });
         } else {
@@ -77,7 +87,7 @@ axiosWithAuth.interceptors.response.use(
             });
         }
 
-        return Promise.reject(error); // Trả về lỗi để nơi gọi Axios biết
+        return Promise.reject(error);
     }
 );
 

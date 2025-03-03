@@ -23,6 +23,7 @@ class AccountModel
 
         return $result;
     }
+    
     public static function findByPhone($phone)
     {
         $query = new ConnectDatabase();
@@ -37,6 +38,24 @@ class AccountModel
         ";
 
         $result = $query->query($sql, ['phone' => $phone])->fetch();
+
+        return $result;
+    }
+    
+    public static function findByAccessToken($accessToken)
+    {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                *
+            FROM
+                accounts
+            WHERE
+                access_token = :accessToken
+        ";
+
+        $result = $query->query($sql, ['accessToken' => $accessToken])->fetch();
 
         return $result;
     }

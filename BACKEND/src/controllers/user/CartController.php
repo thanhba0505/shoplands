@@ -8,11 +8,17 @@ class CartController
 {
     public function getAll()
     {
-        $data = [];
+        $data = [
+            0 => [
+                'name' => 'Product 1',
+                'quantity' => 1
+            ],
+            1 => [
+                'name' => 'Product 2',
+                'quantity' => 2
+            ]
+        ];
 
-        Response::json([
-            'success' => true,
-            'data' => $data
-        ]);
+        Response::json($data);
     }
 }

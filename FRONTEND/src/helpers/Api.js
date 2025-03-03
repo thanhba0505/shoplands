@@ -1,22 +1,36 @@
 class Api {
+    // 🔹 Loại bỏ dấu "/" dư thừa ở đầu và cuối
     static cleanEndpoint(endpoint = "") {
-        return endpoint.trim().replace(/^\/|\/$/g, ""); // Loại bỏ "/" ở đầu & cuối
+        return endpoint.trim().replace(/^\/+|\/+$/g, "");
     }
 
-    static auth(endpoint = "") {
-        return `/auth/${this.cleanEndpoint(endpoint)}`;
+    // 🔹 Hàm chuẩn hóa endpoint với base
+    static buildPath(base, endpoint = "") {
+        const cleanBase = this.cleanEndpoint(base);
+        const cleanEndpoint = this.cleanEndpoint(endpoint);
+        return cleanEndpoint ? `${cleanBase}/${cleanEndpoint}` : cleanBase;
     }
 
-    static user(endpoint = "") {
-        return `/user/${this.cleanEndpoint(endpoint)}`;
+    // 🔹 Các API route
+    
+    static login(endpoint = "") {
+        return this.buildPath("login", endpoint);
     }
 
-    static product(endpoint = "") {
-        return `/products/${this.cleanEndpoint(endpoint)}`;
+    static logout(endpoint = "") {
+        return this.buildPath("logout", endpoint);
     }
 
-    static order(endpoint = "") {
-        return `/orders/${this.cleanEndpoint(endpoint)}`;
+    static register(endpoint = "") {
+        return this.buildPath("register", endpoint);
+    }
+
+    static refreshToken(endpoint = "") {
+        return this.buildPath("refresh-token", endpoint);
+    }
+
+    static carts(endpoint = "") {
+        return this.buildPath("carts", endpoint);
     }
 }
 

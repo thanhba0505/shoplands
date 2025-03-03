@@ -22,7 +22,7 @@ const Login = () => {
         dispatch(startLoading());
         setIsLoading(true);
         try {
-            const response = await axiosDefault.post(Api.auth("login"), {
+            const response = await axiosDefault.post(Api.login(), {
                 phone,
                 password,
             });
