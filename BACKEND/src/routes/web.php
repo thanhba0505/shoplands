@@ -10,5 +10,14 @@ $router->post('api/refresh-token', 'AuthController@refreshToken');
 $router->post('api/logout', 'AuthController@logout');
 
 // API CART
-$router->get('api/carts', 'User\CartController@getAll', ['App\Middlewares\UserMiddleware']);
+$router->get('api/carts', 'CartController@getAll', ['App\Middlewares\UserMiddleware']);
+
+// API CATEGORY
+$router->get('api/categories', 'CategoryController@getAll');
+
+// API PRODUCT
+$router->get('api/products', 'ProductController@getAll');
+
+// API PRODUCT VARIANT
+// $router->get('api/product-variants', 'ProductVariantController@getAll');
 

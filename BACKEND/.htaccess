@@ -1,10 +1,24 @@
+# Bật mod_rewrite
 RewriteEngine On
 RewriteBase /code-php/shopee/BACKEND
 
-# Tài nguyên tĩnh
-RewriteRule ^public/(.*)$ public/$1 [L]
+# 1️⃣ Chặn toàn bộ truy cập vào src/storage/, trừ src/storage/public/
+RewriteRule ^src/storage/(?!public/).* - [F,L]
 
-# Chuyển hướng tất cả các yêu cầu đến index.php
+# 2️⃣ Chặn truy cập trực tiếp vào tất cả các file PHP (trừ index.php)
+RewriteCond %{REQUEST_URI} !/index.php$ [NC]
+RewriteRule ^.*\.php$ - [F,L]
+
+# 3️⃣ Chặn truy cập vào file hệ thống quan trọng (.env, .git, .htaccess, composer.json, v.v.)
+<FilesMatch "(\.env|\.git|\.htaccess|composer\.json|composer\.lock|package\.json|package-lock\.json|config\.php|\.log)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 4️⃣ Chặn truy cập tất cả file ẩn (file bắt đầu bằng ".")
+RewriteRule (^|/)\. - [F,L]
+
+# 5️⃣ Chuyển hướng tất cả yêu cầu không phải file hoặc thư mục hợp lệ đến index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
