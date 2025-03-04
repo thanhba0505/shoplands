@@ -20,7 +20,6 @@ class ProductController
         $products = ProductModel::getAll($limit);
 
         foreach ($products as $key => $product) {
-            $products[$key]['description'] = [];
             $products[$key]['variants'] = ProductVariantModel::getByProductId($product['product_id']);
             $products[$key]['average_rating'] = ReviewModel::getAverageRatingByProductId($product['product_id']);
             $products[$key]['count_reviews'] = ReviewModel::getCountReviewsByProductId($product['product_id']);
@@ -32,6 +31,9 @@ class ProductController
             $sold_quantity = 0;
 
             foreach ($products[$key]['variants'] as $key2 => $variant) {
+                $quantity += $variant['quantity'];
+                $sold_quantity += $variant['sold_quantity'];
+
                 $values = ProductVariantValueModel::getByProductVariantId($variant['product_variant_id']);
                 $products[$key]['variants'][$key2]['value'] =  $values;
 
