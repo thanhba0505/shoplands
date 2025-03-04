@@ -38,6 +38,15 @@ axiosWithAuth.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        // 🔴 Xử lý lỗi mất kết nối mạng
+        if (!error.response) {
+            enqueueSnackbar(
+                "Không thể kết nối đến server. Vui lòng kiểm tra mạng!",
+                { variant: "error" }
+            );
+            return Promise.reject(error);
+        }
+
         // 🔴 Xử lý lỗi token hết hạn (401 Unauthorized)
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;

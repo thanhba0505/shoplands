@@ -1,18 +1,11 @@
-import { Container, useTheme } from "@mui/material";
+import { Container } from "@mui/material";
 import PaperCustom from "~/components/PaperCustom";
+import CategoryList from "./CategoryList";
 
 const Home = () => {
-    const theme = useTheme();
     return (
         <>
-            <Container
-                maxWidth="xl"
-                sx={{
-                    height: "200px",
-                }}
-            >
-                <PaperCustom>Danh mục</PaperCustom>
-            </Container>
+            <CategoryList />
             <Container
                 maxWidth="xl"
                 sx={{

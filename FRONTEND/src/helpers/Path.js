@@ -1,4 +1,26 @@
 class Path {
+    // ASSET PATHS
+    static public(subPath = "") {
+        return this.buildPath(import.meta.env.VITE_API_URL_PUBLIC, subPath);
+    }
+
+    static publicApp(subPath = "") {
+        return this.buildPath(this.public() + "/app", subPath);
+    }
+
+    static publicAvatar(subPath = "") {
+        return this.buildPath(this.public() + "/uploaded/avatar", subPath);
+    }
+
+    static publicBackground(subPath = "") {
+        return this.buildPath(this.public() + "/uploaded/background", subPath);
+    }
+
+    static publicProduct(subPath = "") {
+        return this.buildPath(this.public() + "/uploaded/product", subPath);
+    }
+
+    // PUBLIC PATHS
     static home(subPath = "") {
         return this.buildPath("/", subPath);
     }

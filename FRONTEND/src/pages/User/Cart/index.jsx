@@ -15,7 +15,9 @@ const Cart = () => {
             const response = await axiosWithAuth.get(Api.carts());
             setCarts(response.data);
         } catch (error) {
-            navigate(Path.login());
+            if (error.response) {
+                navigate(Path.login());
+            }
         }
     }, [navigate]);
 

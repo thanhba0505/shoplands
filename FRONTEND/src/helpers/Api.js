@@ -29,6 +29,10 @@ class Api {
         return this.buildPath("refresh-token", endpoint);
     }
 
+    static categories(endpoint = "") {
+        return this.buildPath("categories", endpoint);
+    }
+
     static carts(endpoint = "") {
         return this.buildPath("carts", endpoint);
     }
