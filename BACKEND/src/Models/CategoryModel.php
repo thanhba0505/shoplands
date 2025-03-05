@@ -32,7 +32,7 @@ class CategoryModel
 
         $sql =  "
             SELECT
-                c.id, 
+                c.id as category_id, 
                 c.name, 
                 c.slug,
                 c.image_path

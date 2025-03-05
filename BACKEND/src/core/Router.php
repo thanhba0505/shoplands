@@ -55,7 +55,7 @@ class Router
         $method = $_SERVER['REQUEST_METHOD'];
 
         if (!isset($this->routes[$method])) {
-            Response::json(['success' => false, 'message' => 'Method not allowed'], 405);
+            Response::json(['message' => 'Method not allowed'], 405);
         }
 
         foreach ($this->routes[$method] as $route => $action) {
@@ -73,7 +73,7 @@ class Router
                             $middlewareInstance = new $middleware();
                             $middlewareInstance->handle();
                         } else {
-                            Response::json(['success' => false, 'message' => "Middleware không hợp lệ: $middleware"], 500);
+                            Response::json(['message' => "Middleware không hợp lệ: $middleware"], 500);
                         }
                     }
                 }
@@ -98,11 +98,11 @@ class Router
                     call_user_func_array([$controller, $methodName], $params);
                     return;
                 } else {
-                    Response::json(['success' => false, 'message' => "Controller không tồn tại: $controllerNamespace"], 404);
+                    Response::json(['message' => "Controller không tồn tại: $controllerNamespace"], 404);
                 }
             }
         }
 
-        Response::json(['success' => false, 'message' => 'Route không tìm thấy'], 404);
+        Response::json(['message' => 'Route không tìm thấy'], 404);
     }
 }

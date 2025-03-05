@@ -14,6 +14,7 @@ import Home from "~/pages/Public/Home";
 import Products from "~/pages/Public/Products";
 import Introduce from "~/pages/Public/Introduce";
 import Contact from "~/pages/Public/Contact";
+import ProductDetail from "~/pages/Public/ProductDetail";
 
 // User
 import Cart from "~/pages/User/Cart";
@@ -40,6 +41,7 @@ const publicRoutes = [
     // Public
     { path: "/", component: Home },
     { path: "/products", component: Products },
+    { path: "/product-detail/:id", component: ProductDetail },
     { path: "/introduce", component: Introduce },
     { path: "/contact", component: Contact },
 ];

@@ -37,6 +37,10 @@ class Path {
         return this.buildPath("/products", subPath);
     }
 
+    static productDetail(subPath = "") {
+        return this.buildPath("/product-detail", subPath);
+    }
+
     static introduce(subPath = "") {
         return this.buildPath("/introduce", subPath);
     }
@@ -90,8 +94,9 @@ class Path {
 
     // Helper function to format the path correctly
     static buildPath(basePath, subPath) {
-        return subPath
-            ? `${basePath}/${subPath.replace(/^\/+/, "")}`
+        const subPathString = String(subPath); // Chuyển subPath thành string
+        return subPathString
+            ? `${basePath}/${subPathString.replace(/^\/+/, "")}`
             : basePath;
     }
 }
