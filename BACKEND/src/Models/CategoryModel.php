@@ -15,7 +15,8 @@ class CategoryModel
             SELECT
                 c.id, 
                 c.name, 
-                c.slug
+                c.slug,
+                c.image_path
             FROM
                 categories c
         ";
@@ -33,7 +34,8 @@ class CategoryModel
             SELECT
                 c.id, 
                 c.name, 
-                c.slug
+                c.slug,
+                c.image_path
             FROM
                 categories c
                 JOIN products p ON p.category_id = c.id

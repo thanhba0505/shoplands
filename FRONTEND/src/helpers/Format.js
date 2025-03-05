@@ -1,0 +1,123 @@
+class Format {
+    // Định dạng tiền tệ
+    static formatCurrency(amount, currency = "VND", locale = "vi-VN") {
+        const number = parseFloat(amount);
+        if (isNaN(number)) {
+            return `${currency} 0`;
+        }
+        // Định dạng tiền tệ với "đ" và không có khoảng cách
+        return new Intl.NumberFormat(locale, {
+            style: "currency",
+            currency: currency,
+        })
+            .format(number)
+            .replace("₫", "đ")
+            .replace(/\s/g, ""); 
+    }
+
+    // Định dạng ngày giờ
+    static formatDate(date, format = "DD/MM/YYYY", locale = "vi-VN") {
+        const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        };
+
+        const dateObj = new Date(date);
+        if (isNaN(dateObj)) {
+            return "Ngày không hợp lệ";
+        }
+
+        if (format === "DD/MM/YYYY") {
+            return new Intl.DateTimeFormat(locale, {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            }).format(dateObj);
+        }
+
+        return new Intl.DateTimeFormat(locale, options).format(dateObj);
+    }
+
+    // Định dạng thời gian (HH:mm:ss)
+    static formatTime(time) {
+        const date = new Date(time);
+        if (isNaN(date)) {
+            return "Thời gian không hợp lệ";
+        }
+        return date.toLocaleTimeString();
+    }
+
+    // Định dạng số
+    static formatNumber(number, locale = "vi-VN") {
+        const num = parseFloat(number);
+        if (isNaN(num)) {
+            return "Số không hợp lệ";
+        }
+        return new Intl.NumberFormat(locale).format(num);
+    }
+
+    // Định dạng phần trăm
+    static formatPercentage(number, locale = "vi-VN") {
+        const num = parseFloat(number);
+        if (isNaN(num)) {
+            return "Số không hợp lệ";
+        }
+        return new Intl.NumberFormat(locale, {
+            style: "percent",
+            minimumFractionDigits: 2,
+        }).format(num);
+    }
+
+    // Định dạng ngày giờ kiểu '1 ngày trước', '3 giờ trước'
+    static formatDateTime(date) {
+        const now = new Date();
+        const then = new Date(date);
+        const diff = Math.abs(now - then);
+
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(diff / (1000 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days > 0) {
+            return `${days} ngày trước`;
+        } else if (hours > 0) {
+            return `${hours} giờ trước`;
+        } else if (minutes > 0) {
+            return `${minutes} phút trước`;
+        } else if (seconds > 0) {
+            return `${seconds} giây trước`;
+        }
+
+        return "Vừa xong";
+    }
+
+    // Định dạng số lớn hơn 100 thành '1k', '1.3k'
+    static formatLargeNumber(number) {
+        const num = parseFloat(number);
+        if (isNaN(num)) {
+            return "Số không hợp lệ";
+        }
+
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + "k";
+        }
+        return num;
+    }
+
+    // Định dạng số với số chữ số thập phân cố định
+    static formatNumberWithDecimals(number, decimals = 2, locale = "vi-VN") {
+        const num = parseFloat(number);
+        if (isNaN(num)) {
+            return "Số không hợp lệ";
+        }
+        return num.toLocaleString(locale, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
+        });
+    }
+}
+
+export default Format;

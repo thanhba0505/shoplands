@@ -11,6 +11,7 @@ import {
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Api from "~/helpers/Api";
+import Format from "~/helpers/Format";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
@@ -125,25 +126,28 @@ const BestSellingProducts = () => {
                                         variant="body1"
                                         sx={{
                                             fontWeight: "bold",
-                                            textDecoration:
-                                                product.min_price_promotion
-                                                    ? "line-through"
-                                                    : "none",
                                             marginRight:
-                                                product.min_price_promotion
+                                                product.price_from_min_price
                                                     ? 1
                                                     : 0,
                                         }}
                                     >
-                                        {product.min_price} VND
+                                        {Format.formatCurrency(
+                                            product.min_price
+                                        )}
                                     </Typography>
 
-                                    {product.min_price_promotion && (
+                                    {product.price_from_min_price && (
                                         <Typography
                                             variant="body1"
                                             color="error"
+                                            sx={{
+                                                textDecoration: "line-through",
+                                            }}
                                         >
-                                            {product.min_price_promotion} VND
+                                            {Format.formatCurrency(
+                                                product.price_from_min_price
+                                            )}
                                         </Typography>
                                     )}
                                 </Box>
@@ -160,7 +164,7 @@ const BestSellingProducts = () => {
                                 {/* Nút "Xem chi tiết" */}
                                 <Button
                                     fullWidth
-                                    variant="contained"
+                                    variant="outlined"
                                     sx={{ marginTop: 2 }}
                                     onClick={() =>
                                         navigate(

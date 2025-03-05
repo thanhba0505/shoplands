@@ -26,7 +26,7 @@ class ProductController
 
             $minPrice = null;
             $maxPrice = null;
-            $minPricePromotion = null;
+            $priceFromMinPrice = null;
             $quantity = 0;
             $sold_quantity = 0;
 
@@ -42,20 +42,18 @@ class ProductController
                     $products[$key]['attributes'][$value['name']] = array_unique($products[$key]['attributes'][$value['name']]);
                 }
 
+                // Tính minmax
                 if ($variant['promotion_price'] === null) {
                     $currentMin = $variant['price']; // Nếu promotion_price là null, chỉ sử dụng price
                     $currentMinPromotion = null; // Không có promotion_price
                 } else {
                     $currentMin = min($variant['price'], $variant['promotion_price']);
-                    $currentMinPromotion = ($currentMin === $variant['promotion_price']) ? $variant['promotion_price'] : null;
+                    $currentMinPromotion = ($currentMin === $variant['promotion_price']) ? $variant['price'] : null;
                 }
 
-                // Cập nhật minPrice nếu chưa được thiết lập hoặc tìm thấy giá thấp hơn
                 if ($minPrice === null || $currentMin < $minPrice) {
                     $minPrice = $currentMin;
-
-                    // Nếu minPrice chính là promotion_price, gán minPricePromotion = null
-                    $minPricePromotion = ($currentMin === $variant['promotion_price']) ? null : $currentMinPromotion;
+                    $priceFromMinPrice = $currentMinPromotion; // Lưu giá trị của promotion_price nếu minPrice từ promotion_price
                 }
 
                 // Kiểm tra giá trị max giữa price và promotion_price
@@ -73,7 +71,7 @@ class ProductController
 
             $products[$key]['min_price'] = $minPrice;
             $products[$key]['max_price'] = $maxPrice;
-            $products[$key]['min_price_promotion'] = $minPricePromotion;
+            $products[$key]['price_from_min_price'] = $priceFromMinPrice;
             $products[$key]['quantity'] = $quantity;
             $products[$key]['sold_quantity'] = $sold_quantity;
 

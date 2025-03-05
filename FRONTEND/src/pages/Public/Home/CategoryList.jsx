@@ -50,8 +50,12 @@ const CategoryList = () => {
                         >
                             <Avatar
                                 alt={category.name}
-                                src={Path.publicApp(category.slug) + ".webp"}
-                                sx={{ width: 150, height: 150, cursor: "pointer" }}
+                                src={Path.publicApp(category.image_path)}
+                                sx={{
+                                    width: 150,
+                                    height: 150,
+                                    cursor: "pointer",
+                                }}
                                 onClick={() => {
                                     // navigate(Path.category(category.slug));
                                 }}
