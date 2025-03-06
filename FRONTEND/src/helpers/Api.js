@@ -37,8 +37,8 @@ class Api {
         return this.buildPath("products", endpoint);
     }
 
-    static carts(endpoint = "") {
-        return this.buildPath("carts", endpoint);
+    static cart(endpoint = "") {
+        return this.buildPath("cart", endpoint);
     }
 }
 
