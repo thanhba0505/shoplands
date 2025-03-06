@@ -15,7 +15,13 @@ import Path from "~/helpers/Path";
 import ButtonLoading from "~/components/ButtonLoading";
 import Format from "~/helpers/Format";
 import QuantityInput from "~/components/QuantityInput";
+import axiosWithAuth from "~/utils/axiosWithAuth";
+import Api from "~/helpers/Api";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import Auth from "~/helpers/Auth";
 
+// Hình ảnh
 const ImageProduct = ({ images }) => {
   const defaultImage = images && images.find((image) => image.default === 1);
 
@@ -65,10 +71,13 @@ const ImageProduct = ({ images }) => {
   );
 };
 
+// Thống tin sản phẩm
 const InfoProduct = ({ product }) => {
   const [selectedValues, setSelectedValues] = useState({});
   const [quantity, setQuantity] = useState(1);
   const variants = product?.variants;
+
+  const navigate = useNavigate();
 
   // Xử lý chọn thuộc tính
   const handleShowPrice = (key, value) => {
@@ -119,17 +128,12 @@ const InfoProduct = ({ product }) => {
     : product.quantity;
   const productSoldQuantity = selectedVariant
     ? selectedVariant.sold_quantity
-    : product.sold_quantity;
+    : 1;
 
   // Xử lý nhập số lượng
 
   const handleQuantityChange = (newQuantity) => {
     setQuantity(newQuantity);
-  };
-
-  // Xử lý thêm vào giỏ hàng
-  const handleAddToCart = () => {
-    console.log("selectedVariant", selectedVariant);
   };
 
   return (
@@ -326,21 +330,65 @@ const InfoProduct = ({ product }) => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Box sx={{ display: "flex", gap: 2 }}>
+
+          {/* Nút xử lý */}
+          {Auth.checkUser() ? (
+            <BtnHandle selectedVariant={selectedVariant} quantity={quantity} />
+          ) : (
             <ButtonLoading
-              sx={{ width: "50%" }}
-              variant="outlined"
-              onClick={handleAddToCart}
+              variant="contained"
+              sx={{ width: "100%" }}
+              onClick={() => navigate(Path.login())}
             >
-              Thêm vào giỏ hàng
+              Đăng nhập để mua hàng
             </ButtonLoading>
-            <ButtonLoading sx={{ width: "50%" }} variant="contained">
-              Mua ngay
-            </ButtonLoading>
-          </Box>
+          )}
         </Box>
       )}
     </>
+  );
+};
+
+// Xử lý thêm vào giỏ hàng
+const BtnHandle = ({ selectedVariant, quantity }) => {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleAddToCart = async () => {
+    if (!selectedVariant) {
+      enqueueSnackbar("Hãy chọn thuộc tính sản phẩm", { variant: "warning" });
+      return;
+    }
+    try {
+      const response = await axiosWithAuth.post(
+        Api.cart(),
+        {
+          product_variant_id: selectedVariant.product_variant_id,
+          quantity,
+        },
+        { navigate }
+      );
+      if (response.status === 200 || response.status === 201) {
+        enqueueSnackbar(response.data.message, { variant: "success" });
+      }
+    } catch (error) {
+      console.log(error.response?.data?.message);
+    }
+  };
+
+  return (
+    <Box sx={{ display: "flex", gap: 2 }}>
+      <ButtonLoading
+        sx={{ width: "50%" }}
+        variant="outlined"
+        onClick={handleAddToCart}
+      >
+        Thêm vào giỏ hàng
+      </ButtonLoading>
+      <ButtonLoading sx={{ width: "50%" }} variant="contained">
+        Mua ngay
+      </ButtonLoading>
+    </Box>
   );
 };
 

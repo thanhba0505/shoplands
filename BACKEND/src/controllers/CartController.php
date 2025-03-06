@@ -55,7 +55,15 @@ class CartController
 
         $result = CartModel::addCart($user["user_id"], $productVariantId, $quantity);
 
-        Response::json($result);
+        if ($result) {
+            Response::json([
+                "message" => "Thêm vào giỏ hàng thành công"
+            ], 201);
+        } else {
+            Response::json([
+                "message" => "Thêm vào giỏ hàng thất bại thành công"
+            ], 400);
+        }
     }
 
     public function updateCart()

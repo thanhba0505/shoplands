@@ -58,8 +58,8 @@ axiosWithAuth.interceptors.response.use(
         const refreshToken = store.getState().auth.refreshToken;
         if (!refreshToken) {
           enqueueSnackbar(
-            "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!",
-            { variant: "warning" }
+            "Bạn chưa đăng nhập!",
+            { variant: "error" }
           );
           store.dispatch(logout());
           if (navigate) navigate(Path.login()); // Navigate to login page
