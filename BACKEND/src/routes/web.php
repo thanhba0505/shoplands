@@ -12,6 +12,8 @@ $router->post('api/logout', 'AuthController@logout');
 // API CART
 $router->get('api/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']);
 $router->post('api/cart', 'CartController@addCart', ['App\Middlewares\UserMiddleware']);
+$router->put('api/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']);
+$router->delete('api/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']);
 
 // API CATEGORY
 $router->get('api/categories', 'CategoryController@getAll');

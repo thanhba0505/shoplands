@@ -29,4 +29,28 @@ class ProductVariantModel
 
         return $result ?? [];
     }
+
+    // Lấy danh sách variant theo cartId
+    public static function getByCartId($cart_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                pv.id AS product_variant_id,
+                pv.price,
+                pv.promotion_price,
+                pv.quantity,
+                pv.sold_quantity
+            FROM
+                product_variants pv
+                JOIN carts c ON c.product_variant_id = pv.id
+            WHERE
+                c.id = :cart_id
+        ";
+
+        $result = $query->query($sql, ['cart_id' => $cart_id])->fetch();
+
+        return $result ?? null;
+    }
 }

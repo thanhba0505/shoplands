@@ -13,7 +13,7 @@ class CartModel
 
         $sql = "
             SELECT DISTINCT
-                s.id,
+                s.id AS seller_id,
                 s.store_name
             FROM
                 carts c
@@ -29,9 +29,33 @@ class CartModel
         return $result ?? [];
     }
 
+    // Lấy carts theo user id và seller id
+    public static function getCartsByUserIdAndSellerId($userId, $sellerId)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT DISTINCT
+                c.id AS cart_id,
+                c.quantity
+            FROM
+                carts c
+                JOIN product_variants pv ON pv.id = c.product_variant_id
+                JOIN products p ON p.id = pv.product_id
+            WHERE
+                c.user_id = :userId
+                AND p.seller_id = :sellerId
+        ";
+
+        $result = $query->query($sql, ['userId' => $userId, "sellerId" => $sellerId])->fetchAll();
+
+        return $result ?? [];
+    }
+
+    // Thêm vào giỏ hàng
     public static function addCart($userId, $productVariantId, $quantity)
     {
-        $query = new ConnectDatabase(); 
+        $query = new ConnectDatabase();
 
         $sql = "
             INSERT INTO
