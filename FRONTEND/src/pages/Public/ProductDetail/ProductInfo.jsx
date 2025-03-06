@@ -1,238 +1,356 @@
 import { useState } from "react";
 import {
-    Box,
-    Typography,
-    Button,
-    Rating,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    TableContainer,
-    Table,
-    TableBody,
-    TableRow,
-    TableCell,
+  Box,
+  Typography,
+  Button,
+  Rating,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@mui/material";
 import PaperCustom from "~/components/PaperCustom";
-import { FavoriteBorder } from "@mui/icons-material";
 import Path from "~/helpers/Path";
 import ButtonLoading from "~/components/ButtonLoading";
+import Format from "~/helpers/Format";
+import QuantityInput from "~/components/QuantityInput";
 
 const ImageProduct = ({ images }) => {
-    const defaultImage = images && images.find((image) => image.default === 1);
+  const defaultImage = images && images.find((image) => image.default === 1);
 
-    return (
-        <>
-            {images && (
-                <Box
-                    sx={{
-                        width: "40%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "start",
-                        alignItems: "center",
-                    }}
-                >
-                    <Box sx={{ padding: 2 }}>
-                        <img
-                            src={Path.publicProduct(defaultImage?.image_path)}
-                            alt="Product Image"
-                            style={{
-                                width: "100%",
-                                maxWidth: "400px",
-                                objectFit: "contain",
-                                margin: "auto",
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-                        {images &&
-                            images.map((image, key) => (
-                                <img
-                                    key={key}
-                                    src={Path.publicProduct(image.image_path)}
-                                    alt="Product Image"
-                                    style={{
-                                        width: "100px",
-                                        maxWidth: "400px",
-                                        objectFit: "contain",
-                                        margin: "auto",
-                                    }}
-                                />
-                            ))}
-                    </Box>
-                </Box>
-            )}
-        </>
-    );
+  return (
+    <>
+      {images && (
+        <Box
+          sx={{
+            width: "40%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "start",
+            alignItems: "center",
+          }}
+        >
+          <Box sx={{ padding: 2 }}>
+            <img
+              src={Path.publicProduct(defaultImage?.image_path)}
+              alt="Product Image"
+              style={{
+                width: "100%",
+                maxWidth: "400px",
+                objectFit: "contain",
+                margin: "auto",
+              }}
+            />
+          </Box>
+          <Box sx={{ padding: 2, display: "flex", gap: 2 }}>
+            {images &&
+              images.map((image, key) => (
+                <img
+                  key={key}
+                  src={Path.publicProduct(image.image_path)}
+                  alt="Product Image"
+                  style={{
+                    width: "100px",
+                    maxWidth: "400px",
+                    objectFit: "contain",
+                    margin: "auto",
+                  }}
+                />
+              ))}
+          </Box>
+        </Box>
+      )}
+    </>
+  );
 };
 
 const InfoProduct = ({ product }) => {
-    const [selectedValues, setSelectedValues] = useState({});
+  const [selectedValues, setSelectedValues] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const variants = product?.variants;
 
-    const handleShowPrice = (key, value) => {
-        if (selectedValues[key] === value) {
-            setSelectedValues((prev) => ({
-                ...prev,
-                [key]: null,
-            }));
-        } else {
-            setSelectedValues((prev) => ({
-                ...prev,
-                [key]: value,
-            }));
-        }
+  // Xử lý chọn thuộc tính
+  const handleShowPrice = (key, value) => {
+    if (selectedValues[key] === value) {
+      setSelectedValues((prev) => ({
+        ...prev,
+        [key]: null,
+      }));
+    } else {
+      setSelectedValues((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    }
+  };
 
-        console.log(selectedValues);
-    };
-    return (
-        <>
-            {product && (
-                <Box sx={{ width: "60%", padding: 2 }}>
-                    <Typography className="line-clamp-3" variant="h5">
-                        {product.name}
-                    </Typography>
+  const getSelectedVariant = () => {
+    if (
+      variants &&
+      Object.keys(selectedValues).length ===
+        Object.keys(product.attributes).length
+    ) {
+      return variants.find((variant) => {
+        return Object.keys(selectedValues).every((key) => {
+          const selectedValue = selectedValues[key];
+          return variant.values.some(
+            (v) => v.name === key && v.value === selectedValue
+          );
+        });
+      });
+    }
+    return null;
+  };
+
+  const selectedVariant = getSelectedVariant();
+
+  const priceToShow = selectedVariant
+    ? selectedVariant.promotion_price || selectedVariant.price
+    : null;
+
+  const priceFrom = selectedVariant ? selectedVariant.price : product.min_price;
+  const priceTo = selectedVariant
+    ? selectedVariant.promotion_price || selectedVariant.price
+    : product.max_price;
+
+  const productQuantity = selectedVariant
+    ? selectedVariant.quantity
+    : product.quantity;
+  const productSoldQuantity = selectedVariant
+    ? selectedVariant.sold_quantity
+    : product.sold_quantity;
+
+  // Xử lý nhập số lượng
+
+  const handleQuantityChange = (newQuantity) => {
+    setQuantity(newQuantity);
+  };
+
+  // Xử lý thêm vào giỏ hàng
+  const handleAddToCart = () => {
+    console.log("selectedVariant", selectedVariant);
+  };
+
+  return (
+    <>
+      {product && (
+        <Box sx={{ width: "60%", padding: 2 }}>
+          <Typography className="line-clamp-3" variant="h5">
+            {product.name}
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="body2" color="textSecondary">
+              {product.average_rating}
+            </Typography>
+
+            <Rating
+              size="small"
+              name="read-only"
+              readOnly
+              value={
+                product.average_rating ? parseFloat(product.average_rating) : 0
+              }
+              precision={0.1}
+            />
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ marginLeft: 1 }}
+            >
+              ({product.count_reviews} đánh giá)
+            </Typography>
+          </Box>
+          <Typography
+            variant="h5"
+            fontWeight={"bold"}
+            color="#fff"
+            sx={{ padding: 2, bgcolor: "primary.light" }}
+          >
+            {priceToShow
+              ? `${Format.formatCurrency(priceToShow)}`
+              : `${Format.formatCurrency(priceFrom)} - ${Format.formatCurrency(
+                  priceTo
+                )}`}
+            {priceToShow &&
+              selectedVariant &&
+              selectedVariant.promotion_price && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{ display: "inline", marginLeft: 1 }}
+                >
+                  {Format.formatCurrency(selectedVariant.promotion_price)}
+                </Typography>
+              )}
+            {priceToShow &&
+              selectedVariant &&
+              selectedVariant.promotion_price && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{ display: "inline", marginLeft: 1 }}
+                >
+                  {Format.formatPercentage(
+                    (selectedVariant.price - selectedVariant.promotion_price) /
+                      selectedVariant.price
+                  )}
+                </Typography>
+              )}
+          </Typography>
+          <TableContainer>
+            <Table sx={{ borderCollapse: "collapse", border: "none" }}>
+              <TableBody>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      width: "20%",
+                      px: 0,
+                      py: 1,
+                      border: "none",
+                    }}
+                  >
+                    Tồn kho
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      px: 0,
+                      py: 1,
+                      border: "none",
+                    }}
+                  >
+                    {productQuantity}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      width: "20%",
+                      px: 0,
+                      py: 1,
+                      border: "none",
+                    }}
+                  >
+                    Đã bán
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      px: 0,
+                      py: 1,
+                      border: "none",
+                    }}
+                  >
+                    {productSoldQuantity}
+                  </TableCell>
+                </TableRow>
+                {product.attributes &&
+                  Object.keys(product.attributes).map((key, index) => (
+                    <TableRow key={index}>
+                      <TableCell
+                        sx={{
+                          width: "20%",
+                          px: 0,
+                          py: 1,
+                          border: "none",
+                        }}
+                      >
+                        {key}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          px: 0,
+                          py: 1,
+                          border: "none",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          {" "}
+                          {product.attributes[key].map((value, subIndex) => (
+                            <Button
+                              variant="outlined"
+                              key={subIndex}
+                              onClick={() => handleShowPrice(key, value)}
+                              sx={{
+                                backgroundColor:
+                                  selectedValues[key] === value
+                                    ? "primary.light"
+                                    : "#fff",
+                                color:
+                                  selectedValues[key] === value
+                                    ? "#fff"
+                                    : "primary.light",
+                              }}
+                            >
+                              {value}
+                            </Button>
+                          ))}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                {/* Số lượng */}
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      width: "20%",
+                      px: 0,
+                      py: 1,
+                      border: "none",
+                    }}
+                  >
+                    Số lượng
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      px: 0,
+                      py: 1,
+                      border: "none",
+                    }}
+                  >
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Typography variant="body2" color="textSecondary">
-                            {product.average_rating}
-                        </Typography>
-
-                        <Rating
-                            size="small"
-                            name="read-only"
-                            readOnly
-                            value={
-                                product.average_rating
-                                    ? parseFloat(product.average_rating)
-                                    : 0
-                            }
-                            precision={0.1}
-                        />
-                        <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            sx={{ marginLeft: 1 }}
-                        >
-                            ({product.count_reviews} đánh giá)
-                        </Typography>
+                      <QuantityInput
+                        min={1}
+                        max={productSoldQuantity}
+                        value={quantity}
+                        onChange={handleQuantityChange}
+                      />
                     </Box>
-                    <Typography
-                        variant="h5"
-                        fontWeight={"bold"}
-                        color="#fff"
-                        sx={{ padding: 2, bgcolor: "primary.light" }}
-                    >
-                        {/* Nơi hiển thị gi */}
-                    </Typography>
-                    <TableContainer>
-                        <Table
-                            sx={{ borderCollapse: "collapse", border: "none" }}
-                        >
-                            <TableBody>
-                                {product.attributes &&
-                                    Object.keys(product.attributes).map(
-                                        (key, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell
-                                                    sx={{
-                                                        width: "20%",
-                                                        px: 0,
-                                                        py: 1,
-                                                        border: "none",
-                                                    }}
-                                                >
-                                                    {key}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{
-                                                        px: 0,
-                                                        py: 1,
-                                                        border: "none",
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            display: "flex",
-                                                            gap: 1,
-                                                            flexWrap: "wrap",
-                                                        }}
-                                                    >
-                                                        {" "}
-                                                        {product.attributes[
-                                                            key
-                                                        ].map(
-                                                            (
-                                                                value,
-                                                                subIndex
-                                                            ) => (
-                                                                <Button
-                                                                    variant="outlined"
-                                                                    key={
-                                                                        subIndex
-                                                                    }
-                                                                    onClick={() =>
-                                                                        handleShowPrice(
-                                                                            key,
-                                                                            value
-                                                                        )
-                                                                    }
-                                                                    sx={{
-                                                                        backgroundColor:
-                                                                            selectedValues[
-                                                                                key
-                                                                            ] ===
-                                                                            value
-                                                                                ? "primary.light"
-                                                                                : "#fff",
-                                                                        color:
-                                                                            selectedValues[
-                                                                                key
-                                                                            ] ===
-                                                                            value
-                                                                                ? "#fff"
-                                                                                : "primary.light",
-                                                                    }}
-                                                                >
-                                                                    {value}
-                                                                </Button>
-                                                            )
-                                                        )}
-                                                    </Box>
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Box sx={{ display: "flex", gap: 2 }}>
-                        <ButtonLoading
-                            sx={{ width: "50%" }}
-                            variant="contained"
-                        >
-                            Mua ngay
-                        </ButtonLoading>
-                        <ButtonLoading
-                            sx={{ width: "50%" }}
-                            variant="contained"
-                        >
-                            Mua ngay
-                        </ButtonLoading>
-                    </Box>
-                </Box>
-            )}
-        </>
-    );
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <ButtonLoading
+              sx={{ width: "50%" }}
+              variant="outlined"
+              onClick={handleAddToCart}
+            >
+              Thêm vào giỏ hàng
+            </ButtonLoading>
+            <ButtonLoading sx={{ width: "50%" }} variant="contained">
+              Mua ngay
+            </ButtonLoading>
+          </Box>
+        </Box>
+      )}
+    </>
+  );
 };
 
 const ProductInfo = ({ product }) => {
-    return (
-        <PaperCustom sx={{ display: "flex" }}>
-            <ImageProduct images={product?.images} />
-            <InfoProduct product={product} />
-        </PaperCustom>
-    );
+  return (
+    <PaperCustom sx={{ display: "flex" }}>
+      <ImageProduct images={product?.images} />
+      <InfoProduct product={product} />
+    </PaperCustom>
+  );
 };
 
 export default ProductInfo;

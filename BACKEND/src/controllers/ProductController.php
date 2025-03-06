@@ -114,7 +114,7 @@ class ProductController
             $sold_quantity += $variant['sold_quantity'];
 
             $values = ProductVariantValueModel::getByProductVariantId($variant['product_variant_id']);
-            $product['variants'][$key2]['value'] =  $values;
+            $product['variants'][$key2]['values'] =  $values;
 
             foreach ($values as $value) {
                 $product['attributes'][$value['name']][] = $value['value'];
