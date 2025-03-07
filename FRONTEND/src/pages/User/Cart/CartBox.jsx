@@ -15,8 +15,12 @@ import QuantityInput from "~/components/QuantityInput";
 import Format from "~/helpers/Format";
 import Path from "~/helpers/Path";
 import { useTheme } from "@emotion/react";
+import axiosWithAuth from "~/utils/axiosWithAuth";
+import Api from "~/helpers/Api";
+import { useNavigate } from "react-router-dom";
 
 const CartBox = ({ cart }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -52,7 +56,8 @@ const CartBox = ({ cart }) => {
   };
 
   // Xử lý thay đổi số lượng
-  const handleChangeQuantity = (cartId, newQuantity) => {
+  const handleChangeQuantity = async (cartId, newQuantity) => {
+    // Cập nhật giỏ hàng ngay lập tức trước khi gọi API
     const updatedCartDetails = cartDetails.map((cartDetail) => {
       if (cartDetail.cart_id === cartId) {
         return { ...cartDetail, quantity: newQuantity };
@@ -60,7 +65,36 @@ const CartBox = ({ cart }) => {
       return cartDetail;
     });
     setCartDetails(updatedCartDetails);
-    calculateTotal();
+
+    try {
+      // Gọi API để thay đổi số lượng trên server
+      const cartDetailToUpdate = updatedCartDetails.find(
+        (cartDetail) => cartDetail.cart_id === cartId
+      );
+
+      const response = await axiosWithAuth.put(
+        Api.cart(),
+        {
+          product_variant_id:
+            cartDetailToUpdate.product_variant.product_variant_id,
+          quantity: newQuantity,
+        },
+        { navigate }
+      );
+
+      // Kiểm tra thành công và cập nhật lại giỏ hàng
+      if (response.status === 200 || response.status === 201) {
+        setCartDetails((prevCartDetails) =>
+          prevCartDetails.map((cartDetail) =>
+            cartDetail.cart_id === cartId
+              ? { ...cartDetail, quantity: newQuantity }
+              : cartDetail
+          )
+        );
+      }
+    } catch (error) {
+      window.location.reload();
+    }
   };
 
   const handleCheckout = () => {

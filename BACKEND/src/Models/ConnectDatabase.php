@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Log;
 use PDO;
 use PDOException;
 use Exception;
@@ -26,7 +27,8 @@ class ConnectDatabase
                 PDO::ATTR_EMULATE_PREPARES   => false
             ]);
         } catch (PDOException $e) {
-            throw new Exception("Database connection failed: " . $e->getMessage());
+            // throw new Exception("Database connection failed: " . $e->getMessage());
+            Log::json(["message" => "Database connection failed: " . $e->getMessage()]);
         }
     }
 
@@ -37,7 +39,8 @@ class ConnectDatabase
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
-            throw new Exception("Query failed: " . $e->getMessage());
+            // throw new Exception("Query failed: " . $e->getMessage());
+            Log::array(["message" => "Query failed: " . $e->getMessage()]);
         }
     }
 

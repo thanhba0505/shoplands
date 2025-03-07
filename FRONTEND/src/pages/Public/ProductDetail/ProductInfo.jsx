@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -74,7 +74,6 @@ const ImageProduct = ({ images }) => {
 // Thống tin sản phẩm
 const InfoProduct = ({ product }) => {
   const [selectedValues, setSelectedValues] = useState({});
-  const [soldQuantity, setSoldQuantity] = useState(product.sold_quantity);
   const [quantity, setQuantity] = useState(1);
   const variants = product?.variants;
 
@@ -129,14 +128,11 @@ const InfoProduct = ({ product }) => {
     ? selectedVariant.quantity
     : product.quantity;
 
-  useEffect(() => {
-    selectedVariant
-      ? setSoldQuantity(selectedVariant.sold_quantity)
-      : setSoldQuantity(product.sold_quantity);
-  }, [selectedVariant, product.sold_quantity]);
+  const soldQuantity = selectedVariant
+    ? selectedVariant.sold_quantity
+    : product.sold_quantity;
 
   // Xử lý nhập số lượng
-
   const handleQuantityChange = (newQuantity) => {
     setQuantity(newQuantity);
   };
@@ -325,7 +321,7 @@ const InfoProduct = ({ product }) => {
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <QuantityInput
                         min={1}
-                        max={soldQuantity}
+                        max={productQuantity}
                         value={quantity}
                         onChange={handleQuantityChange}
                       />
@@ -378,6 +374,9 @@ const BtnHandle = ({ selectedVariant, quantity }) => {
       }
     } catch (error) {
       console.log(error.response?.data?.message);
+      if (error.response?.data?.quantity !== selectedVariant.quantity) {
+        window.location.reload();
+      }
     }
   };
 

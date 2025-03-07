@@ -43,3 +43,20 @@ DATABASE
 php artisan migrate:fresh --seed
 
 
+Mã HTTP	Ý nghĩa	Ví dụ sử dụng
+200	OK	Thành công, trả về thông tin, dữ liệu
+201	Created	Tạo mới tài nguyên (thêm vào giỏ hàng, tạo tài khoản)
+202	Accepted	Yêu cầu được chấp nhận, nhưng chưa hoàn thành
+204	No Content	Thành công, nhưng không cần trả về dữ liệu
+301	Moved Permanently	Chuyển hướng vĩnh viễn
+302	Found (Temporary Redirect)	Chuyển hướng tạm thời
+400	Bad Request	Cú pháp không hợp lệ
+401	Unauthorized	Chưa đăng nhập hoặc xác thực
+403	Forbidden	Không có quyền truy cập
+404	Not Found	Tài nguyên không tồn tại
+405	Method Not Allowed	Phương thức không được phép
+422	Unprocessable Entity	Dữ liệu không thể xử lý (thiếu thông tin quan trọng)
+500	Internal Server Error	Lỗi máy chủ
+502	Bad Gateway	Lỗi kết nối giữa các máy chủ
+503	Service Unavailable	Dịch vụ tạm thời không khả dụng
+504	Gateway Timeout	Lỗi khi máy chủ không phản hồi kịp thời

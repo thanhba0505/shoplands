@@ -68,4 +68,65 @@ class CartModel
 
         return $result ? true : false;
     }
+
+    // Cập nhật giỏ hàng
+    public static function updateCart($userId, $productVariantId, $quantity)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                carts c
+            SET
+                c.quantity = :quantity
+            WHERE
+                c.user_id = :userId
+                AND c.product_variant_id = :productVariantId
+        ";
+
+        $result = $query->query($sql, ['quantity' => $quantity, "userId" => $userId, "productVariantId" => $productVariantId]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
+
+    // Xóa khỏi giỏ hàng
+    public static function deleteCart($userId, $cartId)
+    {
+        $query = new ConnectDatabase();
+
+        // Sửa lại câu lệnh SQL
+        $sql = "
+            DELETE FROM
+                carts
+            WHERE
+                id = :cartId
+                AND user_id = :userId
+        ";
+
+        $result = $query->query($sql, ['cartId' => $cartId, "userId" => $userId]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
+
+
+    // Kiểm tra carts theo user id và product variant id
+    public static function checkCart($userId, $productVariantId)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                c.id AS cart_id,
+                c.quantity
+            FROM
+                carts c
+            WHERE
+                c.user_id = :userId
+                AND c.product_variant_id = :productVariantId
+        ";
+
+        $result = $query->query($sql, ['userId' => $userId, "productVariantId" => $productVariantId])->fetch();
+
+        return $result ?? false;
+    }
 }

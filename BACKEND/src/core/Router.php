@@ -55,7 +55,7 @@ class Router
         $method = $_SERVER['REQUEST_METHOD'];
 
         if (!isset($this->routes[$method])) {
-            Response::json(['message' => 'Method not allowed'], 405);
+            Response::json(['message' => 'Không tìm thấy phương thức này'], 405);
         }
 
         foreach ($this->routes[$method] as $route => $action) {
@@ -103,6 +103,6 @@ class Router
             }
         }
 
-        Response::json(['message' => 'Route không tìm thấy'], 404);
+        Response::json(['message' => 'Không tìm thấy đường dẫn này'], 404);
     }
 }
