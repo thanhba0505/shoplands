@@ -9,6 +9,7 @@ use App\Models\CartModel;
 use App\Models\ProductImageModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
+use App\Models\ProductVariantValueModel;
 
 class CartController
 {
@@ -18,9 +19,9 @@ class CartController
 
         $carts["user_id"] = $user["user_id"];
 
-        $carts["carts"] = CartModel::getSellersByUserId($user["user_id"]);
+        $carts["group"] = CartModel::getSellersByUserId($user["user_id"]);
 
-        foreach ($carts["carts"] as $key => $cart) {
+        foreach ($carts["group"] as $key => $cart) {
             $cartDetails = CartModel::getCartsByUserIdAndSellerId($user["user_id"], $cart["seller_id"]);
 
             foreach ($cartDetails as $key2 => $cartDetail) {
@@ -29,9 +30,11 @@ class CartController
 
                 $productVariant = ProductVariantModel::getByCartId($cartDetail["cart_id"]);
                 $cartDetails[$key2]["product_variant"] = $productVariant;
+                $cartDetails[$key2]['image'] = ProductImageModel::getDefault($product["product_id"]);
+                $cartDetails[$key2]['variant_value'] = ProductVariantValueModel::getByProductVariantId($productVariant['product_variant_id']);
             }
 
-            $carts["carts"][$key]['cart_details'] = $cartDetails;
+            $carts["group"][$key]['cart_details'] = $cartDetails;
         }
 
 

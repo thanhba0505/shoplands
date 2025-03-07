@@ -15,6 +15,7 @@
     "@mui/icons-material": "^6.4.6",
     "@mui/lab": "^6.0.0-beta.29",
     "@mui/material": "^6.4.6",
+    "@mui/x-data-grid": "^7.27.2",
     "@reduxjs/toolkit": "^2.2.4",
     "axios": "^1.6.8",
     "csstype": "3.0.10",

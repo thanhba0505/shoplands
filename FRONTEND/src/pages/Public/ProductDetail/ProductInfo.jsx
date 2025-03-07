@@ -340,7 +340,7 @@ const InfoProduct = ({ product }) => {
               sx={{ width: "100%" }}
               onClick={() => navigate(Path.login())}
             >
-              Đăng nhập để mua hàng
+              Đăng nhập để mua sản phẩm
             </ButtonLoading>
           )}
         </Box>

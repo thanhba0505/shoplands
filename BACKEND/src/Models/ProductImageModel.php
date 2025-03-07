@@ -25,4 +25,25 @@ class ProductImageModel
 
         return $result;
     }
+
+    // Lấy danh ảnh mặc định
+    public static function getDefault($product_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                pi.image_path,
+                pi.default
+            FROM
+                product_images pi
+            WHERE
+                pi.product_id = :product_id
+                AND pi.default = :default
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id, "default" => 1])->fetch();
+
+        return $result['image_path'] ?? null;
+    }
 }
