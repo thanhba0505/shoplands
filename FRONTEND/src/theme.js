@@ -6,7 +6,9 @@ const theme = extendTheme({
     headerHeight: "80px",
     containerGap: "24px",
     boxShadow: "0px 0px 8px #bfe2ff",
-    light: "#bfe2ff",
+    primary: {
+      light: "#bfe2ff",
+    },
   },
 });
 

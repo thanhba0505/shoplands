@@ -1,21 +1,39 @@
 import { useEffect, useState } from "react";
-import { Box, IconButton, TextField } from "@mui/material";
+import { Box, IconButton, InputBase, TextField } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 
 const QuantityInput = ({ min = 1, max = 100, value = 1, onChange }) => {
   const [quantity, setQuantity] = useState(Number(value));
 
+  // Cập nhật lại quantity nếu min/max thay đổi
+  useEffect(() => {
+    // Nếu quantity nhỏ hơn min, đặt lại thành min
+    if (quantity < min) {
+      setQuantity(min);
+      onChange(min);
+    } else if (quantity > max) {
+      setQuantity(max);
+      onChange(max);
+    }
+  }, [min, max, quantity, onChange]); // Đảm bảo nó chạy khi min/max thay đổi
+
   const handleIncrease = () => {
     if (quantity < max) {
-      setQuantity((prev) => prev + 1);
-      onChange(quantity + 1);
+      setQuantity((prev) => {
+        const newQuantity = prev + 1;
+        onChange(newQuantity); // Gọi callback khi thay đổi số lượng
+        return newQuantity;
+      });
     }
   };
 
   const handleDecrease = () => {
     if (quantity > min) {
-      setQuantity((prev) => prev - 1);
-      onChange(quantity - 1);
+      setQuantity((prev) => {
+        const newQuantity = prev - 1;
+        onChange(newQuantity); // Gọi callback khi thay đổi số lượng
+        return newQuantity;
+      });
     }
   };
 
@@ -23,33 +41,42 @@ const QuantityInput = ({ min = 1, max = 100, value = 1, onChange }) => {
     const value = Number(event.target.value);
     if (value >= min && value <= max) {
       setQuantity(value);
-      onChange(value);
+      onChange(value); // Gọi callback khi giá trị thay đổi
     } else if (value < min) {
       setQuantity(min);
-      onChange(min);
+      onChange(min); // Gọi callback nếu dưới min
     } else if (value > max) {
       setQuantity(max);
-      onChange(max);
+      onChange(max); // Gọi callback nếu trên max
     }
   };
 
-  useEffect(() => {
-    setQuantity(1);
-  }, [max]);
-
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-      <IconButton onClick={handleDecrease} disabled={quantity <= min}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 0.5,
+        border: "1px solid #ccc",
+        borderRadius: "4px",
+        width: "fit-content",
+        px: 1,
+      }}
+    >
+      <IconButton size="small" onClick={handleDecrease} disabled={quantity <= min}>
         <Remove />
       </IconButton>
-      <TextField
+      <InputBase
         value={quantity}
         onChange={handleInputChange}
-        variant="outlined"
-        size="small"
-        sx={{ width: "60px", textAlign: "center" }}
+        sx={{
+          input: { textAlign: "center" },
+          width: "50px",
+          height: "40px",
+          border: "none",
+        }}
       />
-      <IconButton onClick={handleIncrease} disabled={quantity >= max}>
+      <IconButton size="small" onClick={handleIncrease} disabled={quantity >= max}>
         <Add />
       </IconButton>
     </Box>

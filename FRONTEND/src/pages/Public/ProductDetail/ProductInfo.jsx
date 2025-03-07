@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -74,24 +74,26 @@ const ImageProduct = ({ images }) => {
 // Thống tin sản phẩm
 const InfoProduct = ({ product }) => {
   const [selectedValues, setSelectedValues] = useState({});
+  const [soldQuantity, setSoldQuantity] = useState(product.sold_quantity);
   const [quantity, setQuantity] = useState(1);
   const variants = product?.variants;
 
   const navigate = useNavigate();
 
-  // Xử lý chọn thuộc tính
   const handleShowPrice = (key, value) => {
-    if (selectedValues[key] === value) {
-      setSelectedValues((prev) => ({
-        ...prev,
-        [key]: null,
-      }));
-    } else {
-      setSelectedValues((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
-    }
+    setSelectedValues((prev) => {
+      const newSelectedValues = { ...prev }; // Sao chép đối tượng cũ
+
+      if (newSelectedValues[key] === value) {
+        // Nếu giá trị hiện tại giống giá trị đã chọn, xóa thuộc tính đó
+        delete newSelectedValues[key];
+      } else {
+        // Nếu không, thêm hoặc cập nhật giá trị mới cho key
+        newSelectedValues[key] = value;
+      }
+
+      return newSelectedValues;
+    });
   };
 
   const getSelectedVariant = () => {
@@ -126,9 +128,12 @@ const InfoProduct = ({ product }) => {
   const productQuantity = selectedVariant
     ? selectedVariant.quantity
     : product.quantity;
-  const productSoldQuantity = selectedVariant
-    ? selectedVariant.sold_quantity
-    : 1;
+
+  useEffect(() => {
+    selectedVariant
+      ? setSoldQuantity(selectedVariant.sold_quantity)
+      : setSoldQuantity(product.sold_quantity);
+  }, [selectedVariant, product.sold_quantity]);
 
   // Xử lý nhập số lượng
 
@@ -244,7 +249,7 @@ const InfoProduct = ({ product }) => {
                       border: "none",
                     }}
                   >
-                    {productSoldQuantity}
+                    {soldQuantity}
                   </TableCell>
                 </TableRow>
                 {product.attributes &&
@@ -320,7 +325,7 @@ const InfoProduct = ({ product }) => {
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <QuantityInput
                         min={1}
-                        max={productSoldQuantity}
+                        max={soldQuantity}
                         value={quantity}
                         onChange={handleQuantityChange}
                       />
