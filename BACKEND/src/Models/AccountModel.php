@@ -23,7 +23,7 @@ class AccountModel
 
         return $result;
     }
-    
+
     public static function findByPhone($phone)
     {
         $query = new ConnectDatabase();
@@ -41,7 +41,7 @@ class AccountModel
 
         return $result;
     }
-    
+
     public static function findByAccessToken($accessToken)
     {
         $query = new ConnectDatabase();
@@ -78,6 +78,52 @@ class AccountModel
             'accessToken' => $accessToken,
             'refreshToken' => $refreshToken,
             'account_ID' => $account_ID
+        ]);
+
+        return $result;
+    }
+
+    // Kiểm tra số điện thoại
+    public static function checkPhone($phone)
+    {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                *
+            FROM
+                accounts
+            WHERE
+                phone = :phone
+        ";
+
+        $result = $query->query($sql, ['phone' => $phone])->fetch();
+
+        return $result ?? false;
+    }
+
+    // Thêm 1 account
+    public static function addAccount($phone, $password, $role = 'user', $status = 'active', $accessToken = null, $refreshToken = null)
+    {
+        $query = new ConnectDatabase();
+
+        $time_start = date('Y-m-d H:i:s');
+
+        $sql =  "
+            INSERT INTO
+                accounts (phone, password, role, time_start, status, access_token, refresh_token)
+            VALUES
+                (:phone, :password, :role, :time_start, :status, :accessToken, :refreshToken)
+        ";
+
+        $result = $query->query($sql, [
+            'phone' => $phone,
+            'password' => $password,
+            'role' => $role,
+            'time_start' => $time_start,
+            'status' => $status,
+            'accessToken' => $accessToken,
+            'refreshToken' => $refreshToken
         ]);
 
         return $result;

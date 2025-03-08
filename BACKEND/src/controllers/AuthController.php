@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\JwtHelper;
+use App\Helpers\Log;
 use App\Helpers\Validator;
 use App\Helpers\Verification;
 use App\Models\AccountModel;
@@ -129,25 +130,70 @@ class AuthController
 
     public function register()
     {
-        $phoneNumber = Request::json('phone');
+        $phone = Request::json('phone');
+        $name = Request::json('name');
         $password = Request::json('password');
+        $code = Request::json('code');
 
-        if (!$phoneNumber || !$password) {
-            Response::json(['message' => 'Số điện thoại hoặt mật khẩu rỗng'], 400);
+        // Kiểm tra tên tài khoản
+        $nameCheck = Validator::isText($name, 'Tên tài khoản', 3, 20);
+        if ($nameCheck !== true) {
+            Response::json(['message' => $nameCheck], 400);
         }
 
-        if (!Validator::isPhone($phoneNumber)) {
-            Response::json(['message' => 'Số điện thoại không đúng'], 400);
+        // Kiểm tra số điện thoại hợp lệ
+        $phoneCheck = Validator::isPhone($phone);
+        if ($phoneCheck !== true) {
+            Response::json(['message' => $phoneCheck], 400);
         }
 
-        $validatePassword = Validator::isPasswordStrength($password);
-        if ($validatePassword !== true) {
-            Response::json(['message' => $validatePassword], 400);
+        // Kiểm tra độ mạnh của mật khẩu
+        $passwordCheck = Validator::isPasswordStrength($password);
+        if ($passwordCheck !== true) {
+            Response::json(['message' => $passwordCheck], 400);
         }
 
+        // Kiểm tra mã xác nhận
+        $verificationCode = VerificationCodeModel::getByPhone(Validator::formatPhone($phone));
 
-        Response::json(['message' => "Đăng ký thành công"], 400);
+        if (!$verificationCode) {
+            Response::json(['message' => 'Số điện thoại không hợp lệ.'], 400);
+        }
+
+        if ($verificationCode['code'] !== $code) {
+            Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+        }
+
+        // Kiểm tra số điện thoại đã tồn tại chưa
+        if (AccountModel::checkPhone($phone)) {
+            Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
+        }
+
+        // Kiểm tra mã xác nhận đã hết hạn chưa
+        if (!Verification::checkTime(strtotime($verificationCode['created_date_time']))) {
+            Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
+        }
+
+        // Mã hóa mật khẩu
+        $passwordHash = password_hash($password, PASSWORD_ARGON2I);
+
+        try {
+            // Tạo tài khoản
+            $resultAccount = AccountModel::addAccount($phone, $passwordHash);
+
+
+
+
+            if ($resultAccount !== false && $resultAccount->rowCount() > 0) {
+                Response::json(['message' => 'Đăng ký tài khoản thành công'], 201);
+            } else {
+                Response::json(['message' => 'Lỗi đăng ký tài khoản'], 400);
+            }
+        } catch (Exception $e) {
+            Response::json(['message' => 'Lỗi đăng ký tài khoản'], 400);
+        }
     }
+
 
 
     // Gửi mã xác nhận 
@@ -155,23 +201,43 @@ class AuthController
     {
         $phoneNumber = Request::json('phone');
 
-        if (!$phoneNumber) {
-            Response::json(['message' => 'Số điện thoại không được rỗng', 'phone' => $phoneNumber], 400);
+        // Kiểm tra số điện thoại hợp lệ
+        $phoneCheck = Validator::isPhone($phoneNumber);
+        if ($phoneCheck !== true) {
+            Response::json(['message' => $phoneCheck], 400);
         }
+
+        // Chuyển đổi số về định dạng +84
+        $phoneNumber = Validator::formatPhone($phoneNumber, '+84');
 
         try {
             $resultSend = Verification::sendCode($phoneNumber);
 
             if (!$resultSend) {
-                Response::json(['message' => 'Gửi má xác nhận thất bại'], 400);
+                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
             }
 
             $date = date('Y-m-d H:i:s');
 
-            $result = VerificationCodeModel::addVerificationCode($resultSend['message_id'], $resultSend['code'], $date, $phoneNumber);
+            // Kiểm tra số điện thoại đã có mã trước đó chưa
+            if (VerificationCodeModel::checkPhone($phoneNumber)) {
+                $result = VerificationCodeModel::updateVerificationCode(
+                    $resultSend['message_id'],
+                    $resultSend['code'],
+                    $date,
+                    $phoneNumber
+                );
+            } else {
+                $result = VerificationCodeModel::addVerificationCode(
+                    $resultSend['message_id'],
+                    $resultSend['code'],
+                    $date,
+                    $phoneNumber
+                );
+            }
 
-            if ($result->rowCount() > 0) {
-                Response::json(['message' => 'Gửi mã xác nhận thành công', 'code' => $resultSend['code']], 200);
+            if ($result !== false && $result->rowCount() > 0) {
+                Response::json(['message' => 'Gửi mã xác nhận thành công'], 200);
             } else {
                 Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
             }

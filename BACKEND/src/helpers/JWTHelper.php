@@ -15,8 +15,8 @@ class JwtHelper
     public static function init()
     {
         self::$secret_key = $_ENV['JWT_SECRET_KEY'];
-        self::$expire_time = ACCESS_TOKEN_EXPIRY;
-        self::$refresh_expire_time = REFRESH_TOKEN_EXPIRY;
+        self::$expire_time = $_ENV['JWT_ACCESS_TOKEN_EXPIRY'];
+        self::$refresh_expire_time = $_ENV['JWT_REFRESH_TOKEN_EXPIRY'];
     }
 
     public static function generateToken($account_ID, $isRefreshToken = false)

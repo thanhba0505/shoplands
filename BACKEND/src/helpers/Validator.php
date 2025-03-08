@@ -4,26 +4,52 @@ namespace App\Helpers;
 
 class Validator
 {
-    // Kiểm tra số điện thoại (Hỗ trợ định dạng VN: +84 hoặc 0)
-    public static function isPhone($phone, $format = 'default')
+    public static function isText($text, $label = "Nội dung", $min = 3, $max = 20)
     {
+        // Đảm bảo độ dài nằm trong khoảng min-max
+        $length = strlen($text);
+        if ($length < $min || $length > $max) {
+            return "$label phải có từ $min đến $max ký tự.";
+        }
+
+        // Chỉ cho phép chữ cái, số và dấu gạch dưới (_)
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $text)) {
+            return "Chỉ chấp nhận chữ cái, số và dấu gạch dưới (_).";
+        }
+
+        return true;
+    }
+
+    // Kiểm tra số điện thoại hợp lệ (Trả về true nếu hợp lệ, hoặc chuỗi lỗi nếu không hợp lệ)
+    public static function isPhone($phone)
+    {
+        if (empty($phone)) {
+            return "Số điện thoại không được rỗng.";
+        }
+
         $phoneRegex = '/^(?:\+84|0)(3|5|7|8|9)\d{8}$/';
 
         if (!preg_match($phoneRegex, $phone)) {
-            return false; // Trả về false nếu không đúng định dạng số VN
+            return "Số điện thoại không hợp lệ.";
         }
 
-        // Chuẩn hóa số điện thoại về dạng +84 hoặc 0 tùy yêu cầu
+        return true;
+    }
+
+    // Chuyển đổi số điện thoại sang định dạng +84XXX hoặc 0XXX
+    public static function formatPhone($phone, $format = '+84')
+    {
+        if (self::isPhone($phone) !== true) {
+            return false;
+        }
+
         if ($format === '0') {
-            // Chuyển về định dạng 0XXX
-            return preg_replace('/^\+84/', '0', $phone);
+            return preg_replace('/^\+84/', '0', $phone); // Chuyển về 0XXX
         } elseif ($format === '+84') {
-            // Chuyển về định dạng +84XXX
-            return preg_replace('/^0/', '+84', $phone);
+            return preg_replace('/^0/', '+84', $phone); // Chuyển về +84XXX
         }
 
-        // Giữ nguyên số nếu không có yêu cầu chuyển đổi
-        return $phone;
+        return $phone; // Trả về số gốc nếu không có yêu cầu chuyển đổi
     }
 
     // Kiểm tra độ mạnh của mật khẩu

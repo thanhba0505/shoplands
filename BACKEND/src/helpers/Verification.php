@@ -22,8 +22,8 @@ class Verification
   // Gửi má xác nhận tài khoản
   public static function sendCode($phoneNumber)
   {
-    $sid    = $_ENV['VERIFICATION_SID'];
-    $token  = $_ENV['VERIFICATION_TOKEN'];
+    $sid    = $_ENV['TWILIO_SID'];
+    $token  = $_ENV['TWILIO_TOKEN'];
     $twilioNumber = $_ENV['TWILIO_NUMBER'];
 
     try {
@@ -46,5 +46,17 @@ class Verification
     } catch (Exception $e) {
       return false;
     }
+  }
+
+  // Kiểm tra thời gian xác nhận
+  public static function checkTime($time)
+  {
+
+    $timeExpired = (int) $_ENV['TWILIO_EXPIRY'];
+
+    $currentTime = time();
+    $timeDiff = $currentTime - $time;
+
+    return $timeDiff <= $timeExpired;
   }
 }
