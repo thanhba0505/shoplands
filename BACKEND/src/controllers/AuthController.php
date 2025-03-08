@@ -5,12 +5,17 @@ namespace App\Controllers;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\JwtHelper;
+use App\Helpers\Validator;
+use App\Helpers\Verification;
 use App\Models\AccountModel;
 use App\Models\SellerModel;
 use App\Models\UserModel;
+use App\Models\VerificationCodeModel;
+use Exception;
 
 class AuthController
 {
+    // Đăng nhập
     public function login()
     {
         $phone = Request::json('phone');
@@ -118,5 +123,60 @@ class AuthController
         AccountModel::updateTokens($id, null, null);
 
         Response::json(['message' => 'Đăng xuất thành công']);
+    }
+
+    // Đăng ký
+
+    public function register()
+    {
+        $phoneNumber = Request::json('phone');
+        $password = Request::json('password');
+
+        if (!$phoneNumber || !$password) {
+            Response::json(['message' => 'Số điện thoại hoặt mật khẩu rỗng'], 400);
+        }
+
+        if (!Validator::isPhone($phoneNumber)) {
+            Response::json(['message' => 'Số điện thoại không đúng'], 400);
+        }
+
+        $validatePassword = Validator::isPasswordStrength($password);
+        if ($validatePassword !== true) {
+            Response::json(['message' => $validatePassword], 400);
+        }
+
+
+        Response::json(['message' => "Đăng ký thành công"], 400);
+    }
+
+
+    // Gửi mã xác nhận 
+    public function sendVerificationCode()
+    {
+        $phoneNumber = Request::json('phone');
+
+        if (!$phoneNumber) {
+            Response::json(['message' => 'Số điện thoại không được rỗng', 'phone' => $phoneNumber], 400);
+        }
+
+        try {
+            $resultSend = Verification::sendCode($phoneNumber);
+
+            if (!$resultSend) {
+                Response::json(['message' => 'Gửi má xác nhận thất bại'], 400);
+            }
+
+            $date = date('Y-m-d H:i:s');
+
+            $result = VerificationCodeModel::addVerificationCode($resultSend['message_id'], $resultSend['code'], $date, $phoneNumber);
+
+            if ($result->rowCount() > 0) {
+                Response::json(['message' => 'Gửi mã xác nhận thành công', 'code' => $resultSend['code']], 200);
+            } else {
+                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
+            }
+        } catch (Exception $e) {
+            Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
+        }
     }
 }

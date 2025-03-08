@@ -74,6 +74,7 @@ const Login = () => {
                     label="Số điện thoại"
                     variant="outlined"
                     margin="normal"
+                    type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     disabled={isLoading}
@@ -99,6 +100,19 @@ const Login = () => {
                 >
                     Đăng nhập
                 </ButtonLoading>
+
+                <Typography
+                    variant="body2"
+                    sx={{
+                        mt: 2,
+                        color: "primary.main",
+                        cursor: "pointer",
+                        userSelect: "none",
+                    }}
+                    onClick={() => navigate(Path.register())}
+                >
+                    Chưa có tài khoản? Đăng ký!
+                </Typography>
 
                 <Typography
                     variant="body2"

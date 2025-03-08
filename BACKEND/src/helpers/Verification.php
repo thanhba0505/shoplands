@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Helpers;
+
+use App\Models\VerificationCodeModel;
+use Exception;
+use Twilio\Rest\Client;
+
+class Verification
+{
+  public static function generateCode($length = 6)
+  {
+    $characters = '0123456789';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+      $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+  }
+
+  // Gửi má xác nhận tài khoản
+  public static function sendCode($phoneNumber)
+  {
+    $sid    = $_ENV['VERIFICATION_SID'];
+    $token  = $_ENV['VERIFICATION_TOKEN'];
+    $twilioNumber = $_ENV['TWILIO_NUMBER'];
+
+    try {
+      $client = new Client($sid, $token);
+      $verificationCode = self::generateCode();
+
+      // Gửi tin nhắn SMS
+      $message = $client->messages->create(
+        $phoneNumber,
+        [
+          'from' => $twilioNumber,
+          'body' => "Mã xác nhận của bạn là: $verificationCode"
+        ]
+      );
+
+      return [
+        'code' => $verificationCode,
+        'message_id' => $message->sid
+      ];
+    } catch (Exception $e) {
+      return false;
+    }
+  }
+}

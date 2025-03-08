@@ -8,6 +8,8 @@ $router->get('api/public/logo', 'Public\ImageController@logoSvg');
 $router->post('api/login', 'AuthController@login');
 $router->post('api/refresh-token', 'AuthController@refreshToken');
 $router->post('api/logout', 'AuthController@logout');
+$router->post('api/send-verification-code', 'AuthController@sendVerificationCode');
+$router->post('api/register', 'AuthController@register');
 
 // API CART
 $router->get('api/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']);
