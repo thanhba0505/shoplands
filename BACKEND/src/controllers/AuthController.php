@@ -2,12 +2,12 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Hash;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\JwtHelper;
-use App\Helpers\Log;
 use App\Helpers\Validator;
-use App\Helpers\Verification;
+use App\Helpers\VerificationCode;
 use App\Models\AccountModel;
 use App\Models\SellerModel;
 use App\Models\UserModel;
@@ -25,22 +25,22 @@ class AuthController
         // Kiểm tra thông tin tài khoản
         $account = AccountModel::findByPhone($phone);
 
-        if (!$account || !password_verify($password, $account['password'])) {
+        if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
             Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
         }
 
         // Tạo Access Token và Refresh Token
-        $accessToken = JwtHelper::generateToken($account['id']);
-        $refreshToken = JwtHelper::generateToken($account['id'], true);
+        $accessToken = JwtHelper::generateToken($account['account_id']);
+        $refreshToken = JwtHelper::generateToken($account['account_id'], true);
 
         // Cập nhật token vào CSDL
-        AccountModel::updateTokens($account['id'], $accessToken, $refreshToken);
+        AccountModel::updateTokens($account['account_id'], $accessToken, $refreshToken);
 
         // Thông tin tài khoản
         if ($account['role'] == 'user') {
-            $account = UserModel::findById($account['id']);
+            $account = UserModel::findById($account['account_id']);
         } else if ($account['role'] == 'seller') {
-            $account = SellerModel::findById($account['id']);
+            $account = SellerModel::findById($account['account_id']);
         }
 
         Response::json([
@@ -66,17 +66,17 @@ class AuthController
         }
 
         // Tạo token mới
-        $newAccessToken = JwtHelper::generateToken($account['id']);
-        $newRefreshToken = JwtHelper::generateToken($account['id'], true);
+        $newAccessToken = JwtHelper::generateToken($account['account_id']);
+        $newRefreshToken = JwtHelper::generateToken($account['account_id'], true);
 
         // Cập nhật token vào CSDL
-        AccountModel::updateTokens($account['id'], $newAccessToken, $newRefreshToken);
+        AccountModel::updateTokens($account['account_id'], $newAccessToken, $newRefreshToken);
 
         // Thông tin tài khoản
         if ($account['role'] == 'user') {
-            $account = UserModel::findById($account['id']);
+            $account = UserModel::findById($account['account_id']);
         } else if ($account['role'] == 'seller') {
-            $account = SellerModel::findById($account['id']);
+            $account = SellerModel::findById($account['account_id']);
         }
 
         Response::json([
@@ -127,7 +127,6 @@ class AuthController
     }
 
     // Đăng ký
-
     public function register()
     {
         $phone = Request::json('phone');
@@ -154,37 +153,33 @@ class AuthController
         }
 
         // Kiểm tra mã xác nhận
-        $verificationCode = VerificationCodeModel::getByPhone(Validator::formatPhone($phone));
+        $verificationCode = VerificationCodeModel::findByPhone(Validator::formatPhone($phone, '+84'));
 
         if (!$verificationCode) {
             Response::json(['message' => 'Số điện thoại không hợp lệ.'], 400);
         }
 
-        if ($verificationCode['code'] !== $code) {
+        if (!Hash::verifyArgon2i($code, $verificationCode['code'])) {
             Response::json(['message' => 'Mã xác nhận không khớp'], 400);
         }
 
         // Kiểm tra số điện thoại đã tồn tại chưa
-        if (AccountModel::checkPhone($phone)) {
+        if (AccountModel::findByPhone($phone)) {
             Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
         }
 
-        // Kiểm tra mã xác nhận đã hết hạn chưa
-        if (!Verification::checkTime(strtotime($verificationCode['created_date_time']))) {
-            Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
-        }
-
-        // Mã hóa mật khẩu
-        $passwordHash = password_hash($password, PASSWORD_ARGON2I);
+        // // Kiểm tra mã xác nhận đã hết hạn chưa
+        // if (!VerificationCode::checkTime(strtotime($verificationCode['created_at']))) {
+        //     Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
+        // }
 
         try {
             // Tạo tài khoản
-            $resultAccount = AccountModel::addAccount($phone, $passwordHash);
+            $resultAccount = AccountModel::addAccount($phone, $password);
+            $newAccount = AccountModel::findByPhone($phone);
+            $resultUser = UserModel::addUser($name, $newAccount['account_id']);
 
-
-
-
-            if ($resultAccount !== false && $resultAccount->rowCount() > 0) {
+            if ($resultAccount !== false && $resultAccount->rowCount() > 0 && $resultUser !== false && $resultUser->rowCount() > 0) {
                 Response::json(['message' => 'Đăng ký tài khoản thành công'], 201);
             } else {
                 Response::json(['message' => 'Lỗi đăng ký tài khoản'], 400);
@@ -193,8 +188,6 @@ class AuthController
             Response::json(['message' => 'Lỗi đăng ký tài khoản'], 400);
         }
     }
-
-
 
     // Gửi mã xác nhận 
     public function sendVerificationCode()
@@ -211,27 +204,23 @@ class AuthController
         $phoneNumber = Validator::formatPhone($phoneNumber, '+84');
 
         try {
-            $resultSend = Verification::sendCode($phoneNumber);
+            $resultSend = VerificationCode::sendCode($phoneNumber);
 
             if (!$resultSend) {
                 Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
             }
 
-            $date = date('Y-m-d H:i:s');
-
             // Kiểm tra số điện thoại đã có mã trước đó chưa
-            if (VerificationCodeModel::checkPhone($phoneNumber)) {
+            if (VerificationCodeModel::findByPhone($phoneNumber)) {
                 $result = VerificationCodeModel::updateVerificationCode(
                     $resultSend['message_id'],
                     $resultSend['code'],
-                    $date,
                     $phoneNumber
                 );
             } else {
                 $result = VerificationCodeModel::addVerificationCode(
                     $resultSend['message_id'],
                     $resultSend['code'],
-                    $date,
                     $phoneNumber
                 );
             }
@@ -239,10 +228,10 @@ class AuthController
             if ($result !== false && $result->rowCount() > 0) {
                 Response::json(['message' => 'Gửi mã xác nhận thành công'], 200);
             } else {
-                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
+                Response::json(['message' => 'Đã xảy ra lỗi'], 400);
             }
         } catch (Exception $e) {
-            Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 400);
         }
     }
 }

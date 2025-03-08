@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('phone')->unique();
-            $table->string('password');
+            $table->text('phone')->unique();
+            $table->text('phoneHash')->unique();
+            $table->text('password');
             $table->enum('role', ['user', 'seller', 'admin']);
             $table->enum('status', ['active', 'inactive', 'banned']);
             $table->string('access_token')->nullable();

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\Carbon;
+use App\Helpers\Hash;
+use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class AccountModel
@@ -12,32 +15,56 @@ class AccountModel
 
         $sql =  "
             SELECT
-                *
+                c.id as account_id,
+                c.phone,
+                c.password,
+                c.role,
+                c.status,
+                c.created_at,
+                c.access_token,
+                c.refresh_token
             FROM
-                accounts
+                accounts c
             WHERE
-                id = :id
+                c.id = :id
         ";
 
         $result = $query->query($sql, ['id' => $id])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
 
         return $result;
     }
 
     public static function findByPhone($phone)
     {
+        $phone = Hash::encodeSha256($phone);
+
         $query = new ConnectDatabase();
 
         $sql =  "
             SELECT
-                *
+                c.id as account_id,
+                c.phone,
+                c.password,
+                c.role,
+                c.status,
+                c.created_at,
+                c.access_token,
+                c.refresh_token
             FROM
-                accounts
+                accounts c
             WHERE
-                phone = :phone
+                c.phoneHash = :phone
         ";
 
         $result = $query->query($sql, ['phone' => $phone])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
 
         return $result;
     }
@@ -48,9 +75,16 @@ class AccountModel
 
         $sql =  "
             SELECT
-                *
+                c.id as account_id,
+                c.phone,
+                c.password,
+                c.role,
+                c.status,
+                c.created_at,
+                c.access_token,
+                c.refresh_token
             FROM
-                accounts
+                accounts c
             WHERE
                 access_token = :accessToken
         ";
@@ -83,47 +117,30 @@ class AccountModel
         return $result;
     }
 
-    // Kiểm tra số điện thoại
-    public static function checkPhone($phone)
-    {
-        $query = new ConnectDatabase();
-
-        $sql =  "
-            SELECT
-                *
-            FROM
-                accounts
-            WHERE
-                phone = :phone
-        ";
-
-        $result = $query->query($sql, ['phone' => $phone])->fetch();
-
-        return $result ?? false;
-    }
-
     // Thêm 1 account
-    public static function addAccount($phone, $password, $role = 'user', $status = 'active', $accessToken = null, $refreshToken = null)
+    public static function addAccount($phone, $password, $role = 'user', $status = 'active')
     {
         $query = new ConnectDatabase();
 
-        $created_at = now();
+        $created_at = Carbon::now();
+        $password = Hash::encodeArgon2i($password);
+        $phoneHash = Hash::encodeSha256($phone);
+        $phone = Hash::encodeAes($phone);
 
         $sql =  "
             INSERT INTO
-                accounts (phone, password, role, created_at, status, access_token, refresh_token)
+                accounts (phone, phoneHash, password, role, created_at, status)
             VALUES
-                (:phone, :password, :role, :created_at, :status, :accessToken, :refreshToken)
+                (:phone, :phoneHash, :password, :role, :created_at, :status)
         ";
 
         $result = $query->query($sql, [
             'phone' => $phone,
+            'phoneHash' => $phoneHash,
             'password' => $password,
             'role' => $role,
             'created_at' => $created_at,
-            'status' => $status,
-            'accessToken' => $accessToken,
-            'refreshToken' => $refreshToken
+            'status' => $status
         ]);
 
         return $result;

@@ -10,9 +10,10 @@ return new class extends Migration
     {
         Schema::create('verification_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('message_sid');
+            $table->string('message_sid')->unique();
             $table->string('code');
-            $table->string('phone');
+            $table->text('phone')->unique();
+            $table->text('phoneHash')->unique();
             $table->dateTime('created_at');
         });
     }

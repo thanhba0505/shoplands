@@ -14,8 +14,8 @@ class SellerSeeder extends Seeder
             [
                 'store_name' => 'Thế Giới Thời Trang',
                 'owner_name' => 'Phạm Thị Ngọc',
-                'bank_name' => 'MB bank',
-                'bank_number' => '83659834',
+                'bank_name' => $this->encodeAes('MB bank'),
+                'bank_number' => $this->encodeAes('83659834'),
                 'status' => 'approved',
                 'description' => 'Cung cấp các sản phẩm thời trang cao cấp dành cho nam, nữ và trẻ em.',
                 'background' => 'seller-1.jpg',
@@ -25,8 +25,8 @@ class SellerSeeder extends Seeder
             [
                 'store_name' => 'Phụ Kiện Sành Điệu',
                 'owner_name' => 'Hoàng Văn Bình',
-                'bank_name' => 'TP bank',
-                'bank_number' => '73257326',
+                'bank_name' => $this->encodeAes('TP bank'),
+                'bank_number' => $this->encodeAes('73257326'),
                 'status' => 'approved',
                 'description' => 'Chuyên phụ kiện thời trang, trang sức và đồng hồ.',
                 'background' => 'seller-2.jpg',
@@ -36,8 +36,8 @@ class SellerSeeder extends Seeder
             [
                 'store_name' => 'Công Nghệ Số',
                 'owner_name' => 'Nguyễn Thị Hạnh',
-                'bank_name' => 'HD bank',
-                'bank_number' => '93658993',
+                'bank_name' => $this->encodeAes('HD bank'),
+                'bank_number' => $this->encodeAes('93658993'),
                 'status' => 'approved',
                 'description' => 'Nhà cung cấp thiết bị điện tử, điện thoại và máy tính hàng đầu.',
                 'background' => 'seller-3.jpg',
@@ -47,8 +47,8 @@ class SellerSeeder extends Seeder
             [
                 'store_name' => 'Nhà Cửa Online',
                 'owner_name' => 'Trần Văn Minh',
-                'bank_name' => 'TP bank',
-                'bank_number' => '43658934',
+                'bank_name' => $this->encodeAes('TP bank'),
+                'bank_number' => $this->encodeAes('43658934'),
                 'status' => 'pending',
                 'description' => 'Đầy đủ các sản phẩm phục vụ cho cuộc sống gia đình và nhà cửa.',
                 'background' => 'seller-4.jpg',
@@ -58,8 +58,8 @@ class SellerSeeder extends Seeder
             [
                 'store_name' => 'Thể Thao và Sách',
                 'owner_name' => 'Phạm Thị Lan',
-                'bank_name' => 'MP bank',
-                'bank_number' => '27358923',
+                'bank_name' => $this->encodeAes('MP bank'),
+                'bank_number' => $this->encodeAes('27358923'),
                 'status' => 'rejected',
                 'description' => 'Các sản phẩm thể thao và sách phục vụ nhu cầu giải trí và rèn luyện.',
                 'background' => 'seller-5.jpg',
@@ -71,5 +71,91 @@ class SellerSeeder extends Seeder
         foreach ($sellers as $seller) {
             Seller::create($seller);
         }
+    }
+
+    // ========================= LẤY KHÓA BÍ MẬT =========================
+
+    // Lấy khóa bí mật cho Argon2i từ .env
+    private function getArgonKey()
+    {
+        return "shopee_argon";
+    }
+
+    // Lấy khóa bí mật cho AES-256 từ .env
+    private function getAesKey()
+    {
+
+        // Lấy chuỗi key từ .env và chuyển thành key 32 bytes bằng SHA-256
+        $rawKey = "shopee_aes";
+        $key = hash('sha256', $rawKey, true); // true để trả về dạng nhị phân
+
+        return $key;
+    }
+
+    // Tạo IV ngẫu nhiên cho AES-256
+    private function generateIv()
+    {
+        return random_bytes(openssl_cipher_iv_length("AES-256-CBC"));
+    }
+
+    // ========================= PASSWORD_ARGON2I (MÃ HÓA MỘT CHIỀU) =========================
+
+    // Mã hóa mật khẩu bằng PASSWORD_ARGON2I
+    public function encodeArgon2i($password)
+    {
+        $key = self::getArgonKey();
+        $passwordWithKey = hash_hmac('sha256', $password, $key);
+        return password_hash($passwordWithKey, PASSWORD_ARGON2I);
+    }
+
+    // Kiểm tra mật khẩu với hash đã lưu
+    public function verifyArgon2i($password, $hashedPassword)
+    {
+        $key = self::getArgonKey();
+        $passwordWithKey = hash_hmac('sha256', $password, $key);
+        return password_verify($passwordWithKey, $hashedPassword);
+    }
+
+    public static function encodeSha256($data)
+    {
+        return hash('sha256', $data);
+    }
+
+    // ========================= AES-256-CBC (MÃ HÓA HAI CHIỀU) =========================
+
+    // Mã hóa dữ liệu bằng AES-256-CBC
+    public function encodeAes($data)
+    {
+        $key = self::getAesKey();
+        $iv = self::generateIv();
+
+        $encrypted = openssl_encrypt($data, "AES-256-CBC", $key, 0, $iv);
+        if ($encrypted === false) {
+            throw new \Exception("Encryption failed.");
+        }
+
+        return base64_encode($iv . $encrypted);
+    }
+
+    // Giải mã dữ liệu bằng AES-256-CBC
+    public function decodeAes($encryptedData)
+    {
+        $key = self::getAesKey();
+        $decoded = base64_decode($encryptedData);
+
+        $ivLength = openssl_cipher_iv_length("AES-256-CBC");
+        if (strlen($decoded) < $ivLength) {
+            throw new \Exception("Invalid encrypted data.");
+        }
+
+        $iv = substr($decoded, 0, $ivLength);
+        $ciphertext = substr($decoded, $ivLength);
+
+        $decrypted = openssl_decrypt($ciphertext, "AES-256-CBC", $key, 0, $iv);
+        if ($decrypted === false) {
+            throw new \Exception("Decryption failed.");
+        }
+
+        return $decrypted;
     }
 }

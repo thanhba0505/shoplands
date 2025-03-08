@@ -2,11 +2,10 @@
 
 namespace App\Helpers;
 
-use App\Models\VerificationCodeModel;
 use Exception;
 use Twilio\Rest\Client;
 
-class Verification
+class VerificationCode
 {
   public static function generateCode($length = 6)
   {

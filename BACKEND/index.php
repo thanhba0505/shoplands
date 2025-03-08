@@ -6,12 +6,18 @@ use App\Core\Router;
 use App\Helpers\Response;
 use Dotenv\Dotenv;
 
+// Cài đặt múi giờ
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+
 // Lấy thông tin env
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 // Lấy config
 require './config.php';
+
+
+
 
 // Kiểm tra và thêm header CORS chỉ cho phép frontend từ một địa chỉ cụ thể
 $allowedOrigin = $_ENV['FRONTEND_URL']; // Đọc từ file .env
@@ -37,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);  // Kết thúc yêu cầu OPTIONS
 }
 
+
+
+
 // Log dữ liệu nhận được từ frontend
 // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //     // Kiểm tra xem dữ liệu có được gửi lên không
@@ -50,6 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 //         error_log("No data received or data is not valid JSON.");
 //     }
 // }
+
+
+
 
 // Khởi tạo Router
 $router = new Router();

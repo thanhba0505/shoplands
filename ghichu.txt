@@ -4,6 +4,7 @@ Sửa .htaccess RewriteBase /congnghemoi/shopee/ thành path lưu dự án
 - Bảo mật access token và refresh token
 - Bảo mật form CSRF
 - Bảo mật chống XSS
+- Rainbow Table
 
 - Chạy csdl 
 *** Tải composer trên trình duyệt (nếu máy chưa tải) - dùng composer --version để ktra phiên bản
@@ -19,13 +20,9 @@ git commit -m "message"
 git push
 git pull
 
-Bật câu lệnh css : npm run watch
-
-Làm việc liên quan tới jquery và js sử dụng thư viện
-- alpine (ưu tiên)
-- jquery
-
+Mở các extension
 ;extension=gd
+;extension=sodium
 
 -----------------------------------------------------------
 BACKEND

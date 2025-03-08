@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('store_name');
             $table->string('owner_name');
-            $table->string('bank_name');
-            $table->string('bank_number');
+            $table->text('bank_name');
+            $table->text('bank_number');
             $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->text('description')->nullable();
             $table->string('background')->nullable();

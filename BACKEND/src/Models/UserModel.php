@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Helpers\Hash;
 use App\Models\ConnectDatabase;
 
 class UserModel
 {
-    public static function findById($id)
+    public static function findById($account_id)
     {
         $query = new ConnectDatabase();
 
@@ -24,11 +25,28 @@ class UserModel
                 accounts a
                 JOIN users u ON u.account_id = a.id
             WHERE
-                a.id = :id
+                a.id = :account_id
         ";
 
-        $result = $query->query($sql, ['id' => $id])->fetch();
+        $result = $query->query($sql, ['account_id' => $account_id])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
 
         return $result;
+    }
+
+    // Thêm 1 user
+    public static function addUser($name, $account_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO users (name, account_id)
+            VALUES (:name, :account_id)
+        ";
+
+        return $query->query($sql, ['name' => $name, 'account_id' => $account_id]);
     }
 }

@@ -2,36 +2,52 @@
 
 namespace App\Models;
 
+use App\Helpers\Carbon;
+use App\Helpers\Hash;
+use App\Helpers\Log;
 use App\Models\ConnectDatabase;
 
 class VerificationCodeModel
 {
     // Thêm 1 dòng 
-    public static function addVerificationCode($message_sid, $code, $created_date_time, $phone)
+    public static function addVerificationCode($message_sid, $code, $phone)
     {
         $query = new ConnectDatabase();
 
+        $created_at = Carbon::now();
+        $code = Hash::encodeArgon2i($code);
+        $phoneHash = Hash::encodeSha256($phone);
+        $phone = Hash::encodeAes($phone);
+
+        Log::text($code);
+        Log::text($phone);
+
         $sql =  "
             INSERT INTO
-                verification_codes (message_sid, code, created_date_time, phone)
+                verification_codes (message_sid, code, created_at, phone, phoneHash)
             VALUES
-                (:message_sid, :code, :created_date_time, :phone)
+                (:message_sid, :code, :created_at, :phone, :phoneHash)
         ";
 
         $result = $query->query($sql, [
             'message_sid' => $message_sid,
             'code' => $code,
-            'created_date_time' => $created_date_time,
-            'phone' => $phone
+            'created_at' => $created_at,
+            'phone' => $phone,
+            'phoneHash' => $phoneHash
         ]);
 
         return $result;
     }
 
     // Cập nhật code
-    public static function updateVerificationCode($message_sid, $code, $created_date_time, $phone)
+    public static function updateVerificationCode($message_sid, $code, $phone)
     {
         $query = new ConnectDatabase();
+
+        $created_at = Carbon::now();
+        $code = Hash::encodeArgon2i($code);
+        $phone = Hash::encodeSha256($phone);
 
         $sql =  "
             UPDATE
@@ -39,43 +55,26 @@ class VerificationCodeModel
             SET
                 message_sid = :message_sid,
                 code = :code,
-                created_date_time = :created_date_time
+                created_at = :created_at
             WHERE
-                phone = :phone
+                phoneHash = :phone
         ";
 
         $result = $query->query($sql, [
             'message_sid' => $message_sid,
             'code' => $code,
-            'created_date_time' => $created_date_time,
+            'created_at' => $created_at,
             'phone' => $phone
         ]);
 
         return $result;
     }
 
-    // Kiểm tra phone
-    public static function checkPhone($phone)
+    // Tim kiếm theo phone
+    public static function findByPhone($phone)
     {
-        $query = new ConnectDatabase();
+        $phone = Hash::encodeSha256($phone);
 
-        $sql =  "
-            SELECT
-                *
-            FROM
-                verification_codes
-            WHERE
-                phone = :phone
-        ";
-
-        $result = $query->query($sql, ['phone' => $phone])->fetch();
-
-        return $result ?? false;
-    }
-
-    // Lấy theo phone
-    public static function getByPhone($phone)
-    {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -83,16 +82,20 @@ class VerificationCodeModel
                 vc.id,
                 vc.message_sid,
                 vc.code,
-                vc.created_date_time,
+                vc.created_at,
                 vc.phone
             FROM
                 verification_codes vc
             WHERE
-                vc.phone = :phone
+                vc.phoneHash = :phone
         ";
 
         $result = $query->query($sql, ['phone' => $phone])->fetch();
 
-        return $result ?? false;
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
+
+        return $result;
     }
 }

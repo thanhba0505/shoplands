@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class Controller
@@ -10,10 +11,9 @@ class Controller
     {
         $conn = new ConnectDatabase();
         $sql = file_get_contents('.sql');
-        $products = $conn->query($sql)->fetchAll();
+        $result = $conn->query($sql)->fetchAll();
 
 
-        header('Content-Type: application/json');
-        echo json_encode($products);
+        Response::json($result);
     }
 }

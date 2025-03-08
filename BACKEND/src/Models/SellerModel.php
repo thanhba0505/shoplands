@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Hash;
 use App\Models\ConnectDatabase;
 
 class SellerModel
@@ -34,6 +35,10 @@ class SellerModel
         ";
 
         $result = $query->query($sql, ['id' => $id])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
 
         return $result;
     }
