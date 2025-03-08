@@ -16,7 +16,7 @@ class ProductVariant extends Model
         'sold_quantity',
         'product_id',
     ];
-
+    public $timestamps = false;
     public function product()
     {
         return $this->belongsTo(Product::class);

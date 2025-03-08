@@ -13,7 +13,7 @@ class ReviewImage extends Model
         'image_path',
         'review_id',
     ];
-
+    public $timestamps = false;
     // Mối quan hệ với User
     public function review()
     {

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ShippingFee extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $fillable = [
         'shipping_method',
         'same_province',

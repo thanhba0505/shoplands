@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('image_path');
-            $table->timestamps();
         });
     }
 

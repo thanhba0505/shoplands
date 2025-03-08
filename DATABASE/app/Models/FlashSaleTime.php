@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FlashSaleTime extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $fillable = [
         'description',
         'time_start',

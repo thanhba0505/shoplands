@@ -10,7 +10,7 @@ class OrderStatus extends Model
     use HasFactory;
 
     protected $table = 'order_status';
-
+    public $timestamps = false;
     protected $fillable = [
         'status',
         'date_time',

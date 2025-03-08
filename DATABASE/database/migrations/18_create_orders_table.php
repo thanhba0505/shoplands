@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('seller_id'); // Foreign key
             $table->unsignedBigInteger('shipping_fee_id'); // Foreign key
             $table->unsignedBigInteger('coupon_id')->nullable(); // Foreign key
-            $table->timestamps();
+            $table->dateTime('created_at');
 
             $table->foreign('from_address_id')->references('id')->on('addresses');
             $table->foreign('to_address_id')->references('id')->on('addresses');

@@ -14,10 +14,9 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['user', 'seller', 'admin']);
             $table->enum('status', ['active', 'inactive', 'banned']);
-            $table->dateTime('time_start');
             $table->string('access_token')->nullable();
             $table->string('refresh_token')->nullable();
-            $table->timestamps();
+            $table->dateTime('created_at');
         });
     }
 

@@ -14,7 +14,6 @@ return new class extends Migration
             $table->decimal('price', 15, 2);
             $table->unsignedBigInteger('order_id'); // Foreign key
             $table->unsignedBigInteger('product_variant_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders');
             $table->foreign('product_variant_id')->references('id')->on('product_variants');

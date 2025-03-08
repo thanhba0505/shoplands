@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('image_path');
             $table->unsignedBigInteger('review_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('review_id')->references('id')->on('reviews');
         });

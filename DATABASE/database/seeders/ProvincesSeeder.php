@@ -82,7 +82,7 @@ class ProvincesSeeder extends Seeder
         ];
 
         foreach ($province_names as $name) {
-            Province::factory()->create(['name' => $name]);
+            Province::create(['name' => $name]);
         }
     }
 }

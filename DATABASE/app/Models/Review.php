@@ -12,11 +12,11 @@ class Review extends Model
     protected $fillable = [
         'rating',
         'comment',
-        'date_time',
+        'created_at',
         'user_id',
         'product_variant_id',
     ];
-
+    public $timestamps = false;
     // Mối quan hệ với User
     public function user()
     {

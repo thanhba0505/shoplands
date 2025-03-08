@@ -19,7 +19,7 @@ class UserModel
                 a.phone,
                 a.role,
                 a.status,
-                a.time_start
+                a.created_at
             FROM
                 accounts a
                 JOIN users u ON u.account_id = a.id

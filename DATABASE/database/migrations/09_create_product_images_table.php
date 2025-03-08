@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('image_path');
             $table->boolean('default')->default(false);
             $table->unsignedBigInteger('product_id');
-            $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products');
         });

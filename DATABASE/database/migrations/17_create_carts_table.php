@@ -13,7 +13,6 @@ return new class extends Migration
             $table->integer('quantity');
             $table->unsignedBigInteger('user_id');  // Foreign key
             $table->unsignedBigInteger('product_variant_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('product_variant_id')->references('id')->on('product_variants');

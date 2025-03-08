@@ -17,7 +17,7 @@ class FlashSaleProduct extends Model
         'product_variant_id',
         'flash_sale_time_id',
     ];
-
+    public $timestamps = false;
     // Mối quan hệ với ProductVariant
     public function productVariant()
     {

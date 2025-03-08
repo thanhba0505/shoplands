@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('background')->nullable();
             $table->string('logo')->nullable();
             $table->unsignedBigInteger('account_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('account_id')->references('id')->on('accounts');
         });

@@ -12,9 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('message_sid');
             $table->string('code');
-            $table->dateTime('created_date_time');
             $table->string('phone');
-            $table->timestamps();
+            $table->dateTime('created_at');
         });
     }
 

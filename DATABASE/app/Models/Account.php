@@ -9,5 +9,6 @@ class Account extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['phone', 'password', 'role', 'status', 'time_start', 'access_token', 'refresh_token'];
+    protected $fillable = ['phone', 'password', 'role', 'status', 'created_at', 'access_token', 'refresh_token'];
+    public $timestamps = false;
 }

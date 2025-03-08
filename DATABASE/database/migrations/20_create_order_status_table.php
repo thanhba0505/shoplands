@@ -13,7 +13,6 @@ return new class extends Migration
             $table->enum('status', ['pending', 'packing', 'packed', 'shipping', 'delivered', 'canceled', 'returned', 'return-requested', 'return-rejected', 'return-approved', 'completed']);
             $table->dateTime('date_time');
             $table->unsignedBigInteger('order_id');
-            $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders');
         });

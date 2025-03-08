@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('product_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products');
         });

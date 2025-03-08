@@ -15,7 +15,7 @@ class OrderItem extends Model
         'order_id',
         'product_variant_id',
     ];
-
+    public $timestamps = false;
     /**
      * Quan hệ với bảng Order.
      */

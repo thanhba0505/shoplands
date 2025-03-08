@@ -107,20 +107,20 @@ class AccountModel
     {
         $query = new ConnectDatabase();
 
-        $time_start = date('Y-m-d H:i:s');
+        $created_at = now();
 
         $sql =  "
             INSERT INTO
-                accounts (phone, password, role, time_start, status, access_token, refresh_token)
+                accounts (phone, password, role, created_at, status, access_token, refresh_token)
             VALUES
-                (:phone, :password, :role, :time_start, :status, :accessToken, :refreshToken)
+                (:phone, :password, :role, :created_at, :status, :accessToken, :refreshToken)
         ";
 
         $result = $query->query($sql, [
             'phone' => $phone,
             'password' => $password,
             'role' => $role,
-            'time_start' => $time_start,
+            'created_at' => $created_at,
             'status' => $status,
             'accessToken' => $accessToken,
             'refreshToken' => $refreshToken

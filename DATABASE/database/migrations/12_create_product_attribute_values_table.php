@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('value');
             $table->unsignedBigInteger('product_attribute_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('product_attribute_id')->references('id')->on('product_attributes');
         });

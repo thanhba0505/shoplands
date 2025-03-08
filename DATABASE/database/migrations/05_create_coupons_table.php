@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->unsignedBigInteger('seller_id'); // Foreign key
-            $table->timestamps();
 
             $table->foreign('seller_id')->references('id')->on('sellers');
         });

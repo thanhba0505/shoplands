@@ -17,7 +17,7 @@ class AccountFactory extends Factory
             'password'      => password_hash('123', PASSWORD_ARGON2I), // Mặc định hash password là 'password'
             'role'          => $this->faker->randomElement(['user', 'seller', 'admin']), // Random vai trò
             'status'        => $this->faker->randomElement(['active', 'inactive', 'banned']), // Random trạng thái
-            'time_start'    => $this->faker->dateTimeBetween('-5 year', '-1 year'), // Ngày tạo tài khoản
+            'created_at'    => $this->faker->dateTimeBetween('-5 year', '-1 year'), // Ngày tạo tài khoản
             'access_token'  => null, // Random access token
             'refresh_token' => null, // Random refresh token
         ];

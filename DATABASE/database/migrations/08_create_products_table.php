@@ -15,7 +15,6 @@ return new class extends Migration
             $table->enum('status', ['active', 'locked', 'hidden', 'deleted']);
             $table->unsignedBigInteger('seller_id'); // Foreign key
             $table->unsignedBigInteger('category_id')->nullable(); // Foreign key
-            $table->timestamps();
 
             $table->foreign('seller_id')->references('id')->on('sellers');
             $table->foreign('category_id')->references('id')->on('categories');

@@ -25,7 +25,7 @@ class ReviewFactory extends Factory
         return [
             'rating' => $rating, // Đánh giá ngẫu nhiên theo tỷ lệ
             'comment' => $comment, // Câu bình luận ngẫu nhiên
-            'date_time' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'user_id' => User::inRandomOrder()->first()->id, // Lấy ngẫu nhiên user từ bảng users
             'product_variant_id' => ProductVariant::inRandomOrder()->first()->id, // Lấy ngẫu nhiên product_variant từ bảng product_variants
         ];

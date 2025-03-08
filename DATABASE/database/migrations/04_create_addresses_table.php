@@ -15,7 +15,6 @@ return new class extends Migration
             $table->unsignedBigInteger('province_id'); // Foreign key
             $table->unsignedBigInteger('seller_id')->nullable(); // Foreign key
             $table->unsignedBigInteger('user_id')->nullable(); // Foreign key
-            $table->timestamps();
 
             $table->foreign('province_id')->references('id')->on('provinces');
             $table->foreign('seller_id')->references('id')->on('sellers');

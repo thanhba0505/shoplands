@@ -25,7 +25,7 @@ class SellerModel
                 a.phone,
                 a.role,
                 a.status,
-                a.time_start
+                a.created_at
             FROM
                 accounts a
                 JOIN sellers s ON s.account_id = a.id

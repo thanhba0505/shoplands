@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariantValue extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $fillable = [
         'product_attribute_value_id',
         'product_variant_id'
