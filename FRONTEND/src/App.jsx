@@ -13,7 +13,7 @@ import Path from "./helpers/Path";
 import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 
-// 🔹 Component xử lý Not Found (404)
+// Component xử lý Not Found (404)
 const NotFoundRedirect = () => {
     const { enqueueSnackbar } = useSnackbar();
 
@@ -26,14 +26,14 @@ const NotFoundRedirect = () => {
     return <Navigate to={Path.home()} replace />;
 };
 
-// 🔹 Hàm render routes (Tách nhỏ route có `*`)
+// Hàm render routes (Tách nhỏ route có `*`)
 const renderRoutes = (routes, role = null) => {
     return routes.map((route, index) => {
         const Page = route.component;
         const Layout = route.layout || DefaultLayout;
 
         if (route.path.includes("*")) {
-            // 🔥 Sửa lỗi `v7_relativeSplatPath` bằng cách tách route cha & route con
+            // Sửa lỗi `v7_relativeSplatPath` bằng cách tách route cha & route con
             return (
                 <Route key={index} path={route.path.replace("/*", "")}>
                     <Route
@@ -78,7 +78,7 @@ const renderRoutes = (routes, role = null) => {
     });
 };
 
-// 🔹 Khởi tạo Router với tất cả Future Flags
+// Khởi tạo Router với tất cả Future Flags
 const router = createBrowserRouter(
     createRoutesFromElements(
         <>
@@ -91,17 +91,17 @@ const router = createBrowserRouter(
     ),
     {
         future: {
-            v7_startTransition: true, // ✅ Cải thiện hiệu suất với `startTransition`
-            v7_relativeSplatPath: true, // ✅ Sửa lỗi path chứa `*`
-            v7_fetcherPersist: true, // ✅ Giữ dữ liệu `useFetcher()` lâu hơn
-            v7_normalizeFormMethod: true, // ✅ Đảm bảo `formMethod` luôn là chữ hoa
-            v7_partialHydration: true, // ✅ Hỗ trợ SSR tốt hơn (nếu dùng)
-            v7_skipActionErrorRevalidation: true, // ✅ Tránh reload không cần thiết nếu action lỗi
+            v7_startTransition: true, // Cải thiện hiệu suất với `startTransition`
+            v7_relativeSplatPath: true, // Sửa lỗi path chứa `*`
+            v7_fetcherPersist: true, // Giữ dữ liệu `useFetcher()` lâu hơn
+            v7_normalizeFormMethod: true, // Đảm bảo `formMethod` luôn là chữ hoa
+            v7_partialHydration: true, // Hỗ trợ SSR tốt hơn (nếu dùng)
+            v7_skipActionErrorRevalidation: true, // Tránh reload không cần thiết nếu action lỗi
         },
     }
 );
 
-// 🔹 Component App chính
+// Component App chính
 const App = () => {
     return (
         <>
