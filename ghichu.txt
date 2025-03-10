@@ -1,59 +1,59 @@
-Sửa .htaccess RewriteBase /congnghemoi/shopee/ thành path lưu dự án
+-----------------------------------------------------------
+Sửa BACKEND/.htaccess 
+    RewriteBase /code-php/shopee/BACKEND
+  -> thành path lưu dự án
+
+-----------------------------------------------------------
+CÁC BẢO MẬT 
+    - Thực hiện xác thực đăng nhập bằng JWT access token và refresh token
+    - Bảo mật form CSRF
+    - Bảo mật chống XSS
+    - Rainbow Table
 
 
-- Bảo mật access token và refresh token
-- Bảo mật form CSRF
-- Bảo mật chống XSS
-- Rainbow Table
+-----------------------------------------------------------
+GIT
+    git add .
+    git commit -m "message"
+    git push
+    git pull
 
-- Chạy csdl 
-*** Tải composer trên trình duyệt (nếu máy chưa tải) - dùng composer --version để ktra phiên bản
-B1 cd _db
-B2 composer install
-B2 php artisan migrate:fresh --seed
-
-
-- Load lệnh git
-git add .
-git commit -m "message"
-
-git push
-git pull
-
-Mở các extension
-;extension=gd
-;extension=sodium
+-----------------------------------------------------------
+php.ini
+    ;extension=gd
+    ;extension=sodium
 
 -----------------------------------------------------------
 BACKEND
-composer install
-composer update
+    composer install
+    composer update
 
 -----------------------------------------------------------
 FRONTEND
-npm install
-npm update
-Chạy host: yarn dev
+    npm install
+    npm update
+    Chạy host: yarn dev
 
 -----------------------------------------------------------
 DATABASE
-php artisan migrate:fresh --seed
+    php artisan migrate:fresh --seed
 
-
-Mã HTTP	Ý nghĩa	Ví dụ sử dụng
-200	OK	Thành công, trả về thông tin, dữ liệu
-201	Created	Tạo mới tài nguyên (thêm vào giỏ hàng, tạo tài khoản)
-202	Accepted	Yêu cầu được chấp nhận, nhưng chưa hoàn thành
-204	No Content	Thành công, nhưng không cần trả về dữ liệu
-301	Moved Permanently	Chuyển hướng vĩnh viễn
-302	Found (Temporary Redirect)	Chuyển hướng tạm thời
-400	Bad Request	Cú pháp không hợp lệ
-401	Unauthorized	Chưa đăng nhập hoặc xác thực
-403	Forbidden	Không có quyền truy cập
-404	Not Found	Tài nguyên không tồn tại
-405	Method Not Allowed	Phương thức không được phép
-422	Unprocessable Entity	Dữ liệu không thể xử lý (thiếu thông tin quan trọng)
-500	Internal Server Error	Lỗi máy chủ
-502	Bad Gateway	Lỗi kết nối giữa các máy chủ
-503	Service Unavailable	Dịch vụ tạm thời không khả dụng
-504	Gateway Timeout	Lỗi khi máy chủ không phản hồi kịp thời
+-----------------------------------------------------------
+Mã HTTP	    Ý nghĩa	                    Ví dụ sử dụng
+200	OK	                                Thành công, trả về thông tin, dữ liệu
+201	Created                         	Tạo mới tài nguyên (thêm vào giỏ hàng, tạo tài khoản)
+202	Accepted	                        Yêu cầu được chấp nhận, nhưng chưa hoàn thành
+204	No Content                      	Thành công, nhưng không cần trả về dữ liệu
+301	Moved Permanently               	Chuyển hướng vĩnh viễn
+302	Found (Temporary Redirect)      	Chuyển hướng tạm thời
+400	Bad Request	                        Cú pháp không hợp lệ
+401	Unauthorized	                    Chưa đăng nhập hoặc xác thực
+403	Forbidden	                        Không có quyền truy cập
+404	Not Found	                        Tài nguyên không tồn tại
+405	Method Not Allowed	                Phương thức không được phép
+409 Conflict                            Xung đột phiên đăng nhập, cần xác minh thêm
+422	Unprocessable Entity	            Dữ liệu không thể xử lý (thiếu thông tin quan trọng)
+500	Internal Server Error	            Lỗi máy chủ
+502	Bad Gateway	                        Lỗi kết nối giữa các máy chủ
+503	Service Unavailable	                Dịch vụ tạm thời không khả dụng
+504	Gateway Timeout	                    Lỗi khi máy chủ không phản hồi kịp thời

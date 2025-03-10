@@ -9,6 +9,7 @@ use App\Helpers\JwtHelper;
 use App\Helpers\Validator;
 use App\Helpers\VerificationCode;
 use App\Models\AccountModel;
+use App\Models\DeviceLoginModel;
 use App\Models\SellerModel;
 use App\Models\UserModel;
 use App\Models\VerificationCodeModel;
@@ -22,13 +23,80 @@ class AuthController
         $phone = Request::json('phone');
         $password = Request::json('password');
 
-        // Kiểm tra thông tin tài khoản
+        // Kiểm tra tài khoản
         $account = AccountModel::findByPhone($phone);
-
         if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
             Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
         }
 
+        // Kiểm tra thiết bị lạ đăng nhập
+        $account_id = $account['account_id'];
+        $ip_address = Request::getServer('REMOTE_ADDR');
+        $user_agent = Request::getServer('HTTP_USER_AGENT');
+
+        // Kiểm tra thiết bị đã đăng nhập trước đó
+        $device = DeviceLoginModel::getByAccountId($account_id);
+
+        if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
+            $phoneFormat = Validator::formatPhone($phone, '+84');
+            $resultSend = VerificationCode::sendCode($phoneFormat);
+
+            if (!$resultSend) {
+                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
+            }
+
+            // Insert hoặc cập nhật thông tin thiết bị vào DB
+            DeviceLoginModel::insertOrUpdateDeviceLogin($account_id, null, $resultSend['message_sid'], $resultSend['code']);
+
+            $device = DeviceLoginModel::getByAccountId($account_id);
+
+            // Trả về mã 409 để yêu cầu nhập mã xác nhận
+            Response::json(["message" => "Vui lòng xác nhận mã được gửi về số điện thoại!"], 409);
+        }
+
+        $this->handleLogin($account);
+    }
+
+    // Kiểm tra code
+    public function checkLoginCode()
+    {
+        $code = Request::json('code');
+        $phone = Request::json('phone');
+        $password = Request::json('password');
+
+        // Kiểm tra tài khoản
+        $account = AccountModel::findByPhone($phone);
+        if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
+            Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
+        }
+
+        $account_id = $account['account_id'];
+
+        $ip_address = Request::getServer('REMOTE_ADDR');
+        $user_agent = Request::getServer('HTTP_USER_AGENT');
+        $device = DeviceLoginModel::getByAccountId($account_id);
+
+        if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
+            if (!Hash::verifyArgon2i($code, $device['code'])) {
+                Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+            }
+
+            if (!VerificationCode::checkTime(strtotime($device['created_at']))) {
+                Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
+            }
+
+            // Cập nhật token
+            $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
+            
+            DeviceLoginModel::updateTokens($account_id, $device_token);
+        }
+
+        $this->handleLogin($account);
+    }
+
+    // Private handle login
+    private function handleLogin($account)
+    {
         // Tạo Access Token và Refresh Token
         $accessToken = JwtHelper::generateToken($account['account_id']);
         $refreshToken = JwtHelper::generateToken($account['account_id'], true);
@@ -50,6 +118,7 @@ class AuthController
         ]);
     }
 
+    // Refresh token
     public function refreshToken()
     {
         $refreshToken = Request::json('refresh_token');
@@ -86,6 +155,7 @@ class AuthController
         ]);
     }
 
+    // Đăng xuất
     public function logout()
     {
         // Lấy access token từ request
@@ -168,10 +238,10 @@ class AuthController
             Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
         }
 
-        // // Kiểm tra mã xác nhận đã hết hạn chưa
-        // if (!VerificationCode::checkTime(strtotime($verificationCode['created_at']))) {
-        //     Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
-        // }
+        // Kiểm tra mã xác nhận đã hết hạn chưa
+        if (!VerificationCode::checkTime(strtotime($verificationCode['created_at']))) {
+            Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
+        }
 
         try {
             // Tạo tài khoản
@@ -207,19 +277,19 @@ class AuthController
             $resultSend = VerificationCode::sendCode($phoneNumber);
 
             if (!$resultSend) {
-                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 400);
+                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
             }
 
             // Kiểm tra số điện thoại đã có mã trước đó chưa
             if (VerificationCodeModel::findByPhone($phoneNumber)) {
                 $result = VerificationCodeModel::updateVerificationCode(
-                    $resultSend['message_id'],
+                    $resultSend['message_sid'],
                     $resultSend['code'],
                     $phoneNumber
                 );
             } else {
                 $result = VerificationCodeModel::addVerificationCode(
-                    $resultSend['message_id'],
+                    $resultSend['message_sid'],
                     $resultSend['code'],
                     $phoneNumber
                 );

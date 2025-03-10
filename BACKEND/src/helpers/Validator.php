@@ -55,31 +55,31 @@ class Validator
     // Kiểm tra độ mạnh của mật khẩu
     public static function isPasswordStrength($password)
     {
-        $minLength = 8;
-        $hasUpperCase = preg_match('/[A-Z]/', $password); // Có chữ hoa
-        $hasLowerCase = preg_match('/[a-z]/', $password); // Có chữ thường
-        $hasNumbers = preg_match('/\d/', $password); // Có số
-        $hasSpecialChar = preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password); // Có ký tự đặc biệt
+        // $minLength = 8;
+        // $hasUpperCase = preg_match('/[A-Z]/', $password); // Có chữ hoa
+        // $hasLowerCase = preg_match('/[a-z]/', $password); // Có chữ thường
+        // $hasNumbers = preg_match('/\d/', $password); // Có số
+        // $hasSpecialChar = preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password); // Có ký tự đặc biệt
 
-        if (strlen($password) < $minLength) {
-            return "Mật khẩu phải có ít nhất 8 ký tự.";
-        }
+        // if (strlen($password) < $minLength) {
+        //     return "Mật khẩu phải có ít nhất 8 ký tự.";
+        // }
 
-        if (!$hasUpperCase) {
-            return "Mật khẩu phải chứa ít nhất một chữ hoa.";
-        }
+        // if (!$hasUpperCase) {
+        //     return "Mật khẩu phải chứa ít nhất một chữ hoa.";
+        // }
 
-        if (!$hasLowerCase) {
-            return "Mật khẩu phải chứa ít nhất một chữ thường.";
-        }
+        // if (!$hasLowerCase) {
+        //     return "Mật khẩu phải chứa ít nhất một chữ thường.";
+        // }
 
-        if (!$hasNumbers) {
-            return "Mật khẩu phải chứa ít nhất một chữ số.";
-        }
+        // if (!$hasNumbers) {
+        //     return "Mật khẩu phải chứa ít nhất một chữ số.";
+        // }
 
-        if (!$hasSpecialChar) {
-            return "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.";
-        }
+        // if (!$hasSpecialChar) {
+        //     return "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.";
+        // }
 
         return true;
     }

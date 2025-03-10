@@ -40,7 +40,7 @@ class VerificationCode
 
       return [
         'code' => $verificationCode,
-        'message_id' => $message->sid
+        'message_sid' => $message->sid
       ];
     } catch (Exception $e) {
       return false;

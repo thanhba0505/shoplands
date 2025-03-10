@@ -10,6 +10,7 @@ $router->post('api/refresh-token', 'AuthController@refreshToken');
 $router->post('api/logout', 'AuthController@logout');
 $router->post('api/send-verification-code', 'AuthController@sendVerificationCode');
 $router->post('api/register', 'AuthController@register');
+$router->post('api/check-login-code', 'AuthController@checkLoginCode');
 
 // API COUPON
 $router->get('api/coupons/{seller_id}', 'CouponController@getBySellerId');

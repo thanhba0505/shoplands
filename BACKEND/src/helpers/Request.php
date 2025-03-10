@@ -30,7 +30,7 @@ class Request
         return $default;
     }
 
-    // ✅ Lấy giá trị từ HTTP headers
+    // Lấy giá trị từ HTTP headers
     public static function getHeader($name, $default = null)
     {
         $headers = getallheaders();
@@ -53,5 +53,11 @@ class Request
             return $key === null ? $data : ($data[$key] ?? $default);
         }
         return $default;
+    }
+
+    // Lấy giá trị từ $_SERVER
+    public static function getServer($value, $default = null)
+    {
+        return $_SERVER[$value] ?? $default;
     }
 }
