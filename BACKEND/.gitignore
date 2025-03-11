@@ -2,3 +2,4 @@ node_modules/
 vendor/
 .sql
 data.log
+src/Logs/

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Path from "~/helpers/Path";
 import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
+import ModalCustom from "~/components/ModalCustom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,24 +22,25 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [code, setCode] = useState("");
   const [open, setOpen] = useState(false);
-  const [api, setApi] = useState(Api.login());
 
   const theme = useTheme();
 
   const handleOpen = () => {
     setOpen(true);
-    setApi(Api.checkLogin());
   };
   const handleClose = () => {
     setOpen(false);
-    setApi(Api.login());
   };
 
   const handleLogin = async () => {
+    if (!phone || !password) {
+      enqueueSnackbar("Vui lòng nhập đầy đủ thông tin", { variant: "error" });
+      return;
+    }
     dispatch(startLoading());
     setIsLoading(true);
     try {
-      const response = await axiosDefault.post(api, {
+      const response = await axiosDefault.post(Api.login(), {
         phone,
         password,
         code: code ? code : null,
@@ -159,62 +161,51 @@ const Login = () => {
       </PaperCustom>
 
       {/* Modal */}
-      <Modal
+      <ModalCustom
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        title="Nhập mã xác nhận"
+        subtitle="Hãy kiểm tra điện thoại của bạn và điền mã xác nhận tài khoản"
       >
-        <Box>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-          <Box
-            sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
-          >
-            <TextField
-              autoComplete="off"
-              sx={{ flex: 3 }}
-              fullWidth
-              label="Mã xác nhận"
-              variant="outlined"
-              margin="normal"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              disabled={isLoading}
-            />
-            <ButtonLoading
-              sx={{
-                mt: 2,
-                height: 56,
-                flex: 1,
-                backgroundColor: theme.custom?.primary?.light,
-                color: theme.palette.primary.main,
-              }}
-              variant="outlined"
-              color="primary"
-              onClick={handleSendCode}
-              loading={isLoading}
-            >
-              Lấy mã
-            </ButtonLoading>
-          </Box>
-
-          <ButtonLoading
+        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
+          <TextField
+            autoComplete="off"
+            sx={{ flex: 3 }}
             fullWidth
-            sx={{ mt: 2, height: 56 }}
-            variant="contained"
+            label="Mã xác nhận"
+            variant="outlined"
+            margin="normal"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            disabled={isLoading}
+          />
+          <ButtonLoading
+            sx={{
+              mt: 2,
+              height: 56,
+              flex: 1,
+              color: theme.palette.primary.main,
+            }}
+            variant="outlined"
             color="primary"
-            onClick={handleLogin}
+            onClick={handleSendCode}
             loading={isLoading}
           >
-            Đăng ký
+            Lấy mã
           </ButtonLoading>
         </Box>
-      </Modal>
+
+        <ButtonLoading
+          fullWidth
+          sx={{ mt: 2, height: 56 }}
+          variant="contained"
+          color="primary"
+          onClick={handleLogin}
+          loading={isLoading}
+        >
+          Đăng ký
+        </ButtonLoading>
+      </ModalCustom>
     </Box>
   );
 };
