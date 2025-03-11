@@ -6,6 +6,7 @@ use App\Helpers\Hash;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\JwtHelper;
+use App\Helpers\Log;
 use App\Helpers\Validator;
 use App\Helpers\VerificationCode;
 use App\Models\AccountModel;
@@ -38,57 +39,38 @@ class AuthController
         $device = DeviceLoginModel::getByAccountId($account_id);
 
         if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
-            $phoneFormat = Validator::formatPhone($phone, '+84');
-            $resultSend = VerificationCode::sendCode($phoneFormat);
+            Log::json($device['code'], "code");
+            if (!$device['code'] || !VerificationCode::checkTime(strtotime($device['created_at']))) {
+                $phoneFormat = Validator::formatPhone($phone, '+84');
+                $resultSend = VerificationCode::sendCode($phoneFormat);
 
-            if (!$resultSend) {
-                Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
+                if (!$resultSend) {
+                    Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
+                }
+
+                // Insert hoặc cập nhật thông tin thiết bị vào DB
+                DeviceLoginModel::insertOrUpdateDeviceLogin($account_id, null, $resultSend['message_sid'], $resultSend['code']);
+
+                $device = DeviceLoginModel::getByAccountId($account_id);
+
+                // Trả về mã 409 để yêu cầu nhập mã xác nhận
+                Response::json(["message" => "Vui lòng xác nhận mã được gửi về số điện thoại!"], 409);
+            } else {
+                $code = Request::json('code');
+
+                if (!Hash::verifyArgon2i($code, $device['code'])) {
+                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+                }
+    
+                if (!VerificationCode::checkTime(strtotime($device['created_at']))) {
+                    Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
+                }
+    
+                // Cập nhật token
+                $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
+    
+                DeviceLoginModel::updateTokens($account_id, $device_token);
             }
-
-            // Insert hoặc cập nhật thông tin thiết bị vào DB
-            DeviceLoginModel::insertOrUpdateDeviceLogin($account_id, null, $resultSend['message_sid'], $resultSend['code']);
-
-            $device = DeviceLoginModel::getByAccountId($account_id);
-
-            // Trả về mã 409 để yêu cầu nhập mã xác nhận
-            Response::json(["message" => "Vui lòng xác nhận mã được gửi về số điện thoại!"], 409);
-        }
-
-        $this->handleLogin($account);
-    }
-
-    // Kiểm tra code
-    public function checkLoginCode()
-    {
-        $code = Request::json('code');
-        $phone = Request::json('phone');
-        $password = Request::json('password');
-
-        // Kiểm tra tài khoản
-        $account = AccountModel::findByPhone($phone);
-        if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
-            Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
-        }
-
-        $account_id = $account['account_id'];
-
-        $ip_address = Request::getServer('REMOTE_ADDR');
-        $user_agent = Request::getServer('HTTP_USER_AGENT');
-        $device = DeviceLoginModel::getByAccountId($account_id);
-
-        if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
-            if (!Hash::verifyArgon2i($code, $device['code'])) {
-                Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-            }
-
-            if (!VerificationCode::checkTime(strtotime($device['created_at']))) {
-                Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
-            }
-
-            // Cập nhật token
-            $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
-            
-            DeviceLoginModel::updateTokens($account_id, $device_token);
         }
 
         $this->handleLogin($account);

@@ -64,18 +64,22 @@ class DeviceLoginModel
     {
         $query = new ConnectDatabase();
 
+        $created_at = Carbon::now();
+
         $sql = "
             UPDATE device_login
             SET 
                 device_token = :device_token,
-                code = NULL
+                code = NULL,
+                created_at = :created_at
             WHERE
                 account_id = :account_id
         ";
 
         $result = $query->query($sql, [
             "device_token" => $device_token,
-            "account_id" => $account_id
+            "account_id" => $account_id,
+            "created_at" => $created_at
         ]);
 
         return $result;

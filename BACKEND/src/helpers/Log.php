@@ -4,25 +4,21 @@ namespace App\Helpers;
 
 class Log
 {
-    protected static $logFile = 'data.log';
+    protected static $logPath = 'src/logs/';
 
-    public static function text($logData)
+    protected static function writeLog($logData, $title, $fileName = 'global.log')
     {
-        self::writeLog($logData);
+        file_put_contents(self::$logPath . $fileName, '---------------------' . date('Y-m-d H:i:s') . '---------------------' . PHP_EOL . $title . ' - ' . $logData . PHP_EOL, FILE_APPEND);
     }
 
-    public static function array(array $logData)
+    public static function json($logData, $title = '', $fileName = 'global.log')
     {
-        self::writeLog(print_r($logData, true));
+        self::writeLog(json_encode($logData, JSON_PRETTY_PRINT), $title, $fileName);
     }
 
-    public static function json($logData)
+    // Log sms
+    public static function sms($logData, $title = '', $fileName = 'sms.log')
     {
-        self::writeLog(json_encode($logData, JSON_PRETTY_PRINT));
-    }
-
-    protected static function writeLog($logData)
-    {
-        file_put_contents(self::$logFile, date('Y-m-d H:i:s') . ' - ' . $logData . PHP_EOL, FILE_APPEND);
+        self::json($logData, $title, $fileName);
     }
 }

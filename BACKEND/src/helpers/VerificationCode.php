@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Exception;
 use Twilio\Rest\Client;
+use App\Helpers\Log;
 
 class VerificationCode
 {
@@ -37,6 +38,11 @@ class VerificationCode
           'body' => "Mã xác nhận của bạn là: $verificationCode"
         ]
       );
+
+      Log::sms([
+        'code' => $verificationCode,
+        'message_sid' => $message->sid,
+      ], $phoneNumber);
 
       return [
         'code' => $verificationCode,
