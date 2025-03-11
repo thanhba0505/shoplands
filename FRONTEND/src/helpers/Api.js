@@ -16,6 +16,10 @@ class Api {
     static login(endpoint = "") {
         return this.buildPath("login", endpoint);
     }
+    
+    static checkLogin(endpoint = "") {
+        return this.buildPath("check-login-code", endpoint);
+    }
 
     static logout(endpoint = "") {
         return this.buildPath("logout", endpoint);

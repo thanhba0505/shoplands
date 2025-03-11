@@ -4,7 +4,7 @@ import { loginSuccess } from "~/redux/authSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import { useSnackbar } from "notistack";
 import Api from "~/helpers/Api";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Modal, TextField, Typography } from "@mui/material";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
@@ -13,121 +13,210 @@ import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
 
 const Login = () => {
-    const navigate = useNavigate();
-    const [phone, setPhone] = useState("");
-    const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
-    const { enqueueSnackbar } = useSnackbar();
-    const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
+  const [code, setCode] = useState("");
+  const [open, setOpen] = useState(false);
+  const [api, setApi] = useState(Api.login());
 
-    const theme = useTheme();
+  const theme = useTheme();
 
-    const handleLogin = async () => {
-        dispatch(startLoading());
-        setIsLoading(true);
-        try {
-            const response = await axiosDefault.post(Api.login(), {
-                phone,
-                password,
-            });
+  const handleOpen = () => {
+    setOpen(true);
+    setApi(Api.checkLogin());
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setApi(Api.login());
+  };
 
-            const { access_token, refresh_token, account } = response.data;
-            dispatch(loginSuccess({ access_token, refresh_token, account }));
-            enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
-            navigate(Path.home());
-        } catch (error) {
-            console.error("Đăng nhập thất bại: " + error.response.data.message);
-        } finally {
-            setIsLoading(false);
-            dispatch(stopLoading());
-        }
-    };
+  const handleLogin = async () => {
+    dispatch(startLoading());
+    setIsLoading(true);
+    try {
+      const response = await axiosDefault.post(api, {
+        phone,
+        password,
+        code: code ? code : null,
+      });
 
-    return (
-        <Box
-            sx={{
-                minHeight: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "12px",
-            }}
+      const { access_token, refresh_token, account } = response.data;
+      dispatch(loginSuccess({ access_token, refresh_token, account }));
+      handleClose();
+      enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
+      navigate(Path.home());
+    } catch (error) {
+      if (error.response?.status === 409) {
+        handleOpen();
+      } else {
+        console.error("Đăng nhập thất bại: " + error.response.data.message);
+      }
+    } finally {
+      setIsLoading(false);
+      dispatch(stopLoading());
+    }
+  };
+
+  const handleSendCode = async () => {
+    // try {
+    //   const response = await axiosDefault.post(Api.sendCode(), {
+    //     phone,
+    //   });
+    //   enqueueSnackbar(response.data.message, { variant: "success" });
+    // } catch (error) {
+    //   enqueueSnackbar(error.response.data.message, { variant: "error" });
+    // }
+
+    console.log("Gui ma xac thuc");
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "12px",
+      }}
+    >
+      <PaperCustom
+        elevation={2}
+        sx={{
+          textAlign: "center",
+          paddingX: 6,
+          paddingY: 8,
+          width: 450,
+          border: "1px solid",
+          borderColor: "primary.light",
+        }}
+      >
+        <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+          Đăng Nhập
+        </Typography>
+
+        <TextField
+          autoComplete="off"
+          fullWidth
+          label="Số điện thoại"
+          variant="outlined"
+          margin="normal"
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          disabled={isLoading}
+        />
+        <TextField
+          autoComplete="off"
+          fullWidth
+          label="Mật khẩu"
+          variant="outlined"
+          margin="normal"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+        />
+        <ButtonLoading
+          fullWidth
+          sx={{ mt: 2, height: 56 }}
+          variant="contained"
+          color="primary"
+          onClick={handleLogin}
+          loading={isLoading}
         >
-            <PaperCustom
-                elevation={2}
-                sx={{
-                    textAlign: "center",
-                    paddingX: 6,
-                    paddingY: 8,
-                    width: 450,
-                    border: "1px solid",
-                    borderColor: "primary.light",
-                }}
+          Đăng nhập
+        </ButtonLoading>
+
+        <Typography
+          variant="body2"
+          sx={{
+            mt: 2,
+            color: "primary.main",
+            cursor: "pointer",
+            userSelect: "none",
+          }}
+          onClick={() => navigate(Path.register())}
+        >
+          Chưa có tài khoản? Đăng ký!
+        </Typography>
+
+        <Typography
+          variant="body2"
+          sx={{
+            mt: 2,
+            color: "primary.main",
+            cursor: "pointer",
+            userSelect: "none",
+          }}
+        >
+          Quên mật khẩu?
+        </Typography>
+      </PaperCustom>
+
+      {/* Modal */}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+          >
+            <TextField
+              autoComplete="off"
+              sx={{ flex: 3 }}
+              fullWidth
+              label="Mã xác nhận"
+              variant="outlined"
+              margin="normal"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              disabled={isLoading}
+            />
+            <ButtonLoading
+              sx={{
+                mt: 2,
+                height: 56,
+                flex: 1,
+                backgroundColor: theme.custom?.primary?.light,
+                color: theme.palette.primary.main,
+              }}
+              variant="outlined"
+              color="primary"
+              onClick={handleSendCode}
+              loading={isLoading}
             >
-                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                    Đăng Nhập
-                </Typography>
+              Lấy mã
+            </ButtonLoading>
+          </Box>
 
-                <TextField
-                    autoComplete="off"
-                    fullWidth
-                    label="Số điện thoại"
-                    variant="outlined"
-                    margin="normal"
-                    type="text"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={isLoading}
-                />
-                <TextField
-                    autoComplete="off"
-                    fullWidth
-                    label="Mật khẩu"
-                    variant="outlined"
-                    margin="normal"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                />
-                <ButtonLoading
-                    fullWidth
-                    sx={{ mt: 2, height: 56 }}
-                    variant="contained"
-                    color="primary"
-                    onClick={handleLogin}
-                    loading={isLoading}
-                >
-                    Đăng nhập
-                </ButtonLoading>
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        mt: 2,
-                        color: "primary.main",
-                        cursor: "pointer",
-                        userSelect: "none",
-                    }}
-                    onClick={() => navigate(Path.register())}
-                >
-                    Chưa có tài khoản? Đăng ký!
-                </Typography>
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        mt: 2,
-                        color: "primary.main",
-                        cursor: "pointer",
-                        userSelect: "none",
-                    }}
-                >
-                    Quên mật khẩu?
-                </Typography>
-            </PaperCustom>
+          <ButtonLoading
+            fullWidth
+            sx={{ mt: 2, height: 56 }}
+            variant="contained"
+            color="primary"
+            onClick={handleLogin}
+            loading={isLoading}
+          >
+            Đăng ký
+          </ButtonLoading>
         </Box>
-    );
+      </Modal>
+    </Box>
+  );
 };
 
 export default Login;
