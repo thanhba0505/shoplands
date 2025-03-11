@@ -8,7 +8,7 @@ use App\Helpers\Response;
 use App\Helpers\JwtHelper;
 use App\Helpers\Log;
 use App\Helpers\Validator;
-use App\Helpers\VerificationCode;
+use App\Helpers\SendMessage;
 use App\Models\AccountModel;
 use App\Models\DeviceLoginModel;
 use App\Models\SellerModel;
@@ -40,9 +40,9 @@ class AuthController
 
         if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
             Log::json($device['code'], "code");
-            if (!$device['code'] || !VerificationCode::checkTime(strtotime($device['created_at']))) {
+            if (!$device['code'] || !SendMessage::checkTimeExpired(($device['created_at']))) {
                 $phoneFormat = Validator::formatPhone($phone, '+84');
-                $resultSend = VerificationCode::sendCode($phoneFormat);
+                $resultSend = SendMessage::sendLoginCode($phoneFormat);
 
                 if (!$resultSend) {
                     Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
@@ -61,14 +61,14 @@ class AuthController
                 if (!Hash::verifyArgon2i($code, $device['code'])) {
                     Response::json(['message' => 'Mã xác nhận không khớp'], 400);
                 }
-    
-                if (!VerificationCode::checkTime(strtotime($device['created_at']))) {
+
+                if (!SendMessage::checkTimeExpired(($device['created_at']))) {
                     Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
                 }
-    
+
                 // Cập nhật token
                 $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
-    
+
                 DeviceLoginModel::updateTokens($account_id, $device_token);
             }
         }
@@ -221,7 +221,7 @@ class AuthController
         }
 
         // Kiểm tra mã xác nhận đã hết hạn chưa
-        if (!VerificationCode::checkTime(strtotime($verificationCode['created_at']))) {
+        if (!SendMessage::checkTimeExpired(($verificationCode['created_at']))) {
             Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
         }
 
@@ -256,7 +256,7 @@ class AuthController
         $phoneNumber = Validator::formatPhone($phoneNumber, '+84');
 
         try {
-            $resultSend = VerificationCode::sendCode($phoneNumber);
+            $resultSend = SendMessage::sendLoginCode($phoneNumber);
 
             if (!$resultSend) {
                 Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
