@@ -8,13 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('device_login', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->text('device_token')->nullable();
+            $table->text('content');
             $table->text('code');
-            $table->text('message_sid');
             $table->dateTime('created_at');
-            $table->unsignedBigInteger('account_id')->unique(); // Foreign key
+            $table->unsignedBigInteger('account_id');
 
             $table->foreign('account_id')->references('id')->on('accounts');
         });
@@ -22,10 +21,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('device_login', function (Blueprint $table) {
+        Schema::table('messages', function (Blueprint $table) {
             $table->dropForeign(['account_id']);
         });
 
-        Schema::dropIfExists('device_login');
+        Schema::dropIfExists('messages');
     }
 };

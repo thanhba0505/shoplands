@@ -26,34 +26,48 @@ class SendMessage
   public static function send($phoneNumber, $messageBody)
   {
     try {
-      // Gửi tin nhắn SMS
-      $client = new Client(self::$sid, self::$token);
-      
-      $message = $client->messages->create(
-        $phoneNumber,
-        [
-          'from' => self::$twilioNumber,
-          'body' => $messageBody
-        ]
-      );
-      
-      if ($message->sid) {
-        // Log thông tin tin nhắn
-        Log::sms([
-          'message_sid' => $message->sid,
-          'body' => $messageBody
-        ], $phoneNumber);
+      // Giả sử gửi tin nhắn
+      Log::sms([
+        'phone' => $phoneNumber,
+        'body' => $messageBody
+      ], $phoneNumber);
 
-        return [
-          'message_sid' => $message->sid
-        ];
-      } else {
-        return false;
-      }
+      return [
+        'status' => "sent"
+      ];
     } catch (Exception $e) {
       // Nếu có lỗi, trả về false
       return false;
     }
+    // try {
+    //   // Gửi tin nhắn SMS
+    //   $client = new Client(self::$sid, self::$token);
+
+    //   $message = $client->messages->create(
+    //     $phoneNumber,
+    //     [
+    //       'from' => self::$twilioNumber,
+    //       'body' => $messageBody
+    //     ]
+    //   );
+
+    //   if ($message->sid) {
+    //     // Log thông tin tin nhắn
+    //     Log::sms([
+    //       'message_sid' => $message->sid,
+    //       'body' => $messageBody
+    //     ], $phoneNumber);
+
+    //     return [
+    //       'message_sid' => $message->sid
+    //     ];
+    //   } else {
+    //     return false;
+    //   }
+    // } catch (Exception $e) {
+    //   // Nếu có lỗi, trả về false
+    //   return false;
+    // }
   }
 
   // Phương thức gửi mã xác nhận

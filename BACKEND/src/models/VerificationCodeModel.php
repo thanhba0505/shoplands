@@ -19,9 +19,6 @@ class VerificationCodeModel
         $phoneHash = Hash::encodeSha256($phone);
         $phone = Hash::encodeAes($phone);
 
-        Log::text($code);
-        Log::text($phone);
-
         $sql =  "
             INSERT INTO
                 verification_codes (message_sid, code, created_at, phone, phoneHash)

@@ -2,15 +2,14 @@
 $router->get('api/sql', 'Controller@sql');
 
 // PUBLIC
-$router->get('api/public/logo', 'Public\ImageController@logoSvg');
+// $router->get('api/public/logo', 'Public\ImageController@logoSvg');
 
 // API AUTH
-$router->post('api/login', 'AuthController@login');
-$router->post('api/refresh-token', 'AuthController@refreshToken');
-$router->post('api/logout', 'AuthController@logout');
-$router->post('api/send-verification-code', 'AuthController@sendVerificationCode');
-$router->post('api/register', 'AuthController@register');
-$router->post('api/check-login-code', 'AuthController@checkLoginCode');
+$router->post('api/auth/login', 'AuthController@login');
+$router->post('api/auth/refresh-token', 'AuthController@refreshToken');
+$router->post('api/auth/logout', 'AuthController@logout');
+$router->post('api/auth/send-code', 'AuthController@sendCode');
+$router->post('api/auth/register', 'AuthController@register');
 
 // API COUPON
 $router->get('api/coupons/{seller_id}', 'CouponController@getBySellerId');
@@ -28,3 +27,6 @@ $router->post('api/cart', 'CartController@addCart', ['App\Middlewares\UserMiddle
 $router->put('api/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']);
 $router->delete('api/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']);
 
+// API ADRESS
+$router->get('api/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']);
+$router->get('api/address/seller/{id}', 'AddressController@fineBySellerId');

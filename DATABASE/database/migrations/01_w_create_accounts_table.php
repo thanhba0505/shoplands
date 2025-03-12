@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->text('phone')->unique();
-            $table->text('phoneHash')->unique();
+            $table->text('phoneHash');
             $table->text('password');
             $table->enum('role', ['user', 'seller', 'admin']);
             $table->enum('status', ['active', 'inactive', 'banned']);
-            $table->string('access_token')->nullable();
-            $table->string('refresh_token')->nullable();
+            $table->text('device_token')->nullable();
+            $table->text('access_token')->nullable();
+            $table->text('refresh_token')->nullable();
             $table->dateTime('created_at');
         });
     }
