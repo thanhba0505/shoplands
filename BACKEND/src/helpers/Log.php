@@ -17,8 +17,14 @@ class Log
     }
 
     // Log sms
-    public static function sms($logData, $title = '', $fileName = 'sms.log')
+    public static function sms($logData, $title = '')
     {
-        self::json($logData, $title, $fileName);
+        self::json($logData, $title, 'sms.log');
+    }
+
+    // Log login
+    public static function login($logData, $title = '')
+    {
+        self::json($logData, $title, 'login.log');
     }
 }

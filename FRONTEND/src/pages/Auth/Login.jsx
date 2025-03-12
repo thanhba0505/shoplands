@@ -4,7 +4,7 @@ import { loginSuccess } from "~/redux/authSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import { useSnackbar } from "notistack";
 import Api from "~/helpers/Api";
-import { Box, Modal, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";

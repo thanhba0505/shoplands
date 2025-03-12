@@ -36,42 +36,44 @@ class AuthController
         $user_agent = Request::getServer('HTTP_USER_AGENT');
 
         // Kiểm tra thiết bị đã đăng nhập trước đó
-        $device = DeviceLoginModel::getByAccountId($account_id);
+        // $device = DeviceLoginModel::getByAccountId($account_id);
 
-        if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
-            Log::json($device['code'], "code");
-            if (!$device['code'] || !SendMessage::checkTimeExpired(($device['created_at']))) {
-                $phoneFormat = Validator::formatPhone($phone, '+84');
-                $resultSend = SendMessage::sendLoginCode($phoneFormat);
+        // if (!$device || !$device['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $device['device_token'])) {
 
-                if (!$resultSend) {
-                    Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
-                }
+        //     if (!$device || !$device['code'] || !SendMessage::checkTimeExpired(($device['created_at']))) {
+        //         $phoneFormat = Validator::formatPhone($phone, '+84');
+        //         $resultSend = SendMessage::sendLoginCode($phoneFormat);
 
-                // Insert hoặc cập nhật thông tin thiết bị vào DB
-                DeviceLoginModel::insertOrUpdateDeviceLogin($account_id, null, $resultSend['message_sid'], $resultSend['code']);
+        //         if (!$resultSend) {
+        //             Response::json(['message' => 'Gửi mã xác nhận thất bại'], 500);
+        //         }
 
-                $device = DeviceLoginModel::getByAccountId($account_id);
+        //         // Insert hoặc cập nhật thông tin thiết bị vào DB
+        //         DeviceLoginModel::insertOrUpdateDeviceLogin($account_id, null, $resultSend['message_sid'], $resultSend['code']);
 
-                // Trả về mã 409 để yêu cầu nhập mã xác nhận
-                Response::json(["message" => "Vui lòng xác nhận mã được gửi về số điện thoại!"], 409);
-            } else {
-                $code = Request::json('code');
+        //         $device = DeviceLoginModel::getByAccountId($account_id);
 
-                if (!Hash::verifyArgon2i($code, $device['code'])) {
-                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-                }
+        //         // Trả về mã 409 để yêu cầu nhập mã xác nhận
+        //         Response::json(["message" => "Vui lòng xác nhận mã được gửi về số điện thoại!"], 409);
+        //     } else {
+        //         $code = Request::json('code');
 
-                if (!SendMessage::checkTimeExpired(($device['created_at']))) {
-                    Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
-                }
+        //         if (!Hash::verifyArgon2i($code, $device['code'])) {
+        //             Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+        //         }
 
-                // Cập nhật token
-                $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
+        //         if (!SendMessage::checkTimeExpired(($device['created_at']))) {
+        //             Response::json(['message' => 'Mã xác nhận đã hết hạn'], 400);
+        //         }
 
-                DeviceLoginModel::updateTokens($account_id, $device_token);
-            }
-        }
+        //         // Cập nhật token
+        //         $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
+
+        //         DeviceLoginModel::updateTokens($account_id, $device_token);
+        //     }
+        // }
+
+        Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], $account['account_id']);
 
         $this->handleLogin($account);
     }

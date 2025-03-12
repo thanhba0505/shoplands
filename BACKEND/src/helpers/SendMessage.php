@@ -12,7 +12,6 @@ class SendMessage
   private static $token;
   private static $twilioNumber;
   private static $timeExpired;
-  private static $client;
 
   // Khởi tạo static thông qua phương thức init()
   public static function init()
@@ -21,9 +20,6 @@ class SendMessage
     self::$token = $_ENV['TWILIO_TOKEN'];
     self::$twilioNumber = $_ENV['TWILIO_NUMBER'];
     self::$timeExpired = $_ENV['TWILIO_EXPIRY'];
-
-    // Khởi tạo client Twilio
-    self::$client = new Client(self::$sid, self::$token);
   }
 
   // Phương thức chung gửi tin nhắn
@@ -31,23 +27,29 @@ class SendMessage
   {
     try {
       // Gửi tin nhắn SMS
-      $message = self::$client->messages->create(
+      $client = new Client(self::$sid, self::$token);
+      
+      $message = $client->messages->create(
         $phoneNumber,
         [
           'from' => self::$twilioNumber,
           'body' => $messageBody
         ]
       );
+      
+      if ($message->sid) {
+        // Log thông tin tin nhắn
+        Log::sms([
+          'message_sid' => $message->sid,
+          'body' => $messageBody
+        ], $phoneNumber);
 
-      // Log thông tin tin nhắn
-      Log::sms([
-        'message_sid' => $message->sid,
-        'body' => $messageBody
-      ], $phoneNumber);
-
-      return [
-        'message_sid' => $message->sid
-      ];
+        return [
+          'message_sid' => $message->sid
+        ];
+      } else {
+        return false;
+      }
     } catch (Exception $e) {
       // Nếu có lỗi, trả về false
       return false;
@@ -60,17 +62,26 @@ class SendMessage
     $result['code'] = Other::generateCode(6);
     $result['message_sid'] = self::send($phoneNumber, $result['code']);
 
-    return $result;
+    return $result['message_sid'] ? $result : false;
   }
 
   // Kiểm tra thời gian hết hạn
   public static function checkTimeExpired($time)
   {
-    $timeExpired = (int) self::$timeExpired;
+
+    $time = strtotime($time);
+    if (!$time) {
+      return false;
+    }
+
+    $timeExpired = self::$timeExpired;
+    if (!is_numeric($timeExpired) || $timeExpired <= 0) {
+      return false;
+    }
 
     $currentTime = time();
     $timeDiff = $currentTime - $time;
 
-    return $timeDiff <= $timeExpired;
+    return $timeDiff <= (int) $timeExpired;
   }
 }
