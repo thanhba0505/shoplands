@@ -18,8 +18,20 @@ class Log
     {
         self::ensureLogPathExists();  // Kiểm tra và tạo thư mục nếu cần
 
-        // Cố gắng ghi log và kiểm tra nếu có lỗi
-        if (false === file_put_contents(self::$logPath . $fileName, '---------------------' . date('Y-m-d H:i:s') . '---------------------' . PHP_EOL . $title . ' - ' . $logData . PHP_EOL . PHP_EOL, FILE_APPEND)) {
+        // Đọc toàn bộ nội dung file hiện tại
+        $currentContent = '';
+        if (file_exists(self::$logPath . $fileName)) {
+            $currentContent = file_get_contents(self::$logPath . $fileName);
+        }
+
+        // Tạo log mới ở đầu file
+        $newLog = '---------------------' . Carbon::now() . '---------------------' . PHP_EOL . $title . ' - ' . $logData . PHP_EOL . PHP_EOL;
+
+        // Ghi log mới vào đầu file
+        $fullContent = $newLog . $currentContent; // Thêm log mới vào đầu nội dung cũ
+
+        // Ghi toàn bộ nội dung lại vào file
+        if (false === file_put_contents(self::$logPath . $fileName, $fullContent)) {
             // Nếu ghi không thành công, có thể thực hiện xử lý như gửi email hoặc log error
             error_log("Failed to write to log file: " . self::$logPath . $fileName);
         }

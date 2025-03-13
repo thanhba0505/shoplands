@@ -52,7 +52,8 @@ class AuthController
                     }
 
                     AccountModel::activeAccount($account_new['account_id']);
-                    Response::json(['message' => 'Đăng ký thành công'], 201);
+
+                    $this->handleLogin($account_new);
                 } else {
                     $result = SendMessage::sendMessageCode($phone, $account_new['account_id']);
 
@@ -99,7 +100,9 @@ class AuthController
                     Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
                 }
 
-                AccountModel::updateDeviceToken($account_id, $ip_address, $user_agent);
+                // Tiếp tục đăng nhập nếu đúng
+                Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], 'Số điện thoại: ' . $account['phone']);
+                $this->handleLogin($account);
             } else {
                 $result = SendMessage::sendMessageCode($account['phone'], $account_id);
 
@@ -108,15 +111,17 @@ class AuthController
                 }
             }
         }
-
-        Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], $account_id . ' - ' . $account['phone']);
-
-        $this->handleLogin($account);
     }
 
     // Private handle login
     private function handleLogin($account)
     {
+        // Thêm thông tin thiết bị
+        $ip_address = Request::getServer('REMOTE_ADDR');
+        $user_agent = Request::getServer('HTTP_USER_AGENT');
+
+        AccountModel::updateDeviceToken($account['account_id'], $ip_address, $user_agent);
+
         // Tạo Access Token và Refresh Token
         $accessToken = JwtHelper::generateToken($account['account_id']);
         $refreshToken = JwtHelper::generateToken($account['account_id'], true);
@@ -220,7 +225,7 @@ class AuthController
 
         // Xóa access_token và refresh_token khỏi database
         AccountModel::updateTokens($id, null, null);
-        AccountModel::deleteDeviceToken($id); 
+        AccountModel::deleteDeviceToken($id);
 
         Response::json(['message' => 'Đăng xuất thành công']);
     }

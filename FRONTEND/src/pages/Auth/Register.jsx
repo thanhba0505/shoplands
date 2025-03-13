@@ -8,6 +8,10 @@ import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
 import Path from "~/helpers/Path";
 import Validator from "~/helpers/Validator";
+import { startLoading, stopLoading } from "~/redux/loadingSlice";
+import axiosDefault from "~/utils/axiosDefault";
+import Api from "~/helpers/Api";
+import { loginSuccess } from "~/redux/authSlice";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -16,36 +20,64 @@ const Register = () => {
   const theme = useTheme();
 
   const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    if (!checkInfo()) return;
+
+    dispatch(startLoading());
+    setIsLoading(true);
+    try {
+      const response = await axiosDefault.post(Api.register(), {
+        name,
+        phone,
+        password,
+        code,
+      });
+
+      const { access_token, refresh_token, account } = response.data;
+      dispatch(loginSuccess({ access_token, refresh_token, account }));
+      setOpen(false);
+      enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
+      navigate(Path.home());
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setOpen(true);
+      } else {
+        console.error("Đăng nhập thất bại: " + error.response.data.message);
+      }
+    } finally {
+      setIsLoading(false);
+      dispatch(stopLoading());
+    }
+  };
+
+  const checkInfo = () => {
     // Kiểm tra số điện thoại
     if (!Validator.isPhone(phone)) {
       enqueueSnackbar("Số điện thoại không hợp lệ!", { variant: "error" });
-      return;
+      return false;
     }
 
     // Kiểm tra độ mạnh mật khẩu
     const passwordValidationMessage = Validator.isPasswordStrength(password);
     if (passwordValidationMessage !== "Mật khẩu hợp lệ") {
       enqueueSnackbar(passwordValidationMessage, { variant: "error" });
-      return;
+      return false;
     }
 
     // Kiểm tra mật khẩu và nhập lại mật khẩu
     if (password !== confirmPassword) {
       enqueueSnackbar("Mật khẩu không khớp!", { variant: "error" });
-      return;
+      return false;
     }
 
-    console.log("Đăng ký thành công", { phone, password });
-  };
-
-  const handleSendVerificationCode = () => {
-    console.log("Gui ma xac thuc");
+    return true;
   };
 
   return (
@@ -72,6 +104,17 @@ const Register = () => {
         <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
           Đăng Ký
         </Typography>
+        <TextField
+          autoComplete="off"
+          fullWidth
+          label="Họ và tên"
+          variant="outlined"
+          margin="normal"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={isLoading}
+        />
 
         <TextField
           autoComplete="off"
@@ -84,6 +127,7 @@ const Register = () => {
           onChange={(e) => setPhone(e.target.value)}
           disabled={isLoading}
         />
+
         <TextField
           autoComplete="off"
           fullWidth
@@ -106,35 +150,19 @@ const Register = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
           disabled={isLoading}
         />
-        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
+        {open && (
           <TextField
             autoComplete="off"
-            sx={{ flex: 3 }}
             fullWidth
-            label="Mã xác nhận"
+            label="Nhập mã xác nhận"
             variant="outlined"
             margin="normal"
-            value={verificationCode}
-            onChange={(e) => setVerificationCode(e.target.value)}
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
             disabled={isLoading}
           />
-          <ButtonLoading
-            sx={{
-              mt: 2,
-              height: 56,
-              flex: 1,
-              backgroundColor: theme.custom?.primary?.light,
-              color: theme.palette.primary.main,
-            }}
-            variant="outlined"
-            color="primary"
-            onClick={handleSendVerificationCode}
-            loading={isLoading}
-          >
-            Lấy mã
-          </ButtonLoading>
-        </Box>
-
+        )}
         <ButtonLoading
           fullWidth
           sx={{ mt: 2, height: 56 }}
@@ -145,7 +173,6 @@ const Register = () => {
         >
           Đăng ký
         </ButtonLoading>
-
         <Typography
           variant="body2"
           sx={{

@@ -14,23 +14,19 @@ class Api {
     // 🔹 Các API route
     
     static login(endpoint = "") {
-        return this.buildPath("login", endpoint);
+        return this.buildPath("auth/login", endpoint);
     }
     
-    static checkLogin(endpoint = "") {
-        return this.buildPath("check-login-code", endpoint);
-    }
-
     static logout(endpoint = "") {
-        return this.buildPath("logout", endpoint);
+        return this.buildPath("auth/logout", endpoint);
     }
 
     static register(endpoint = "") {
-        return this.buildPath("register", endpoint);
+        return this.buildPath("auth/register", endpoint);
     }
 
     static refreshToken(endpoint = "") {
-        return this.buildPath("refresh-token", endpoint);
+        return this.buildPath("auth/refresh-token", endpoint);
     }
 
     static categories(endpoint = "") {

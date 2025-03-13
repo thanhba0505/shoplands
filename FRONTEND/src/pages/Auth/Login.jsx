@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import Path from "~/helpers/Path";
 import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
-import ModalCustom from "~/components/ModalCustom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -63,19 +62,6 @@ const Login = () => {
     }
   };
 
-  const handleSendCode = async () => {
-    // try {
-    //   const response = await axiosDefault.post(Api.sendCode(), {
-    //     phone,
-    //   });
-    //   enqueueSnackbar(response.data.message, { variant: "success" });
-    // } catch (error) {
-    //   enqueueSnackbar(error.response.data.message, { variant: "error" });
-    // }
-
-    console.log("Gui ma xac thuc");
-  };
-
   return (
     <Box
       sx={{
@@ -123,6 +109,19 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           disabled={isLoading}
         />
+        {open && (
+          <TextField
+            autoComplete="off"
+            fullWidth
+            label="Mã xác nhận"
+            variant="outlined"
+            margin="normal"
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            disabled={isLoading}
+          />
+        )}
         <ButtonLoading
           fullWidth
           sx={{ mt: 2, height: 56 }}
@@ -159,53 +158,6 @@ const Login = () => {
           Quên mật khẩu?
         </Typography>
       </PaperCustom>
-
-      {/* Modal */}
-      <ModalCustom
-        open={open}
-        onClose={handleClose}
-        title="Nhập mã xác nhận"
-        subtitle="Hãy kiểm tra điện thoại của bạn và điền mã xác nhận tài khoản"
-      >
-        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
-          <TextField
-            autoComplete="off"
-            sx={{ flex: 3 }}
-            fullWidth
-            label="Mã xác nhận"
-            variant="outlined"
-            margin="normal"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            disabled={isLoading}
-          />
-          <ButtonLoading
-            sx={{
-              mt: 2,
-              height: 56,
-              flex: 1,
-              color: theme.palette.primary.main,
-            }}
-            variant="outlined"
-            color="primary"
-            onClick={handleSendCode}
-            loading={isLoading}
-          >
-            Lấy mã
-          </ButtonLoading>
-        </Box>
-
-        <ButtonLoading
-          fullWidth
-          sx={{ mt: 2, height: 56 }}
-          variant="contained"
-          color="primary"
-          onClick={handleLogin}
-          loading={isLoading}
-        >
-          Đăng ký
-        </ButtonLoading>
-      </ModalCustom>
     </Box>
   );
 };
