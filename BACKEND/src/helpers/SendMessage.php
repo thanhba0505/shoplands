@@ -5,6 +5,8 @@ namespace App\Helpers;
 use Exception;
 use Twilio\Rest\Client;
 use App\Helpers\Log;
+use App\Models\MessageModel;
+use App\Helpers\Carbon;
 
 class SendMessage
 {
@@ -26,17 +28,18 @@ class SendMessage
   public static function send($phoneNumber, $messageBody)
   {
     try {
+      $phoneNumber = Validator::formatPhone($phoneNumber, '+84');
       // Giả sử gửi tin nhắn
       Log::sms([
-        'phone' => $phoneNumber,
         'body' => $messageBody
-      ], $phoneNumber);
+      ], "Số điện thoại: " .  $phoneNumber);
 
-      return [
-        'status' => "sent"
-      ];
+      return true;
     } catch (Exception $e) {
       // Nếu có lỗi, trả về false
+      Log::sms([
+        'error' => $e
+      ], "Số điện thoại: " .  $phoneNumber);
       return false;
     }
     // try {
@@ -70,32 +73,38 @@ class SendMessage
     // }
   }
 
-  // Phương thức gửi mã xác nhận
-  public static function sendLoginCode($phoneNumber)
+  // Phương thức gửi mã xác nhận 
+  public static function sendMessageCode($phoneNumber, $account_id)
   {
-    $result['code'] = Other::generateCode(6);
-    $result['message_sid'] = self::send($phoneNumber, $result['code']);
+    $code = Other::generateCode(6);
+    $content = "Mã xác nhận của bạn là: " . $code;
 
-    return $result['message_sid'] ? $result : false;
+    $result = self::send($phoneNumber, $content);
+
+    if ($result) {
+      MessageModel::addMessage($content, $code, $account_id);
+      return true;
+    }
+
+    return false;
   }
 
   // Kiểm tra thời gian hết hạn
-  public static function checkTimeExpired($time)
+  public static function checkMessageCodeExpired($time)
   {
-
     $time = strtotime($time);
     if (!$time) {
-      return false;
+      return false; 
     }
 
-    $timeExpired = self::$timeExpired;
-    if (!is_numeric($timeExpired) || $timeExpired <= 0) {
-      return false;
-    }
+    $timeExpired = (int) self::$timeExpired; 
 
-    $currentTime = time();
+    $currentTime = strtotime(Carbon::now());  
+
     $timeDiff = $currentTime - $time;
 
-    return $timeDiff <= (int) $timeExpired;
+    return $timeDiff <= $timeExpired;
   }
 }
+
+SendMessage::init();

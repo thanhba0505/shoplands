@@ -19,7 +19,7 @@ class Log
         self::ensureLogPathExists();  // Kiểm tra và tạo thư mục nếu cần
 
         // Cố gắng ghi log và kiểm tra nếu có lỗi
-        if (false === file_put_contents(self::$logPath . $fileName, '---------------------' . date('Y-m-d H:i:s') . '---------------------' . PHP_EOL . $title . ' - ' . $logData . PHP_EOL, FILE_APPEND)) {
+        if (false === file_put_contents(self::$logPath . $fileName, '---------------------' . date('Y-m-d H:i:s') . '---------------------' . PHP_EOL . $title . ' - ' . $logData . PHP_EOL . PHP_EOL, FILE_APPEND)) {
             // Nếu ghi không thành công, có thể thực hiện xử lý như gửi email hoặc log error
             error_log("Failed to write to log file: " . self::$logPath . $fileName);
         }
@@ -34,6 +34,12 @@ class Log
     public static function global($logData, $title = '')
     {
         self::json($logData, $title, 'global.log');
+    }
+
+    // Log debug
+    public static function debug($logData, $title = '')
+    {
+        self::json($logData, $title, 'debug.log');
     }
 
     // Log sms

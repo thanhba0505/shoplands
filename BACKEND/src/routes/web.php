@@ -8,7 +8,6 @@ $router->get('api/sql', 'Controller@sql');
 $router->post('api/auth/login', 'AuthController@login');
 $router->post('api/auth/refresh-token', 'AuthController@refreshToken');
 $router->post('api/auth/logout', 'AuthController@logout');
-$router->post('api/auth/send-code', 'AuthController@sendCode');
 $router->post('api/auth/register', 'AuthController@register');
 
 // API COUPON

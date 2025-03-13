@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->text('content');
-            $table->text('code');
+            $table->text('code')->nullable();
             $table->dateTime('created_at');
             $table->unsignedBigInteger('account_id');
 

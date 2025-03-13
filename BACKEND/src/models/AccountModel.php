@@ -15,18 +15,19 @@ class AccountModel
 
         $sql =  "
             SELECT
-                c.id as account_id,
-                c.phone,
-                c.password,
-                c.role,
-                c.status,
-                c.created_at,
-                c.access_token,
-                c.refresh_token
+                a.id as account_id,
+                a.phone,
+                a.password,
+                a.role,
+                a.status,
+                a.created_at,
+                a.device_token,
+                a.access_token,
+                a.refresh_token
             FROM
-                accounts c
+                accounts a
             WHERE
-                c.id = :id
+                a.id = :id
         ";
 
         $result = $query->query($sql, ['id' => $id])->fetch();
@@ -46,18 +47,19 @@ class AccountModel
 
         $sql =  "
             SELECT
-                c.id as account_id,
-                c.phone,
-                c.password,
-                c.role,
-                c.status,
-                c.created_at,
-                c.access_token,
-                c.refresh_token
+                a.id as account_id,
+                a.phone,
+                a.password,
+                a.role,
+                a.status,
+                a.created_at,
+                a.device_token,
+                a.access_token,
+                a.refresh_token
             FROM
-                accounts c
+                accounts a
             WHERE
-                c.phoneHash = :phone
+                a.phoneHash = :phone
         ";
 
         $result = $query->query($sql, ['phone' => $phone])->fetch();
@@ -75,18 +77,19 @@ class AccountModel
 
         $sql =  "
             SELECT
-                c.id as account_id,
-                c.phone,
-                c.password,
-                c.role,
-                c.status,
-                c.created_at,
-                c.access_token,
-                c.refresh_token
+                a.id as account_id,
+                a.phone,
+                a.password,
+                a.role,
+                a.status,
+                a.created_at,
+                a.device_token,
+                a.access_token,
+                a.refresh_token
             FROM
-                accounts c
+                accounts a
             WHERE
-                access_token = :accessToken
+                a.access_token = :accessToken
         ";
 
         $result = $query->query($sql, ['accessToken' => $accessToken])->fetch();
@@ -94,7 +97,7 @@ class AccountModel
         return $result;
     }
 
-    public static function updateTokens($account_ID, $accessToken, $refreshToken)
+    public static function updateTokens($account_id, $accessToken, $refreshToken)
     {
         $query = new ConnectDatabase();
 
@@ -105,13 +108,13 @@ class AccountModel
                 access_token = :accessToken,
                 refresh_token = :refreshToken
             WHERE
-                id = :account_ID
+                id = :account_id
         ";
 
         $result = $query->query($sql, [
             'accessToken' => $accessToken,
             'refreshToken' => $refreshToken,
-            'account_ID' => $account_ID
+            'account_id' => $account_id
         ]);
 
         return $result;
@@ -142,6 +145,65 @@ class AccountModel
             'created_at' => $created_at,
             'status' => $status
         ]);
+
+        return $result;
+    }
+
+    // Sửa account
+    public static function activeAccount($account_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                status = 'active'
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, ['account_id' => $account_id]);
+
+        return $result;
+    }
+
+    // Cập nhật device_token
+    public static function updateDeviceToken($account_id, $ip_address, $user_agent)
+    {
+        $query = new ConnectDatabase();
+
+        $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                device_token = :device_token
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, ['device_token' => $device_token, 'account_id' => $account_id]);
+
+        return $result;
+    }
+
+    // Xóa device_token
+    public static function deleteDeviceToken($account_id)
+    {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                device_token = NULL
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, ['account_id' => $account_id]);
 
         return $result;
     }
