@@ -44,7 +44,8 @@ class MessageModel
               id AS message_id, 
               content, 
               code, 
-              created_at 
+              created_at, 
+              deleted_at
           FROM 
               messages 
           WHERE 
@@ -57,6 +58,28 @@ class MessageModel
     $result = $conn->query($sql, [
       ':account_id' => $account_id
     ])->fetch();
+
+    return $result && $result['deleted_at'] == null ? $result : false;
+  }
+
+  // Xóa tin nhắn theo message_id
+  public static function deleteMessage($message_id)
+  {
+    $conn = new ConnectDatabase();
+
+    $sql = "
+        UPDATE 
+            messages 
+        SET 
+            deleted_at = :deleted_at 
+        WHERE 
+            id = :message_id
+    ";
+
+    $result = $conn->query($sql, [
+      ':deleted_at' => Carbon::now(),
+      ':message_id' => $message_id
+    ]);
 
     return $result;
   }

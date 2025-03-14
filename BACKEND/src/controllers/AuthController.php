@@ -16,6 +16,7 @@ use App\Models\SellerModel;
 use App\Models\UserModel;
 use App\Models\VerificationCodeModel;
 use Exception;
+use GuzzleHttp\Psr7\Message;
 
 class AuthController
 {
@@ -51,6 +52,7 @@ class AuthController
                         Response::json(['message' => 'Mã xác nhận không khớp'], 400);
                     }
 
+                    MessageModel::deleteMessage($message['message_id']);
                     AccountModel::activeAccount($account_new['account_id']);
 
                     $this->handleLogin($account_new);
@@ -99,6 +101,7 @@ class AuthController
                     }
 
                     // Tiếp tục đăng nhập nếu đúng
+                    MessageModel::deleteMessage($message['message_id']);
                 } else {
                     $result = SendMessage::sendMessageCode($account['phone'], $account_id);
 
@@ -288,7 +291,8 @@ class AuthController
                 if (!Hash::verifyArgon2i($code, $message['code'])) {
                     Response::json(['message' => 'Mã xác nhận không khớp'], 400);
                 }
-
+                
+                MessageModel::deleteMessage($message['message_id']);
                 AccountModel::updatePassword($account['account_id'], $passwordNew);
 
                 $account = AccountModel::findById($account['account_id']);

@@ -13,6 +13,7 @@ return new class extends Migration
             $table->text('content');
             $table->text('code')->nullable();
             $table->dateTime('created_at');
+            $table->dateTime('deleted_at')->nullable();
             $table->unsignedBigInteger('account_id');
 
             $table->foreign('account_id')->references('id')->on('accounts');
