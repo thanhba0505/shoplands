@@ -33,6 +33,10 @@ class Path {
         return this.buildPath("/register", subPath);
     }
 
+    static forgotPassword(subPath = "") {
+        return this.buildPath("/forgot-password", subPath);
+    }
+
     static products(subPath = "") {
         return this.buildPath("/products", subPath);
     }

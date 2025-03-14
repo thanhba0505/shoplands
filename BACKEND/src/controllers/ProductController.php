@@ -68,6 +68,8 @@ class ProductController
                     $maxPrice = $currentMax;
                 }
             }
+            // Chỉnh sửa attributes
+            $products[$key]['attributes'] = $products[$key]['attributes'] ?? [];
 
             $products[$key]['min_price'] = $minPrice;
             $products[$key]['max_price'] = $maxPrice;

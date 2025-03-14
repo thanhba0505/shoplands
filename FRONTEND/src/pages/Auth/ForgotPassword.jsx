@@ -1,58 +1,50 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "~/redux/authSlice";
-import axiosDefault from "~/utils/axiosDefault";
 import { useSnackbar } from "notistack";
-import Api from "~/helpers/Api";
 import { Box, TextField, Typography } from "@mui/material";
-import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
-import Path from "~/helpers/Path";
 import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
+import Path from "~/helpers/Path";
+import { startLoading, stopLoading } from "~/redux/loadingSlice";
+import axiosDefault from "~/utils/axiosDefault";
+import Api from "~/helpers/Api";
+import { loginSuccess } from "~/redux/authSlice";
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const [isLoading, setIsLoading] = useState(false);
-  const [code, setCode] = useState("");
-  const [open, setOpen] = useState(false);
-
   const theme = useTheme();
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!phone || !password) {
-      enqueueSnackbar("Vui lòng nhập đầy đủ thông tin", { variant: "error" });
-      return;
-    }
+  const handleRegister = async () => {
+    if (!checkInfo()) return;
+
     dispatch(startLoading());
     setIsLoading(true);
     try {
-      const response = await axiosDefault.post(Api.login(), {
+      const response = await axiosDefault.post(Api.register(), {
         phone,
         password,
-        code: code ? code : null,
+        code,
       });
 
       const { access_token, refresh_token, account } = response.data;
       dispatch(loginSuccess({ access_token, refresh_token, account }));
-      handleClose();
+      setOpen(false);
       enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
       navigate(Path.home());
     } catch (error) {
       if (error.response?.status === 409) {
-        handleOpen();
+        setOpen(true);
       } else {
         console.error("Đăng nhập thất bại: " + error.response.data.message);
       }
@@ -60,6 +52,28 @@ const Login = () => {
       setIsLoading(false);
       dispatch(stopLoading());
     }
+  };
+
+  const checkInfo = () => {
+    // Kiểm tra số điện thoại
+    if (!phone) {
+      enqueueSnackbar("Số điện thoại được rỗng!", { variant: "error" });
+      return false;
+    }
+
+    // Kiểm tra độ mạnh mật khẩu
+    if (!password) {
+      enqueueSnackbar("Mật khẩu không được rỗng", { variant: "error" });
+      return false;
+    }
+
+    // Kiểm tra mật khẩu và nhập lại mật khẩu
+    if (password !== confirmPassword) {
+      enqueueSnackbar("Nhập lại mật khẩu không đúng!", { variant: "error" });
+      return false;
+    }
+
+    return true;
   };
 
   return (
@@ -78,13 +92,13 @@ const Login = () => {
           textAlign: "center",
           paddingX: 6,
           paddingY: 8,
-          width: 450,
+          width: 500,
           border: "1px solid",
           borderColor: "primary.light",
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-          Đăng Nhập
+          Quên mật khẩu
         </Typography>
 
         <TextField
@@ -98,10 +112,11 @@ const Login = () => {
           onChange={(e) => setPhone(e.target.value)}
           disabled={isLoading}
         />
+
         <TextField
           autoComplete="off"
           fullWidth
-          label="Mật khẩu"
+          label="Mật khẩu mới"
           variant="outlined"
           margin="normal"
           type="password"
@@ -109,11 +124,22 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           disabled={isLoading}
         />
+        <TextField
+          autoComplete="off"
+          fullWidth
+          label="Nhập lại mật khẩu"
+          variant="outlined"
+          margin="normal"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          disabled={isLoading}
+        />
         {open && (
           <TextField
             autoComplete="off"
             fullWidth
-            label="Mã xác nhận"
+            label="Nhập mã xác nhận"
             variant="outlined"
             margin="normal"
             type="text"
@@ -127,12 +153,11 @@ const Login = () => {
           sx={{ mt: 2, height: 56 }}
           variant="contained"
           color="primary"
-          onClick={handleLogin}
+          onClick={handleRegister}
           loading={isLoading}
         >
-          Đăng nhập
+          Xác nhận
         </ButtonLoading>
-
         <Typography
           variant="body2"
           sx={{
@@ -141,26 +166,25 @@ const Login = () => {
             cursor: "pointer",
             userSelect: "none",
           }}
-          onClick={() => navigate(Path.register())}
+          onClick={() => navigate(Path.login())}
+        >
+          Quay về đăng nhập
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            mt: 2,
+            color: "primary.main",
+            cursor: "pointer",
+            userSelect: "none",
+          }}
+          onClick={() => navigate(Path.login())}
         >
           Chưa có tài khoản? Đăng ký
-        </Typography>
-
-        <Typography
-          variant="body2"
-          sx={{
-            mt: 2,
-            color: "primary.main",
-            cursor: "pointer",
-            userSelect: "none",
-          }}
-          onClick={() => navigate(Path.forgotPassword())}
-        >
-          Quên mật khẩu?
         </Typography>
       </PaperCustom>
     </Box>
   );
 };
 
-export default Login;
+export default ForgotPassword;

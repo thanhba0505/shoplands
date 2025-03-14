@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
 import Path from "~/helpers/Path";
-import Validator from "~/helpers/Validator";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import Api from "~/helpers/Api";
@@ -59,15 +58,14 @@ const Register = () => {
 
   const checkInfo = () => {
     // Kiểm tra số điện thoại
-    if (!Validator.isPhone(phone)) {
-      enqueueSnackbar("Số điện thoại không hợp lệ!", { variant: "error" });
+    if (!phone) {
+      enqueueSnackbar("Số điện thoại được rỗng!", { variant: "error" });
       return false;
     }
 
     // Kiểm tra độ mạnh mật khẩu
-    const passwordValidationMessage = Validator.isPasswordStrength(password);
-    if (passwordValidationMessage !== "Mật khẩu hợp lệ") {
-      enqueueSnackbar(passwordValidationMessage, { variant: "error" });
+    if (!password) {
+      enqueueSnackbar("Mật khẩu không được rỗng", { variant: "error" });
       return false;
     }
 
