@@ -22,15 +22,15 @@ class AuthController
     // Đăng ký
     public function register()
     {
-        $name = Request::json('name');
-        $phone = Request::json('phone');
-        $password = Request::json('password');
-        $code = Request::json('code');
-
-        // Kiểm tra thông tin đăng ký
-        $this->checkInfoRegister($name, $phone, $password);
-
         try {
+            $name = Request::json('name');
+            $phone = Request::json('phone');
+            $password = Request::json('password');
+            $code = Request::json('code');
+
+            // Kiểm tra thông tin đăng ký
+            $this->checkInfoRegister($name, $phone, $password);
+
             $account = AccountModel::findByPhone($phone);
             if (!$account || $account['status'] == 'inactive') {
                 if (!$account) {
@@ -46,13 +46,9 @@ class AuthController
 
                 $message = MessageModel::getLastMessage($account_new['account_id']);
 
-                if ($code && $message) {
+                if ($code && $message && SendMessage::checkMessageCodeExpired($message['created_at'])) {
                     if (!Hash::verifyArgon2i($code, $message['code'])) {
                         Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-                    }
-
-                    if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
-                        Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
                     }
 
                     AccountModel::activeAccount($account_new['account_id']);
@@ -69,7 +65,8 @@ class AuthController
             } else {
                 Response::json(['message' => 'Tài khoản đã đăng ký'], 409);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi đăng ký: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -77,161 +74,178 @@ class AuthController
     // Đăng nhập
     public function login()
     {
-        $phone = Request::json('phone');
-        $password = Request::json('password');
-        $code = Request::json('code');
+        try {
+            $phone = Request::json('phone');
+            $password = Request::json('password');
+            $code = Request::json('code');
 
-        // Kiểm tra tài khoản
-        $account = AccountModel::findByPhone($phone);
-        if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
-            Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
-        }
+            // Kiểm tra tài khoản
+            $account = AccountModel::findByPhone($phone);
+            if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
+                Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
+            }
 
-        // Kiểm tra thiết bị lạ đăng nhập
-        $account_id = $account['account_id'];
-        $ip_address = Request::getServer('REMOTE_ADDR');
-        $user_agent = Request::getServer('HTTP_USER_AGENT');
+            // Kiểm tra thiết bị lạ đăng nhập
+            $account_id = $account['account_id'];
+            $ip_address = Request::getServer('REMOTE_ADDR');
+            $user_agent = Request::getServer('HTTP_USER_AGENT');
 
-        if (!$account['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $account['device_token'])) {
-            // Gửi sms và tạo
-            $message = MessageModel::getLastMessage($account_id);
-            if ($code && $message) {
-                if (!Hash::verifyArgon2i($code, $message['code'])) {
-                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-                }
+            if (!$account['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $account['device_token'])) {
+                // Gửi sms và tạo
+                $message = MessageModel::getLastMessage($account_id);
+                if ($code && $message && SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                    if (!Hash::verifyArgon2i($code, $message['code'])) {
+                        Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+                    }
 
-                if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
-                    Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
-                }
+                    // Tiếp tục đăng nhập nếu đúng
+                } else {
+                    $result = SendMessage::sendMessageCode($account['phone'], $account_id);
 
-                // Tiếp tục đăng nhập nếu đúng
-                Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], 'Số điện thoại: ' . $account['phone']);
-                $this->handleLogin($account);
-            } else {
-                $result = SendMessage::sendMessageCode($account['phone'], $account_id);
-
-                if ($result) {
-                    Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 409);
+                    if ($result) {
+                        Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 409);
+                    }
                 }
             }
+
+            Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], 'Số điện thoại: ' . $account['phone']);
+            $this->handleLogin($account);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi đăng nhập: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Private handle login
     private function handleLogin($account)
     {
-        // Thêm thông tin thiết bị
-        $ip_address = Request::getServer('REMOTE_ADDR');
-        $user_agent = Request::getServer('HTTP_USER_AGENT');
+        try {
+            // Thêm thông tin thiết bị
+            $ip_address = Request::getServer('REMOTE_ADDR');
+            $user_agent = Request::getServer('HTTP_USER_AGENT');
 
-        AccountModel::updateDeviceToken($account['account_id'], $ip_address, $user_agent);
+            AccountModel::updateDeviceToken($account['account_id'], $ip_address, $user_agent);
 
-        // Tạo Access Token và Refresh Token
-        $accessToken = JwtHelper::generateToken($account['account_id']);
-        $refreshToken = JwtHelper::generateToken($account['account_id'], true);
+            // Tạo Access Token và Refresh Token
+            $accessToken = JwtHelper::generateToken($account['account_id']);
+            $refreshToken = JwtHelper::generateToken($account['account_id'], true);
 
-        // Cập nhật token vào CSDL
-        AccountModel::updateTokens($account['account_id'], $accessToken, $refreshToken);
+            // Cập nhật token vào CSDL
+            AccountModel::updateTokens($account['account_id'], $accessToken, $refreshToken);
 
-        // Thông tin tài khoản
-        if ($account['role'] == 'user') {
-            $account = UserModel::findById($account['account_id']);
-        } else if ($account['role'] == 'seller') {
-            $account = SellerModel::findById($account['account_id']);
+            // Thông tin tài khoản
+            if ($account['role'] == 'user') {
+                $account = UserModel::findById($account['account_id']);
+            } else if ($account['role'] == 'seller') {
+                $account = SellerModel::findById($account['account_id']);
+            }
+
+            Response::json([
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
+                'account' => $account
+            ]);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi xử lý đăng nhập: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
-
-        Response::json([
-            'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,
-            'account' => $account
-        ]);
     }
 
     // Refresh token
     public function refreshToken()
     {
-        $refreshToken = Request::json('refresh_token');
+        try {
+            $refreshToken = Request::json('refresh_token');
 
-        // Kiểm tra token hợp lệ
-        $decoded = JwtHelper::verifyToken($refreshToken);
-        if (!$decoded) {
-            Response::json(['message' => 'Refresh token không hợp lệ'], 401);
+            // Kiểm tra token hợp lệ
+            $decoded = JwtHelper::verifyToken($refreshToken);
+            if (!$decoded) {
+                Response::json(['message' => 'Refresh token không hợp lệ'], 401);
+            }
+
+            $account = AccountModel::findById($decoded->account_id);
+            if (!$account || $account['refresh_token'] !== $refreshToken) {
+                Response::json(['message' => 'Refresh token không hợp lệ'], 401);
+            }
+
+            // Kiểm tra thiết bị lạ đăng nhập
+            $ip_address = Request::getServer('REMOTE_ADDR');
+            $user_agent = Request::getServer('HTTP_USER_AGENT');
+
+            if (!$account['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $account['device_token'])) {
+                Response::json(['message' => 'Thiết bị lạ, vui lòng đăng nhập lại'], 401);
+            }
+
+            // Tạo token mới
+            $newAccessToken = JwtHelper::generateToken($account['account_id']);
+            $newRefreshToken = JwtHelper::generateToken($account['account_id'], true);
+
+            // Cập nhật token vào CSDL
+            AccountModel::updateTokens($account['account_id'], $newAccessToken, $newRefreshToken);
+
+            // Thông tin tài khoản
+            if ($account['role'] == 'user') {
+                $account = UserModel::findById($account['account_id']);
+            } else if ($account['role'] == 'seller') {
+                $account = SellerModel::findById($account['account_id']);
+            }
+
+            Response::json([
+                'access_token' => $newAccessToken,
+                'refresh_token' => $newRefreshToken,
+                'account' => $account
+            ]);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi xử lý refresh token: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
-
-        $account = AccountModel::findById($decoded->account_id);
-        if (!$account || $account['refresh_token'] !== $refreshToken) {
-            Response::json(['message' => 'Refresh token không hợp lệ'], 401);
-        }
-
-        // Kiểm tra thiết bị lạ đăng nhập
-        $ip_address = Request::getServer('REMOTE_ADDR');
-        $user_agent = Request::getServer('HTTP_USER_AGENT');
-
-        if (!$account['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $account['device_token'])) {
-            Response::json(['message' => 'Thiết bị lạ, vui lòng đăng nhập lại'], 401);
-        }
-
-        // Tạo token mới
-        $newAccessToken = JwtHelper::generateToken($account['account_id']);
-        $newRefreshToken = JwtHelper::generateToken($account['account_id'], true);
-
-        // Cập nhật token vào CSDL
-        AccountModel::updateTokens($account['account_id'], $newAccessToken, $newRefreshToken);
-
-        // Thông tin tài khoản
-        if ($account['role'] == 'user') {
-            $account = UserModel::findById($account['account_id']);
-        } else if ($account['role'] == 'seller') {
-            $account = SellerModel::findById($account['account_id']);
-        }
-
-        Response::json([
-            'access_token' => $newAccessToken,
-            'refresh_token' => $newRefreshToken,
-            'account' => $account
-        ]);
     }
 
     // Đăng xuất
     public function logout()
     {
-        // Lấy access token từ request
-        $accessToken = Request::getHeader('Authorization');
+        try {
+            // Lấy access token từ request
+            $accessToken = Request::getHeader('Authorization');
 
-        if (!$accessToken) {
-            Response::json(['message' => 'Không tìm thấy access token'], 401);
+            if (!$accessToken) {
+                Response::json(['message' => 'Không tìm thấy access token'], 401);
+            }
+
+            // Loại bỏ 'Bearer ' nếu có
+            $accessToken = str_replace('Bearer ', '', $accessToken);
+
+            // Xác thực token
+            $decoded = JwtHelper::verifyToken($accessToken);
+            if (!$decoded) {
+                Response::json(['message' => 'Access token không hợp lệ'], 401);
+            }
+
+            $account = AccountModel::findById($decoded->account_id);
+            if (!$account) {
+                Response::json(['message' => 'Access token không hợp lệ'], 401);
+            }
+
+            if (!$account['access_token']) {
+                Response::json(['message' => 'Tài khoản đã đăng xuất'], 401);
+            }
+
+            if ($account['access_token'] !== $accessToken) {
+                Response::json(['message' => 'Access token không hợp lệ'], 401);
+            }
+
+            // Lấy ID từ access token
+            $id = $decoded->account_id;
+
+            // Xóa access_token và refresh_token khỏi database
+            AccountModel::updateTokens($id, null, null);
+            AccountModel::deleteDeviceToken($id);
+
+            Response::json(['message' => 'Đăng xuất thành công']);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi xử lý đăng xuất: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
-
-        // Loại bỏ 'Bearer ' nếu có
-        $accessToken = str_replace('Bearer ', '', $accessToken);
-
-        // Xác thực token
-        $decoded = JwtHelper::verifyToken($accessToken);
-        if (!$decoded) {
-            Response::json(['message' => 'Access token không hợp lệ'], 401);
-        }
-
-        $account = AccountModel::findById($decoded->account_id);
-        if (!$account) {
-            Response::json(['message' => 'Access token không hợp lệ'], 401);
-        }
-
-        if (!$account['access_token']) {
-            Response::json(['message' => 'Tài khoản đã đăng xuất'], 401);
-        }
-
-        if ($account['access_token'] !== $accessToken) {
-            Response::json(['message' => 'Access token không hợp lệ'], 401);
-        }
-
-        // Lấy ID từ access token
-        $id = $decoded->account_id;
-
-        // Xóa access_token và refresh_token khỏi database
-        AccountModel::updateTokens($id, null, null);
-        AccountModel::deleteDeviceToken($id);
-
-        Response::json(['message' => 'Đăng xuất thành công']);
     }
 
     // Kiểm tra đăng ký
@@ -253,6 +267,43 @@ class AuthController
         $passwordCheck = Validator::isPasswordStrength($password);
         if ($passwordCheck !== true) {
             Response::json(['message' => $passwordCheck], 400);
+        }
+    }
+
+    // Lấy lại mật khẩu
+    public function forgotPassword()
+    {
+        try {
+            $phone = Request::json('phone');
+            $passwordNew = Request::json('password');
+            $code = Request::json('code');
+
+            $account = AccountModel::findByPhone($phone);
+            if (!$account) {
+                Response::json(['message' => 'Tài khoản không tồn tại'], 400);
+            }
+
+            $message = MessageModel::getLastMessage($account['account_id']);
+            if ($code && $message && SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                if (!Hash::verifyArgon2i($code, $message['code'])) {
+                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+                }
+
+                AccountModel::updatePassword($account['account_id'], $passwordNew);
+
+                $account = AccountModel::findById($account['account_id']);
+
+                $this->handleLogin($account);
+            } else {
+                $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
+
+                if ($result) {
+                    Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 409);
+                }
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi lấy lại mật khẩu: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 }

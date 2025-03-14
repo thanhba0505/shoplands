@@ -54,6 +54,12 @@ class Log
         self::json($logData, $title, 'debug.log');
     }
 
+    // Log throwable
+    public static function throwable($logData, $title = '')
+    {
+        self::json($logData, $title, 'throwable.log');
+    }
+
     // Log sms
     public static function sms($logData, $title = '')
     {

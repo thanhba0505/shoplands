@@ -207,4 +207,25 @@ class AccountModel
 
         return $result;
     }
+
+    // Cập nhật password
+    public static function updatePassword($account_id, $password)
+    {
+        $query = new ConnectDatabase();
+
+        $password = Hash::encodeArgon2i($password);
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                password = :password
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, ['password' => $password, 'account_id' => $account_id]);
+
+        return $result;
+    }
 }
