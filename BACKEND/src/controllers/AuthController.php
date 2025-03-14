@@ -40,6 +40,10 @@ class AuthController
                 }
                 $account_new = AccountModel::findByPhone($phone);
 
+                if (!Hash::verifyArgon2i($password, $account_new['password'])) {
+                    Response::json(['message' => 'Mật khẩu không đúng'], 400);
+                }
+
                 $message = MessageModel::getLastMessage($account_new['account_id']);
 
                 if ($code && $message) {

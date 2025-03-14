@@ -73,7 +73,7 @@ const Register = () => {
 
     // Kiểm tra mật khẩu và nhập lại mật khẩu
     if (password !== confirmPassword) {
-      enqueueSnackbar("Mật khẩu không khớp!", { variant: "error" });
+      enqueueSnackbar("Nhập lại mật khẩu không đúng!", { variant: "error" });
       return false;
     }
 

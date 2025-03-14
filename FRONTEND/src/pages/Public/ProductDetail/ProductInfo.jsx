@@ -97,7 +97,7 @@ const InfoProduct = ({ product }) => {
 
   const getSelectedVariant = () => {
     if (
-      variants &&
+      variants && product.attributes &&
       Object.keys(selectedValues).length ===
         Object.keys(product.attributes).length
     ) {
@@ -334,7 +334,7 @@ const InfoProduct = ({ product }) => {
 
           {/* Nút xử lý */}
           {Auth.checkUser() ? (
-            <BtnHandle selectedVariant={selectedVariant} quantity={quantity} />
+            <BtnHandle selectedVariant={selectedVariant} quantity={quantity} attributes={product?.attributes} />
           ) : (
             <ButtonLoading
               variant="contained"
@@ -351,12 +351,12 @@ const InfoProduct = ({ product }) => {
 };
 
 // Xử lý thêm vào giỏ hàng
-const BtnHandle = ({ selectedVariant, quantity }) => {
+const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
+  
   const handleAddToCart = async () => {
-    if (!selectedVariant) {
+    if (!selectedVariant && attributes && Object.keys(attributes).length > 0) {
       enqueueSnackbar("Hãy chọn thuộc tính sản phẩm", { variant: "warning" });
       return;
     }

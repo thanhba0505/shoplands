@@ -147,6 +147,8 @@ class ProductController
                 $maxPrice = $currentMax;
             }
         }
+        // Chỉnh sửa attributes
+        $product['attributes'] = $product['attributes'] ?? [];
 
         // Gán các giá trị cho sản phẩm
         $product['min_price'] = $minPrice;
@@ -159,6 +161,7 @@ class ProductController
         $product['images'] = ProductImageModel::getByProductId($product['product_id']);
         $product['category'] = CategoryModel::getByProductId($product['product_id']);
         $product['details'] = ProductDetailModel::getByProductId($product['product_id']);
+
 
         // Trả về kết quả dưới dạng JSON
         Response::json($product);
