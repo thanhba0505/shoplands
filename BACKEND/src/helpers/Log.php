@@ -2,20 +2,17 @@
 
 namespace App\Helpers;
 
-class Log
-{
+class Log {
     protected static $logPath = 'src/logs/';
 
     // Kiểm tra và tạo thư mục nếu không tồn tại
-    protected static function ensureLogPathExists()
-    {
+    protected static function ensureLogPathExists() {
         if (!file_exists(self::$logPath)) {
             mkdir(self::$logPath, 0777, true); // Tạo thư mục với quyền ghi
         }
     }
 
-    protected static function writeLog($logData, $title, $fileName = 'global.log')
-    {
+    protected static function writeLog($logData, $title, $fileName = 'global.log') {
         self::ensureLogPathExists();  // Kiểm tra và tạo thư mục nếu cần
 
         // Đọc toàn bộ nội dung file hiện tại
@@ -24,7 +21,7 @@ class Log
             $currentContent = file_get_contents(self::$logPath . $fileName);
         }
 
-        // Tạo log mới ở đầu file
+        // Tạo log mới ở đầu file, đảm bảo giữ lại định dạng ngữ nghĩa của dữ liệu
         $newLog = '---------------------' . Carbon::now() . '---------------------' . PHP_EOL . $title . ' - ' . $logData . PHP_EOL . PHP_EOL;
 
         // Ghi log mới vào đầu file
@@ -37,38 +34,34 @@ class Log
         }
     }
 
-    public static function json($logData, $title = '', $fileName = 'global.log')
-    {
-        self::writeLog(json_encode($logData, JSON_PRETTY_PRINT), $title, $fileName);
+    public static function json($logData, $title = '', $fileName = 'global.log') {
+        // Sử dụng JSON_UNESCAPED_UNICODE để đảm bảo không mã hóa ký tự Unicode
+        self::writeLog(json_encode($logData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), $title, $fileName);
     }
 
+
     // Log global
-    public static function global($logData, $title = '')
-    {
+    public static function global($logData, $title = 'Lỗi:') {
         self::json($logData, $title, 'global.log');
     }
 
     // Log debug
-    public static function debug($logData, $title = '')
-    {
+    public static function debug($logData, $title = 'Lỗi:') {
         self::json($logData, $title, 'debug.log');
     }
 
     // Log throwable
-    public static function throwable($logData, $title = '')
-    {
+    public static function throwable($logData, $title = 'Lỗi:') {
         self::json($logData, $title, 'throwable.log');
     }
 
     // Log sms
-    public static function sms($logData, $title = '')
-    {
+    public static function sms($logData, $title = 'Lỗi:') {
         self::json($logData, $title, 'sms.log');
     }
 
     // Log login
-    public static function login($logData, $title = '')
-    {
+    public static function login($logData, $title = 'Lỗi:') {
         self::json($logData, $title, 'login.log');
     }
 }

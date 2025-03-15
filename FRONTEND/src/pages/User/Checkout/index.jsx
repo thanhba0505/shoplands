@@ -6,8 +6,11 @@ import {
   Container,
   FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -27,19 +30,20 @@ import { setSellerId } from "~/redux/orderSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
-const Address = ({ setShippingFee }) => {
+const Address = ({ setAddress }) => {
   const navigate = useNavigate();
   const [addresses, setAddresses] = useState([]);
-  const [address, setAddress] = useState(null);
 
   const fetchApi = useCallback(async () => {
     try {
       const response = await axiosWithAuth.get(Api.address(), { navigate });
       setAddresses(response.data);
+      const defaultAddress = response.data.find((item) => item.default == 1);
+      setAddress(defaultAddress);
     } catch (error) {
       Log.error(error.response?.data?.message);
     }
-  }, [navigate]);
+  }, [navigate, setAddress]);
 
   useEffect(() => {
     fetchApi();
@@ -248,10 +252,9 @@ const Products = ({ setSubTotal }) => {
   );
 };
 
-const Coupons = ({ subTotal }) => {
+const Coupons = ({ subTotal, setCoupon, coupon }) => {
   const seller_id = useSelector((state) => state.order.seller_id);
   const [coupons, setCoupons] = useState([]);
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
 
   const fetchApi = useCallback(async () => {
     try {
@@ -268,10 +271,13 @@ const Coupons = ({ subTotal }) => {
     fetchApi();
   }, [fetchApi]);
 
-  const handleSelectCoupon = (couponId, minimumOrderValue) => {
+  let selectedCoupon = coupon;
+
+  const handleSelectCoupon = (selectedCoupon, minimumOrderValue) => {
     // Kiểm tra xem subTotal có đáp ứng được đơn hàng tối thiểu không
     if (subTotal >= minimumOrderValue) {
-      setSelectedCoupon(couponId === selectedCoupon ? null : couponId); // Toggle selection
+      // Toggle selection: Nếu đã chọn thì bỏ chọn, nếu chưa chọn thì chọn
+      setCoupon(selectedCoupon === coupon ? null : selectedCoupon);
     }
   };
 
@@ -282,19 +288,19 @@ const Coupons = ({ subTotal }) => {
       </Typography>
 
       <Box sx={{ maxHeight: "430px", overflowY: "auto" }}>
-        <Box display="flex" flexWrap="wrap" gap={2}>
+        <Box display="flex" flexWrap="wrap" gap={2} py={1}>
           {coupons.map((coupon) => (
             <Box
               key={coupon.coupon_id}
               width="calc(33.333% - 16px)"
               marginBottom={2}
-              onClick={() =>
-                handleSelectCoupon(coupon.coupon_id, coupon.minimum_order_value)
+              onClick={
+                () => handleSelectCoupon(coupon, coupon.minimum_order_value) // Pass full coupon object
               }
               sx={{
                 cursor: "pointer",
                 border: `1px solid ${
-                  selectedCoupon === coupon.coupon_id ? "blue" : "#ccc"
+                  coupon === selectedCoupon ? "blue" : "#ccc"
                 }`,
                 m: 0,
                 borderRadius: "8px",
@@ -303,7 +309,7 @@ const Coupons = ({ subTotal }) => {
                 backgroundColor:
                   subTotal < coupon.minimum_order_value
                     ? "#d3d3d3" // Nền xám nếu không đủ điều kiện
-                    : selectedCoupon === coupon.coupon_id
+                    : coupon === selectedCoupon
                     ? "#f0f8ff" // Nền màu xanh khi chọn
                     : "transparent",
                 opacity: subTotal < coupon.minimum_order_value ? 0.5 : 1, // Làm mờ nếu không đủ điều kiện
@@ -368,31 +374,144 @@ const Coupons = ({ subTotal }) => {
   );
 };
 
-const ShippingMethod = () => {
-  return <Container>ShippingMethod</Container>;
-};
+const ShippingFee = ({ setShippingFee, shippingFee }) => {
+  const [shippingFees, setShippingFees] = useState([]);
 
-const Price = ({ subTotal, discount }) => {
+  const fetchApi = useCallback(async () => {
+    try {
+      const response = await axiosDefault.get(Api.shippingFees());
+      setShippingFees(response.data);
+
+      // Cài phương thức giao hàng mặc định là phương thức đầu tiên trong mảng (nếu có)
+      if (response.data && response.data.length > 0) {
+        setShippingFee(response.data[0]); // Đặt phương thức giao hàng đầu tiên là mặc định
+      }
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
+  }, [setShippingFee]);
+
+  useEffect(() => {
+    fetchApi();
+  }, [fetchApi]);
+
+  const handleChange = (event) => {
+    const selectedShippingFee = shippingFees.find(
+      (item) => item.shipping_fee_id === event.target.value
+    );
+    setShippingFee(selectedShippingFee); // Lưu phương thức giao hàng được chọn
+  };
+
   return (
     <Container>
-      {subTotal} - {discount}
+      <Typography variant="h5" sx={{ marginBottom: 2 }}>
+        Phương thức giao hàng
+      </Typography>
+
+      {shippingFee && (
+        <FormControl fullWidth>
+          <InputLabel id="shipping-fee-select-label">
+            Chọn phương thức giao hàng
+          </InputLabel>
+          <Select
+            labelId="shipping-fee-select-label"
+            value={shippingFee.shipping_fee_id} // Đảm bảo rằng giá trị luôn hợp lệ
+            onChange={handleChange}
+            label="Chọn phương thức giao hàng"
+          >
+            {shippingFees.map((item) => (
+              <MenuItem key={item.shipping_fee_id} value={item.shipping_fee_id}>
+                {item.method} - {Format.formatCurrency(item.price)}{" "}
+                {/* Hiển thị phương thức và giá */}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+    </Container>
+  );
+};
+
+const Price = ({ subTotal, shippingFee, coupon }) => {
+  const [discount, setDiscount] = useState(0);
+  const shippingFeePrice = shippingFee ? shippingFee.price : 0;
+
+  useEffect(() => {
+    if (coupon) {
+      // Kiểm tra xem mã giảm giá có đủ điều kiện không
+      if (subTotal >= coupon.minimum_order_value) {
+        let calculatedDiscount = 0;
+
+        // Tính toán giảm giá theo loại
+        if (coupon.discount_type === "percentage") {
+          // Giảm giá theo tỷ lệ phần trăm
+          calculatedDiscount = (subTotal * coupon.discount_value) / 100;
+
+          // Kiểm tra nếu giảm giá vượt quá mức tối đa
+          if (coupon.maximum_discount) {
+            calculatedDiscount = Math.min(
+              calculatedDiscount,
+              coupon.maximum_discount
+            );
+          }
+        } else if (coupon.discount_type === "fixed") {
+          // Giảm giá theo giá trị cố định
+          calculatedDiscount = coupon.discount_value;
+
+          // Kiểm tra nếu giảm giá vượt quá tổng tiền
+          if (calculatedDiscount > subTotal) {
+            calculatedDiscount = subTotal;
+          }
+        }
+
+        // Cập nhật giá trị giảm
+        setDiscount(calculatedDiscount);
+      } else {
+        setDiscount(0); // Nếu không đủ điều kiện, không áp dụng giảm giá
+      }
+    } else {
+      setDiscount(0);
+    }
+  }, [subTotal, coupon]); // Chạy lại khi `subTotal` hoặc `coupon` thay đổi
+
+  return (
+    <Container>
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Tổng tiền sản phẩm: {Format.formatCurrency(subTotal)}
+      </Typography>
+
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Phí vận chuyển: {Format.formatCurrency(shippingFeePrice)}
+      </Typography>
+
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Giảm giá: {Format.formatCurrency(discount)}
+      </Typography>
+
+      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        Thành tiền:{" "}
+        {Format.formatCurrency(
+          subTotal + parseFloat(shippingFeePrice) - discount
+        )}
+      </Typography>
     </Container>
   );
 };
 
 const Checkout = () => {
-  const [shippingFee, setShippingFee] = useState(null);
+  const [address, setAddress] = useState(null);
   const [subTotal, setSubTotal] = useState(0);
-  const [discount, setDiscount] = useState(0);
-
+  const [coupon, setCoupon] = useState(null);
+  const [shippingFee, setShippingFee] = useState(null);
+  
   return (
     <>
-      <Address setShippingFee={setShippingFee} />
+      <Address setAddress={setAddress} />
       <Products setSubTotal={setSubTotal} />
-      <Coupons subTotal={subTotal} setDiscount={setDiscount} />
-      <ShippingMethod />
+      <Coupons subTotal={subTotal} setCoupon={setCoupon} coupon={coupon} />
+      <ShippingFee setShippingFee={setShippingFee} shippingFee={shippingFee} />
 
-      <Price subTotal={subTotal} discount={discount} />
+      <Price subTotal={subTotal} shippingFee={shippingFee} coupon={coupon} />
     </>
   );
 };

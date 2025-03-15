@@ -14,7 +14,7 @@ class AddressController
         try {
             $user = Auth::user();
 
-            $result = AddressModel::getAll($user['user_id']);
+            $result = AddressModel::getAllByAccountId($user['account_id']);
 
             Response::json($result);
         } catch (\Throwable $th) {
@@ -27,6 +27,10 @@ class AddressController
     {
         try {
             $result = AddressModel::getAllBySellerId($seller_id);
+
+            if (!$result) {
+                Response::json(['message' => 'Không tìm thấy người bán'], 400);
+            }
 
             Response::json($result);
         } catch (\Throwable $th) {

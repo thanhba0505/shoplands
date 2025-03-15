@@ -7,7 +7,7 @@ use App\Models\ConnectDatabase;
 class AddressModel
 {
     // Lấy danh sách địa chỉ theo account_id
-    public static function getAll($account_id)
+    public static function getAllByAccountId($account_id)
     {
         $query = new ConnectDatabase();
 

@@ -53,6 +53,10 @@ class Api {
     static coupons(endpoint = "") {
         return this.buildPath("coupons", endpoint);
     }
+
+    static shippingFees(endpoint = "") {
+        return this.buildPath("shipping-fees", endpoint);
+    }
 }
 
 export default Api;

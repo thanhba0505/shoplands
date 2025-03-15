@@ -10,8 +10,7 @@ class ShippingFee extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        'shipping_method',
-        'same_province',
-        'shipping_fee',
+        'method',
+        'price',
     ];
 }

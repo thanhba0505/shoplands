@@ -32,3 +32,6 @@ $router->post('api/user/cart/ids', 'CartController@getByCartIds', ['App\Middlewa
 // API ADRESS
 $router->get('api/user/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
 $router->get('api/seller/address/{seller_id}', 'AddressController@fineBySellerId');
+
+// API SHIPPING FEE
+$router->get('api/shipping-fees', 'ShippingFeeController@getAll');

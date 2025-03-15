@@ -31,6 +31,8 @@ class CouponModel
                 cp.seller_id = :seller_id 
                 AND cp.start_date <= NOW()
                 AND cp.end_date >= NOW()
+            ORDER BY
+                minimum_order_value ASC
         ";
 
         $result = $query->query($sql, ['seller_id' => $seller_id])->fetchAll();
