@@ -13,7 +13,7 @@ class UserMiddleware
         $user = Auth::user();
 
         if (!$user) {
-            Response::json(['message' => 'Không có quyền truy cập'], 401);
+            Response::json(['message' => 'Đăng nhập người dùng để thực hiện hành động này'], 401);
         }
     }
 }

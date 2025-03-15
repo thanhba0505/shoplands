@@ -22,6 +22,7 @@ import Cart from "~/pages/User/Cart";
 import Profile from "~/pages/User/Profile";
 import AddressBook from "~/pages/User/AddressBook";
 import Orders from "~/pages/User/Orders";
+import Checkout from "~/pages/User/Checkout";
 
 // Seller
 import Dashboard from "~/pages/Seller/Dashboard";
@@ -36,38 +37,39 @@ import Sellers from "~/pages/Admin/Sellers";
 //-------------------------------------------------------------//
 // PUBLIC ROUTES
 const publicRoutes = [
-    // Auth
-    { path: "/login", component: Login },
-    { path: "/register", component: Register },
-    { path: "/forgot-password", component: ForgotPassword },
-    // Public
-    { path: "/", component: Home },
-    { path: "/products", component: Products },
-    { path: "/product-detail/:id", component: ProductDetail },
-    { path: "/introduce", component: Introduce },
-    { path: "/contact", component: Contact },
+  // Auth
+  { path: "/login", component: Login },
+  { path: "/register", component: Register },
+  { path: "/forgot-password", component: ForgotPassword },
+  // Public
+  { path: "/", component: Home },
+  { path: "/products", component: Products },
+  { path: "/product-detail/:id", component: ProductDetail },
+  { path: "/introduce", component: Introduce },
+  { path: "/contact", component: Contact },
 ];
 
 // USER ROUTES
 const userRoutes = [
-    { path: "/user/cart", component: Cart },
-    { path: "/user/profile", component: Profile },
-    { path: "/user/address-book", component: AddressBook },
-    { path: "/user/orders", component: Orders },
+  { path: "/user/cart", component: Cart },
+  { path: "/user/profile", component: Profile },
+  { path: "/user/address-book", component: AddressBook },
+  { path: "/user/orders", component: Orders },
+  { path: "/user/orders/checkout", component: Checkout },
 ];
 
 // SELLER ROUTES
 const sellerRoutes = [
-    { path: "/seller/dashboard", component: Dashboard },
-    { path: "/seller/orders", component: OrdersSeller },
-    { path: "/seller/products", component: ProductSellers },
+  { path: "/seller/dashboard", component: Dashboard },
+  { path: "/seller/orders", component: OrdersSeller },
+  { path: "/seller/products", component: ProductSellers },
 ];
 
 // ADMIN ROUTES
 const adminRoutes = [
-    { path: "/admin/dashboard", component: DashboardAdmin },
-    { path: "/admin/users", component: Users },
-    { path: "/admin/sellers", component: Sellers },
+  { path: "/admin/dashboard", component: DashboardAdmin },
+  { path: "/admin/users", component: Users },
+  { path: "/admin/sellers", component: Sellers },
 ];
 
 export { publicRoutes, userRoutes, sellerRoutes, adminRoutes };

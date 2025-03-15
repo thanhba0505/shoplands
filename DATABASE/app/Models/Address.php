@@ -13,8 +13,7 @@ class Address extends Model
         'address_line',
         'default',
         'province_id',
-        'seller_id',
-        'user_id',
+        'account_id',
     ];
 
     // Mối quan hệ với Province

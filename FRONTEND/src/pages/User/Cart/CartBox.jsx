@@ -18,10 +18,15 @@ import { useTheme } from "@emotion/react";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCarts } from "~/redux/orderSlice";
+import { useSnackbar } from "notistack";
 
 const CartBox = ({ cart }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [cartDetails, setCartDetails] = useState(cart.cart_details);
@@ -107,7 +112,14 @@ const CartBox = ({ cart }) => {
       quantity: product.quantity,
     }));
 
-    console.log("Sản phẩm đã chọn và số lượng:", selectedItemsWithQuantity);
+    if (selectedItemsWithQuantity.length > 0) {
+      dispatch(setCarts(selectedItemsWithQuantity));
+      navigate(Path.userCheckout());
+    } else {
+      enqueueSnackbar("Chưa chọn sản phẩm nào", {
+        variant: "error",
+      });
+    }
   };
 
   return (

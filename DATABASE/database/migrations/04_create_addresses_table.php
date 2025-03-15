@@ -13,12 +13,10 @@ return new class extends Migration
             $table->string('address_line');
             $table->boolean('default')->default(false);
             $table->unsignedBigInteger('province_id'); // Foreign key
-            $table->unsignedBigInteger('seller_id')->nullable(); // Foreign key
-            $table->unsignedBigInteger('user_id')->nullable(); // Foreign key
+            $table->unsignedBigInteger('account_id')->nullable(); // Foreign key
 
             $table->foreign('province_id')->references('id')->on('provinces');
-            $table->foreign('seller_id')->references('id')->on('sellers');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('account_id')->references('id')->on('accounts');
         });
     }
 
@@ -26,8 +24,7 @@ return new class extends Migration
     {
         Schema::table('addresses', function (Blueprint $table) {
             $table->dropForeign(['province_id']);
-            $table->dropForeign(['seller_id']);
-            $table->dropForeign(['user_id']);
+            $table->dropForeign(['account_id']);
         });
 
         Schema::dropIfExists('addresses');

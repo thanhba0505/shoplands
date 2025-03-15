@@ -31,7 +31,7 @@ const ForgotPassword = () => {
     dispatch(startLoading());
     setIsLoading(true);
     try {
-      const response = await axiosDefault.post(Api.register(), {
+      const response = await axiosDefault.post(Api.forgotPassword(), {
         phone,
         password,
         code,
@@ -40,7 +40,7 @@ const ForgotPassword = () => {
       const { access_token, refresh_token, account } = response.data;
       dispatch(loginSuccess({ access_token, refresh_token, account }));
       setOpen(false);
-      enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
+      enqueueSnackbar("Đặt lại mật khẩu thành công!", { variant: "success" });
       navigate(Path.home());
     } catch (error) {
       if (error.response?.status === 409) {

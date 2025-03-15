@@ -22,11 +22,11 @@ $router->get('api/products', 'ProductController@getAll');
 $router->get('api/products/{id}', 'ProductController@getByProductId');
 
 // API CART
-$router->get('api/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']);
-$router->post('api/cart', 'CartController@addCart', ['App\Middlewares\UserMiddleware']);
-$router->put('api/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']);
-$router->delete('api/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']);
+$router->get('api/user/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->post('api/user/cart', 'CartController@addCart', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->put('api/user/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->delete('api/user/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']); // --------------- User
 
 // API ADRESS
-$router->get('api/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']);
-$router->get('api/address/seller/{id}', 'AddressController@fineBySellerId');
+$router->get('api/user/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->get('api/seller/address/{seller_id}', 'AddressController@fineBySellerId');

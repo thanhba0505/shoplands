@@ -242,7 +242,6 @@ class AuthController
 
             // Xóa access_token và refresh_token khỏi database
             AccountModel::updateTokens($id, null, null);
-            AccountModel::deleteDeviceToken($id);
 
             Response::json(['message' => 'Đăng xuất thành công']);
         } catch (\Throwable $th) {

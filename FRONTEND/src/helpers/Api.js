@@ -25,6 +25,10 @@ class Api {
         return this.buildPath("auth/register", endpoint);
     }
 
+    static forgotPassword(endpoint = "") {
+        return this.buildPath("auth/forgot-password", endpoint);
+    }
+
     static refreshToken(endpoint = "") {
         return this.buildPath("auth/refresh-token", endpoint);
     }
@@ -38,7 +42,11 @@ class Api {
     }
 
     static cart(endpoint = "") {
-        return this.buildPath("cart", endpoint);
+        return this.buildPath("user/cart", endpoint);
+    }
+
+    static address(endpoint = "") {
+        return this.buildPath("user/address", endpoint);
     }
 }
 
