@@ -4,11 +4,9 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class CartModel
-{
+class CartModel {
     // Lấy seller có trong cart theo user id
-    public static function getSellersByUserId($userId)
-    {
+    public static function getSellersByUserId($userId) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -29,9 +27,30 @@ class CartModel
         return $result ?? [];
     }
 
+    // Lấy seller theo cart id
+    public static function findSellerByCartId($cartId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                s.id AS seller_id,
+                s.store_name
+            FROM
+                carts c
+                JOIN product_variants pv ON pv.id = c.product_variant_id
+                JOIN products p ON p.id = pv.product_id
+                JOIN sellers s ON s.id = p.seller_id
+            WHERE
+                c.id = :cartId
+        ";
+
+        $result = $query->query($sql, ['cartId' => $cartId])->fetch();
+
+        return $result;
+    }
+
     // Lấy carts theo user id và seller id
-    public static function getCartsByUserIdAndSellerId($userId, $sellerId)
-    {
+    public static function getCartsByUserIdAndSellerId($userId, $sellerId) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -53,8 +72,7 @@ class CartModel
     }
 
     // Thêm vào giỏ hàng
-    public static function addCart($userId, $productVariantId, $quantity)
-    {
+    public static function addCart($userId, $productVariantId, $quantity) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -70,8 +88,7 @@ class CartModel
     }
 
     // Cập nhật giỏ hàng
-    public static function updateCart($userId, $productVariantId, $quantity)
-    {
+    public static function updateCart($userId, $productVariantId, $quantity) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -90,8 +107,7 @@ class CartModel
     }
 
     // Xóa khỏi giỏ hàng
-    public static function deleteCart($userId, $cartId)
-    {
+    public static function deleteCart($userId, $cartId) {
         $query = new ConnectDatabase();
 
         // Sửa lại câu lệnh SQL
@@ -110,8 +126,7 @@ class CartModel
 
 
     // Kiểm tra carts theo user id và product variant id
-    public static function checkCart($userId, $productVariantId)
-    {
+    public static function checkCart($userId, $productVariantId) {
         $query = new ConnectDatabase();
 
         $sql = "

@@ -4,6 +4,7 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import CartBox from "./CartBox";
 import { useNavigate } from "react-router-dom";
+import Log from "~/helpers/Log";
 
 const Cart = () => {
   const [carts, setCarts] = useState([]);
@@ -14,7 +15,7 @@ const Cart = () => {
       const response = await axiosWithAuth.get(Api.cart(), { navigate });
       setCarts(response.data);
     } catch (error) {
-      console.error(error.response?.data?.message);
+      Log.error(error.response?.data?.message);
     }
   }, [navigate]);
 
@@ -25,7 +26,7 @@ const Cart = () => {
   return (
     <Container>
       <Box sx={{ width: "100%", padding: 2 }}>
-        {carts?.group?.map((cart, index) => (
+        {carts?.groups?.map((cart, index) => (
           <Box key={index} sx={{ marginBottom: 4 }}>
             <CartBox cart={cart} />
           </Box>

@@ -6,6 +6,7 @@ class Api {
 
     // 🔹 Hàm chuẩn hóa endpoint với base
     static buildPath(base, endpoint = "") {
+        endpoint = endpoint.toString();
         const cleanBase = this.cleanEndpoint(base);
         const cleanEndpoint = this.cleanEndpoint(endpoint);
         return cleanEndpoint ? `${cleanBase}/${cleanEndpoint}` : cleanBase;
@@ -47,6 +48,10 @@ class Api {
 
     static address(endpoint = "") {
         return this.buildPath("user/address", endpoint);
+    }
+
+    static coupons(endpoint = "") {
+        return this.buildPath("coupons", endpoint);
     }
 }
 

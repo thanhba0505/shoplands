@@ -27,6 +27,8 @@ $router->post('api/user/cart', 'CartController@addCart', ['App\Middlewares\UserM
 $router->put('api/user/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']); // --------------- User
 $router->delete('api/user/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']); // --------------- User
 
+$router->post('api/user/cart/ids', 'CartController@getByCartIds', ['App\Middlewares\UserMiddleware']); // --------------- User
+
 // API ADRESS
 $router->get('api/user/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
 $router->get('api/seller/address/{seller_id}', 'AddressController@fineBySellerId');

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers\Auth;
+use App\Helpers\Log;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Models\CartModel;
@@ -10,6 +11,7 @@ use App\Models\ProductImageModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
 use App\Models\ProductVariantValueModel;
+use App\Models\SellerModel;
 
 class CartController {
     // Lấy danh sách sản phẩm trong giỏ hàng
@@ -18,9 +20,9 @@ class CartController {
 
         $carts["user_id"] = $user["user_id"];
 
-        $carts["group"] = CartModel::getSellersByUserId($user["user_id"]);
+        $carts["groups"] = CartModel::getSellersByUserId($user["user_id"]);
 
-        foreach ($carts["group"] as $key => $cart) {
+        foreach ($carts["groups"] as $key => $cart) {
             $cartDetails = CartModel::getCartsByUserIdAndSellerId($user["user_id"], $cart["seller_id"]);
 
             foreach ($cartDetails as $key2 => $cartDetail) {
@@ -33,11 +35,8 @@ class CartController {
                 $cartDetails[$key2]['variant_value'] = ProductVariantValueModel::getByProductVariantId($productVariant['product_variant_id']);
             }
 
-            $carts["group"][$key]['cart_details'] = $cartDetails;
+            $carts["groups"][$key]['cart_details'] = $cartDetails;
         }
-
-
-
         Response::json($carts);
     }
 
@@ -157,5 +156,59 @@ class CartController {
         }
     }
 
-    // Lấy sản phẩm theo cart id
+    // Lấy sản phẩm theo danh sách cart id
+    public function getByCartIds() {
+        try {
+            $user = Auth::user();
+            $cartIds = Request::json("cart_ids");
+
+            if (!$cartIds) {
+                Response::json([
+                    "message" => "Không tìm thấy thông tin"
+                ], 400);
+            }
+
+            $result = [];
+            $result['user_id'] = $user['user_id'];
+
+            $seller = CartModel::findSellerByCartId($cartIds[0]);
+
+            if ($seller) {
+                $b = [];
+                $b['seller_id'] = $seller['seller_id'];
+                $b['store_name'] = $seller['store_name'];
+
+                $cartDetails = CartModel::getCartsByUserIdAndSellerId($user["user_id"], $seller["seller_id"]);
+
+                $a = [];
+                foreach ($cartDetails as $key2 => $cartDetail) {
+                    if (in_array($cartDetail["cart_id"], $cartIds)) {
+                        $a = $cartDetail;
+                        $product = ProductModel::getByCartId($cartDetail["cart_id"]);
+                        $a["product"] = $product;
+
+                        $productVariant = ProductVariantModel::getByCartId($cartDetail["cart_id"]);
+                        $a["product_variant"] = $productVariant;
+                        $a['image'] = ProductImageModel::getDefault($product["product_id"]);
+                        $a['variant_value'] = ProductVariantValueModel::getByProductVariantId($productVariant['product_variant_id']);
+                        $b['cart_details'][] = $a;
+                    }
+                }
+
+
+                $result['group'] = $b;
+
+                Response::json($result);
+            } else {
+                Response::json([
+                    "message" => "Không tìm thấy thông tin"
+                ], 400);
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi lấy sản phẩm theo danh sách cart id: " . $th->getMessage());
+            Response::json([
+                "message" => "Đã có lỗi xảy ra"
+            ]);
+        }
+    }
 }

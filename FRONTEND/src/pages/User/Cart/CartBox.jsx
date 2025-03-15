@@ -19,7 +19,7 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setCarts } from "~/redux/orderSlice";
+import { setCartIds } from "~/redux/orderSlice";
 import { useSnackbar } from "notistack";
 
 const CartBox = ({ cart }) => {
@@ -107,13 +107,12 @@ const CartBox = ({ cart }) => {
       selectedItems.includes(cartDetail.cart_id)
     );
 
-    const selectedItemsWithQuantity = selectedProducts.map((product) => ({
-      cart_id: product.cart_id,
-      quantity: product.quantity,
-    }));
+    const selectedItemsWithQuantity = selectedProducts.map(
+      (product) => product.cart_id
+    );
 
     if (selectedItemsWithQuantity.length > 0) {
-      dispatch(setCarts(selectedItemsWithQuantity));
+      dispatch(setCartIds(selectedItemsWithQuantity));
       navigate(Path.userCheckout());
     } else {
       enqueueSnackbar("Chưa chọn sản phẩm nào", {

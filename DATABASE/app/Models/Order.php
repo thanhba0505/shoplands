@@ -13,9 +13,8 @@ class Order extends Model
     public $timestamps = false;
     protected $fillable = [
         'subtotal_price',
-        'discount_amount',
+        'discount',
         'final_price',
-        'payment_method',
         'cancel_reason',
         'from_address_id',
         'to_address_id',
