@@ -8,30 +8,25 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Api from "~/helpers/Api";
-import Path from "~/helpers/Path";
-import { setAddresses } from "~/redux/authSlice";
+import Log from "~/helpers/Log";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
 const Address = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const addresses = useSelector((state) => state.auth.addresses);
+  const [addresses, setAddresses] = useState([]);
 
   const [address, setAddress] = useState(null);
 
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await axiosWithAuth.get(Api.address());
-      dispatch(setAddresses(response.data));
+      const response = await axiosWithAuth.get(Api.address(), { navigate });
+      setAddresses(response.data);
     } catch (error) {
-      if (error.response?.status === 401) {
-        navigate(Path.login());
-      }
+      Log.error(error.response?.data?.message);
     }
-  }, [navigate, dispatch]);
+  }, [navigate]);
 
   useEffect(() => {
     fetchProducts();

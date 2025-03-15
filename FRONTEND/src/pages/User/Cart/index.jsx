@@ -3,17 +3,20 @@ import { Box, Container } from "@mui/material";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import CartBox from "./CartBox";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [carts, setCarts] = useState([]);
+  const navigate = useNavigate();
+
   const fetchCarts = useCallback(async () => {
     try {
-      const response = await axiosWithAuth.get(Api.cart());
+      const response = await axiosWithAuth.get(Api.cart(), { navigate });
       setCarts(response.data);
     } catch (error) {
       console.error(error.response?.data?.message);
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     fetchCarts();

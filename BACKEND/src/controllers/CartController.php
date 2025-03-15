@@ -11,10 +11,9 @@ use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
 use App\Models\ProductVariantValueModel;
 
-class CartController
-{
-    public function getAll()
-    {
+class CartController {
+    // Lấy danh sách sản phẩm trong giỏ hàng
+    public function getAll() {
         $user = Auth::user();
 
         $carts["user_id"] = $user["user_id"];
@@ -42,9 +41,8 @@ class CartController
         Response::json($carts);
     }
 
-
-    public function addCart()
-    {
+    // Thêm vào giỏ hàng
+    public function addCart() {
         $user = Auth::user();
 
         $productVariantId = Request::json("product_variant_id");
@@ -97,8 +95,8 @@ class CartController
         }
     }
 
-    public function updateCart()
-    {
+    // Cập nhật giỏ hàng
+    public function updateCart() {
         $user = Auth::user();
 
         $productVariantId = Request::json("product_variant_id");
@@ -134,8 +132,8 @@ class CartController
         }
     }
 
-    public function deleteCart()
-    {
+    // Xóa khỏi giỏ hàng
+    public function deleteCart() {
         $user = Auth::user();
 
         $cartId = Request::json("cart_id");
@@ -158,4 +156,6 @@ class CartController
             ], 400);
         }
     }
+
+    // Lấy sản phẩm theo cart id
 }
