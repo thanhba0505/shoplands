@@ -144,4 +144,30 @@ class CartModel {
 
         return $result ?? false;
     }
+
+    // Lấy danh sách số lượng, giá của giỏ hàng
+    public static function getQuantityAndPrice($user_id, $seller_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                c.id AS cart_id,
+                c.quantity,
+                pv.id AS product_variant_id,
+                pv.price,
+                pv.promotion_price
+            FROM
+                carts c
+                JOIN product_variants pv ON pv.id = c.product_variant_id
+                JOIN products p ON p.id = pv.product_id
+                JOIN sellers s ON s.id = p.seller_id
+            WHERE
+                c.user_id = :user_id
+                AND s.id = :seller_id
+        ";
+
+        $result = $query->query($sql, ['user_id' => $user_id, "seller_id" => $seller_id])->fetchAll();
+
+        return $result ?? [];
+    }
 }

@@ -472,7 +472,7 @@ const Price = ({ subTotal, shippingFee, coupon }) => {
     } else {
       setDiscount(0);
     }
-  }, [subTotal, coupon]); // Chạy lại khi `subTotal` hoặc `coupon` thay đổi
+  }, [subTotal, coupon, shippingFee]); // Chạy lại khi `subTotal` hoặc `coupon` thay đổi
 
   return (
     <Container>
