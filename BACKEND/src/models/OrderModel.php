@@ -38,4 +38,62 @@ class OrderModel {
 
         return $orderId > 0 ? $orderId : $orderId;
     }
+
+    // Tìm đơn hàng theo id và user id
+    public static function find($orderId, $userId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.seller_id,
+                o.user_id,
+                o.from_address_id,
+                o.to_address_id,
+                o.shipping_fee_id,
+                o.subtotal_price,
+                o.discount,
+                o.final_price,
+                o.paid,
+                o.revenue,
+                o.cancel_reason,
+                o.coupon_id,
+                o.created_at
+            FROM
+                orders o
+            WHERE
+                o.id = :orderId
+                AND o.user_id = :userId
+        ";
+
+        $result = $query->query($sql, [
+            'orderId' => $orderId,
+            'userId' => $userId
+        ])->fetch();
+
+        return $result;
+    }
+
+    // Cập nhật thanh toán theo id và user id
+    public static function updatePaid($orderId, $userId, $paid) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                orders
+            SET
+                paid = :paid
+            WHERE
+                id = :orderId
+                AND user_id = :userId
+        ";
+
+        $result = $query->query($sql, [
+            'paid' => $paid,
+            'userId' => $userId,
+            'orderId' => $orderId
+        ]);
+
+        return $result;
+    }
 }

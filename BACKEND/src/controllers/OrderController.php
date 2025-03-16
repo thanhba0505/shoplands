@@ -15,9 +15,9 @@ use App\Models\OrderModel;
 use App\Models\OrderStatusModel;
 use App\Models\SellerModel;
 use App\Models\ShippingFeeModel;
-use Seller;
 
 class OrderController {
+    // Tạo đơn hàng
     public function add() {
         try {
             $user = Auth::user();
@@ -133,9 +133,45 @@ class OrderController {
                 Response::json(['message' => 'Lỗi tạo trạng thái đơn hàng'], 400);
             }
 
+            // Xử lý tạo QR code thanh toán
+
+
+
             Response::json(['message' => 'Tạo đơn hàng thành công'], 200);
         } catch (\Throwable $th) {
             Log::throwable("Lỗi tạo đơn hàng: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Kiểm tra thanh toán
+    public function checkPayment() {
+        try {
+            $user = Auth::user();
+            $orderId = Request::json('order_id');
+
+            if (!$orderId) {
+                Response::json(['message' => 'Thông tin không đầy đủ'], 400);
+            }
+
+            $order = OrderModel::find($orderId, $user["user_id"]);
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy thông tin đơn hàng'], 400);
+            }
+            
+            // Kiểm tra ở đây, giả bộ nó đã thanh toán
+            $check = true;
+
+            if ($check) {
+                OrderModel::updatePaid($orderId, $user["user_id"], 100);
+                OrderStatusModel::add($orderId, 'pending');
+
+                Response::json(['message' => 'Xác nhận đã thanh toán'], 200);
+            } else {
+                Response::json(['message' => 'Bạn chưa thanh toán'], 200);
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi kiểm tra thanh toán: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
