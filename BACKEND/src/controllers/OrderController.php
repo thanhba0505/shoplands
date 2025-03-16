@@ -128,7 +128,7 @@ class OrderController {
             }
 
             // Tạo trạng thái đơn hàng
-            $orderStatus = OrderStatusModel::add($orderId, 'pending');
+            $orderStatus = OrderStatusModel::add($orderId, 'unpaid');
             if (!$orderStatus) {
                 Response::json(['message' => 'Lỗi tạo trạng thái đơn hàng'], 400);
             }

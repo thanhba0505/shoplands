@@ -60,9 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 //     }
 // }
 
-
-header('Content-Type: application/json');
-
 // Khởi tạo Router
 $router = new Router();
 require './src/routes/web.php';

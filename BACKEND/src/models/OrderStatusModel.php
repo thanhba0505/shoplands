@@ -15,7 +15,7 @@ class OrderStatusModel {
 
         $sql = "
             INSERT INTO
-                order_status (order_id, status, date_time)
+                order_status (order_id, status, created_at)
             VALUES
                 (:order_id, :status, :created_at)
         ";
