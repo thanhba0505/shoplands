@@ -40,11 +40,13 @@ class QRCode {
     $result = $builder->build();
     $result->saveToFile($fullPath);
 
-    return $fullPath;
+    return $outputPath;
   }
 
-  public static function createPayment($paymentLink, $fileName) {
-    $outputPath = 'qrcode/' . $fileName . '.png';
+  public static function createPayment($paymentLink) {
+    $fileName = Other::generateFileName('payment', 'png');
+
+    $outputPath = 'qrcode/' . $fileName;
     return self::createQRCode($paymentLink, $outputPath);
   }
 }

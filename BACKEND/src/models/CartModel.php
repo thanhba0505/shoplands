@@ -170,4 +170,21 @@ class CartModel {
 
         return $result ?? [];
     }
+
+    // Xóa khỏi giỏ hàng
+    public static function delete($user_id, $cartId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            DELETE FROM
+                carts
+            WHERE
+                id = :cartId
+                AND user_id = :user_id
+        ";
+
+        $result = $query->query($sql, ['cartId' => $cartId, "userId" => $user_id]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
 }

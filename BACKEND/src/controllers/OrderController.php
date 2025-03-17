@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Helpers\Auth;
 use App\Helpers\Format;
 use App\Helpers\Log;
+use App\Helpers\QRCode;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Models\AddressModel;
@@ -114,7 +115,7 @@ class OrderController {
             $orderId = OrderModel::add($sellerId, $userId, $fromAddressId, $toAddressId, $shippingFeeId, $subtotalPrice, $discount, $finalPrice, $revenue, $couponId);
 
             if (!$orderId) {
-                Response::json(['message' => 'Lỗi tạo đơn hàng'], 400);
+                throw new \Exception("Lỗi tạo đơn hàng");
             }
 
             // Tạo chi tiết đơn hàng
@@ -122,22 +123,28 @@ class OrderController {
                 if (in_array($cart["cart_id"], $cartIds)) {
                     $orderItem = OrderItemModel::add($orderId, $cart["product_variant_id"], $cart["quantity"], $cart["promotion_price"] ? $cart["promotion_price"] : $cart["price"]);
                     if (!$orderItem) {
-                        Response::json(['message' => 'Lỗi tạo chi tiết đơn hàng'], 400);
+                        throw new \Exception("Lỗi tạo chi tiết đơn hàng");
                     }
                 }
             }
 
             // Tạo trạng thái đơn hàng
-            $orderStatus = OrderStatusModel::add($orderId, 'unpaid');
-            if (!$orderStatus) {
-                Response::json(['message' => 'Lỗi tạo trạng thái đơn hàng'], 400);
-            }
+            OrderStatusModel::add($orderId, 'unpaid');
+
+            // Xóa giỏ hàng -------------------------------------
+            // CartModel::delete($userId, $cartIds);
+
+            // Cập nhật số lượng, số lượng tồn sản phẩm ------------------------------------
 
             // Xử lý tạo QR code thanh toán
+            $paymentLink = "aaa";
+            $paymentPath = QRCode::createPayment($paymentLink);
 
+            if (!$paymentPath) {
+                throw new \Exception("Lỗi tạo QR code thanh toán");
+            }
 
-
-            Response::json(['message' => 'Tạo đơn hàng thành công'], 200);
+            Response::json($paymentPath, 200);
         } catch (\Throwable $th) {
             Log::throwable("Lỗi tạo đơn hàng: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -158,7 +165,7 @@ class OrderController {
             if (!$order) {
                 Response::json(['message' => 'Không tìm thấy thông tin đơn hàng'], 400);
             }
-            
+
             // Kiểm tra ở đây, giả bộ nó đã thanh toán
             $check = true;
 
