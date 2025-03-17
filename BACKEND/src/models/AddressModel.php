@@ -4,11 +4,9 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class AddressModel
-{
+class AddressModel {
     // Lấy danh sách địa chỉ theo account_id
-    public static function getAllByAccountId($account_id)
-    {
+    public static function getAllByAccountId($account_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -32,8 +30,7 @@ class AddressModel
     }
 
     // Lấy danh sách địa chỉ theo seller_id
-    public static function getAllBySellerId($seller_id)
-    {
+    public static function getAllBySellerId($seller_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -58,8 +55,7 @@ class AddressModel
     }
 
     // Lấy địa chỉ mặc định theo account_id
-    public static function findDefault($account_id)
-    {
+    public static function findDefault($account_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -84,8 +80,7 @@ class AddressModel
     }
 
     // Lấy địa chỉ mặc định theo seller_id
-    public static function findDefaultBySellerId($seller_id)
-    {
+    public static function findDefaultBySellerId($seller_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -110,9 +105,8 @@ class AddressModel
         return $result;
     }
 
-    // Lấy địa chỉ người bán theo id và seller_id
-    public static function findFromAddress($address_id, $seller_id)
-    {
+    // Lấy địa chỉ mặc định người bán theo id và seller_id
+    public static function findFromAddress($seller_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -128,18 +122,17 @@ class AddressModel
                 JOIN provinces p ON p.id = a.province_id
                 JOIN sellers s ON s.account_id = a.account_id
             WHERE
-                a.id = :address_id
-                AND s.id = :seller_id
+                s.id = :seller_id
+                AND a.default = :default
         ";
 
-        $result = $query->query($sql, ['address_id' => $address_id, 'seller_id' => $seller_id])->fetch();
+        $result = $query->query($sql, ['seller_id' => $seller_id, "default" => '1'])->fetch();
 
         return $result;
     }
 
     // Lấy địa chỉ người mua
-    public static function findToAddress($address_id, $user_id)
-    {
+    public static function findToAddress($address_id, $user_id) {
         $query = new ConnectDatabase();
 
         $sql =  "

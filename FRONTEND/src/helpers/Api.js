@@ -50,6 +50,10 @@ class Api {
         return this.buildPath("user/address", endpoint);
     }
 
+    static orders(endpoint = "") {
+        return this.buildPath("user/orders", endpoint);
+    }
+
     static coupons(endpoint = "") {
         return this.buildPath("coupons", endpoint);
     }

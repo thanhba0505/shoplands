@@ -74,6 +74,10 @@ class Path {
         return this.buildPath("/user/orders/checkout", subPath);
     }
 
+    static userPayment(subPath = "") {
+        return this.buildPath("/user/orders/payment", subPath);
+    }
+
     // SELLER PATHS
     static sellerDashboard(subPath = "") {
         return this.buildPath("/seller/dashboard", subPath);

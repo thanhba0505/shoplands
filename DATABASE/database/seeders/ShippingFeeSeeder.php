@@ -11,15 +11,15 @@ class ShippingFeeSeeder extends Seeder
     {
         $data = [
             [
-                'method' => 'Giao hàng nhanh',
+                'method' => 'Giao hàng nhanh (2 - 4 ngày',
                 'price' => 25000,
             ],
             [
-                'method' => 'Giao hàng tiết kiệm',
+                'method' => 'Giao hàng tiết kiệm (5 - 7 ngày)',
                 'price' => 10000,
             ],
             [
-                'method' => 'Giao hàng hỏa tốc',
+                'method' => 'Giao hàng hỏa tốc (8h - 24h)',
                 'price' => 70000,
             ],
         ];

@@ -24,28 +24,27 @@ class OrderController {
             $user = Auth::user();
 
             $userId = $user["user_id"];
-            $sellerId = Request::json("seller_id");
-            $fromAddressId = Request::json("from_address_id");
-            $toAddressId = Request::json("to_address_id");
+            $toAddressId = Request::json("address_id");
             $shippingFeeId = Request::json("shipping_fee_id");
             $couponId = Request::json("coupon_id");
             $cartIds = Request::json("cart_ids");
 
-            if (empty($sellerId) || empty($fromAddressId) || empty($toAddressId) || empty($shippingFeeId) || empty($cartIds)) {
-                Response::json(['message' => 'Thông tin không đủ'], 400);
+            if (empty($toAddressId) || empty($shippingFeeId) || empty($cartIds)) {
+                Response::json(['message' => 'Thông tin tạo đơn hàng không đủ'], 400);
             }
-
             // Kiểm tra seller
-            $seller = SellerModel::findBySellerId($sellerId);
+            $seller = SellerModel::findSellerByCartId($cartIds[0]);
             if (!$seller) {
                 Response::json(['message' => 'Không tìm thấy thông tin người bán'], 400);
             }
 
             // Kiểm tra địa chỉ
-            $fromAddress = AddressModel::findFromAddress($fromAddressId, $sellerId);
+            $fromAddress = AddressModel::findFromAddress($seller["seller_id"]);
             if (!$fromAddress) {
                 Response::json(['message' => 'Không tìm thấy địa chỉ người bán'], 400);
             }
+
+            $fromAddressId = $fromAddress["address_id"];
 
             $toAddress = AddressModel::findToAddress($toAddressId, $userId);
             if (!$toAddress) {
@@ -61,7 +60,7 @@ class OrderController {
             $shippingPrice = floatval($shippingFee["price"]);
 
             // Kiểm tra sản phẩm
-            $carts = CartModel::getQuantityAndPrice($userId, $sellerId);
+            $carts = CartModel::getQuantityAndPrice($userId, $seller["seller_id"]);
             if (!$carts) {
                 Response::json(['message' => 'Không tìm thấy sản phẩm trong giỏ hàng'], 400);
             }
@@ -76,7 +75,7 @@ class OrderController {
             // Kiểm tra mã giảm giá
             $coupon = null;
             if ($couponId) {
-                $coupon = CouponModel::find($couponId, $sellerId);
+                $coupon = CouponModel::find($couponId, $seller["seller_id"]);
                 if (!$coupon) {
                     Response::json(['message' => 'Không tìm thấy thông tin giảm giá của người bán này'], 400);
                 }
@@ -112,7 +111,7 @@ class OrderController {
             $revenue = Format::number(($finalPrice - $shippingPrice) * (1 - $_ENV["REVENUE_PROPORTION"]), 0);
 
             // Tạo đơn hàng
-            $orderId = OrderModel::add($sellerId, $userId, $fromAddressId, $toAddressId, $shippingFeeId, $subtotalPrice, $discount, $finalPrice, $revenue, $couponId);
+            $orderId = OrderModel::add($seller["seller_id"], $userId, $fromAddressId, $toAddressId, $shippingFeeId, $subtotalPrice, $discount, $finalPrice, $revenue, $couponId);
 
             if (!$orderId) {
                 throw new \Exception("Lỗi tạo đơn hàng");
@@ -144,7 +143,10 @@ class OrderController {
                 throw new \Exception("Lỗi tạo QR code thanh toán");
             }
 
-            Response::json($paymentPath, 200);
+            Response::json([
+                "pathQr" => $paymentPath,
+                "orderId" => $orderId
+            ], 200);
         } catch (\Throwable $th) {
             Log::throwable("Lỗi tạo đơn hàng: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

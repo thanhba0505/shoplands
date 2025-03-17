@@ -22,7 +22,9 @@ import Cart from "~/pages/User/Cart";
 import Profile from "~/pages/User/Profile";
 import AddressBook from "~/pages/User/AddressBook";
 import Orders from "~/pages/User/Orders";
+import OrderDetail from "~/pages/User/OrderDetail";
 import Checkout from "~/pages/User/Checkout";
+import Payment from "~/pages/User/Payment";
 
 // Seller
 import Dashboard from "~/pages/Seller/Dashboard";
@@ -55,7 +57,9 @@ const userRoutes = [
   { path: "/user/profile", component: Profile },
   { path: "/user/address-book", component: AddressBook },
   { path: "/user/orders", component: Orders },
+  { path: "/user/orders/detail/:id", component: OrderDetail },
   { path: "/user/orders/checkout", component: Checkout },
+  { path: "/user/orders/payment", component: Payment },
 ];
 
 // SELLER ROUTES

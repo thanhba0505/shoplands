@@ -113,7 +113,7 @@ const CartBox = ({ cart }) => {
 
     if (selectedItemsWithQuantity.length > 0) {
       dispatch(setCartIds(selectedItemsWithQuantity));
-      navigate(Path.userCheckout());
+      navigate(Path.userOrders("checkout"));
     } else {
       enqueueSnackbar("Chưa chọn sản phẩm nào", {
         variant: "error",
