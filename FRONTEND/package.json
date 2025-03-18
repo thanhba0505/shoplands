@@ -17,6 +17,7 @@
     "@mui/material": "^6.4.6",
     "@mui/x-data-grid": "^7.27.2",
     "@reduxjs/toolkit": "^2.2.4",
+    "@toolpad/core": "^0.13.0",
     "axios": "^1.6.8",
     "csstype": "3.0.10",
     "dotenv": "^16.4.5",

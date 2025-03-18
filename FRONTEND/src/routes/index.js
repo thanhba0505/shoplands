@@ -1,9 +1,5 @@
 // Layout
-// import ContainerLayout from "~/components/Layout/ContainerLayout";
-// import SidebarLeftLayout from "~/components/Layout/SidebarLeftLayout";
-// import NoLayout from "~/components/Layout/NoLayout";
-
-// Pages
+import ManageLayout from "~/components/layout/ManageLayout";
 
 // Auth
 import Login from "~/pages/Auth/Login";
@@ -64,8 +60,8 @@ const userRoutes = [
 
 // SELLER ROUTES
 const sellerRoutes = [
-  { path: "/seller/dashboard", component: Dashboard },
-  { path: "/seller/orders", component: OrdersSeller },
+  { path: "/seller/dashboard", component: Dashboard, layout: ManageLayout },
+  { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
   { path: "/seller/products", component: ProductSellers },
 ];
 

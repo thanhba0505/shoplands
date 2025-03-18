@@ -49,7 +49,12 @@ const Login = () => {
       dispatch(loginSuccess({ access_token, refresh_token, account }));
       handleClose();
       enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
-      navigate(Path.home());
+
+      if (account.role === "user") {
+        navigate(Path.home());
+      } else {
+        navigate(Path.sellerDashboard());
+      }
     } catch (error) {
       if (error.response?.status === 409) {
         handleOpen();
