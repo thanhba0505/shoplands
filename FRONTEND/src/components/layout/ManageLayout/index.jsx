@@ -21,7 +21,7 @@ import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import MarkunreadMailboxOutlinedIcon from "@mui/icons-material/MarkunreadMailboxOutlined";
 import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import AddCardRoundedIcon from "@mui/icons-material/AddCardRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
@@ -308,15 +308,20 @@ const ManageLayout = ({ children }) => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            marginTop: 3,
-            gap: 2,
+            gap: 3,
           }}
         >
-          <PaperCustom sx={{ pr: 0 }}>
+          <PaperCustom
+            sx={{
+              pr: 0,
+              marginTop: 3,
+              height: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
+            }}
+          >
             <Box
               sx={{
                 pr: 2,
-                height: `calc(100vh - ${theme.custom.headerHeight} - 3 * ${theme.custom.containerGap})`,
+                height: `calc(100vh - ${theme.custom.headerHeight} - 3.5 * ${theme.custom.containerGap})`,
                 overflowY: "auto",
               }}
             >
@@ -335,7 +340,22 @@ const ManageLayout = ({ children }) => {
             </Box>
           </PaperCustom>
 
-          <Box sx={{ flex: 1, paddingLeft: 2 }}>{children}</Box>
+          <Box
+            sx={{
+              pr: 2,
+              height: `calc(100vh - ${theme.custom.headerHeight})`,
+              overflowY: "auto",
+              flexGrow: 1,
+            }}
+          >
+            <Box
+              sx={{
+                marginY: 3,
+              }}
+            >
+              {children}
+            </Box>
+          </Box>
         </Box>
       </Container>
     </>
