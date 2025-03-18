@@ -7,7 +7,7 @@ use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class OrderModel {
-    // Lấy danh sách danh mục
+    // Tạo đơn hàng
     public static function add($seller_id, $user_id, $from_address_id, $to_address_id, $shipping_fee_id, $subtotal_price, $discount, $final_price, $revenue, $coupon_id = null) {
         $query = new ConnectDatabase();
 
@@ -95,5 +95,36 @@ class OrderModel {
         ]);
 
         return $result;
+    }
+
+    // Lấy danh sach đơn hang theo user id
+    public static function getByUserId($userId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.seller_id,
+                o.user_id,
+                o.from_address_id,
+                o.to_address_id,
+                o.shipping_fee_id,
+                o.subtotal_price,
+                o.discount,
+                o.final_price,
+                o.paid,
+                o.revenue,
+                o.cancel_reason,
+                o.coupon_id,
+                o.created_at
+            FROM
+                orders o
+            WHERE
+                o.user_id = :userId
+        ";
+
+        $result = $query->query($sql, ['userId' => $userId])->fetchAll();
+
+        return $result ?? [];
     }
 }

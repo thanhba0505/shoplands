@@ -4,12 +4,10 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class ProductVariantModel
-{
+class ProductVariantModel {
 
     // Lấy danh sách variant theo product_id
-    public static function getByProductId($product_id)
-    {
+    public static function getByProductId($product_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -31,8 +29,7 @@ class ProductVariantModel
     }
 
     // Lấy danh sách variant theo product_variant_id
-    public static function getByProductVariantId($product_variant_id)
-    {
+    public static function getByProductVariantId($product_variant_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -54,8 +51,7 @@ class ProductVariantModel
     }
 
     // Lấy danh sách variant theo cartId
-    public static function getByCartId($cart_id)
-    {
+    public static function getByCartId($cart_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -75,5 +71,27 @@ class ProductVariantModel
         $result = $query->query($sql, ['cart_id' => $cart_id])->fetch();
 
         return $result ?? null;
+    }
+
+    // Cập nhật số lượng tồn kho và số lượng đã bán
+    public static function updateQuantity($product_variant_id, $quantity_purchase) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE 
+                product_variants
+            SET
+                quantity = quantity - :quantity_purchase,
+                sold_quantity = sold_quantity + :quantity_purchase
+            WHERE
+                id = :product_variant_id
+        ";
+
+        $result = $query->query($sql, [
+            'product_variant_id' => $product_variant_id,
+            'quantity_purchase' => $quantity_purchase
+        ]);
+
+        return $result;
     }
 }

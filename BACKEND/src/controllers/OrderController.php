@@ -18,6 +18,18 @@ use App\Models\SellerModel;
 use App\Models\ShippingFeeModel;
 
 class OrderController {
+    // Lấy danh sách đơn hàng của người dùng
+    public function getAll() {
+        try {
+            $user = Auth::user();
+            $orders = OrderModel::getByUserId($user["user_id"]);
+            Response::json($orders, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi kiểm tra thanh toán: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
     // Tạo đơn hàng
     public function add() {
         try {

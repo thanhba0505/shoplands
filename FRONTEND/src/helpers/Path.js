@@ -79,6 +79,10 @@ class Path {
     }
 
     // SELLER PATHS
+    static seller(subPath = "") {
+        return this.buildPath("/seller", subPath);
+    }
+
     static sellerDashboard(subPath = "") {
         return this.buildPath("/seller/dashboard", subPath);
     }
