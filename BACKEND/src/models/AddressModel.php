@@ -156,4 +156,30 @@ class AddressModel {
 
         return $result;
     }
+
+    // Lấy địa chỉ người bán
+    public static function findSellerAddress($address_id, $seller_id) {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT 
+                a.id AS address_id,
+                a.address_line,
+                a.default,
+                a.account_id,
+                p.name AS province_name,
+                p.id AS province_id
+            FROM
+                addresses a
+                JOIN provinces p ON p.id = a.province_id
+                JOIN sellers s ON s.account_id = a.account_id
+            WHERE
+                a.id = :address_id
+                AND s.id = :seller_id
+        ";
+
+        $result = $query->query($sql, ['address_id' => $address_id, 'seller_id' => $seller_id])->fetch();
+
+        return $result;
+    }
 }

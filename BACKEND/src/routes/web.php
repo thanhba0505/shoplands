@@ -40,3 +40,4 @@ $router->get('api/shipping-fees', 'ShippingFeeController@getAll');
 $router->post('api/user/orders', 'OrderController@add', ['App\Middlewares\UserMiddleware']); // --------------- User
 $router->post('api/user/orders/check-payment', 'OrderController@checkPayment', ['App\Middlewares\UserMiddleware']); // --------------- User
 $router->get('api/user/orders', 'OrderController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->get('api/seller/orders', 'OrderController@getAllBySeller', ['App\Middlewares\SellerMiddleware']); // ---- Seller

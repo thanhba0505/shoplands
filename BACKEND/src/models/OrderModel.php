@@ -127,4 +127,35 @@ class OrderModel {
 
         return $result ?? [];
     }
+
+    // Lấy danh sách đơn hàng theo selelr id
+    public static function getBySellerId($seller_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.seller_id,
+                o.user_id,
+                o.from_address_id,
+                o.to_address_id,
+                o.shipping_fee_id,
+                o.subtotal_price,
+                o.discount,
+                o.final_price,
+                o.paid,
+                o.revenue,
+                o.cancel_reason,
+                o.coupon_id,
+                o.created_at
+            FROM
+                orders o
+            WHERE
+                o.seller_id = :seller_id
+        ";
+
+        $result = $query->query($sql, ['seller_id' => $seller_id])->fetchAll();
+
+        return $result ?? [];
+    }
 }

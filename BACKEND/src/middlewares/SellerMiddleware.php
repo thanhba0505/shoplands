@@ -9,10 +9,10 @@ class SellerMiddleware
 {
     public function handle()
     {
-        // Kiểm tra user đăng nhập
-        $user = Auth::user();
+        // Kiểm tra seller đăng nhập
+        $seller = Auth::seller();
 
-        if (!$user) {
+        if (!$seller) {
             Response::json(['message' => 'Đăng nhập người bán để thực hiện hành động này'], 401);
         }
     }
