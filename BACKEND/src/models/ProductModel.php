@@ -4,10 +4,9 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class ProductModel
-{
-    public static function getAll($limit = 12)
-    {
+class ProductModel {
+    // Lấy danh sách sản phẩm
+    public static function getAll($limit = 12) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -30,8 +29,8 @@ class ProductModel
         return $result ?? [];
     }
 
-    public static function getByProductId($product_id)
-    {
+    // Lấy thông tin sản phẩm theo product_id
+    public static function getByProductId($product_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -53,8 +52,8 @@ class ProductModel
         return $result ?? null;
     }
 
-    public static function getByCartId($cart_id)
-    {
+    // Lấy thông tin sản phẩm theo cart_id
+    public static function getByCartId($cart_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -71,6 +70,30 @@ class ProductModel
         ";
 
         $result = $query->query($sql, ['status' => 'active', 'cart_id' => $cart_id])->fetch();
+
+        return $result ?? null;
+    }
+
+    // Lấy thông tin sản phẩm theo product_variant_id
+    public static function getByProductVariantId($product_variant_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name,
+                p.description,
+                p.status,
+                p.seller_id
+            FROM
+                products p
+                JOIN product_variants pv ON pv.product_id = p.id
+            WHERE
+                p.status = :status
+                AND pv.id = :product_variant_id
+        ";
+
+        $result = $query->query($sql, ['status' => 'active', 'product_variant_id' => $product_variant_id])->fetch();
 
         return $result ?? null;
     }

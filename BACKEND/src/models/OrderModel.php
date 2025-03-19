@@ -129,7 +129,7 @@ class OrderModel {
     }
 
     // Lấy danh sách đơn hàng theo selelr id
-    public static function getBySellerId($seller_id) {
+    public static function getBySellerId($seller_id, $limit = 12) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -152,6 +152,8 @@ class OrderModel {
                 orders o
             WHERE
                 o.seller_id = :seller_id
+            LIMIT
+                $limit
         ";
 
         $result = $query->query($sql, ['seller_id' => $seller_id])->fetchAll();

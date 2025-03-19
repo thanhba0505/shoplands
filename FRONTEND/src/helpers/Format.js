@@ -124,6 +124,36 @@ class Format {
       maximumFractionDigits: decimals,
     });
   }
+
+  // Định dạng trạng thái đơn hàng
+  static formatOrderStatus(status) {
+    switch (status) {
+      case "unpaid":
+        return "Chưa thanh toán";
+      case "packing":
+        return "Đang đóng gói";
+      case "packed":
+        return "Đã đóng gói";
+      case "cancelled":
+        return "Dang xu ly";
+      case "shipping":
+        return "Đang giao hàng";
+      case "delivered":
+        return "Đã giao hàng";
+      case "completed":
+        return "Hoàn thành";
+      case "return-request":
+        return "Yêu cầu trả hàng";
+      case "return-rejected":
+        return "Từ chối trả hàng";
+      case "return-accepted":
+        return "Đồng ý trả hàng";
+      case "returned":
+        return "Đã trả hàng";
+      default:
+        return "Lỗi trạng thái";
+    }
+  }
 }
 
 export default Format;

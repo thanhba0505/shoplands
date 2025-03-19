@@ -14,6 +14,9 @@ use App\Models\CouponModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\OrderStatusModel;
+use App\Models\ProductImageModel;
+use App\Models\ProductModel;
+use App\Models\ProductVariantValueModel;
 use App\Models\SellerModel;
 use App\Models\ShippingFeeModel;
 use App\Models\UserModel;
@@ -207,7 +210,8 @@ class OrderController {
     public function getAllBySeller() {
         try {
             $seller = Auth::seller();
-            $orders = OrderModel::getBySellerId($seller["seller_id"]);
+            $limit = Request::get('limit', 12);
+            $orders = OrderModel::getBySellerId($seller["seller_id"], $limit);
 
             if (!empty($orders)) {
                 foreach ($orders as $key => $order) {
@@ -246,6 +250,23 @@ class OrderController {
                     // Lấy trạng thái cuối cùng
                     $status = OrderStatusModel::findLatest($order["order_id"]);
                     $orders[$key]["latest_status"] = $status;
+
+                    // Lấy danh sách order item
+                    $orderItems = OrderItemModel::getByOrderId($order["order_id"]);
+                    $orders[$key]["order_items"] = $orderItems;
+                    foreach ($orders[$key]["order_items"] as $key2 => $orderItem) {
+                        // Lấy thuộc tính
+                        $attributes = ProductVariantValueModel::getByProductVariantId($orderItem["product_variant_id"]);
+                        $orders[$key]["order_items"][$key2]["attributes"] = $attributes;
+
+                        // Lấy thông tin 
+                        $product = ProductModel::getByProductVariantId($orderItem["product_variant_id"]);
+                        $orders[$key]["order_items"][$key2]["product"] = $product;
+
+                        // Lấy hình ảnh
+                        $images = ProductImageModel::getDefault($product["product_id"]);
+                        $orders[$key]["order_items"][$key2]["image"] = $images;
+                    }
                 }
             }
 

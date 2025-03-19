@@ -51,37 +51,37 @@ const NAVIGATION = [
   {
     name: "Tất cả đơn hàng",
     tooltip: "Tất cả đơn hàng",
-    path: "/dashboard",
+    path: "/orders",
     icon: <WysiwygRoundedIcon />,
   },
   {
     name: "Chờ đóng gói",
     tooltip: "Chờ đóng gói",
-    path: "/dashboard",
+    path: "/orders",
     icon: <MarkunreadMailboxOutlinedIcon />,
   },
   {
     name: "Chờ giao hàng",
     tooltip: "Chờ giao hàng",
-    path: "/dashboard",
+    path: "/orders",
     icon: <CardTravelRoundedIcon />,
   },
   {
     name: "Đang giao hàng",
     tooltip: "Đang giao hàng",
-    path: "/dashboard",
+    path: "/orders",
     icon: <LocalShippingOutlinedIcon />,
   },
   {
     name: "Yêu cầu trả hàng",
     tooltip: "Yêu cầu trả hàng",
-    path: "/dashboard",
+    path: "/orders",
     icon: <AssignmentReturnOutlinedIcon />,
   },
   {
     name: "Hoàn thành",
     tooltip: "Hoàn thành",
-    path: "/dashboard",
+    path: "/orders",
     icon: <FactCheckOutlinedIcon />,
     divider: true,
   },
@@ -351,6 +351,7 @@ const ManageLayout = ({ children }) => {
             <Box
               sx={{
                 marginY: 3,
+                px: "4px",
               }}
             >
               {children}

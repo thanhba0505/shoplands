@@ -8,6 +8,7 @@ const theme = extendTheme({
     boxShadow: "0px 0px 8px #bfe2ff",
     primary: {
       light: "#bfe2ff",
+      strongLight: "#dff1ff",
     },
   },
 });
