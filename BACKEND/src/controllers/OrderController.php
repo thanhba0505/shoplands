@@ -210,8 +210,15 @@ class OrderController {
     public function getAllBySeller() {
         try {
             $seller = Auth::seller();
+            $status = Request::get('status', 'all');
             $limit = Request::get('limit', 12);
-            $orders = OrderModel::getBySellerId($seller["seller_id"], $limit);
+            $page = Request::get('page', 1);
+
+            // Lấy tổng số đơn hàng
+            $count = OrderModel::countBySellerId($seller["seller_id"], $status);
+
+            // Lấy danh sách đơn hàng
+            $orders = OrderModel::getBySellerIdAndStatus($seller["seller_id"], $status, $limit, $page);
 
             if (!empty($orders)) {
                 foreach ($orders as $key => $order) {
@@ -270,8 +277,12 @@ class OrderController {
                 }
             }
 
+            $result = [
+                "count" => $count,
+                "orders" => $orders
+            ];
 
-            Response::json($orders, 200);
+            Response::json($result, 200);
         } catch (\Throwable $th) {
             Log::throwable("Lỗi lấy danh sách đơn hàng theo người bán: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

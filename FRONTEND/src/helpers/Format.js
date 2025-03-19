@@ -49,6 +49,66 @@ class Format {
     return date.toLocaleTimeString();
   }
 
+  // Định dạng ngày giờ (DateTime)
+  static formatDateTime(
+    date,
+    format = "DD/MM/YYYY HH:mm:ss",
+    locale = "vi-VN"
+  ) {
+    const dateObj = new Date(date);
+    if (isNaN(dateObj)) {
+      return "Ngày không hợp lệ";
+    }
+
+    // Nếu format là "DD/MM/YYYY HH:mm:ss"
+    if (format === "DD/MM/YYYY HH:mm:ss") {
+      return (
+        new Intl.DateTimeFormat(locale, {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }).format(dateObj) +
+        " " +
+        dateObj.toLocaleTimeString(locale, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      );
+    }
+
+    // Nếu muốn định dạng khác cho ngày và giờ
+    if (format === "MM/DD/YYYY HH:mm:ss") {
+      return (
+        new Intl.DateTimeFormat(locale, {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric",
+        }).format(dateObj) +
+        " " +
+        dateObj.toLocaleTimeString(locale, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      );
+    }
+
+    return (
+      new Intl.DateTimeFormat(locale, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(dateObj) +
+      " " +
+      dateObj.toLocaleTimeString(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    );
+  }
+
   // Định dạng số
   static formatNumber(number, locale = "vi-VN") {
     const num = parseFloat(number);
@@ -77,7 +137,7 @@ class Format {
   }
 
   // Định dạng ngày giờ kiểu '1 ngày trước', '3 giờ trước'
-  static formatDateTime(date) {
+  static formatTimeAgo(date) {
     const now = new Date();
     const then = new Date(date);
     const diff = Math.abs(now - then);
