@@ -234,6 +234,46 @@ class OrderModel {
         return $result ?? [];
     }
 
+    // Lấy danh 1 đơn hàng theo order_d
+    public static function getByOrderId($order_id, $seller_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.seller_id,
+                o.user_id,
+                o.from_address_id,
+                o.to_address_id,
+                o.shipping_fee_id,
+                o.subtotal_price,
+                o.discount,
+                o.final_price,
+                o.paid,
+                o.revenue,
+                o.cancel_reason,
+                o.coupon_id,
+                o.created_at
+            FROM
+                orders o
+                JOIN (
+                    SELECT order_id, status
+                    FROM order_status
+                    WHERE (order_id, created_at) IN (
+                        SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
+                    )
+                ) os ON os.order_id = o.id
+            WHERE
+                o.id = :order_id
+                AND o.seller_id = :seller_id
+            ORDER BY
+                o.created_at DESC
+        ";
+
+        $result = $query->query($sql, ['order_id' => $order_id, 'seller_id' => $seller_id])->fetch();
+
+        return $result ?? [];
+    }
 
     // Lấy tổng số đơn hàng theo seller id
     public static function countBySellerId($seller_id, $status = "all") {

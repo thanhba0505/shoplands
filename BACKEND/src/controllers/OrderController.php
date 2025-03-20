@@ -288,4 +288,73 @@ class OrderController {
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
+
+    // Lấy 1 đơn hàng
+    public function getByOrderId($order_id) {
+        try {
+            $seller = Auth::seller();
+
+            // Lấy danh sách đơn hàng
+            $order = OrderModel::getByOrderId($order_id, $seller["seller_id"]);
+
+            // Lấy thông tin người mua hàng
+            $user = UserModel::findByUserId($order['user_id']);
+            $order["user"]["user_id"] = $user["user_id"];
+            $order["user"]["name"] = $user["name"];
+            $order["user"]["avatar"] = $user["avatar"];
+
+            // Lấy thông tin địa chỉ người bán
+            $toAddress = AddressModel::findSellerAddress($order["from_address_id"], $order["seller_id"]);
+            $order["from_address"]["address_id"] = $toAddress["address_id"];
+            $order["from_address"]["province_name"] = $toAddress["province_name"];
+            $order["from_address"]["address_line"] = $toAddress["address_line"];
+
+            // Lấy thông tin địa chỉ người mua
+            $toAddress = AddressModel::findToAddress($order["to_address_id"], $order["user_id"]);
+            $order["to_address"]["address_id"] = $toAddress["address_id"];
+            $order["to_address"]["province_name"] = $toAddress["province_name"];
+            $order["to_address"]["address_line"] = $toAddress["address_line"];
+
+            // Lấy thông tin vận chuyển
+            $shippingFee = ShippingFeeModel::find($order["shipping_fee_id"]);
+            $order["shipping_fee"]["shipping_fee_id"] = $shippingFee["shipping_fee_id"];
+            $order["shipping_fee"]["method"] = $shippingFee["method"];
+            $order["shipping_fee"]["price"] = $shippingFee["price"];
+
+            // Lấy thông tin giảm giá
+            $coupon = CouponModel::find($order["coupon_id"], $order["seller_id"]);
+            $order["coupon"] = $coupon;
+
+            // Lấy danh sách trạng thái
+            $orderStatus = OrderStatusModel::getByOrderId($order["order_id"]);
+            $order["order_status"] = $orderStatus;
+
+            // Lấy trạng thái cuối cùng
+            $status = OrderStatusModel::findLatest($order["order_id"]);
+            $order["latest_status"] = $status;
+
+            // Lấy danh sách order item
+            $orderItems = OrderItemModel::getByOrderId($order["order_id"]);
+            $order["order_items"] = $orderItems;
+            foreach ($order["order_items"] as $key2 => $orderItem) {
+                // Lấy thuộc tính
+                $attributes = ProductVariantValueModel::getByProductVariantId($orderItem["product_variant_id"]);
+                $order["order_items"][$key2]["attributes"] = $attributes;
+
+                // Lấy thông tin 
+                $product = ProductModel::getByProductVariantId($orderItem["product_variant_id"]);
+                $order["order_items"][$key2]["product"] = $product;
+
+                // Lấy hình ảnh
+                $images = ProductImageModel::getDefault($product["product_id"]);
+                $order["order_items"][$key2]["image"] = $images;
+            }
+
+
+            Response::json($order, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi lấy danh sách đơn hàng theo người bán: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
 }
