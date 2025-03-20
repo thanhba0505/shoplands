@@ -22,23 +22,25 @@ $router->get('api/products', 'ProductController@getAll');
 $router->get('api/products/{id}', 'ProductController@getByProductId');
 
 // API CART
-$router->get('api/user/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
-$router->post('api/user/cart', 'CartController@addCart', ['App\Middlewares\UserMiddleware']); // --------------- User
-$router->put('api/user/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']); // --------------- User
-$router->delete('api/user/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->get('api/user/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']);
+$router->post('api/user/cart', 'CartController@addCart', ['App\Middlewares\UserMiddleware']);
+$router->put('api/user/cart', 'CartController@updateCart', ['App\Middlewares\UserMiddleware']);
+$router->delete('api/user/cart', 'CartController@deleteCart', ['App\Middlewares\UserMiddleware']);
 
-$router->post('api/user/cart/ids', 'CartController@getByCartIds', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->post('api/user/cart/ids', 'CartController@getByCartIds', ['App\Middlewares\UserMiddleware']);
 
 // API ADRESS
-$router->get('api/user/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
+$router->get('api/user/address', 'AddressController@getAll', ['App\Middlewares\UserMiddleware']);
 $router->get('api/address/{seller_id}', 'AddressController@fineBySellerId');
 
 // API SHIPPING FEE
 $router->get('api/shipping-fees', 'ShippingFeeController@getAll');
 
 // API ORDER
-$router->post('api/user/orders', 'OrderController@add', ['App\Middlewares\UserMiddleware']); // --------------- User
-$router->post('api/user/orders/check-payment', 'OrderController@checkPayment', ['App\Middlewares\UserMiddleware']); // --------------- User
-$router->get('api/user/orders', 'OrderController@getAll', ['App\Middlewares\UserMiddleware']); // --------------- User
-$router->get('api/seller/orders', 'OrderController@getAllBySeller', ['App\Middlewares\SellerMiddleware']); // ---- Seller
-$router->get('api/seller/orders/{order_id}', 'OrderController@getByOrderId', ['App\Middlewares\SellerMiddleware']); // ---- Seller
+$router->post('api/user/orders', 'OrderController@add', ['App\Middlewares\UserMiddleware']);
+$router->post('api/user/orders/check-payment', 'OrderController@checkPayment', ['App\Middlewares\UserMiddleware']);
+$router->get('api/user/orders', 'OrderController@getAll', ['App\Middlewares\UserMiddleware']);
+
+$router->get('api/seller/orders', 'OrderController@getAllBySeller', ['App\Middlewares\SellerMiddleware']);
+$router->get('api/seller/orders/{order_id}', 'OrderController@getByOrderId', ['App\Middlewares\SellerMiddleware']);
+$router->post('api/seller/orders/{order_id}', 'OrderController@addStatus', ['App\Middlewares\SellerMiddleware']);

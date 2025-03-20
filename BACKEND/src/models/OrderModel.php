@@ -234,8 +234,8 @@ class OrderModel {
         return $result ?? [];
     }
 
-    // Lấy danh 1 đơn hàng theo order_d
-    public static function getByOrderId($order_id, $seller_id) {
+    // Lấy danh 1 đơn hàng theo order_id
+    public static function findByOrderId($order_id, $seller_id) {
         $query = new ConnectDatabase();
 
         $sql = "

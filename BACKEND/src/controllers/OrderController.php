@@ -295,7 +295,7 @@ class OrderController {
             $seller = Auth::seller();
 
             // Lấy danh sách đơn hàng
-            $order = OrderModel::getByOrderId($order_id, $seller["seller_id"]);
+            $order = OrderModel::findByOrderId($order_id, $seller["seller_id"]);
 
             // Lấy thông tin người mua hàng
             $user = UserModel::findByUserId($order['user_id']);
@@ -353,7 +353,30 @@ class OrderController {
 
             Response::json($order, 200);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi lấy danh sách đơn hàng theo người bán: " . $th->getMessage());
+            Log::throwable("Lỗi lấy một đơn hàng: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Seller thêm 1 status cho đơn hàng
+    public function addStatus($order_id) {
+        try {
+            $seller = Auth::seller();
+
+            $order = OrderModel::findByOrderId($order_id, $seller["seller_id"]);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 404);
+            }
+
+            $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
+            if ($orderStatus['status'] == 'packing') {
+                $orderStatus = OrderStatusModel::add($order["order_id"], 'packed');
+            }
+
+            Response::json($orderStatus, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("Lỗi thêm status của người bán: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
