@@ -185,20 +185,24 @@ class OrderController {
             }
 
             $status = OrderStatusModel::findLatest($orderId, 'unpaid');
+            if (!$status) {
+                Response::json(['message' => 'Không tìm thấy trạng thái'], 400);
+            }
+
             if ($status['status'] != 'unpaid') {
-                Response::json(['message' => 'Đơn hàng đã thanh toán'], 200);
+                Response::json(['message' => 'Đơn hàng đã được thanh toán trước đó'], 400);
             }
 
             // Kiểm tra ở đây, giả bộ nó đã thanh toán
             $check = true;
 
             if ($check) {
-                OrderModel::updatePaid($orderId, $user["user_id"], 100);
+                OrderModel::updatePaid($orderId, $user["user_id"], rand(1, 100));
                 OrderStatusModel::add($orderId, 'packing');
 
-                Response::json(['message' => 'Xác nhận đã thanh toán'], 200);
+                Response::json(['message' => 'Xác nhận đã thanh toán thành công'], 200);
             } else {
-                Response::json(['message' => 'Bạn chưa thanh toán'], 200);
+                Response::json(['message' => 'Bạn chưa thanh toán'], 400);
             }
         } catch (\Throwable $th) {
             Log::throwable("Lỗi kiểm tra thanh toán: " . $th->getMessage());
@@ -366,7 +370,7 @@ class OrderController {
             $order = OrderModel::findByOrderId($order_id, $seller["seller_id"]);
 
             if (!$order) {
-                Response::json(['message' => 'Không tìm thấy đơn hàng'], 404);
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
             }
 
             $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
@@ -376,8 +380,9 @@ class OrderController {
             if ($orderStatus['status'] == 'unpaid') {
                 Response::json(['message' => 'Đơn hàng chưa thanh toán'], 400);
             } else if ($orderStatus['status'] == 'packing') {
-                $orderStatus = OrderStatusModel::add($order["order_id"], 'packed');
-                Response::json(['message' => 'Đơn hàng đã được đóng gói'], 200);
+                OrderStatusModel::add($order["order_id"], 'packed');
+                $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
+                Response::json($orderStatus, 200);
             } else {
                 Response::json(['message' => 'Đơn hàng đã đóng gói trước đó'], 400);
             }

@@ -13,7 +13,7 @@ import {
   TablePagination,
   TextField,
 } from "@mui/material";
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
@@ -27,6 +27,8 @@ import { TabContext, TabList } from "@mui/lab";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+
 const AcctionButton = ({ handleOnClick, title, ...props }) => {
   return (
     <ButtonLoading
@@ -43,10 +45,44 @@ const AcctionButton = ({ handleOnClick, title, ...props }) => {
   );
 };
 
-const HandleRender = ({ status }) => {
+const HandleRender = ({ status, orderId, setOrders }) => {
+  const [loading, setLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handlePacking = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosWithAuth.post(Api.sellerOrders(orderId));
+
+      if (response.status === 200) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.order_id === orderId
+              ? { ...order, latest_status: response.data }
+              : order
+          )
+        );
+
+        enqueueSnackbar("Đã đóng gói đơn hàng " + orderId, {
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   switch (status) {
     case "packing":
-      return <AcctionButton title="Đã đóng gói" />;
+      return (
+        <AcctionButton
+          loading={loading}
+          onClick={handlePacking}
+          title="Đã đóng gói"
+        />
+      );
     case "return-request":
       return (
         <>
@@ -59,167 +95,160 @@ const HandleRender = ({ status }) => {
   }
 };
 
-const OrdersTable = React.memo(
-  ({ orders }) => {
-    const theme = useTheme();
+const OrdersTable = ({ orders, setOrders }) => {
+  const theme = useTheme();
 
-    return (
-      <>
-        {orders && orders.length > 0 ? (
-          orders.map((order) => (
-            <TableContainer
-              key={order.order_id}
-              component={Paper}
-              sx={{ marginBottom: "20px" }}
-            >
-              <Table>
-                <TableHead>
-                  <TableRow
-                    sx={{ backgroundColor: theme.custom?.primary.light }}
-                  >
-                    <TableCell>
-                      Mã Đơn Hàng: {order.order_id} <br />
-                      {Format.formatDateTime(order.created_at)}
-                    </TableCell>
-                    <TableCell align="center">
-                      Khách hàng <br />
-                      {order.user.name}
-                    </TableCell>
-                    <TableCell align="center">
-                      Gửi từ: <br />
-                      {order.from_address.province_name}
-                    </TableCell>
-                    <TableCell align="center">
-                      Đến: <br />
-                      {order.to_address.province_name}
-                    </TableCell>
-                    <TableCell align="center">
-                      Phương thức giao hàng: <br />
-                      {order.shipping_fee.method}
-                    </TableCell>
-                    <TableCell align="center">
-                      {Format.formatOrderStatus(order.latest_status.status)}{" "}
-                      <br />
-                      {Format.formatDateTime(order.latest_status.created_at)}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
+  return (
+    <>
+      {orders && orders.length > 0 ? (
+        orders.map((order) => (
+          <TableContainer
+            key={order.order_id}
+            component={Paper}
+            sx={{ marginBottom: "20px" }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
+                  <TableCell>
+                    Mã Đơn Hàng: {order.order_id} <br />
+                    {Format.formatDateTime(order.created_at)}
+                  </TableCell>
+                  <TableCell align="center">
+                    Khách hàng <br />
+                    {order.user.name}
+                  </TableCell>
+                  <TableCell align="center">
+                    Gửi từ: <br />
+                    {order.from_address.province_name}
+                  </TableCell>
+                  <TableCell align="center">
+                    Đến: <br />
+                    {order.to_address.province_name}
+                  </TableCell>
+                  <TableCell align="center">
+                    Phương thức giao hàng: <br />
+                    {order.shipping_fee.method}
+                  </TableCell>
+                  <TableCell align="center">
+                    {Format.formatOrderStatus(order.latest_status.status)}
+                    <br />
+                    {Format.formatDateTime(order.latest_status.created_at)}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
 
-                <TableBody>
-                  {order.order_items.map((item) => (
-                    <TableRow key={item.order_item_id}>
-                      <TableCell colSpan={3} sx={{ maxWidth: "200px" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "20px",
-                          }}
-                        >
-                          <img
-                            src={Path.publicProduct(item.image)}
-                            alt={item.product.name}
-                            width="50"
-                          />
-                          <Typography variant="body2" className="line-clamp-2">
-                            {item.product.name}
-                          </Typography>
+              <TableBody>
+                {order.order_items.map((item) => (
+                  <TableRow key={item.order_item_id}>
+                    <TableCell colSpan={3} sx={{ maxWidth: "200px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "20px",
+                        }}
+                      >
+                        <img
+                          src={Path.publicProduct(item.image)}
+                          alt={item.product.name}
+                          width="50"
+                        />
+                        <Typography variant="body2" className="line-clamp-2">
+                          {item.product.name}
+                        </Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell align="center">
+                      Số lượng: {item.quantity}
+                    </TableCell>
+                    <TableCell align="center">
+                      {Format.formatCurrency(item.price)}
+                    </TableCell>
+                    <TableCell align="center">
+                      {item.attributes.map((attr) => (
+                        <div key={attr.name}>
+                          {attr.name}: {attr.value}
                         </div>
-                      </TableCell>
-                      <TableCell align="center">
-                        Số lượng: {item.quantity}
-                      </TableCell>
-                      <TableCell align="center">
-                        {Format.formatCurrency(item.price)}
-                      </TableCell>
-                      <TableCell align="center">
-                        {item.attributes.map((attr) => (
-                          <div key={attr.name}>
-                            {attr.name}: {attr.value}
-                          </div>
-                        ))}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: "bold" }}>
-                      Tổng giá sản phẩm
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                      Tổng giảm giá
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                      Phí vận chuyển
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                      Thành tiền đơn hàng
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                      Khách hàng thanh toán
-                    </TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                      Doanh thu
+                      ))}
                     </TableCell>
                   </TableRow>
+                ))}
 
-                  <TableRow>
-                    <TableCell>
-                      {Format.formatCurrency(order.subtotal_price)}
-                    </TableCell>
-                    <TableCell align="center">
-                      {Format.formatCurrency(order.discount)}
-                    </TableCell>
-                    <TableCell align="center">
-                      {Format.formatCurrency(order.shipping_fee.price)}
-                    </TableCell>
-                    <TableCell align="center">
-                      {Format.formatCurrency(order.final_price)}
-                    </TableCell>
-                    <TableCell align="center">
-                      {Format.formatCurrency(order.paid)}
-                    </TableCell>
-                    <TableCell align="center">
-                      {Format.formatCurrency(order.revenue)}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Tổng giá sản phẩm
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Tổng giảm giá
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Phí vận chuyển
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Thành tiền đơn hàng
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Khách hàng thanh toán
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Doanh thu
+                  </TableCell>
+                </TableRow>
 
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={6}>
-                      <Box sx={{ display: "flex", gap: 2 }}>
-                        <ButtonLoading
-                          variant="outlined"
-                          sx={{
-                            px: 6,
-                          }}
-                        >
-                          Chi tiết đơn hàng
-                        </ButtonLoading>
+                <TableRow>
+                  <TableCell>
+                    {Format.formatCurrency(order.subtotal_price)}
+                  </TableCell>
+                  <TableCell align="center">
+                    {Format.formatCurrency(order.discount)}
+                  </TableCell>
+                  <TableCell align="center">
+                    {Format.formatCurrency(order.shipping_fee.price)}
+                  </TableCell>
+                  <TableCell align="center">
+                    {Format.formatCurrency(order.final_price)}
+                  </TableCell>
+                  <TableCell align="center">
+                    {Format.formatCurrency(order.paid)}
+                  </TableCell>
+                  <TableCell align="center">
+                    {Format.formatCurrency(order.revenue)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
 
-                        <HandleRender status={order.latest_status.status} />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
-          ))
-        ) : (
-          <NoContent text="Không có đơn hàng" sx={{ height: 300 }} />
-        )}
-      </>
-    );
-  },
-  (prevProps, nextProps) => {
-    return (
-      JSON.stringify(prevProps.orders) === JSON.stringify(nextProps.orders)
-    );
-  }
-);
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                      <ButtonLoading
+                        variant="outlined"
+                        sx={{
+                          px: 6,
+                        }}
+                      >
+                        Chi tiết đơn hàng
+                      </ButtonLoading>
 
-OrdersTable.displayName = "OrdersTable";
+                      <HandleRender
+                        setOrders={setOrders}
+                        orderId={order.order_id}
+                        status={order.latest_status.status}
+                      />
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
+        ))
+      ) : (
+        <NoContent text="Không có đơn hàng" sx={{ height: 300 }} />
+      )}
+    </>
+  );
+};
 
 const Orders = () => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
@@ -236,6 +265,7 @@ const Orders = () => {
 
   const handleChange = (event, newValue) => {
     navigate(Path.sellerOrders(newValue));
+    setOrders([]);
     fetchApi(newValue, page, rowsPerPage);
   };
 
@@ -321,16 +351,19 @@ const Orders = () => {
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Số dòng mỗi trang"
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}-${to} trên ${count}`
+          }
         />
       </Box>
 
       {loading ? (
         <CircularProgressLoading sx={{ height: 300 }} />
       ) : (
-        <OrdersTable orders={orders} />
+        <OrdersTable orders={orders} setOrders={setOrders} />
       )}
 
-      {/* Pagination */}
       <TablePagination
         disabled={loading}
         component="div"
@@ -339,6 +372,10 @@ const Orders = () => {
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Số dòng mỗi trang"
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}-${to} trên ${count}`
+        }
       />
     </PaperCustom>
   );

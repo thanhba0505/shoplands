@@ -35,9 +35,8 @@ import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import { useState } from "react";
 import PaperCustom from "~/components/PaperCustom";
 import Path from "~/helpers/Path";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import theme from "~/theme";
-import Log from "~/helpers/Log";
 
 const NAVIGATION = [
   {
@@ -160,6 +159,7 @@ const NAVIGATION = [
 
 const SideBarItem = ({ item, open }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleOnClick = () => {
     navigate(Path.seller(item.path));
@@ -186,7 +186,18 @@ const SideBarItem = ({ item, open }) => {
           <ListItem
             onClick={() => handleOnClick()}
             disablePadding
-            sx={{ display: "block", overflow: "hidden", borderRadius: "8px" }}
+            sx={{
+              display: "block",
+              overflow: "hidden",
+              borderRadius: "8px",
+              backgroundColor: Path.checkStartsWith(
+                item.path,
+                Path.getPathFromIndex(location.pathname, 2)
+              )
+                ? theme.custom.primary.strongLight
+                : "transparent",
+              my: 0.5,
+            }}
           >
             <ListItemButton
               sx={[
@@ -337,7 +348,6 @@ const ManageLayout = ({ children }) => {
                 sx={{
                   width: open ? 250 : 60,
                   transition: "all 0.3s",
-                  // paddingX: open ? "20px" : "10px",
                 }}
               >
                 {NAVIGATION.map((item, index) => (

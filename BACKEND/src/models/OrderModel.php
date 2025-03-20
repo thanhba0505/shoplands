@@ -289,7 +289,13 @@ class OrderModel {
                 COUNT(*) AS total
             FROM
                 orders o
-                JOIN order_status os ON os.order_id = o.id
+                JOIN (
+                    SELECT order_id, status
+                    FROM order_status
+                    WHERE (order_id, created_at) IN (
+                        SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
+                    )
+                ) os ON os.order_id = o.id
             WHERE
                 o.seller_id = :seller_id
                 $statusCondition

@@ -13,6 +13,15 @@ class Path {
     return pathSegments.length > index ? pathSegments[index] : null;
   }
 
+  // Lấy path từ vị trí thứ index
+  static getPathFromIndex(path, index) {
+    const pathSegments = path.split("/");
+    if (pathSegments.length > index) {
+      return "/" + pathSegments.slice(index).join("/");
+    }
+    return null; 
+  }
+
   // ASSET PATHS
   static public(subPath = "") {
     return this.buildPath(import.meta.env.VITE_API_URL_PUBLIC, subPath);
