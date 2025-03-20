@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-const NoContent = ({ sx, ...props }) => {
+const NoContent = ({ text = "Không có nội dung", sx, ...props }) => {
   return (
     <Box
       sx={{
@@ -13,7 +13,7 @@ const NoContent = ({ sx, ...props }) => {
       }}
       {...props}
     >
-      <Typography>Không có nội dung</Typography>
+      <Typography>{text}</Typography>
     </Box>
   );
 };

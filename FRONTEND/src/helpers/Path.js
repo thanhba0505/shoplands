@@ -1,120 +1,134 @@
 class Path {
-    // ASSET PATHS
-    static public(subPath = "") {
-        return this.buildPath(import.meta.env.VITE_API_URL_PUBLIC, subPath);
-    }
+  // Kiểm tra path bắt đầu bằng
+  static checkStartsWith(basePath, targetPath) {
+    const formattedBasePath = basePath.replace(/^\/+|\/+$/g, "") + "/";
+    const formattedTargetPath = targetPath.replace(/^\/+|\/+$/g, "") + "/";
 
-    static publicApp(subPath = "") {
-        return this.buildPath(this.public() + "/app", subPath);
-    }
+    return formattedTargetPath.startsWith(formattedBasePath);
+  }
 
-    static publicAvatar(subPath = "") {
-        return this.buildPath(this.public() + "/uploaded/avatar", subPath);
-    }
+  // Lấy phần tử path thứ index
+  static getElement(path, index) {
+    const pathSegments = path.split("/");
+    return pathSegments.length > index ? pathSegments[index] : null;
+  }
 
-    static publicBackground(subPath = "") {
-        return this.buildPath(this.public() + "/uploaded/background", subPath);
-    }
+  // ASSET PATHS
+  static public(subPath = "") {
+    return this.buildPath(import.meta.env.VITE_API_URL_PUBLIC, subPath);
+  }
 
-    static publicProduct(subPath = "") {
-        return this.buildPath(this.public() + "/uploaded/product", subPath);
-    }
+  static publicApp(subPath = "") {
+    return this.buildPath(this.public() + "/app", subPath);
+  }
 
-    // PUBLIC PATHS
-    static home(subPath = "") {
-        return this.buildPath("/", subPath);
-    }
+  static publicAvatar(subPath = "") {
+    return this.buildPath(this.public() + "/uploaded/avatar", subPath);
+  }
 
-    static login(subPath = "") {
-        return this.buildPath("/login", subPath);
-    }
+  static publicBackground(subPath = "") {
+    return this.buildPath(this.public() + "/uploaded/background", subPath);
+  }
 
-    static register(subPath = "") {
-        return this.buildPath("/register", subPath);
-    }
+  static publicProduct(subPath = "") {
+    return this.buildPath(this.public() + "/uploaded/product", subPath);
+  }
 
-    static forgotPassword(subPath = "") {
-        return this.buildPath("/forgot-password", subPath);
-    }
+  // PUBLIC PATHS
+  static home(subPath = "") {
+    return this.buildPath("/", subPath);
+  }
 
-    static products(subPath = "") {
-        return this.buildPath("/products", subPath);
-    }
+  static login(subPath = "") {
+    return this.buildPath("/login", subPath);
+  }
 
-    static productDetail(subPath = "") {
-        return this.buildPath("/product-detail", subPath);
-    }
+  static register(subPath = "") {
+    return this.buildPath("/register", subPath);
+  }
 
-    static introduce(subPath = "") {
-        return this.buildPath("/introduce", subPath);
-    }
+  static forgotPassword(subPath = "") {
+    return this.buildPath("/forgot-password", subPath);
+  }
 
-    static contact(subPath = "") {
-        return this.buildPath("/contact", subPath);
-    }
+  static products(subPath = "") {
+    return this.buildPath("/products", subPath);
+  }
 
-    // USER PATHS
-    static userProfile(subPath = "") {
-        return this.buildPath("/user/profile", subPath);
-    }
+  static productDetail(subPath = "") {
+    return this.buildPath("/product-detail", subPath);
+  }
 
-    static userCart(subPath = "") {
-        return this.buildPath("/user/cart", subPath);
-    }
+  static introduce(subPath = "") {
+    return this.buildPath("/introduce", subPath);
+  }
 
-    static userOrders(subPath = "") {
-        return this.buildPath("/user/orders", subPath);
-    }
+  static contact(subPath = "") {
+    return this.buildPath("/contact", subPath);
+  }
 
-    static userAddressBook(subPath = "") {
-        return this.buildPath("/user/address-book", subPath);
-    }
+  // USER PATHS
+  static userProfile(subPath = "") {
+    return this.buildPath("/user/profile", subPath);
+  }
 
-    static userCheckout(subPath = "") {
-        return this.buildPath("/user/orders/checkout", subPath);
-    }
+  static userCart(subPath = "") {
+    return this.buildPath("/user/cart", subPath);
+  }
 
-    static userPayment(subPath = "") {
-        return this.buildPath("/user/orders/payment", subPath);
-    }
+  static userOrders(subPath = "") {
+    return this.buildPath("/user/orders", subPath);
+  }
 
-    // SELLER PATHS
-    static seller(subPath = "") {
-        return this.buildPath("/seller", subPath);
-    }
+  static userAddressBook(subPath = "") {
+    return this.buildPath("/user/address-book", subPath);
+  }
 
-    static sellerDashboard(subPath = "") {
-        return this.buildPath("/seller/dashboard", subPath);
-    }
+  static userCheckout(subPath = "") {
+    return this.buildPath("/user/orders/checkout", subPath);
+  }
 
-    static sellerOrders(subPath = "") {
-        return this.buildPath("/seller/orders", subPath);
-    }
+  static userPayment(subPath = "") {
+    return this.buildPath("/user/orders/payment", subPath);
+  }
 
-    static sellerProducts(subPath = "") {
-        return this.buildPath("/seller/products", subPath);
-    }
+  // SELLER PATHS
+  static seller(subPath = "") {
+    return this.buildPath("/seller", subPath);
+  }
 
-    // ADMIN PATHS
-    static adminDashboard(subPath = "") {
-        return this.buildPath("/admin/dashboard", subPath);
-    }
+  static sellerDashboard(subPath = "") {
+    return this.buildPath("/seller/dashboard", subPath);
+  }
 
-    static adminUsers(subPath = "") {
-        return this.buildPath("/admin/users", subPath);
-    }
+  static sellerOrders(subPath = "all") {
+    return this.buildPath("/seller/orders", subPath);
+  }
 
-    static adminSellers(subPath = "") {
-        return this.buildPath("/admin/sellers", subPath);
-    }
+  static sellerProducts(subPath = "") {
+    return this.buildPath("/seller/products", subPath);
+  }
 
-    // Helper function to format the path correctly
-    static buildPath(basePath, subPath) {
-        const subPathString = String(subPath); // Chuyển subPath thành string
-        return subPathString
-            ? `${basePath}/${subPathString.replace(/^\/+/, "")}`
-            : basePath;
-    }
+  // ADMIN PATHS
+  static adminDashboard(subPath = "") {
+    return this.buildPath("/admin/dashboard", subPath);
+  }
+
+  static adminUsers(subPath = "") {
+    return this.buildPath("/admin/users", subPath);
+  }
+
+  static adminSellers(subPath = "") {
+    return this.buildPath("/admin/sellers", subPath);
+  }
+
+  // Helper function to format the path correctly
+  static buildPath(basePath, subPath) {
+    const subPathString = String(subPath); // Chuyển subPath thành string
+    return subPathString
+      ? `${basePath}/${subPathString.replace(/^\/+/, "")}`
+      : basePath;
+  }
 }
 
 export default Path;

@@ -26,6 +26,8 @@ import Payment from "~/pages/User/Payment";
 import Dashboard from "~/pages/Seller/Dashboard";
 import OrdersSeller from "~/pages/Seller/Orders";
 import ProductSellers from "~/pages/Seller/Products";
+import Promotions from "~/pages/Seller/Promotions";
+import Settings from "~/pages/Seller/Settings";
 
 // Admin
 import DashboardAdmin from "~/pages/Admin/Dashboard";
@@ -61,8 +63,32 @@ const userRoutes = [
 // SELLER ROUTES
 const sellerRoutes = [
   { path: "/seller/dashboard", component: Dashboard, layout: ManageLayout },
+  // Đơn hàng
   { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/products", component: ProductSellers },
+  { path: "/seller/orders/all", component: OrdersSeller, layout: ManageLayout },
+  { path: "/seller/orders/packing", component: OrdersSeller, layout: ManageLayout },
+  { path: "/seller/orders/packed", component: OrdersSeller, layout: ManageLayout },
+  { path: "/seller/orders/shipping", component: OrdersSeller, layout: ManageLayout },
+  { path: "/seller/orders/delivered", component: OrdersSeller, layout: ManageLayout },
+  { path: "/seller/orders/completed", component: OrdersSeller, layout: ManageLayout },
+
+  // Sản phẩm
+  { path: "/seller/products", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/all", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/new", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/inventory", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/import-products", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/reviews", component: ProductSellers, layout: ManageLayout },
+
+  // Khuyến mãi
+  { path: "/seller/promotions", component: Promotions, layout: ManageLayout },
+  { path: "/seller/promotions/product-discount", component: Promotions, layout: ManageLayout },
+  { path: "/seller/promotions/coupon", component: Promotions, layout: ManageLayout },
+
+  // Cài đặt
+  { path: "/seller/settings", component: Settings, layout: ManageLayout },
+  { path: "/seller/settings/shop", component: Settings, layout: ManageLayout },
+  { path: "/seller/settings/payment", component: Settings, layout: ManageLayout },
 ];
 
 // ADMIN ROUTES

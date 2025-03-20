@@ -26,6 +26,7 @@ import ButtonLoading from "~/components/ButtonLoading";
 import { TabContext, TabList } from "@mui/lab";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
+import { useLocation, useNavigate } from "react-router-dom";
 const AcctionButton = ({ handleOnClick, title, ...props }) => {
   return (
     <ButtonLoading
@@ -206,7 +207,7 @@ const OrdersTable = React.memo(
             </TableContainer>
           ))
         ) : (
-          <NoContent sx={{ height: 300 }} />
+          <NoContent text="Không có đơn hàng" sx={{ height: 300 }} />
         )}
       </>
     );
@@ -222,29 +223,32 @@ OrdersTable.displayName = "OrdersTable";
 
 const Orders = () => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const value = Path.getElement(location.pathname, 3) ?? "all";
 
   const [orders, setOrders] = useState([]);
   const [count, setCount] = useState(1);
-  const [value, setValue] = useState("all"); // Mặc định là "all" khi không chọn tab
-  const [page, setPage] = useState(0); // Đầu tiên ở trang 0
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Mặc định hiển thị 10 dòng trên mỗi trang
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-    fetchApi(newValue, page, rowsPerPage); // Truyền status (value) vào API
+    navigate(Path.sellerOrders(newValue));
+    fetchApi(newValue, page, rowsPerPage);
   };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    fetchApi(value, newPage, rowsPerPage); // Gọi API khi chuyển trang, truyền status (value) vào API
+    fetchApi(value, newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0); // Khi thay đổi số dòng trên mỗi trang, về lại trang đầu tiên
-    fetchApi(value, 0, newRowsPerPage); // Gọi API để cập nhật dữ liệu với số dòng mới
+    setPage(0);
+    fetchApi(value, 0, newRowsPerPage);
   };
 
   const fetchApi = useCallback(
@@ -254,9 +258,9 @@ const Orders = () => {
         if (seller_id) {
           const response = await axiosWithAuth.get(Api.sellerOrders(), {
             params: {
-              status: status, // Truyền status vào trong params
+              status: status,
               limit: limit,
-              page: page + 1, // API của bạn có thể yêu cầu page bắt đầu từ 1
+              page: page + 1,
             },
           });
           setOrders(response.data.orders);
@@ -264,14 +268,15 @@ const Orders = () => {
         }
       } catch (error) {
         Log.error(error.response?.data?.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     },
     [seller_id]
   );
 
   useEffect(() => {
-    fetchApi(value, page, rowsPerPage); // Gọi API khi load component
+    fetchApi(value, page, rowsPerPage);
   }, [seller_id, value, page, rowsPerPage, fetchApi]);
 
   return (
@@ -282,13 +287,9 @@ const Orders = () => {
             <TabList onChange={handleChange} aria-label="lab API tabs example">
               <Tab disabled={loading} label="Tất cả" value="all" />
               <Tab disabled={loading} label="Chờ đóng gói" value="packing" />
-              <Tab disabled={loading} label="Chờ giao hàng" value="packend" />
+              <Tab disabled={loading} label="Đã đóng gói" value="packed" />
               <Tab disabled={loading} label="Đang giao hàng" value="shipping" />
-              <Tab
-                disabled={loading}
-                label="Yêu cầu trả hàng"
-                value="return-request"
-              />
+              <Tab disabled={loading} label="Đã giao hàng" value="delivered" />
               <Tab disabled={loading} label="Hoàn thành" value="completed" />
             </TabList>
           </Box>
@@ -315,7 +316,7 @@ const Orders = () => {
         <TablePagination
           disabled={loading}
           component="div"
-          count={count} // Tổng số dòng, có thể thay đổi tùy theo dữ liệu trả về từ API
+          count={count}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
@@ -333,7 +334,7 @@ const Orders = () => {
       <TablePagination
         disabled={loading}
         component="div"
-        count={count} // Tổng số dòng, có thể thay đổi tùy theo dữ liệu trả về từ API
+        count={count}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
@@ -342,5 +343,4 @@ const Orders = () => {
     </PaperCustom>
   );
 };
-
 export default Orders;

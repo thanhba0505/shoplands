@@ -43,4 +43,4 @@ $router->get('api/user/orders', 'OrderController@getAll', ['App\Middlewares\User
 
 $router->get('api/seller/orders', 'OrderController@getAllBySeller', ['App\Middlewares\SellerMiddleware']);
 $router->get('api/seller/orders/{order_id}', 'OrderController@getByOrderId', ['App\Middlewares\SellerMiddleware']);
-$router->post('api/seller/orders/{order_id}', 'OrderController@addStatus', ['App\Middlewares\SellerMiddleware']);
+$router->post('api/seller/orders/{order_id}', 'OrderController@sellerAddStatus', ['App\Middlewares\SellerMiddleware']);

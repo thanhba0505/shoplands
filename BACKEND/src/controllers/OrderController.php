@@ -359,7 +359,7 @@ class OrderController {
     }
 
     // Seller thêm 1 status cho đơn hàng
-    public function addStatus($order_id) {
+    public function sellerAddStatus($order_id) {
         try {
             $seller = Auth::seller();
 
@@ -370,11 +370,17 @@ class OrderController {
             }
 
             $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
-            if ($orderStatus['status'] == 'packing') {
-                $orderStatus = OrderStatusModel::add($order["order_id"], 'packed');
+            if (!$orderStatus) {
+                throw new \Exception("Không tìm thấy trạng thái");
             }
-
-            Response::json($orderStatus, 200);
+            if ($orderStatus['status'] == 'unpaid') {
+                Response::json(['message' => 'Đơn hàng chưa thanh toán'], 400);
+            } else if ($orderStatus['status'] == 'packing') {
+                $orderStatus = OrderStatusModel::add($order["order_id"], 'packed');
+                Response::json(['message' => 'Đơn hàng đã được đóng gói'], 200);
+            } else {
+                Response::json(['message' => 'Đơn hàng đã đóng gói trước đó'], 400);
+            }
         } catch (\Throwable $th) {
             Log::throwable("Lỗi thêm status của người bán: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

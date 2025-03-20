@@ -36,6 +36,8 @@ import { useState } from "react";
 import PaperCustom from "~/components/PaperCustom";
 import Path from "~/helpers/Path";
 import { useNavigate } from "react-router-dom";
+import theme from "~/theme";
+import Log from "~/helpers/Log";
 
 const NAVIGATION = [
   {
@@ -51,37 +53,37 @@ const NAVIGATION = [
   {
     name: "Tất cả đơn hàng",
     tooltip: "Tất cả đơn hàng",
-    path: "/orders",
+    path: "/orders/all",
     icon: <WysiwygRoundedIcon />,
   },
   {
     name: "Chờ đóng gói",
     tooltip: "Chờ đóng gói",
-    path: "/orders",
+    path: "/orders/packing",
     icon: <MarkunreadMailboxOutlinedIcon />,
   },
   {
-    name: "Chờ giao hàng",
-    tooltip: "Chờ giao hàng",
-    path: "/orders",
+    name: "Đã đóng gói",
+    tooltip: "Đã đóng gói",
+    path: "/orders/packed",
     icon: <CardTravelRoundedIcon />,
   },
   {
     name: "Đang giao hàng",
     tooltip: "Đang giao hàng",
-    path: "/orders",
+    path: "/orders/shipping",
     icon: <LocalShippingOutlinedIcon />,
   },
   {
     name: "Yêu cầu trả hàng",
     tooltip: "Yêu cầu trả hàng",
-    path: "/orders",
+    path: "/orders/delivered",
     icon: <AssignmentReturnOutlinedIcon />,
   },
   {
     name: "Hoàn thành",
     tooltip: "Hoàn thành",
-    path: "/orders",
+    path: "/orders/completed",
     icon: <FactCheckOutlinedIcon />,
     divider: true,
   },
@@ -91,31 +93,31 @@ const NAVIGATION = [
   {
     name: "Tất cả sản phẩm",
     tooltip: "Tất cả sản phẩm",
-    path: "/dashboard",
+    path: "/products/all",
     icon: <BallotOutlinedIcon />,
   },
   {
     name: "Thêm sản phẩm",
     tooltip: "Thêm sản phẩm",
-    path: "/orders",
+    path: "/products/new",
     icon: <AddShoppingCartRoundedIcon />,
   },
   {
     name: "Kho hàng",
     tooltip: "Kho hàng",
-    path: "/orders",
+    path: "/products/inventory",
     icon: <Inventory2OutlinedIcon />,
   },
   {
     name: "Nhập kho",
     tooltip: "Nhập kho",
-    path: "/orders",
+    path: "/products/import-products",
     icon: <AddCardRoundedIcon />,
   },
   {
     name: "Đánh giá sản phẩm",
     tooltip: "Đánh giá sản phẩm",
-    path: "/orders",
+    path: "/products/reviews",
     icon: <RateReviewOutlinedIcon />,
     divider: true,
   },
@@ -125,13 +127,13 @@ const NAVIGATION = [
   {
     name: "Giảm giá sản phẩm",
     tooltip: "Giảm giá sản phẩm",
-    path: "/dashboard",
+    path: "/promotions/product-discount",
     icon: <SellOutlinedIcon />,
   },
   {
     name: "Mã giảm giá",
     tooltip: "Mã giảm giá",
-    path: "/orders",
+    path: "/promotions/coupon",
     icon: <LocalAtmOutlinedIcon />,
     divider: true,
   },
@@ -144,14 +146,13 @@ const NAVIGATION = [
   {
     name: "Thông tin cửa hàng",
     tooltip: "Thông tin cửa hàng",
-    path: "/dashboard",
+    path: "/settings/shop",
     icon: <StorefrontOutlinedIcon />,
-    divider: true,
   },
   {
     name: "Thông tin thanh toán",
     tooltip: "Thông tin thanh toán",
-    path: "/dashboard",
+    path: "/settings/payment",
     icon: <PaymentOutlinedIcon />,
     divider: true,
   },
@@ -159,6 +160,10 @@ const NAVIGATION = [
 
 const SideBarItem = ({ item, open }) => {
   const navigate = useNavigate();
+
+  const handleOnClick = () => {
+    navigate(Path.seller(item.path));
+  };
 
   return (
     <>
@@ -179,7 +184,7 @@ const SideBarItem = ({ item, open }) => {
       ) : (
         <>
           <ListItem
-            onClick={() => navigate(Path.seller(item.path))}
+            onClick={() => handleOnClick()}
             disablePadding
             sx={{ display: "block", overflow: "hidden", borderRadius: "8px" }}
           >
@@ -201,6 +206,7 @@ const SideBarItem = ({ item, open }) => {
                 <ListItemIcon
                   sx={[
                     {
+                      color: theme.palette.primary.light,
                       minWidth: 0,
                       justifyContent: "center",
                     },
@@ -220,6 +226,7 @@ const SideBarItem = ({ item, open }) => {
                   <ListItemIcon
                     sx={[
                       {
+                        color: theme.palette.primary.light,
                         minWidth: 0,
                         justifyContent: "center",
                       },
@@ -308,7 +315,7 @@ const ManageLayout = ({ children }) => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            gap: 3,
+            gap: 2,
           }}
         >
           <PaperCustom
