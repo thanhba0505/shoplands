@@ -21,6 +21,8 @@ $router->get('api/categories', 'CategoryController@getAll');
 $router->get('api/products', 'ProductController@getAll');
 $router->get('api/products/{id}', 'ProductController@getByProductId');
 
+$router->get('api/seller/products', 'ProductController@sellerGetAll', ['App\Middlewares\SellerMiddleware']);
+
 // API CART
 $router->get('api/user/cart', 'CartController@getAll', ['App\Middlewares\UserMiddleware']);
 $router->post('api/user/cart', 'CartController@addCart', ['App\Middlewares\UserMiddleware']);

@@ -75,6 +75,8 @@ const sellerRoutes = [
   // Sản phẩm
   { path: "/seller/products", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/all", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/active", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/locked", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/new", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/inventory", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/import-products", component: ProductSellers, layout: ManageLayout },

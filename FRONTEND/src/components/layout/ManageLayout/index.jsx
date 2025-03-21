@@ -359,7 +359,6 @@ const ManageLayout = ({ children }) => {
 
           <Box
             sx={{
-              pr: 2,
               height: `calc(100vh - ${theme.custom.headerHeight})`,
               overflowY: "auto",
               flexGrow: 1,

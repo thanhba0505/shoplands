@@ -66,6 +66,10 @@ class Api {
     static sellerOrders(endpoint = "") {
         return this.buildPath("seller/orders", endpoint);
     }
+
+    static sellerProducts(endpoint = "") {
+        return this.buildPath("seller/products", endpoint);
+    }
 }
 
 export default Api;

@@ -261,7 +261,7 @@ const Orders = () => {
   const [count, setCount] = useState(1);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event, newValue) => {
     navigate(Path.sellerOrders(newValue));
