@@ -9,13 +9,35 @@ class Request {
     }
 
     // Lấy giá trị từ $_POST
-    public static function post($value, $default = null) {
+    public static function post($value = null, $default = null) {
+        // Nếu $value là null, duyệt qua tất cả $_POST và decode JSON nếu có
+        if (!$value) {
+            $decodedData = [];
+
+            // Duyệt qua tất cả các giá trị trong $_POST và giải mã nếu có
+            foreach ($_POST as $key => $data) {
+                // Giải mã nếu là chuỗi JSON hợp lệ
+                $decodedData[$key] = (is_string($data) && json_decode($data, true)) ? json_decode($data, true) : $data;
+            }
+
+            return $decodedData;
+        }
+
+        // Kiểm tra nếu có file trong $_POST với key là $value không
         if (isset($_POST[$value])) {
             $data = $_POST[$value];
-            return is_array($data) && empty($data) ? ($default ?? []) : $data;
+
+            // Kiểm tra xem dữ liệu có phải là chuỗi JSON không và giải mã
+            return (is_string($data) && json_decode($data, true)) ? json_decode($data, true) : $data;
         }
+
+        // Nếu không có file, trả về giá trị mặc định
         return $default;
     }
+
+
+
+
 
     // Lấy giá trị từ $_GET
     public static function get($value, $default = null) {
@@ -58,8 +80,59 @@ class Request {
     public static function file($key) {
         // Kiểm tra xem có file trong $_FILES với key là $key không
         if (isset($_FILES[$key])) {
-            return $_FILES[$key];  // Trả về thông tin file
+            // Kiểm tra nếu có nhiều file (mảng) thì trả về null
+            if (is_array($_FILES[$key]['name'])) {
+                return null;  // Nếu có nhiều file, trả về null
+            }
+
+            // Nếu chỉ có một file, trả về thông tin file
+            return $_FILES[$key];
         }
+
         return null;  // Nếu không có file, trả về null
+    }
+
+
+    public static function files($key) {
+        // Kiểm tra xem có file trong $_FILES với key là $key không
+        if (isset($_FILES[$key])) {
+            // Kiểm tra nếu $_FILES[$key]['name'] là mảng (tải nhiều file)
+            if (is_array($_FILES[$key]['name'])) {
+                $files = $_FILES[$key];
+                $result = [];
+
+                // Duyệt qua các file trong mảng $_FILES[$key]
+                foreach ($files['name'] as $key => $fileName) {
+                    // Nếu có file và không có lỗi tải lên (UPLOAD_ERR_OK)
+                    if ($files['error'][$key] === UPLOAD_ERR_OK) {
+                        $result[] = [
+                            'name' => $fileName,
+                            'type' => $files['type'][$key],
+                            'tmp_name' => $files['tmp_name'][$key],
+                            'error' => $files['error'][$key],
+                            'size' => $files['size'][$key]
+                        ];
+                    }
+                }
+
+                // Nếu không có file hợp lệ, trả về mảng rỗng
+                return $result;
+            } else {
+                // Nếu không phải mảng, trả về mảng rỗng nếu không có file hợp lệ
+                if ($_FILES[$key]['error'] === UPLOAD_ERR_OK) {
+                    return [
+                        [
+                            'name' => $_FILES[$key]['name'],
+                            'type' => $_FILES[$key]['type'],
+                            'tmp_name' => $_FILES[$key]['tmp_name'],
+                            'error' => $_FILES[$key]['error'],
+                            'size' => $_FILES[$key]['size']
+                        ]
+                    ];
+                }
+            }
+        }
+
+        return [];  // Nếu không có file hoặc có lỗi, trả về mảng rỗng
     }
 }

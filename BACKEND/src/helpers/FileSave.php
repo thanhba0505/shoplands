@@ -9,7 +9,7 @@ class FileSave {
   private static $basePath = 'src/storage/';
 
   // Lưu ảnh vào thư mục và trả về tên file
-  public static function image($file, $subPath = '', $maxSize = 10485760) {
+  public static function image($file, $subName = 'image', $subPath = '', $maxSize = 10485760) {
     // Kiểm tra nếu file tồn tại và không rỗng
     if (!$file || $file['error'] === UPLOAD_ERR_NO_FILE) {
       return [
@@ -41,7 +41,7 @@ class FileSave {
     }
 
     // Kiểm tra loại file (chỉ cho phép ảnh)
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     if (!in_array($fileType, $allowedTypes)) {
       return [
         'success' => false,
@@ -50,7 +50,8 @@ class FileSave {
     }
 
     // Tạo tên file mới (thêm timestamp để tránh trùng lặp)
-    $newFileName = time() . '_' . basename($fileName);
+    $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+    $newFileName = $subName . '_' . time() . '_' . uniqid() . '.' .  $fileExtension;
 
     // Kết hợp basePath với subPath (nếu có)
     $uploadDir = self::$basePath . $subPath;
@@ -67,7 +68,7 @@ class FileSave {
     if (move_uploaded_file($fileTmpName, $filePath)) {
       return [
         'success' => true,
-        'message' => $newFileName
+        'file_name' => $newFileName
       ];  // Trả về tên file đã lưu
     } else {
       return [
@@ -80,6 +81,6 @@ class FileSave {
 
   // Thêm ảnh sản phẩm
   public static function productImage($file) {
-    return self::image($file, 'public/product/', 5242880); // 5MB
+    return self::image($file, 'product', 'public/uploaded/product/', 5242880); // 5MB
   }
 }

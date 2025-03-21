@@ -1,19 +1,11 @@
 import { TabContext, TabList } from "@mui/lab";
-import { Box, Tab, TablePagination, TextField } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { Box, Tab } from "@mui/material";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CircularProgressLoading from "~/components/CircularProgressLoading";
 import PaperCustom from "~/components/PaperCustom";
-import Api from "~/helpers/Api";
-import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
-import axiosWithAuth from "~/utils/axiosWithAuth";
 import ListProduct from "./ListProduct";
-
-const NewProducts = () => {
-  return <div>new</div>;
-};
+import NewProducts from "./NewProducts";
 
 const Inventory = () => {
   return <div>inventory</div>;

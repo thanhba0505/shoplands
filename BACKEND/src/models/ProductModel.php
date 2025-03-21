@@ -175,7 +175,7 @@ class ProductModel {
     }
 
     // Thêm 1 sản phẩm và trả về id
-    public static function insert($name, $description, $seller_id, $category_id = null, $status = 'active') {
+    public static function add($name, $description, $seller_id, $category_id = null, $status = 'active') {
         $conn = new ConnectDatabase();
 
         $sql = "

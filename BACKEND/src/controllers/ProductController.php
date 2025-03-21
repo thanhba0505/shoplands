@@ -262,25 +262,38 @@ class ProductController {
             $seller = Auth::seller();
 
             $seller_id = $seller['seller_id'];
-            $name = Request::json('name');
-            $description = Request::json('description');
-            $category_id = Request::json('category_id');
-            $product_details = Request::json('product_details', []);
-            $product_attributes = Request::json('product_attributes', []);
-            $product_variants = Request::json('product_variants', []);
-            $image = Request::file('image');
+            $name = Request::post('name');
+            $description = Request::post('description');
+            $category_id = Request::post('category_id');
+            $product_details = Request::post('product_details', []);
+            $product_attributes = Request::post('product_attributes', []);
+            $product_variants = Request::post('product_variants', []);
+            $images = Request::files('images');
 
             // Kiểm tra đầu vào
-            // $this->checkAddProduct($name, $description, $category_id);
+            $this->checkAddProduct($name, $description, $category_id, $images);
 
             // Thêm thông tin product
-            // $product_id = ProductModel::insert($name, $description, $seller_id);
+            $product_id = ProductModel::add($name, $description, $seller_id, $category_id);
 
             // Thêm ảnh sản phẩm
-            $result = FileSave::productImage($image);
+            $default = 1;
+            $countImageUpload = 0;
+            foreach ($images as $key => $image) {
+                $fileSave = FileSave::productImage($image);
+                if ($fileSave['success'] === true) {
+                    ProductImageModel::add($product_id, $fileSave['file_name'], $default);
+                    $default = 0;
+                    $countImageUpload++;
+                }
+            }
+            if ($countImageUpload === 0) {
+                Response::json(['message' => 'Có lỗi xảy ra, số ảnh được tải lên ít hơn 1'], 400);
+            }
 
+            
 
-            Response::json(['message' => 'Thêm sản phẩm thành công', $result], 200);
+            Response::json([$images], 200);
         } catch (\Throwable $th) {
             Log::throwable("ProductController -> sellerAdd: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -288,7 +301,7 @@ class ProductController {
     }
 
     // Kiểm tra thêm sản phẩm
-    private function checkAddProduct($name, $description, $category_id) {
+    private function checkAddProduct($name, $description, $category_id, $images) {
         $checkName = Validator::isText($name, 'Tên sản phẩm', 3, 100);
         if ($checkName !== true) {
             Response::json(['message' => $checkName], 400);
@@ -302,6 +315,10 @@ class ProductController {
         $checkCategory = CategoryModel::find($category_id);
         if (!$checkCategory) {
             Response::json(['message' => 'Không tìm thấy danh mục'], 400);
+        }
+
+        if (!$images || count($images) < 1) {
+            Response::json(['message' => 'Sản phẩm cần ít nhất 1 hình ảnh'], 400);
         }
     }
 }
