@@ -72,8 +72,6 @@ class ProductModel {
         return $result ?? [];
     }
 
-
-
     // Đếm sản phẩm theo seller
     public static function countBySellerId($seller_id, $status = 'all') {
         $query = new ConnectDatabase();
@@ -106,8 +104,6 @@ class ProductModel {
 
         return $result['total'] ?? 0;
     }
-
-
 
     // Lấy thông tin sản phẩm theo product_id
     public static function getByProductId($product_id) {
@@ -176,5 +172,27 @@ class ProductModel {
         $result = $query->query($sql, ['status' => 'active', 'product_variant_id' => $product_variant_id])->fetch();
 
         return $result ?? null;
+    }
+
+    // Thêm 1 sản phẩm và trả về id
+    public static function insert($name, $description, $seller_id, $category_id = null, $status = 'active') {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO 
+                products (name, description, status, seller_id, category_id)
+            VALUES
+                (:name, :description, :status, :seller_id, :category_id)
+        ";
+
+        $conn->query($sql, [
+            'name' => $name,
+            'description' => $description,
+            'status' => $status,
+            'seller_id' => $seller_id,
+            'category_id' => $category_id
+        ]);
+
+        return $conn->getConnection()->lastInsertId();
     }
 }

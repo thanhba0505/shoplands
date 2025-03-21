@@ -2,27 +2,34 @@
 
 namespace App\Helpers;
 
-class Validator
-{
-    public static function isText($text, $label = "Nội dung", $min = 3, $max = 20)
-    {
+class Validator {
+    public static function isText($text, $label = "Nội dung", $min = 3, $max = 20, $allowNewLine = false) {
         // Đảm bảo độ dài nằm trong khoảng min-max
         $length = strlen($text);
         if ($length < $min || $length > $max) {
             return "$label phải có từ $min đến $max ký tự.";
         }
 
-        // Chỉ cho phép chữ cái, số và dấu gạch dưới (_)
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $text)) {
-            return "Chỉ chấp nhận chữ cái, số và dấu gạch dưới (_).";
+        // Biểu thức chính quy cho phép chữ cái, số, dấu cách, và ký tự đặc biệt
+        $regex = '/^[\p{L}\p{N}\s\.,!?&=_\-]+$/u';
+
+        // Nếu cho phép dấu xuống dòng, bổ sung ký tự \n vào regex
+        if ($allowNewLine) {
+            $regex = '/^[\p{L}\p{N}\s\.,!?&=_\-\\n]+$/u';
+        }
+
+        // Kiểm tra chuỗi với biểu thức chính quy
+        if (!preg_match($regex, $text)) {
+            return "$label không hợp lệ.";
         }
 
         return true;
     }
 
+
+
     // Kiểm tra số điện thoại hợp lệ (Trả về true nếu hợp lệ, hoặc chuỗi lỗi nếu không hợp lệ)
-    public static function isPhone($phone)
-    {
+    public static function isPhone($phone) {
         if (empty($phone)) {
             return "Số điện thoại không được rỗng.";
         }
@@ -37,8 +44,7 @@ class Validator
     }
 
     // Chuyển đổi số điện thoại sang định dạng +84XXX hoặc 0XXX
-    public static function formatPhone($phone, $format = '+84')
-    {
+    public static function formatPhone($phone, $format = '+84') {
         if (self::isPhone($phone) !== true) {
             return false;
         }
@@ -53,8 +59,7 @@ class Validator
     }
 
     // Kiểm tra độ mạnh của mật khẩu
-    public static function isPasswordStrength($password)
-    {
+    public static function isPasswordStrength($password) {
         // $minLength = 8;
         // $hasUpperCase = preg_match('/[A-Z]/', $password); // Có chữ hoa
         // $hasLowerCase = preg_match('/[a-z]/', $password); // Có chữ thường

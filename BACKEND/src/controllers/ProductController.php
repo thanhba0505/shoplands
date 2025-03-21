@@ -3,9 +3,11 @@
 namespace App\Controllers;
 
 use App\Helpers\Auth;
+use App\Helpers\FileSave;
 use App\Helpers\Log;
 use App\Helpers\Request;
 use App\Helpers\Response;
+use App\Helpers\Validator;
 use App\Models\CategoryModel;
 use App\Models\ProductDetailModel;
 use App\Models\ProductImageModel;
@@ -251,6 +253,55 @@ class ProductController {
         } catch (\Throwable $th) {
             Log::throwable("Lỗi lấy danh sách sản phẩm: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Seller thêm sản phẩm
+    public function sellerAdd() {
+        try {
+            $seller = Auth::seller();
+
+            $seller_id = $seller['seller_id'];
+            $name = Request::json('name');
+            $description = Request::json('description');
+            $category_id = Request::json('category_id');
+            $product_details = Request::json('product_details', []);
+            $product_attributes = Request::json('product_attributes', []);
+            $product_variants = Request::json('product_variants', []);
+            $image = Request::file('image');
+
+            // Kiểm tra đầu vào
+            // $this->checkAddProduct($name, $description, $category_id);
+
+            // Thêm thông tin product
+            // $product_id = ProductModel::insert($name, $description, $seller_id);
+
+            // Thêm ảnh sản phẩm
+            $result = FileSave::productImage($image);
+
+
+            Response::json(['message' => 'Thêm sản phẩm thành công', $result], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("ProductController -> sellerAdd: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Kiểm tra thêm sản phẩm
+    private function checkAddProduct($name, $description, $category_id) {
+        $checkName = Validator::isText($name, 'Tên sản phẩm', 3, 100);
+        if ($checkName !== true) {
+            Response::json(['message' => $checkName], 400);
+        }
+
+        $checkDescription = Validator::isText($description, 'Mota', 0, 5000, true);
+        if ($checkDescription !== true) {
+            Response::json(['message' => $checkDescription], 400);
+        }
+
+        $checkCategory = CategoryModel::find($category_id);
+        if (!$checkCategory) {
+            Response::json(['message' => 'Không tìm thấy danh mục'], 400);
         }
     }
 }
