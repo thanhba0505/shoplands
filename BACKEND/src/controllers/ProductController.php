@@ -279,7 +279,7 @@ class ProductController {
             // Thêm ảnh sản phẩm
             $default = 1;
             $countImageUpload = 0;
-            foreach ($images as $key => $image) {
+            foreach ($images as $image) {
                 $fileSave = FileSave::productImage($image);
                 if ($fileSave['success'] === true) {
                     ProductImageModel::add($product_id, $fileSave['file_name'], $default);
@@ -291,9 +291,18 @@ class ProductController {
                 Response::json(['message' => 'Có lỗi xảy ra, số ảnh được tải lên ít hơn 1'], 400);
             }
 
+            // Thêm thống tin chi tiết
+            foreach ($product_details as $product_detail) {
+                ProductDetailModel::add(
+                    $product_id,
+                    $product_detail['name'],
+                    $product_detail['description']
+                );
+            }
+
             
 
-            Response::json([$images], 200);
+            Response::json([$product_details], 200);
         } catch (\Throwable $th) {
             Log::throwable("ProductController -> sellerAdd: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

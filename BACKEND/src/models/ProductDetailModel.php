@@ -4,11 +4,9 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class ProductDetailModel
-{
+class ProductDetailModel {
     // Lấy danh sách chi tiết sản phẩm theo id
-    public static function getByProductId($product_id)
-    {
+    public static function getByProductId($product_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -22,6 +20,26 @@ class ProductDetailModel
         ";
 
         $result = $query->query($sql, ['product_id' => $product_id])->fetchAll();
+
+        return $result;
+    }
+
+    // Thêm chi tiết sản phẩm
+    public static function add($product_id, $name, $description) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO
+                product_details (product_id, name, description)
+            VALUES
+                (:product_id, :name, :description)
+        ";
+
+        $result = $conn->query($sql, [
+            'product_id' => $product_id,
+            'name' => $name,
+            'description' => $description
+        ]);
 
         return $result;
     }
