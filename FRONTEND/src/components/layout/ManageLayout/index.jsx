@@ -362,6 +362,7 @@ const ManageLayout = ({ children }) => {
               height: `calc(100vh - ${theme.custom.headerHeight})`,
               overflowY: "auto",
               flexGrow: 1,
+              pr: 1,
             }}
           >
             <Box
