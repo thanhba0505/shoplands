@@ -4,10 +4,8 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class ProductVariantValueModel
-{
-    public static function getByProductVariantId($product_variant_id)
-    {
+class ProductVariantValueModel {
+    public static function getByProductVariantId($product_variant_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -24,6 +22,25 @@ class ProductVariantValueModel
         ";
 
         $result = $query->query($sql, ['product_variant_id' => $product_variant_id])->fetchAll();
+
+        return $result;
+    }
+
+    // Thêm giá trị thuộc tính
+    public static function add($product_variant_id, $product_attribute_value_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO
+                product_variant_values (product_variant_id, product_attribute_value_id)
+            VALUES
+                (:product_variant_id, :product_attribute_value_id)
+        ";
+
+        $result = $query->query($sql, [
+            'product_variant_id' => $product_variant_id,
+            'product_attribute_value_id' => $product_attribute_value_id
+        ]);
 
         return $result;
     }

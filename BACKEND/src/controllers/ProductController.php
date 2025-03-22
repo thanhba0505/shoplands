@@ -9,10 +9,14 @@ use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\Validator;
 use App\Models\CategoryModel;
+use App\Models\ProductAttribute;
+use App\Models\ProductAttributeModel;
+use App\Models\ProductAttributeValueModel;
 use App\Models\ProductDetailModel;
 use App\Models\ProductImageModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
+use App\Models\ProductVariantValue;
 use App\Models\ProductVariantValueModel;
 use App\Models\ReviewModel;
 
@@ -266,7 +270,6 @@ class ProductController {
             $description = Request::post('description');
             $category_id = Request::post('category_id');
             $product_details = Request::post('product_details', []);
-            $product_attributes = Request::post('product_attributes', []);
             $product_variants = Request::post('product_variants', []);
             $images = Request::files('images');
 
@@ -300,9 +303,95 @@ class ProductController {
                 );
             }
 
-            
+            // Thêm thuộc tính
+            if (count($product_variants) > 1) {
+                $product_attributes = [];
 
-            Response::json([$product_details], 200);
+                foreach ($product_variants as $variant) {
+                    foreach ($variant['attributes'] as $attribute) {
+                        $name = $attribute['name'];
+                        $value = $attribute['value'];
+
+                        if (!isset($product_attributes[$name])) {
+                            $product_attributes[$name] = [
+                                "name" => $name,
+                                "values" => []
+                            ];
+                        }
+
+                        if (!in_array($value, $product_attributes[$name]['values'])) {
+                            $product_attributes[$name]['values'][] = $value;
+                        }
+                    }
+                }
+
+                $product_attributes = array_values($product_attributes);
+
+                $combinationsCount = 1;
+                foreach ($product_attributes as $attribute) {
+                    $combinationsCount *= count($attribute['values']);
+                }
+
+                if ($combinationsCount !== count($product_variants)) {
+                    Response::json([
+                        'message' => 'Số lượng tổ hợp thuộc tính không khớp với số lượng biến thể sản phẩm.'
+                    ]);
+                }
+
+                $attribute_value = [];
+                foreach ($product_attributes as $attribute) {
+                    $product_attribute_id =  ProductAttributeModel::add(
+                        $attribute['name']
+                    );
+
+
+                    foreach ($attribute['values'] as $key => $value) {
+                        $product_attribute_value_id = ProductAttributeValueModel::add(
+                            $value,
+                            $product_attribute_id
+                        );
+
+                        $attribute_value[] = [
+                            'name' => $attribute['name'],
+                            'value' => $value,
+                            'product_attribute_value_id' => $product_attribute_value_id
+                        ];
+                    }
+                }
+
+                foreach ($product_variants as $variant) {
+                    $product_variant_id = ProductVariantModel::add(
+                        $product_id,
+                        $variant['quantity'],
+                        $variant['price'],
+                        $variant['promotion_price']
+                    );
+
+                    foreach ($variant['attributes'] as $attribute) {
+                        foreach ($attribute_value as $key => $value) {
+                            if ($value['name'] === $attribute['name'] && $value['value'] === $attribute['value']) {
+                                ProductVariantValueModel::add(
+                                    $product_variant_id,
+                                    $value['product_attribute_value_id']
+                                );
+                            }
+                        }
+                    }
+                }
+
+                Response::json([$product_attributes, $product_variants, $attribute_value], 200);
+            } else {
+                // Nếu k có thuộc tính
+                foreach ($product_variants as $variant) {
+                    ProductVariantModel::add(
+                        $product_id,
+                        $variant['quantity'],
+                        $variant['price'],
+                        $variant['promotion_price']
+                    );
+                }
+                Response::json(['message' => 'Thêm sản phẩm thành công 1'], 200);
+            }
         } catch (\Throwable $th) {
             Log::throwable("ProductController -> sellerAdd: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

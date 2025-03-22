@@ -94,4 +94,25 @@ class ProductVariantModel {
 
         return $result;
     }
+
+    // Thêm 1 sản phẩm
+    public static function add($product_id, $quantity, $price, $promotion_price = null) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO
+                product_variants (product_id, quantity, price, promotion_price)
+            VALUES
+                (:product_id, :quantity, :price, :promotion_price)
+        ";
+
+        $conn->query($sql, [
+            'product_id' => $product_id,
+            'quantity' => $quantity,
+            'price' => $price,
+            'promotion_price' => $promotion_price
+        ]);
+
+        return $conn->getConnection()->lastInsertId();
+    }
 }
