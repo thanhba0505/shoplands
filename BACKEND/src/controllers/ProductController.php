@@ -268,13 +268,24 @@ class ProductController {
             $seller_id = $seller['seller_id'];
             $name = Request::post('name');
             $description = Request::post('description');
-            $category_id = Request::post('category_id');
-            $product_details = Request::post('product_details', []);
-            $product_variants = Request::post('product_variants', []);
+            $category_id = Request::post('category_id') === '' ? null : Request::post('category_id');
+            $product_details = is_array(Request::post('product_details', [], true)) ? Request::post('product_details', [], true) : [];
+            $product_variants = is_array(Request::post('product_variants', [], true)) ? Request::post('product_variants', [], true) : [];
             $images = Request::files('images');
 
+            // Response::json([
+            //     'name' => $name,
+            //     'description' => $description,
+            //     'category_id' => $category_id,
+            //     'product_details' => $product_details,
+            //     'product_variants' => $product_variants,
+            //     'images' => $images
+            // ], 200);
+
+
+
             // Kiểm tra đầu vào
-            $this->checkAddProduct($name, $description, $category_id, $images);
+            $this->checkAddProduct($name, $description, $category_id, $images, $product_details, $product_variants);
 
             // Thêm thông tin product
             $product_id = ProductModel::add($name, $description, $seller_id, $category_id);
@@ -364,7 +375,7 @@ class ProductController {
                         $product_id,
                         $variant['quantity'],
                         $variant['price'],
-                        $variant['promotion_price']
+                        $variant['promotion_price'] ?? null
                     );
 
                     foreach ($variant['attributes'] as $attribute) {
@@ -379,7 +390,7 @@ class ProductController {
                     }
                 }
 
-                Response::json([$product_attributes, $product_variants, $attribute_value], 200);
+                Response::json(['message' => 'Thêm sản phẩm thành công'], 201);
             } else {
                 // Nếu k có thuộc tính
                 foreach ($product_variants as $variant) {
@@ -387,10 +398,10 @@ class ProductController {
                         $product_id,
                         $variant['quantity'],
                         $variant['price'],
-                        $variant['promotion_price']
+                        $variant['promotion_price'] ?? null
                     );
                 }
-                Response::json(['message' => 'Thêm sản phẩm thành công 1'], 200);
+                Response::json(['message' => 'Thêm sản phẩm thành công'], 201);
             }
         } catch (\Throwable $th) {
             Log::throwable("ProductController -> sellerAdd: " . $th->getMessage());
@@ -399,7 +410,7 @@ class ProductController {
     }
 
     // Kiểm tra thêm sản phẩm
-    private function checkAddProduct($name, $description, $category_id, $images) {
+    private function checkAddProduct($name, $description, $category_id, $images, $product_details, $product_variants) {
         $checkName = Validator::isText($name, 'Tên sản phẩm', 3, 100);
         if ($checkName !== true) {
             Response::json(['message' => $checkName], 400);
@@ -410,13 +421,50 @@ class ProductController {
             Response::json(['message' => $checkDescription], 400);
         }
 
-        $checkCategory = CategoryModel::find($category_id);
-        if (!$checkCategory) {
-            Response::json(['message' => 'Không tìm thấy danh mục'], 400);
+        if (!empty($category_id)) {
+            $checkCategory = CategoryModel::find($category_id);
+            if (!$checkCategory) {
+                Response::json(['message' => 'Không tìm thấy danh mục'], 400);
+            }
         }
 
         if (!$images || count($images) < 1) {
             Response::json(['message' => 'Sản phẩm cần ít nhất 1 hình ảnh'], 400);
+        }
+
+        foreach ($product_details as $product_detail) {
+            $checkName = Validator::isText($product_detail['name'], 'Tên sản phẩm', 3, 300);
+            if ($checkName !== true) {
+                Response::json(['message' => $checkName], 400);
+            }
+
+            $checkDescription = Validator::isText($product_detail['description'], 'Mô tả', 0, 5000, true);
+            if ($checkDescription !== true) {
+                Response::json(['message' => $checkDescription], 400);
+            }
+        }
+
+        if (count($product_variants) < 1) {
+            Response::json(['message' => 'Không đủ thông tin giá sản phẩm'], 400);
+        }
+
+        foreach ($product_variants as $variant) {
+            $checkPrice = Validator::isNumber($variant['price'], 'Giá sản phẩm', 1, null);
+            if ($checkPrice !== true) {
+                Response::json(['message' => $checkPrice], 400);
+            }
+
+            $checkQuantity = Validator::isNumber($variant['quantity'], 'Số lượng sản phẩm', 1, 10000);
+            if ($checkQuantity !== true) {
+                Response::json(['message' => $checkQuantity], 400);
+            }
+
+            if ($variant['promotion_price'] && $variant['promotion_price'] >= $variant['price']) {
+                Response::json(['message' => "Giá khuyến mãi phải nhỏ hơn giá bán"], 400);
+                if ($variant['promotion_price'] <= 0) {
+                    Response::json(['message' => "Giá khuyến mãi phải lớn hơn 0"], 400);
+                }
+            }
         }
     }
 }

@@ -17,6 +17,11 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
+import Log from "~/helpers/Log";
+import axiosWithAuth from "~/utils/axiosWithAuth";
+import Api from "~/helpers/Api";
+import axiosDefault from "~/utils/axiosDefault";
+import { useNavigate } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -34,15 +39,17 @@ const NewProducts = () => {
   const [name, setName] = useState("");
   const [images, setImages] = useState([]);
   const [description, setDescription] = useState("");
-  const [categoryId, setCategoryId] = useState(null);
+  const [categoryId, setCategoryId] = useState("");
   const [productVariants, setProductVariants] = useState([]);
   const [attributesComplete, setAttributesComplete] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const [countDetails, setCountDetails] = useState(0);
   const [valuesCounts, setValuesCounts] = useState([]);
   const [countAttributes, setCountAttributes] = useState(0);
 
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   // State for product details
   const [details, setDetails] = useState([]);
@@ -50,10 +57,18 @@ const NewProducts = () => {
   // State for product attributes
   const [attributes, setAttributes] = useState([]);
 
-  const options = [
-    { label: "The Godfather", id: 1 },
-    { label: "Pulp Fiction", id: 2 },
-  ];
+  const fetchApi = useCallback(async () => {
+    try {
+      const response = await axiosDefault.get(Api.categories());
+      setCategories(response.data);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchApi();
+  }, [fetchApi]);
 
   // Add or update a product detail
   const handleDetailChange = (index, field, value) => {
@@ -280,7 +295,7 @@ const NewProducts = () => {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Format the data as requested
     const formattedVariants = productVariants.map((variant) => ({
       price: parseFloat(variant.price) || 0,
@@ -300,15 +315,54 @@ const NewProducts = () => {
       name,
       description,
       category_id: categoryId,
-      product_details: formattedDetails,
-      product_variants: formattedVariants,
+      product_details: JSON.stringify(formattedDetails), // Convert product details to JSON string
+      product_variants: JSON.stringify(formattedVariants), // Convert product variants to JSON string
+      images: images, // Keep images as they are (for form data)
     };
 
-    // Log the formatted data
-    console.log(JSON.stringify(productData, null, 2));
+    // Log the formatted data for debugging
+    console.log({
+      name,
+      description,
+      category_id: categoryId,
+      product_details: formattedDetails, // Convert product details to JSON string
+      product_variants: formattedVariants, // Convert product variants to JSON string
+      images: images, // Keep images as they are (for form data)
+    });
 
-    // Here you would typically make an API call to save the product
-    // axiosWithAuth.post('/api/products', productData);
+    // Prepare FormData to include images and JSON stringified data
+    const formData = new FormData();
+    formData.append("name", productData.name);
+    formData.append("description", productData.description);
+    formData.append("category_id", productData.category_id);
+    formData.append("product_details", productData.product_details);
+    formData.append("product_variants", productData.product_variants);
+
+    // Append images if any
+    images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
+
+    // Call the API to create the product
+    try {
+      const response = await axiosWithAuth.post(
+        Api.sellerProducts(),
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Make sure the content type is multipart
+          },
+          navigate,
+        }
+      );
+
+      if (response.status === 201) {
+        enqueueSnackbar("Tạo sản phẩm thành công", { variant: "success" });
+        // navigate(Path.sellerProducts("detail/" + response.data.id));
+      }
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
   };
 
   // Render a variant row with inputs for price, promotion, and quantity
@@ -495,7 +549,7 @@ const NewProducts = () => {
                   <TextField
                     variant="outlined"
                     multiline
-                    rows={4}
+                    rows={6}
                     autoComplete="off"
                     type="text"
                     label="Mô tả"
@@ -517,7 +571,8 @@ const NewProducts = () => {
                 <TableCell>
                   <Autocomplete
                     disablePortal
-                    options={options}
+                    options={categories}
+                    getOptionLabel={(option) => option.name}
                     size="small"
                     sx={{ width: 300 }}
                     onChange={(event, newValue) => {
@@ -583,7 +638,7 @@ const NewProducts = () => {
                     <Grid2>
                       <Button
                         fullWidth
-                        variant="outlined"
+                        variant="contained"
                         color="error"
                         size="small"
                         disabled={countDetails <= 0}
@@ -602,7 +657,7 @@ const NewProducts = () => {
                       <Button
                         fullWidth
                         color="info"
-                        variant="outlined"
+                        variant="contained"
                         size="small"
                         disabled={countDetails >= 10}
                         onClick={() => {
@@ -722,7 +777,7 @@ const NewProducts = () => {
 
                     <Grid2>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         color="error"
                         size="small"
                         disabled={countAttributes <= 0}
@@ -741,7 +796,7 @@ const NewProducts = () => {
                     <Grid2>
                       <Button
                         color="info"
-                        variant="outlined"
+                        variant="contained"
                         size="small"
                         disabled={countAttributes >= 3}
                         onClick={addAttributeRow}
@@ -784,7 +839,7 @@ const NewProducts = () => {
                     <Grid2 size={6}>
                       <Button
                         fullWidth
-                        variant="outlined"
+                        variant="contained"
                         color="error"
                         size="large"
                       >

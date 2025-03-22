@@ -99,6 +99,8 @@ class ProductVariantModel {
     public static function add($product_id, $quantity, $price, $promotion_price = null) {
         $conn = new ConnectDatabase();
 
+        $promotion_price = $promotion_price === 0 ? null : $promotion_price;
+
         $sql = "
             INSERT INTO
                 product_variants (product_id, quantity, price, promotion_price)

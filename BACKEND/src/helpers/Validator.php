@@ -4,6 +4,11 @@ namespace App\Helpers;
 
 class Validator {
     public static function isText($text, $label = "Nội dung", $min = 3, $max = 20, $allowNewLine = false) {
+        // Kiểm tra chuỗi rỗng khi min = 0
+        if ($min == 0 && empty($text)) {
+            return true;  // Nếu min = 0 và chuỗi rỗng, coi như hợp lệ
+        }
+
         // Đảm bảo độ dài nằm trong khoảng min-max
         $length = strlen($text);
         if ($length < $min || $length > $max) {
@@ -25,7 +30,6 @@ class Validator {
 
         return true;
     }
-
 
 
     // Kiểm tra số điện thoại hợp lệ (Trả về true nếu hợp lệ, hoặc chuỗi lỗi nếu không hợp lệ)
@@ -85,6 +89,22 @@ class Validator {
         // if (!$hasSpecialChar) {
         //     return "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.";
         // }
+
+        return true;
+    }
+
+    public static function isNumber($number, $label = "Số", $min = null, $max = null) {
+        if (!is_numeric($number)) {
+            return "$label phải là số.";
+        }
+
+        if ($min !== null && $number < $min) {
+            return "$label phải lớn hơn $min.";
+        }
+
+        if ($max !== null && $number > $max) {
+            return "$label phải nhỏ hơn $max.";
+        }
 
         return true;
     }

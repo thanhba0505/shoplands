@@ -9,35 +9,23 @@ class Request {
     }
 
     // Lấy giá trị từ $_POST
-    public static function post($value = null, $default = null) {
-        // Nếu $value là null, duyệt qua tất cả $_POST và decode JSON nếu có
-        if (!$value) {
-            $decodedData = [];
+    public static function post($key, $default = null, $decodeJson = false) {
 
-            // Duyệt qua tất cả các giá trị trong $_POST và giải mã nếu có
-            foreach ($_POST as $key => $data) {
-                // Giải mã nếu là chuỗi JSON hợp lệ
-                $decodedData[$key] = (is_string($data) && json_decode($data, true)) ? json_decode($data, true) : $data;
+        // Kiểm tra nếu có giá trị trong $_POST với key là $key
+        if (isset($_POST[$key])) {
+            $data = $_POST[$key];
+
+            // Giải mã nếu là chuỗi JSON và $decodeJson là true
+            if ($decodeJson) {
+                return json_decode($data, true);
             }
-
-            return $decodedData;
+            
+            return $data ?? $default;
         }
 
-        // Kiểm tra nếu có file trong $_POST với key là $value không
-        if (isset($_POST[$value])) {
-            $data = $_POST[$value];
-
-            // Kiểm tra xem dữ liệu có phải là chuỗi JSON không và giải mã
-            return (is_string($data) && json_decode($data, true)) ? json_decode($data, true) : $data;
-        }
-
-        // Nếu không có file, trả về giá trị mặc định
+        // Nếu không có giá trị, trả về giá trị mặc định
         return $default;
     }
-
-
-
-
 
     // Lấy giá trị từ $_GET
     public static function get($value, $default = null) {
