@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('shipping_fees', function (Blueprint $table) {
             $table->id();
-            $table->enum('method', ['Giao hàng nhanh', 'Giao hàng tiết kiệm', 'Giao hàng hỏa tốc']);
+            $table->string('method');
             $table->decimal('price', 15, 2);
         });
     }

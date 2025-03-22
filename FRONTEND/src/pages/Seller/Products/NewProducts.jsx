@@ -1,124 +1,430 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
-import { Button, TextField, Box, Typography } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Box,
+  Typography,
+  Grid2,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Avatar,
+  styled,
+  Autocomplete,
+} from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const NewProducts = () => {
   const [name, setName] = useState("");
   const [images, setImages] = useState([]);
+  const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState(null);
+  const [productDetails, setProductDetails] = useState([]);
+  const [productVariants, setProductVariants] = useState([]);
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
+  const [countDetails, setCountDetails] = useState(0);
+  const [countAttributes, setCountAttributes] = useState(0);
 
-  const handleImageChange = (event) => {
-    const files = Array.from(event.target.files); // Chọn nhiều tệp
-    if (files) {
-      setImages(files); // Lưu các tệp ảnh vào state
-    }
-  };
-
-  const handleSubmit = async () => {
-    console.log("Product Name:", name);
-    console.log("Product Images:", images);
-
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      images.forEach((image) => {
-        formData.append("images[]", image); // Đảm bảo tên trường "images[]" là mảng nếu backend yêu cầu
-      });
-
-      // Dữ liệu JSON cần gửi (ví dụ status, description, v.v.)
-      const jsonData = {
-        status: "active", // Một ví dụ dữ liệu JSON bạn cần gửi
-        description: "Mô tả sản phẩm",
-      };
-
-      // Append dữ liệu JSON vào FormData dưới dạng stringified JSON
-      formData.append("json_data", JSON.stringify(jsonData));
-
-      const response = await axiosWithAuth.post(
-        Api.sellerProducts(),
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // Đảm bảo header đúng cho việc gửi tệp
-          },
-        }
-      );
-
-      console.log("Response:", response);
-      // Xử lý thành công nếu cần
-    } catch (error) {
-      Log.error(error.response?.data?.message);
-    }
-  };
-
+  const options = [
+    { label: "The Godfather", id: 1 },
+    { label: "Pulp Fiction", id: 2 },
+  ];
   return (
-    <Box sx={{ maxWidth: 400, margin: "0 auto", padding: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Thêm sản phẩm mới
-      </Typography>
+    <Grid2 container spacing={2} sx={{ width: "100%", padding: 2 }}>
+      <Grid2 size={8}>
+        <TableContainer>
+          <Table
+          // sx={{ "& td, & th": { border: "none" }, verticalAlign: "center" }}
+          >
+            <TableBody>
+              {/* Tên sản phẩm */}
+              <TableRow>
+                <TableCell width={"24%"}>Tên sản phẩm: </TableCell>
+                <TableCell>
+                  <TextField
+                    variant="outlined"
+                    autoComplete="off"
+                    type="text"
+                    label="Tên sản phẩm"
+                    size="small"
+                    fullWidth
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </TableCell>
+              </TableRow>
 
-      {/* Trường nhập tên sản phẩm */}
-      <Box sx={{ marginBottom: 2 }}>
-        <Typography variant="body2">Tên sản phẩm</Typography>
-        <TextField
-          fullWidth
-          variant="outlined"
-          value={name}
-          onChange={handleNameChange}
-          sx={{ marginTop: "8px" }}
-        />
-      </Box>
+              {/* Mô tả */}
+              <TableRow>
+                <TableCell>Mô tả: </TableCell>
+                <TableCell>
+                  <TextField
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                    autoComplete="off"
+                    type="text"
+                    label="Mô tả"
+                    size="small"
+                    fullWidth
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </TableCell>
+              </TableRow>
 
-      {/* Button để chọn ảnh */}
-      <Box sx={{ marginBottom: 2 }}>
-        <input
-          accept="image/*"
-          id="product-image"
-          type="file"
-          multiple
-          style={{ display: "none" }}
-          onChange={handleImageChange}
-        />
-        <label htmlFor="product-image">
-          <Button variant="contained" component="span">
-            Chọn ảnh
-          </Button>
-        </label>
-      </Box>
+              {/* Danh mục */}
+              <TableRow>
+                <TableCell>Danh mục: </TableCell>
+                <TableCell>
+                  <Autocomplete
+                    disablePortal
+                    options={options}
+                    size="small"
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Danh mục" />
+                    )}
+                  />
+                </TableCell>
+              </TableRow>
 
-      {/* Hiển thị ảnh đã chọn */}
-      {images.length > 0 && (
-        <Box sx={{ marginTop: 2 }}>
-          <Typography variant="body2">Ảnh đã chọn:</Typography>
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-            {images.map((image, index) => (
-              <img
-                key={index}
-                src={URL.createObjectURL(image)} // Hiển thị ảnh tạm thời
-                alt={`Product image ${index + 1}`}
-                style={{
-                  maxWidth: "100px",
-                  height: "auto",
-                  marginBottom: "10px",
-                }}
+              {/* Chi tiết sản phẩm */}
+              <TableRow>
+                <TableCell>Chi tiết sản phẩm: </TableCell>
+                <TableCell>
+                  <Grid2 container spacing={2}>
+                    <Grid2 size={12}>
+                      Thông tin chi tiết sản phẩm, ví dụ: Nơi sản xuất: Việt Nam
+                    </Grid2>
+                    {Array.from({ length: countDetails }).map((_, index) => (
+                      <React.Fragment key={index}>
+                        <Grid2 size={4}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Từ khóa"
+                            placeholder="Nơi sản xuất"
+                            size="small"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                        <Grid2 size={8}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Nội dung"
+                            size="small"
+                            placeholder="Việt Nam"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                      </React.Fragment>
+                    ))}
+
+                    <Grid2>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        onClick={() => setCountDetails(0)}
+                      >
+                        Xóa tất cả
+                      </Button>
+                    </Grid2>
+
+                    <Grid2 >
+                      <Button
+                        fullWidth
+                        color="info"
+                        variant="outlined"
+                        size="small"
+                        disabled={countDetails >= 10}
+                        onClick={() =>
+                          setCountDetails(
+                            countDetails >= 10 ? countDetails : countDetails + 1
+                          )
+                        }
+                      >
+                        {countDetails >= 10
+                          ? "Đã đạt giới hạn"
+                          : "Thêm 1 dòng chi tiết"}
+                      </Button>
+                    </Grid2>
+                  </Grid2>
+                </TableCell>
+              </TableRow>
+
+              {/* Thuộc tính  */}
+              <TableRow>
+                <TableCell>Thuộc tính: </TableCell>
+                <TableCell>
+                  <Grid2 container spacing={2}>
+                    <Grid2 size={12}>
+                      Các thuộc tính sản phẩm, ví dụ: (Màu: Xanh, Đỏ), (Size: S,
+                      M, L)
+                    </Grid2>
+                    {Array.from({ length: countAttributes }).map((_, index) => (
+                      <React.Fragment key={index}>
+                        <Grid2 size={4}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Thuộc tính"
+                            placeholder="Màu"
+                            size="small"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                        <Grid2 container spacing={1} size={8}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Giá trị thuộc tính"
+                            placeholder="Xanh, Đỏ"
+                            size="small"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                      </React.Fragment>
+                    ))}
+
+                    <Grid2>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        onClick={() => setCountAttributes(0)}
+                      >
+                        Xóa tất cả
+                      </Button>
+                    </Grid2>
+
+                    <Grid2>
+                      <Button
+                        fullWidth
+                        color="info"
+                        variant="outlined"
+                        size="small"
+                        disabled={countAttributes >= 3}
+                        onClick={() =>
+                          setCountAttributes(
+                            countAttributes >= 3
+                              ? countAttributes
+                              : countAttributes + 1
+                          )
+                        }
+                      >
+                        {countAttributes >= 3
+                          ? "Đã đạt giới hạn"
+                          : "Thêm 1 dòng thuộc tính"}
+                      </Button>
+                    </Grid2>
+                  </Grid2>
+                </TableCell>
+              </TableRow>
+
+              {/* Giá và tồn kho */}
+              <TableRow>
+                <TableCell width={"24%"}>Giá và tồn kho: </TableCell>
+                <TableCell>
+                  <Grid2 container spacing={2}>
+                    {countAttributes == 0 ? (
+                      <>
+                        <Grid2 size={12}>
+                          Giá của sản phẩm, khuyến mãi (nếu có) và tồn kho
+                        </Grid2>
+                        <Grid2 size={4}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Giá gốc"
+                            placeholder="100.000đ"
+                            size="small"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                        <Grid2 size={4}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Giá khuyến mãi"
+                            placeholder="80.000đ"
+                            size="small"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                        <Grid2 size={4}>
+                          <TextField
+                            variant="outlined"
+                            autoComplete="off"
+                            type="text"
+                            label="Tồn kho"
+                            placeholder="999"
+                            size="small"
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                          />
+                        </Grid2>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Grid2>
+                </TableCell>
+              </TableRow>
+
+              {/* Button */}
+              <TableRow>
+                <TableCell colSpan={2}>
+                  <Grid2 container spacing={2}>
+                    <Grid2 size={6}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                      >
+                        Huy
+                      </Button>
+                    </Grid2>
+                    <Grid2 size={6}>
+                      <Button
+                        fullWidth
+                        color="info"
+                        variant="contained"
+                        size="small"
+                      >
+                        Tạo mô tảng
+                      </Button>
+                    </Grid2>
+                  </Grid2>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid2>
+
+      <Grid2 size={4}>
+        <Grid2 container spacing={2} justifyContent={"center"}>
+          <Grid2 size={12}>
+            <Avatar
+              sx={{ width: "120px", height: "120px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+
+          <Grid2 size={4}>
+            <Avatar
+              sx={{ width: "100px", height: "100px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+          <Grid2 size={4}>
+            <Avatar
+              sx={{ width: "100px", height: "100px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+          <Grid2 size={4}>
+            <Avatar
+              sx={{ width: "100px", height: "100px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+          <Grid2 size={4}>
+            <Avatar
+              sx={{ width: "100px", height: "100px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+          <Grid2 size={4}>
+            <Avatar
+              sx={{ width: "100px", height: "100px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+          <Grid2 size={4}>
+            <Avatar
+              sx={{ width: "100px", height: "100px", m: "auto" }}
+              variant="rounded"
+            >
+              Mặc định
+            </Avatar>
+          </Grid2>
+
+          <Grid2 size={"auto"}>
+            <Button
+              sx={{ m: "auto", marginTop: 2 }}
+              component="label"
+              role={undefined}
+              variant="outlined"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload files
+              <VisuallyHiddenInput
+                type="file"
+                onChange={(event) => console.log(event.target.files)}
+                multiple
               />
-            ))}
-          </Box>
-        </Box>
-      )}
-
-      {/* Nút submit */}
-      <Box sx={{ marginTop: 2 }}>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Thêm sản phẩm
-        </Button>
-      </Box>
-    </Box>
+            </Button>
+          </Grid2>
+        </Grid2>
+      </Grid2>
+    </Grid2>
   );
 };
 
