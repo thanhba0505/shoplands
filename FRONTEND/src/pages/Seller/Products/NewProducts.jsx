@@ -320,16 +320,6 @@ const NewProducts = () => {
       images: images, // Keep images as they are (for form data)
     };
 
-    // Log the formatted data for debugging
-    console.log({
-      name,
-      description,
-      category_id: categoryId,
-      product_details: formattedDetails, // Convert product details to JSON string
-      product_variants: formattedVariants, // Convert product variants to JSON string
-      images: images, // Keep images as they are (for form data)
-    });
-
     // Prepare FormData to include images and JSON stringified data
     const formData = new FormData();
     formData.append("name", productData.name);

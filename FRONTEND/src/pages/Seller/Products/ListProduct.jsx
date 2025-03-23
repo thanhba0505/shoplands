@@ -1,6 +1,7 @@
 import { Box, TablePagination, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
@@ -8,6 +9,7 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 
 const ListProduct = ({ status, loading, setLoading }) => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [count, setCount] = useState(0);
@@ -37,6 +39,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
               page: page + 1,
               status: status,
             },
+            navigate,
           });
 
           setProducts(response.data.products);
@@ -48,7 +51,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
         setLoading(false);
       }
     },
-    [seller_id, status, setLoading]
+    [seller_id, status, setLoading, navigate]
   );
 
   useEffect(() => {

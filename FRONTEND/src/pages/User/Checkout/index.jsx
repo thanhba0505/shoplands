@@ -522,12 +522,18 @@ const Checkout = () => {
     dispatch(startLoading());
     setIsLoading(true);
     try {
-      const response = await axiosWithAuth.post(Api.orders(), {
-        cart_ids: cartIds,
-        address_id: address.address_id,
-        shipping_fee_id: shippingFee.shipping_fee_id,
-        coupon_id: coupon ? coupon.coupon_id : null,
-      });
+      const response = await axiosWithAuth.post(
+        Api.orders(),
+        {
+          cart_ids: cartIds,
+          address_id: address.address_id,
+          shipping_fee_id: shippingFee.shipping_fee_id,
+          coupon_id: coupon ? coupon.coupon_id : null,
+        },
+        {
+          navigate,
+        }
+      );
 
       Log.info(Path.userOrders("payment"));
       dispatch(setQrAndOrderId(response.data));

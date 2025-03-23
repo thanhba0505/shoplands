@@ -48,11 +48,18 @@ const AcctionButton = ({ handleOnClick, title, ...props }) => {
 const HandleRender = ({ status, orderId, setOrders }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handlePacking = async () => {
     setLoading(true);
     try {
-      const response = await axiosWithAuth.post(Api.sellerOrders(orderId));
+      const response = await axiosWithAuth.post(
+        Api.sellerOrders(orderId),
+        {},
+        {
+          navigate,
+        }
+      );
 
       if (response.status === 200) {
         setOrders((prevOrders) =>
@@ -292,6 +299,7 @@ const Orders = () => {
               limit: limit,
               page: page + 1,
             },
+            navigate,
           });
           setOrders(response.data.orders);
           setCount(response.data.count);
@@ -302,7 +310,7 @@ const Orders = () => {
         setLoading(false);
       }
     },
-    [seller_id]
+    [seller_id, navigate]
   );
 
   useEffect(() => {

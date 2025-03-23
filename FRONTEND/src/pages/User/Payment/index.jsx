@@ -29,9 +29,13 @@ const Payment = () => {
     dispatch(startLoading());
     setIsLoading(true);
     try {
-      const response = await axiosWithAuth.post(Api.orders("check-payment"), {
-        order_id: order_id,
-      });
+      const response = await axiosWithAuth.post(
+        Api.orders("check-payment"),
+        {
+          order_id: order_id,
+        },
+        { navigate }
+      );
 
       enqueueSnackbar(response.data.message, { variant: "success" });
       navigate(Path.userOrders("detail/" + order_id));
