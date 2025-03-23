@@ -1,11 +1,11 @@
 import axios from "axios";
 import store from "~/redux/store";
 import { logout, refreshTokenSuccess } from "~/redux/authSlice";
-import { enqueueSnackbar } from "notistack"; // Hiển thị thông báo lỗi
+import { enqueueSnackbar } from "notistack";
 import Api from "~/helpers/Api";
 import Path from "~/helpers/Path";
+import { setRefreshing } from "~/redux/tokenSlice";
 
-// Tạo axios instance với base URL
 const axiosWithAuth = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/api",
   headers: {
@@ -20,7 +20,6 @@ const axiosRefresh = axios.create({
   },
 });
 
-// 🛠 Interceptor để thêm Authorization header với access token vào mỗi request
 axiosWithAuth.interceptors.request.use(
   (config) => {
     const token = store.getState().auth.accessToken;
@@ -32,17 +31,13 @@ axiosWithAuth.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🛠 Interceptor để tự động xử lý lỗi và refresh token nếu cần
 axiosWithAuth.interceptors.response.use(
-  (response) => response, // ✅ Thành công, trả về response bình thường
-
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
-    // Lấy navigate từ config
     const navigate = originalRequest?.navigate;
+    const state = store.getState();
 
-    // 🔴 Xử lý lỗi mất kết nối mạng
     if (!error.response) {
       enqueueSnackbar("Không thể kết nối đến server. Vui lòng kiểm tra mạng!", {
         variant: "error",
@@ -50,46 +45,49 @@ axiosWithAuth.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 🔴 Xử lý lỗi token hết hạn (401 Unauthorized)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      // Kiểm tra trạng thái isRefreshing trong Redux
+      if (state.token.isRefreshing) {
+        // Nếu đang refresh token, đừng làm gì thêm
+        return Promise.reject(error);
+      }
+
+      store.dispatch(setRefreshing(true)); // Đặt trạng thái isRefreshing là true
+
       try {
-        const refreshToken = store.getState().auth.refreshToken;
+        const refreshToken = state.auth.refreshToken;
         if (!refreshToken) {
-          enqueueSnackbar(
-            "Bạn chưa đăng nhập!",
-            { variant: "error" }
-          );
+          enqueueSnackbar("Bạn chưa đăng nhập!", { variant: "error" });
           store.dispatch(logout());
-          if (navigate) navigate(Path.login()); // Navigate to login page
+          if (navigate) navigate(Path.login());
           return Promise.reject(error);
         }
 
-        // 🔄 Refresh token
         const res = await axiosRefresh.post(Api.refreshToken(), {
           refresh_token: refreshToken,
         });
 
-        // 🔥 Cập nhật Redux với token mới
         store.dispatch(refreshTokenSuccess(res.data));
 
-        // 🔄 Gửi lại request với token mới
         originalRequest.headers[
           "Authorization"
         ] = `Bearer ${res.data.access_token}`;
+        store.dispatch(setRefreshing(false)); // Đặt trạng thái isRefreshing là false sau khi refresh xong
         return axiosWithAuth(originalRequest);
       } catch (refreshError) {
         enqueueSnackbar("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!", {
           variant: "error",
         });
         store.dispatch(logout());
-        if (navigate) navigate(Path.login()); // Navigate to login page
+        if (navigate) navigate(Path.login());
+        store.dispatch(setRefreshing(false)); // Đặt trạng thái isRefreshing là false khi có lỗi
         return Promise.reject(refreshError);
       }
     }
 
-    // 🔴 Tự động hiển thị lỗi từ API
+    // Xử lý các lỗi khác
     if (error.response?.data?.message) {
       enqueueSnackbar(error.response.data.message, { variant: "error" });
     } else {
