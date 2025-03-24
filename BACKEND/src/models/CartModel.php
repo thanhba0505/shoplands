@@ -146,13 +146,14 @@ class CartModel {
     }
 
     // Lấy danh sách số lượng, giá của giỏ hàng
-    public static function getQuantityAndPrice($user_id, $seller_id) {
+    public static function getQuantityAndPrice($user_id) {
         $query = new ConnectDatabase();
 
         $sql = "
             SELECT
                 c.id AS cart_id,
                 c.quantity,
+                c.user_id,
                 pv.id AS product_variant_id,
                 pv.price,
                 pv.promotion_price
@@ -163,27 +164,26 @@ class CartModel {
                 JOIN sellers s ON s.id = p.seller_id
             WHERE
                 c.user_id = :user_id
-                AND s.id = :seller_id
         ";
 
-        $result = $query->query($sql, ['user_id' => $user_id, "seller_id" => $seller_id])->fetchAll();
+        $result = $query->query($sql, ['user_id' => $user_id])->fetchAll();
 
         return $result ?? [];
     }
 
     // Xóa khỏi giỏ hàng
-    public static function delete($user_id, $cartId) {
+    public static function delete($user_id, $cart_id) {
         $query = new ConnectDatabase();
 
         $sql = "
             DELETE FROM
                 carts
             WHERE
-                id = :cartId
+                id = :cart_id
                 AND user_id = :user_id
         ";
 
-        $result = $query->query($sql, ['cartId' => $cartId, "userId" => $user_id]);
+        $result = $query->query($sql, ['cart_id' => $cart_id, "user_id" => $user_id]);
 
         return $result->rowCount() > 0 ? true : false;
     }

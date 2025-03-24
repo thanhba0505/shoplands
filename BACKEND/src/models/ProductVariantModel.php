@@ -74,22 +74,23 @@ class ProductVariantModel {
     }
 
     // Cập nhật số lượng tồn kho và số lượng đã bán
-    public static function updateQuantity($product_variant_id, $quantity_purchase) {
-        $query = new ConnectDatabase();
+    public static function updateQuantity($product_variant_id, $quantity, $sold_quantity) {
+        $conn = new ConnectDatabase();
 
         $sql = "
             UPDATE 
                 product_variants
             SET
-                quantity = quantity - :quantity_purchase,
-                sold_quantity = sold_quantity + :quantity_purchase
+                quantity = :quantity,
+                sold_quantity = :sold_quantity
             WHERE
                 id = :product_variant_id
         ";
 
-        $result = $query->query($sql, [
-            'product_variant_id' => $product_variant_id,
-            'quantity_purchase' => $quantity_purchase
+        $result = $conn->query($sql, [
+            'quantity' => $quantity,
+            'sold_quantity' => $sold_quantity,
+            'product_variant_id' => $product_variant_id
         ]);
 
         return $result;
@@ -116,5 +117,27 @@ class ProductVariantModel {
         ]);
 
         return $conn->getConnection()->lastInsertId();
+    }
+
+    // Lấy 1 variant theo product_variant_id
+    public static function find($product_variant_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                pv.id AS product_variant_id,
+                pv.price,
+                pv.promotion_price,
+                pv.quantity,
+                pv.sold_quantity
+            FROM
+                product_variants pv
+            WHERE
+                pv.id = :product_variant_id
+        ";
+
+        $result = $query->query($sql, ['product_variant_id' => $product_variant_id])->fetch();
+
+        return $result ?? null;
     }
 }

@@ -16,6 +16,7 @@ use App\Models\OrderModel;
 use App\Models\OrderStatusModel;
 use App\Models\ProductImageModel;
 use App\Models\ProductModel;
+use App\Models\ProductVariantModel;
 use App\Models\ProductVariantValueModel;
 use App\Models\SellerModel;
 use App\Models\ShippingFeeModel;
@@ -48,6 +49,28 @@ class OrderController {
             if (empty($toAddressId) || empty($shippingFeeId) || empty($cartIds)) {
                 Response::json(['message' => 'Thông tin tạo đơn hàng không đủ'], 400);
             }
+
+            // Kiểm tra sản phẩm
+            $carts = CartModel::getQuantityAndPrice($userId);
+            if (!$carts) {
+                Response::json(['message' => 'Không tìm thấy sản phẩm trong giỏ hàng'], 400);
+            }
+
+            $subtotalPrice = 0;
+            foreach ($carts as $cart) {
+                if (in_array($cart["cart_id"], $cartIds)) {
+                    $product_variant = ProductVariantModel::find($cart["product_variant_id"]);
+                    if (!$product_variant) {
+                        Response::json(['message' => 'Không tìm thấy sản phẩm trong giỏ hàng'], 400);
+                    }
+
+                    if ($cart["quantity"] > $product_variant["quantity"]) {
+                        Response::json(['message' => 'Số lượng sản phẩm không đủ'], 400);
+                    }
+
+                    $subtotalPrice += ($cart["promotion_price"] ? $cart["promotion_price"] : $cart["price"]) * $cart["quantity"];
+                }
+            }
             // Kiểm tra seller
             $seller = SellerModel::findSellerByCartId($cartIds[0]);
             if (!$seller) {
@@ -74,19 +97,6 @@ class OrderController {
                 Response::json(['message' => 'Không tìm thấy thông tin vận chuyển'], 400);
             }
             $shippingPrice = floatval($shippingFee["price"]);
-
-            // Kiểm tra sản phẩm
-            $carts = CartModel::getQuantityAndPrice($userId, $seller["seller_id"]);
-            if (!$carts) {
-                Response::json(['message' => 'Không tìm thấy sản phẩm trong giỏ hàng'], 400);
-            }
-
-            $subtotalPrice = 0;
-            foreach ($carts as $cart) {
-                if (in_array($cart["cart_id"], $cartIds)) {
-                    $subtotalPrice += ($cart["promotion_price"] ? $cart["promotion_price"] : $cart["price"]) * $cart["quantity"];
-                }
-            }
 
             // Kiểm tra mã giảm giá
             $coupon = null;
@@ -136,20 +146,22 @@ class OrderController {
             // Tạo chi tiết đơn hàng
             foreach ($carts as $cart) {
                 if (in_array($cart["cart_id"], $cartIds)) {
-                    $orderItem = OrderItemModel::add($orderId, $cart["product_variant_id"], $cart["quantity"], $cart["promotion_price"] ? $cart["promotion_price"] : $cart["price"]);
-                    if (!$orderItem) {
-                        throw new \Exception("Lỗi tạo chi tiết đơn hàng");
-                    }
+                    OrderItemModel::add($orderId, $cart["product_variant_id"], $cart["quantity"], $cart["promotion_price"] ? $cart["promotion_price"] : $cart["price"]);
+                    $product_variant = ProductVariantModel::find($cart["product_variant_id"]);
+                    // Cập nhật số lượng
+                    ProductVariantModel::updateQuantity(
+                        $product_variant["product_variant_id"],
+                        $product_variant["quantity"] - $cart["quantity"],
+                        $product_variant["sold_quantity"] + $cart["quantity"]
+                    );
+
+                    // Xóa giỏ hàng
+                    CartModel::delete($userId, $cart["cart_id"]);
                 }
             }
 
             // Tạo trạng thái đơn hàng
             OrderStatusModel::add($orderId, 'unpaid');
-
-            // Xóa giỏ hàng -------------------------------------
-            // CartModel::delete($userId, $cartIds);
-
-            // Cập nhật số lượng, số lượng tồn sản phẩm ------------------------------------
 
             // Xử lý tạo QR code thanh toán
             $paymentLink = "aaa";
@@ -164,7 +176,7 @@ class OrderController {
                 "orderId" => $orderId
             ], 200);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi tạo đơn hàng: " . $th->getMessage());
+            Log::throwable("OrderController -> add:" . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
