@@ -31,6 +31,15 @@ class Path {
     return this.buildPath(this.public() + "/app", subPath);
   }
 
+  static publicLogoRectangle() {
+    return this.buildPath(this.public() + "/app/logo-rectangle.svg");
+  }
+
+
+  static publicLogoSquare() {
+    return this.buildPath(this.public() + "/app/logo-square.svg");
+  }
+
   static publicAvatar(subPath = "") {
     return this.buildPath(this.public() + "/uploaded/avatar", subPath);
   }
@@ -132,7 +141,7 @@ class Path {
   }
 
   // Helper function to format the path correctly
-  static buildPath(basePath, subPath) {
+  static buildPath(basePath, subPath="") {
     const subPathString = String(subPath); // Chuyển subPath thành string
     return subPathString
       ? `${basePath}/${subPathString.replace(/^\/+/, "")}`

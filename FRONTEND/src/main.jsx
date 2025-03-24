@@ -8,20 +8,22 @@ import { Provider } from "react-redux";
 import store, { persistor } from "~/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import SnackbarProviderCustom from "./components/SnackbarProviderCustom";
+import Favicon from "./components/Favicon";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <>
-        {/* <React.StrictMode> */}
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
-                    <SnackbarProviderCustom>
-                        <App />
-                    </SnackbarProviderCustom>
-                </PersistGate>
-            </Provider>
-        </ThemeProvider>
-        {/* </React.StrictMode> */}
-    </>
+  <>
+    {/* <React.StrictMode> */}
+    <Favicon />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <SnackbarProviderCustom>
+            <App />
+          </SnackbarProviderCustom>
+        </PersistGate>
+      </Provider>
+    </ThemeProvider>
+    {/* </React.StrictMode> */}
+  </>
 );
