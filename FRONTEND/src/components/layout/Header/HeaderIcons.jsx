@@ -34,6 +34,7 @@ const MenuIcon = ({ icon, menuItems }) => {
       <IconButton
         onClick={handleOpenMenu}
         sx={{ color: theme.palette.primary.light }}
+        size="medium"
       >
         {icon}
       </IconButton>
@@ -63,6 +64,31 @@ const MenuIcon = ({ icon, menuItems }) => {
   );
 };
 
+// 🔹 Shopping Cart Menu
+const ShoppingCartMenu = () => {
+  const navigate = useNavigate();
+  return (
+    // <MenuIcon
+    //   icon={<ShoppingCart />}
+    //   menuItems={[
+    //     { label: "Sản phẩm 1" },
+    //     { label: "Sản phẩm 2" },
+    //     {
+    //       label: "Xem giỏ hàng",
+    //       onClick: () => navigate(Path.userCart()),
+    //     },
+    //   ]}
+    // />
+    <IconButton
+      size="medium"
+      onClick={() => navigate(Path.userCart())}
+      sx={{ color: "primary.light" }}
+    >
+      <ShoppingCart />
+    </IconButton>
+  );
+};
+
 // 🔹 Notifications Menu
 const NotificationsMenu = () => {
   return (
@@ -72,24 +98,6 @@ const NotificationsMenu = () => {
         { label: "Thông báo 1" },
         { label: "Thông báo 2" },
         { label: "Xem tất cả thông báo" },
-      ]}
-    />
-  );
-};
-
-// 🔹 Shopping Cart Menu
-const ShoppingCartMenu = () => {
-  const navigate = useNavigate();
-  return (
-    <MenuIcon
-      icon={<ShoppingCart />}
-      menuItems={[
-        { label: "Sản phẩm 1" },
-        { label: "Sản phẩm 2" },
-        {
-          label: "Xem giỏ hàng",
-          onClick: () => navigate(Path.userCart()),
-        },
       ]}
     />
   );
@@ -154,11 +162,11 @@ const UserAccountMenu = () => {
 // 🔹 HeaderIcons (Tổng hợp)
 const HeaderIcons = () => {
   return (
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
       {Auth.checkUser() && (
         <>
-          <NotificationsMenu />
           <ShoppingCartMenu />
+          <NotificationsMenu />
         </>
       )}
       <UserAccountMenu />

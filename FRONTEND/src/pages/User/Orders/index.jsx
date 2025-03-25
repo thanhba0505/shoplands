@@ -1,5 +1,7 @@
+import PaperCustom from "~/components/PaperCustom";
+
 const Orders = () => {
-  return <div>Orders</div>;
+  return <PaperCustom>Orders</PaperCustom>;
 };
 
 export default Orders;

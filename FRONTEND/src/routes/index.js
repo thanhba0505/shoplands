@@ -1,5 +1,6 @@
 // Layout
 import ManageLayout from "~/components/layout/ManageLayout";
+import UserOrdersLayout from "~/components/layout/UserOrdersLayout";
 
 // Auth
 import Login from "~/pages/Auth/Login";
@@ -54,7 +55,7 @@ const userRoutes = [
   { path: "/user/cart", component: Cart },
   { path: "/user/profile", component: Profile },
   { path: "/user/address-book", component: AddressBook },
-  { path: "/user/orders", component: Orders },
+  { path: "/user/orders", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/detail/:id", component: OrderDetail },
   { path: "/user/orders/checkout", component: Checkout },
   { path: "/user/orders/payment", component: Payment },
@@ -62,7 +63,7 @@ const userRoutes = [
 
 // SELLER ROUTES
 const sellerRoutes = [
-  { path: "/seller/dashboard", component: Dashboard, layout: ManageLayout },
+  { path: "/seller/dashboard", component: Dashboard, layout: UserOrdersLayout },
   // Đơn hàng
   { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
   { path: "/seller/orders/all", component: OrdersSeller, layout: ManageLayout },

@@ -1,7 +1,5 @@
-import { AppBar, Toolbar, Container, Box, IconButton } from "@mui/material";
+import { Container, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import MenuIcon from "@mui/icons-material/Menu";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -21,6 +19,7 @@ import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import { useState } from "react";
 import PaperCustom from "~/components/PaperCustom";
 import SidebarTab from "../SidebarTab";
+import Header from "../Header";
 
 const NAVIGATION = [
   {
@@ -147,39 +146,7 @@ const ManageLayout = ({ children }) => {
 
   return (
     <>
-      <AppBar
-        position="sticky"
-        sx={{
-          height: theme.custom?.headerHeight,
-          backgroundColor: theme.palette.common.white,
-          color: "#333",
-          padding: "5px 0",
-          boxShadow: theme.custom?.boxShadow,
-          justifyContent: "center",
-          paddingTop: 1,
-        }}
-      >
-        <Container maxWidth="xl">
-          <Toolbar
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "0px !important",
-            }}
-          >
-            <Box>
-              <IconButton
-                onClick={() => setOpen(!open)}
-                sx={{ color: theme.palette.primary.light }}
-              >
-                {open ? <MenuOpenIcon /> : <MenuIcon />}
-              </IconButton>
-              Logo
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Header />
 
       <Container maxWidth="xl">
         <Box
