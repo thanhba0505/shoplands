@@ -1,21 +1,23 @@
-import { Container, Box } from "@mui/material";
+import {
+  Container,
+  Box,
+  List,
+  ListItemText,
+  ListItemIcon,
+  Tooltip,
+  ListItemButton,
+  ListItem,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import MarkunreadMailboxOutlinedIcon from "@mui/icons-material/MarkunreadMailboxOutlined";
-import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
-import AddCardRoundedIcon from "@mui/icons-material/AddCardRounded";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import BallotOutlinedIcon from "@mui/icons-material/BallotOutlined";
-import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
-import AssignmentReturnOutlinedIcon from "@mui/icons-material/AssignmentReturnOutlined";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
-import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
+import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import AllInboxRoundedIcon from '@mui/icons-material/AllInboxRounded';
 import { useState } from "react";
 import PaperCustom from "~/components/PaperCustom";
 import SidebarTab from "../SidebarTab";
@@ -23,120 +25,53 @@ import Header from "../Header";
 
 const NAVIGATION = [
   {
-    name: "Bảng điều khiển",
-    tooltip: "Bảng điều khiển",
-    path: "/dashboard",
-    icon: <DashboardOutlinedIcon />,
+    group: "Tài khoản của tôi",
+  },
+  {
+    name: "Thông tin tài khoản",
+    tooltip: "Thông tin tài khoản",
+    path: "/user/profile",
+    icon: <AccountCircleRoundedIcon />,
+  },
+  {
+    name: "Sổ địa chỉ",
+    tooltip: "Sổ địa chỉ",
+    path: "/user/address-book",
+    icon: <LocationOnRoundedIcon />,
     divider: true,
   },
   {
-    group: "Quản lý đơn hàng",
+    group: "Đơn hàng của bạn",
   },
   {
     name: "Tất cả đơn hàng",
     tooltip: "Tất cả đơn hàng",
-    path: "/orders/all",
+    path: "/user/orders/all",
     icon: <WysiwygRoundedIcon />,
   },
   {
-    name: "Chờ đóng gói",
-    tooltip: "Chờ đóng gói",
-    path: "/orders/packing",
+    name: "Đang đóng gói",
+    tooltip: "Đang đóng gói",
+    path: "/user/orders/packing",
     icon: <MarkunreadMailboxOutlinedIcon />,
-  },
-  {
-    name: "Đã đóng gói",
-    tooltip: "Đã đóng gói",
-    path: "/orders/packed",
-    icon: <CardTravelRoundedIcon />,
   },
   {
     name: "Đang giao hàng",
     tooltip: "Đang giao hàng",
-    path: "/orders/shipping",
+    path: "/user/orders/shipping",
     icon: <LocalShippingOutlinedIcon />,
   },
   {
-    name: "Yêu cầu trả hàng",
-    tooltip: "Yêu cầu trả hàng",
-    path: "/orders/delivered",
-    icon: <AssignmentReturnOutlinedIcon />,
+    name: "Đã nhận hàng",
+    tooltip: "Đã nhận hàng",
+    path: "/user/orders/delivered",
+    icon: <AllInboxRoundedIcon />,
   },
   {
     name: "Hoàn thành",
     tooltip: "Hoàn thành",
-    path: "/orders/completed",
+    path: "/user/orders/completed",
     icon: <FactCheckOutlinedIcon />,
-    divider: true,
-  },
-  {
-    group: "Quản lý sản phẩm",
-  },
-  {
-    name: "Tất cả sản phẩm",
-    tooltip: "Tất cả sản phẩm",
-    path: "/products/all",
-    icon: <BallotOutlinedIcon />,
-  },
-  {
-    name: "Thêm sản phẩm",
-    tooltip: "Thêm sản phẩm",
-    path: "/products/new",
-    icon: <AddShoppingCartRoundedIcon />,
-  },
-  {
-    name: "Kho hàng",
-    tooltip: "Kho hàng",
-    path: "/products/inventory",
-    icon: <Inventory2OutlinedIcon />,
-  },
-  {
-    name: "Nhập kho",
-    tooltip: "Nhập kho",
-    path: "/products/import-products",
-    icon: <AddCardRoundedIcon />,
-  },
-  {
-    name: "Đánh giá sản phẩm",
-    tooltip: "Đánh giá sản phẩm",
-    path: "/products/reviews",
-    icon: <RateReviewOutlinedIcon />,
-    divider: true,
-  },
-  {
-    group: "Quản lý khuyến mãi",
-  },
-  {
-    name: "Giảm giá sản phẩm",
-    tooltip: "Giảm giá sản phẩm",
-    path: "/promotions/product-discount",
-    icon: <SellOutlinedIcon />,
-  },
-  {
-    name: "Mã giảm giá",
-    tooltip: "Mã giảm giá",
-    path: "/promotions/coupon",
-    icon: <LocalAtmOutlinedIcon />,
-    divider: true,
-  },
-  // {
-  //   group: "Quản lý khách hàng",
-  // },
-  {
-    group: "Cài đặt cửa hàng",
-  },
-  {
-    name: "Thông tin cửa hàng",
-    tooltip: "Thông tin cửa hàng",
-    path: "/settings/shop",
-    icon: <StorefrontOutlinedIcon />,
-  },
-  {
-    name: "Thông tin thanh toán",
-    tooltip: "Thông tin thanh toán",
-    path: "/settings/payment",
-    icon: <PaymentOutlinedIcon />,
-    divider: true,
   },
 ];
 
@@ -161,16 +96,124 @@ const ManageLayout = ({ children }) => {
               pr: 0,
               marginTop: 3,
               height: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 2,
             }}
           >
             <Box
               sx={{
                 pr: 2,
-                height: `calc(100vh - ${theme.custom.headerHeight} - 3.5 * ${theme.custom.containerGap})`,
+                // height: `calc(100vh - ${theme.custom.headerHeight} - 3.5 * ${theme.custom.containerGap})`,
                 overflowY: "auto",
               }}
             >
               <SidebarTab navigation={NAVIGATION} open={open} />
+            </Box>
+
+            <Box sx={{ pr: 2 }}>
+              <Box sx={{ borderTop: "2px solid #ccc" }}>
+                <List
+                  disablePadding
+                  sx={{
+                    width: open ? 250 : 60,
+                    transition: "all 0.3s",
+                  }}
+                >
+                  <ListItem
+                    onClick={() => setOpen(!open)}
+                    disablePadding
+                    sx={{
+                      display: "block",
+                      overflow: "hidden",
+                      borderRadius: "8px",
+                      // backgroundColor: Path.checkStartsWith(
+                      //   item.path,
+                      //   Path.getPathFromIndex(location.pathname, 2)
+                      // )
+                      //   ? theme.custom.primary.strongLight
+                      //   : "transparent",
+                      my: 0.5,
+                    }}
+                  >
+                    <ListItemButton
+                      sx={[
+                        {
+                          minHeight: 48,
+                        },
+                        open
+                          ? {
+                              justifyContent: "initial",
+                            }
+                          : {
+                              justifyContent: "center",
+                            },
+                      ]}
+                    >
+                      {open ? (
+                        <ListItemIcon
+                          sx={[
+                            {
+                              color: theme.palette.primary.light,
+                              minWidth: 0,
+                              justifyContent: "center",
+                            },
+                            open
+                              ? {
+                                  mr: 3,
+                                }
+                              : {
+                                  mr: "auto",
+                                },
+                          ]}
+                        >
+                          {<MenuOpenIcon />}
+                        </ListItemIcon>
+                      ) : (
+                        <Tooltip title={"Mở rộng"} placement="right">
+                          <ListItemIcon
+                            sx={[
+                              {
+                                color: theme.palette.primary.light,
+                                minWidth: 0,
+                                justifyContent: "center",
+                              },
+                              open
+                                ? {
+                                    mr: 3,
+                                  }
+                                : {
+                                    mr: "auto",
+                                  },
+                            ]}
+                          >
+                            {<MenuIcon />}
+                          </ListItemIcon>
+                        </Tooltip>
+                      )}
+
+                      <ListItemText
+                        primary={"Đóng"}
+                        sx={[
+                          {
+                            textWrap: "nowrap",
+                            transition: "all 0.3s",
+                          },
+                          open
+                            ? {
+                                opacity: 1,
+                              }
+                            : {
+                                display: "none",
+                                opacity: 0,
+                              },
+                        ]}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Box>
             </Box>
           </PaperCustom>
 

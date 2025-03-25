@@ -53,9 +53,14 @@ const publicRoutes = [
 // USER ROUTES
 const userRoutes = [
   { path: "/user/cart", component: Cart },
-  { path: "/user/profile", component: Profile },
-  { path: "/user/address-book", component: AddressBook },
+  { path: "/user/profile", component: Profile, layout: UserOrdersLayout },
+  { path: "/user/address-book", component: AddressBook, layout: UserOrdersLayout },
   { path: "/user/orders", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/all", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/packing", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/shipping", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/delivered", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/completed", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/detail/:id", component: OrderDetail },
   { path: "/user/orders/checkout", component: Checkout },
   { path: "/user/orders/payment", component: Payment },
@@ -63,7 +68,7 @@ const userRoutes = [
 
 // SELLER ROUTES
 const sellerRoutes = [
-  { path: "/seller/dashboard", component: Dashboard, layout: UserOrdersLayout },
+  { path: "/seller/dashboard", component: Dashboard, layout: ManageLayout },
   // Đơn hàng
   { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
   { path: "/seller/orders/all", component: OrdersSeller, layout: ManageLayout },

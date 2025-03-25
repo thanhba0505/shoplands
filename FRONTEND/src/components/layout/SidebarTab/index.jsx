@@ -18,7 +18,7 @@ const SidebarItem = ({ item, open }) => {
   const location = useLocation();
 
   const handleOnClick = () => {
-    navigate(Path.seller(item.path));
+    navigate(Path.base(item.path));
   };
 
   return (
@@ -48,7 +48,7 @@ const SidebarItem = ({ item, open }) => {
               borderRadius: "8px",
               backgroundColor: Path.checkStartsWith(
                 item.path,
-                Path.getPathFromIndex(location.pathname, 2)
+                Path.getPathFromIndex(location.pathname, 1)
               )
                 ? theme.custom.primary.strongLight
                 : "transparent",

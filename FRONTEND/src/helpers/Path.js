@@ -52,6 +52,12 @@ class Path {
     return this.buildPath(this.public() + "/uploaded/product", subPath);
   }
 
+  
+  // BASE PATH
+  static base(subPath) {
+    return this.buildPath("", subPath);
+  }
+
   // PUBLIC PATHS
   static home(subPath = "") {
     return this.buildPath("/", subPath);
