@@ -98,43 +98,18 @@ class OrderModel {
     }
 
     // Lấy danh sach đơn hang theo user id
-    public static function getByUserId($userId) {
+    public static function getByUserId($user_id, $status = "all", $limit = 12, $page = 1) {
         $query = new ConnectDatabase();
 
-        $sql = "
-            SELECT
-                o.id AS order_id,
-                o.seller_id,
-                o.user_id,
-                o.from_address_id,
-                o.to_address_id,
-                o.shipping_fee_id,
-                o.subtotal_price,
-                o.discount,
-                o.final_price,
-                o.paid,
-                o.revenue,
-                o.cancel_reason,
-                o.coupon_id,
-                o.created_at
-            FROM
-                orders o
-            WHERE
-                o.user_id = :userId
-        ";
-
-        $result = $query->query($sql, ['userId' => $userId])->fetchAll();
-
-        return $result ?? [];
-    }
-
-    // Lấy danh sách đơn hàng theo selelr id
-    public static function getBySellerId($seller_id, $limit = 12, $page = 1) {
-        $query = new ConnectDatabase();
+        $status = $status ?? "all";
 
         // Tính toán OFFSET
         $offset = ($page - 1) * $limit;
 
+        // Nếu status là "all", không cần điều kiện về trạng thái
+        $statusCondition = ($status === "all") ? "" : "AND os.status = :status";
+
+        // Câu truy vấn với subquery để lấy trạng thái cuối cùng (last status) của mỗi đơn hàng
         $sql = "
             SELECT
                 o.id AS order_id,
@@ -153,25 +128,40 @@ class OrderModel {
                 o.created_at
             FROM
                 orders o
+                JOIN (
+                    SELECT order_id, status
+                    FROM order_status
+                    WHERE (order_id, created_at) IN (
+                        SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
+                    )
+                ) os ON os.order_id = o.id
             WHERE
-                o.seller_id = :seller_id
+                o.user_id = :user_id
+                $statusCondition
             ORDER BY
                 o.created_at DESC
             LIMIT
                 :limit OFFSET :offset
         ";
 
-        $result = $query->query($sql, [
-            'seller_id' => $seller_id,
+        // Thực hiện truy vấn
+        $params = [
+            'user_id' => $user_id,
             'limit' => $limit,
             'offset' => $offset
-        ])->fetchAll();
+        ];
+
+        // Nếu status không phải "all", thêm tham số status vào query
+        if ($status !== "all") {
+            $params['status'] = $status;
+        }
+
+        $result = $query->query($sql, $params)->fetchAll();
 
         return $result ?? [];
     }
-
     // Lấy danh sách đơn hàng theo selelr id theo trang thai
-    public static function getBySellerIdAndStatus($seller_id, $status = "all", $limit = 12, $page = 1) {
+    public static function getBySellerId($seller_id, $status = "all", $limit = 12, $page = 1) {
         $query = new ConnectDatabase();
 
         $status = $status ?? "all";
@@ -303,6 +293,46 @@ class OrderModel {
 
         // Truyền tham số vào câu truy vấn
         $params = ['seller_id' => $seller_id];
+
+        // Nếu status không phải "all", thêm tham số status vào query
+        if ($status !== "all") {
+            $params['status'] = $status;
+        }
+
+        // Thực hiện truy vấn
+        $result = $query->query($sql, $params)->fetch();
+
+        return $result['total'] ?? 0;
+    }
+
+    // Lấy tổng số đơn hàng theo user id
+    public static function countByUserId($user_id, $status = "all") {
+        $query = new ConnectDatabase();
+
+        $status = $status ?? "all";
+
+        // Nếu status là "all", không cần điều kiện về trạng thái
+        $statusCondition = ($status === "all") ? "" : "AND os.status = :status";
+
+        $sql = "
+            SELECT
+                COUNT(*) AS total
+            FROM
+                orders o
+                JOIN (
+                    SELECT order_id, status
+                    FROM order_status
+                    WHERE (order_id, created_at) IN (
+                        SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
+                    )
+                ) os ON os.order_id = o.id
+            WHERE
+                o.user_id = :user_id
+                $statusCondition
+        ";
+
+        // Truyền tham số vào câu truy vấn
+        $params = ['user_id' => $user_id];
 
         // Nếu status không phải "all", thêm tham số status vào query
         if ($status !== "all") {

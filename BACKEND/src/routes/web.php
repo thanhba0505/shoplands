@@ -41,7 +41,7 @@ $router->get('api/shipping-fees', 'ShippingFeeController@getAll');
 // API ORDER
 $router->post('api/user/orders', 'OrderController@add', ['App\Middlewares\UserMiddleware']);
 $router->post('api/user/orders/check-payment', 'OrderController@checkPayment', ['App\Middlewares\UserMiddleware']);
-$router->get('api/user/orders', 'OrderController@getAll', ['App\Middlewares\UserMiddleware']);
+$router->get('api/user/orders', 'OrderController@getAllByUser', ['App\Middlewares\UserMiddleware']);
 
 $router->get('api/seller/orders', 'OrderController@getAllBySeller', ['App\Middlewares\SellerMiddleware']);
 $router->get('api/seller/orders/{order_id}', 'OrderController@getByOrderId', ['App\Middlewares\SellerMiddleware']);
