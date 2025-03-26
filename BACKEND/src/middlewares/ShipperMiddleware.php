@@ -9,11 +9,11 @@ class ShipperMiddleware
 {
     public function handle()
     {
-        // Kiểm tra user đăng nhập
-        // $user = Auth::user();
-
-        // if (!$user) {
-        //     Response::json(['message' => 'Đăng nhập người dùng để thực hiện hành động này'], 401);
-        // }
+        // Kiểm tra shipper đăng nhập
+        $shipper = Auth::shipper();
+        
+        if (!$shipper) {
+            Response::json(['message' => 'Đăng nhập người giao hàng để thực hiện hành động này'], 401);
+        }
     }
 }

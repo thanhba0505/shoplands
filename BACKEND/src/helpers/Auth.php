@@ -9,25 +9,31 @@ use App\Models\UserModel;
 use App\Models\SellerModel;
 
 
-class Auth
-{
+class Auth {
     protected static $account = null;
 
     // ✅ Lấy thông tin tài khoản user từ token
-    public static function user()
-    {
+    public static function user() {
         return self::getAuthenticatedAccount('user', UserModel::class);
     }
 
     // ✅ Lấy thông tin tài khoản seller từ token
-    public static function seller()
-    {
+    public static function seller() {
         return self::getAuthenticatedAccount('seller', SellerModel::class);
     }
 
+    // ✅ Lấy thông tin tài khoản shipper từ token
+    public static function shipper() {
+        return self::getAuthenticatedAccount('shipper', null);
+    }
+
+    // ✅ Lấy thông tin tài khoản admin từ token
+    public static function admin() {
+        return self::getAuthenticatedAccount('admin', null);
+    }
+
     // 📌 Hàm chung lấy tài khoản theo vai trò & model
-    protected static function getAuthenticatedAccount($role, $model)
-    {
+    protected static function getAuthenticatedAccount($role, $model) {
         if (self::$account !== null) {
             return self::$account;
         }
@@ -53,9 +59,36 @@ class Auth
         }
 
         // Gọi model tương ứng
-        $account = $model::findById($decoded->account_id);
-        if (!$account || $account['role'] !== $role) {
-            return null;
+        if ($role === 'user' || $role === 'seller') {
+            $account = $model::findById($decoded->account_id);
+            if (!$account || $account['role'] !== $role) {
+                return null;
+            }
+        } else if ($role === 'admin') {
+            $account = AccountModel::findById($decoded->account_id);
+            if (!$account || $account['role'] !== $role) {
+                return null;
+            }
+            $result['account_id'] = $account['account_id'];
+            $result['phone'] = $account['phone'];
+            $result['role'] = $account['role'];
+            $result['status'] = $account['status'];
+            $result['created_at'] = $account['created_at'];
+            $account = $result;
+        } else if ($role === 'shipper') {
+            $account = AccountModel::findById($decoded->account_id);
+            if (!$account || $account['role'] !== $role) {
+                return null;
+            }
+            $result['account_id'] = $account['account_id'];
+            $result['phone'] = $account['phone'];
+            $result['role'] = $account['role'];
+            $result['coin'] = $account['coin'];
+            $result['bank_number'] = $account['bank_number'];
+            $result['bank_name'] = $account['bank_name'];
+            $result['status'] = $account['status'];
+            $result['created_at'] = $account['created_at'];
+            $account = $result;
         }
 
         self::$account = $account;
