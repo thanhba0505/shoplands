@@ -8,6 +8,7 @@ use App\Helpers\Log;
 use App\Helpers\QRCode;
 use App\Helpers\Request;
 use App\Helpers\Response;
+use App\Models\AccountModel;
 use App\Models\AddressModel;
 use App\Models\CartModel;
 use App\Models\CouponModel;
@@ -252,7 +253,7 @@ class OrderController {
             $check = true;
 
             if ($check) {
-                OrderModel::updatePaid($orderId, $user["user_id"], rand(1, 100));
+                OrderModel::updatePaid($orderId, $user["user_id"], $order["final_price"]);
                 OrderStatusModel::add($orderId, 'packing');
 
                 Response::json(['message' => 'Xác nhận đã thanh toán thành công'], 200);
@@ -432,32 +433,145 @@ class OrderController {
     public function userAddStatus($order_id) {
         try {
             $user = Auth::user();
+            $status = Request::json('status');
+            $check = in_array($status, [
+                'completed',
+            ]);
 
-            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
-
-            if (!$order) {
-                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+            if (!$status) {
+                Response::json(['message' => 'Không tìm thấy trạng thái'], 400);
             }
 
-            $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
+            if (!$check) {
+                Response::json(['message' => 'Trạng thái không thể truy cập'], 400);
+            }
+
+            $orderStatus = OrderStatusModel::findLatest($order_id);
             if (!$orderStatus) {
                 throw new \Exception("Không tìm thấy trạng thái");
             }
-            if ($orderStatus['status'] == 'delivered') {
-                OrderStatusModel::add($order["order_id"], 'completed');
-                $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
+
+            if ($status === 'completed' && $orderStatus['status'] === 'delivered') {
+                OrderStatusModel::add($order_id, 'completed');
+                $orderStatus = OrderStatusModel::findLatest($order_id);
+
+                // Xử lý cộng coin cho người bán và shipper
+                $order = OrderModel::find($order_id, $user["user_id"]);
+                $seller = SellerModel::findBySellerId($order["seller_id"]);
+
+                AccountModel::updateCoin($seller["account_id"], $seller["coin"] + $order["revenue"]);
+
+                $shipper = AccountModel::getShipper();
+                $shipping_fee = ShippingFeeModel::find($order["shipping_fee_id"]);
+                AccountModel::updateCoin($shipper["account_id"], $shipper["coin"] + $shipping_fee["price"]);
+
                 Response::json($orderStatus, 200);
             } else {
-                Response::json(['message' => 'Đơn hàng chưa được giao'], 400);
+                Response::json(['message' => 'Không thể cập nhật nhật trạng thái này cho đơn hàng'], 400);
             }
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> sellerAddStatus: " . $th->getMessage());
+            Log::throwable("OrderController -> shipperAddStatus: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Shipper lấy danh sách đơn hàng đang giao
     public function shipperGet() {
-        Response::json(["Danh sách đơn hàng"], 200);
+        try {
+            $status = Request::get('status');
+            $limit = Request::get('limit', 12);
+            $page = Request::get('page', 1);
+
+            $check = in_array($status, [
+                'packed',
+                'shipping'
+            ]);
+
+            if (!$check) {
+                Response::json(['message' => 'Trạng thái không hợp lệ'], 400);
+            }
+
+            // Lấy tổng số đơn hàng
+            $count = OrderModel::count($status);
+
+            // Lấy danh sách đơn hàng
+            $orders = OrderModel::shipperGet($status, $limit, $page);
+
+            if (!empty($orders)) {
+                // Duyệt qua từng đơn hàng và thêm thông tin vào
+                foreach ($orders as $key => $order) {
+                    $orderDetails = $this->getOrderDetailsByShipper($order);
+                    $orders[$key] = array_merge(
+                        $order,
+                        $orderDetails  // Lấy thông tin chi tiết cho từng đơn hàng
+                    );
+                }
+            }
+
+            $result = [
+                "count" => $count,
+                "orders" => $orders
+            ];
+
+            Response::json($result, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> shipperGet: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Shipper thêm 1 status cho đơn hàng
+    public function shipperAddStatus($order_id) {
+        try {
+            $status = Request::json('status');
+            $check = in_array($status, [
+                'shipping',
+                'delivered'
+            ]);
+
+            if (!$status) {
+                Response::json(['message' => 'Không tìm thấy trạng thái'], 400);
+            }
+
+            if (!$check) {
+                Response::json(['message' => 'Trạng thái không thể truy cập'], 400);
+            }
+
+            $orderStatus = OrderStatusModel::findLatest($order_id);
+            if (!$orderStatus) {
+                throw new \Exception("Không tìm thấy trạng thái");
+            }
+
+            if ($status === 'shipping' && $orderStatus['status'] === 'packed') {
+                OrderStatusModel::add($order_id, 'shipping');
+                $orderStatus = OrderStatusModel::findLatest($order_id);
+                Response::json($orderStatus, 200);
+            } else if ($status === 'delivered' && $orderStatus['status'] === 'shipping') {
+                OrderStatusModel::add($order_id, 'delivered');
+                $orderStatus = OrderStatusModel::findLatest($order_id);
+                Response::json($orderStatus, 200);
+            } else {
+                Response::json(['message' => 'Không thể cập nhật nhật trạng thái này cho đơn hàng'], 400);
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> shipperAddStatus: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Phương thức giúp lấy các thông tin chi tiết cho một đơn hàng cho shipper
+    private function getOrderDetailsByShipper($order) {
+        // Lấy thông tin người mua hàng
+        $orderDetails = [
+            "user" => $this->getUserDetails($order['user_id']),
+            "seller" => $this->getSellerDetails($order['seller_id']),
+            "from_address" => $this->getAddressDetails($order["from_address_id"], $order["seller_id"], 'seller'),
+            "to_address" => $this->getAddressDetails($order["to_address_id"], $order["user_id"], 'user'),
+            "shipping_fee" => $this->getShippingFeeDetails($order["shipping_fee_id"]),
+            "latest_status" => OrderStatusModel::findLatest($order["order_id"]),
+            "order_items" => $this->getOrderItems($order["order_id"])
+        ];
+
+        return $orderDetails;
     }
 }

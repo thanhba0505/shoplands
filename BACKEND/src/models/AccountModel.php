@@ -7,10 +7,8 @@ use App\Helpers\Hash;
 use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
-class AccountModel
-{
-    public static function findById($id)
-    {
+class AccountModel {
+    public static function findById($id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -44,8 +42,7 @@ class AccountModel
         return $result;
     }
 
-    public static function findByPhone($phone)
-    {
+    public static function findByPhone($phone) {
         $phone = Hash::encodeSha256($phone);
 
         $query = new ConnectDatabase();
@@ -81,8 +78,7 @@ class AccountModel
         return $result;
     }
 
-    public static function findByAccessToken($accessToken)
-    {
+    public static function findByAccessToken($accessToken) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -116,8 +112,7 @@ class AccountModel
         return $result;
     }
 
-    public static function updateTokens($account_id, $accessToken, $refreshToken)
-    {
+    public static function updateTokens($account_id, $accessToken, $refreshToken) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -140,8 +135,7 @@ class AccountModel
     }
 
     // Thêm 1 account
-    public static function addAccount($phone, $password, $role = 'user', $status = 'active')
-    {
+    public static function addAccount($phone, $password, $role = 'user', $status = 'active') {
         $query = new ConnectDatabase();
 
         $created_at = Carbon::now();
@@ -169,8 +163,7 @@ class AccountModel
     }
 
     // Sửa account
-    public static function activeAccount($account_id)
-    {
+    public static function activeAccount($account_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -188,8 +181,7 @@ class AccountModel
     }
 
     // Cập nhật device_token
-    public static function updateDeviceToken($account_id, $ip_address, $user_agent)
-    {
+    public static function updateDeviceToken($account_id, $ip_address, $user_agent) {
         $query = new ConnectDatabase();
 
         $device_token = Hash::encodeArgon2i($ip_address . $user_agent);
@@ -209,8 +201,7 @@ class AccountModel
     }
 
     // Xóa device_token
-    public static function deleteDeviceToken($account_id)
-    {
+    public static function deleteDeviceToken($account_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -228,8 +219,7 @@ class AccountModel
     }
 
     // Cập nhật password
-    public static function updatePassword($account_id, $password)
-    {
+    public static function updatePassword($account_id, $password) {
         $query = new ConnectDatabase();
 
         $password = Hash::encodeArgon2i($password);
@@ -244,6 +234,58 @@ class AccountModel
         ";
 
         $result = $query->query($sql, ['password' => $password, 'account_id' => $account_id]);
+
+        return $result;
+    }
+
+    // Lấy account shipper
+    public static function getShipper() {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                a.id as account_id,
+                a.phone,
+                a.role,
+                a.bank_number,
+                a.bank_name,
+                a.status,
+                a.coin,
+                a.created_at
+            FROM
+                accounts a
+            WHERE
+                a.role = 'shipper'
+        ";
+
+        $result = $query->query($sql)->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
+        }
+
+        return $result;
+    }
+
+    // Cập nhật coin cho seller
+    public static function updateCoin($account_id, $coin) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                coin = :coin
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, [
+            'coin' => $coin,
+            'account_id' => $account_id
+        ]);
 
         return $result;
     }

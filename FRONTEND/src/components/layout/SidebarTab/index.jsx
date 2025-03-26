@@ -9,9 +9,13 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Path from "~/helpers/Path";
 import theme from "~/theme";
+import PaperCustom from "~/components/PaperCustom";
 
 const SidebarItem = ({ item, open }) => {
   const navigate = useNavigate();
@@ -137,19 +141,134 @@ const SidebarItem = ({ item, open }) => {
   );
 };
 
-const SidebarTab = ({ navigation, open }) => {
+const SidebarTab = ({ navigation, sx }) => {
+  const [open, setOpen] = useState(true);
   return (
-    <List
-      disablePadding
+    <PaperCustom
       sx={{
-        width: open ? 250 : 60,
-        transition: "all 0.3s",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 2,
+        ...sx,
       }}
     >
-      {navigation.map((item, index) => (
-        <SidebarItem key={index} item={item} open={open} />
-      ))}
-    </List>
+      <Box
+        sx={{
+          pr: 2,
+          overflowY: "auto",
+        }}
+      >
+        <List
+          disablePadding
+          sx={{
+            width: open ? 250 : 60,
+            transition: "all 0.3s",
+          }}
+        >
+          {navigation.map((item, index) => (
+            <SidebarItem key={index} item={item} open={open} />
+          ))}
+        </List>
+      </Box>
+      <Box sx={{ pr: 2 }}>
+        <Box sx={{ borderTop: "2px solid #ccc" }}>
+          <List
+            disablePadding
+            sx={{
+              width: open ? 250 : 60,
+              transition: "all 0.3s",
+            }}
+          >
+            <ListItem
+              onClick={() => setOpen(!open)}
+              disablePadding
+              sx={{
+                display: "block",
+                overflow: "hidden",
+                borderRadius: "8px",
+                my: 0.5,
+              }}
+            >
+              <ListItemButton
+                sx={[
+                  {
+                    minHeight: 48,
+                  },
+                  open
+                    ? {
+                        justifyContent: "initial",
+                      }
+                    : {
+                        justifyContent: "center",
+                      },
+                ]}
+              >
+                {open ? (
+                  <ListItemIcon
+                    sx={[
+                      {
+                        color: theme.palette.primary.light,
+                        minWidth: 0,
+                        justifyContent: "center",
+                      },
+                      open
+                        ? {
+                            mr: 3,
+                          }
+                        : {
+                            mr: "auto",
+                          },
+                    ]}
+                  >
+                    {<MenuOpenIcon />}
+                  </ListItemIcon>
+                ) : (
+                  <Tooltip title={"Mở rộng"} placement="right">
+                    <ListItemIcon
+                      sx={[
+                        {
+                          color: theme.palette.primary.light,
+                          minWidth: 0,
+                          justifyContent: "center",
+                        },
+                        open
+                          ? {
+                              mr: 3,
+                            }
+                          : {
+                              mr: "auto",
+                            },
+                      ]}
+                    >
+                      {<MenuIcon />}
+                    </ListItemIcon>
+                  </Tooltip>
+                )}
+
+                <ListItemText
+                  primary={"Đóng"}
+                  sx={[
+                    {
+                      textWrap: "nowrap",
+                      transition: "all 0.3s",
+                    },
+                    open
+                      ? {
+                          opacity: 1,
+                        }
+                      : {
+                          display: "none",
+                          opacity: 0,
+                        },
+                  ]}
+                />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
+      </Box>
+    </PaperCustom>
   );
 };
 

@@ -1,7 +1,5 @@
-import { AppBar, Toolbar, Container, Box, IconButton } from "@mui/material";
+import { AppBar, Toolbar, Container, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import MenuIcon from "@mui/icons-material/Menu";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -18,15 +16,13 @@ import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
-import { useState } from "react";
-import PaperCustom from "~/components/PaperCustom";
 import SidebarTab from "../SidebarTab";
 
 const NAVIGATION = [
   {
     name: "Bảng điều khiển",
     tooltip: "Bảng điều khiển",
-    path: "/dashboard",
+    path: "/seller/dashboard",
     icon: <DashboardOutlinedIcon />,
     divider: true,
   },
@@ -36,37 +32,37 @@ const NAVIGATION = [
   {
     name: "Tất cả đơn hàng",
     tooltip: "Tất cả đơn hàng",
-    path: "/orders/all",
+    path: "/seller/orders/all",
     icon: <WysiwygRoundedIcon />,
   },
   {
     name: "Chờ đóng gói",
     tooltip: "Chờ đóng gói",
-    path: "/orders/packing",
+    path: "/seller/orders/packing",
     icon: <MarkunreadMailboxOutlinedIcon />,
   },
   {
     name: "Đã đóng gói",
     tooltip: "Đã đóng gói",
-    path: "/orders/packed",
+    path: "/seller/orders/packed",
     icon: <CardTravelRoundedIcon />,
   },
   {
     name: "Đang giao hàng",
     tooltip: "Đang giao hàng",
-    path: "/orders/shipping",
+    path: "/seller/orders/shipping",
     icon: <LocalShippingOutlinedIcon />,
   },
   {
     name: "Yêu cầu trả hàng",
     tooltip: "Yêu cầu trả hàng",
-    path: "/orders/delivered",
+    path: "/seller/orders/delivered",
     icon: <AssignmentReturnOutlinedIcon />,
   },
   {
     name: "Hoàn thành",
     tooltip: "Hoàn thành",
-    path: "/orders/completed",
+    path: "/seller/orders/completed",
     icon: <FactCheckOutlinedIcon />,
     divider: true,
   },
@@ -76,31 +72,31 @@ const NAVIGATION = [
   {
     name: "Tất cả sản phẩm",
     tooltip: "Tất cả sản phẩm",
-    path: "/products/all",
+    path: "/seller/products/all",
     icon: <BallotOutlinedIcon />,
   },
   {
     name: "Thêm sản phẩm",
     tooltip: "Thêm sản phẩm",
-    path: "/products/new",
+    path: "/seller/products/new",
     icon: <AddShoppingCartRoundedIcon />,
   },
   {
     name: "Kho hàng",
     tooltip: "Kho hàng",
-    path: "/products/inventory",
+    path: "/seller/products/inventory",
     icon: <Inventory2OutlinedIcon />,
   },
   {
     name: "Nhập kho",
     tooltip: "Nhập kho",
-    path: "/products/import-products",
+    path: "/seller/products/import-products",
     icon: <AddCardRoundedIcon />,
   },
   {
     name: "Đánh giá sản phẩm",
     tooltip: "Đánh giá sản phẩm",
-    path: "/products/reviews",
+    path: "/seller/products/reviews",
     icon: <RateReviewOutlinedIcon />,
     divider: true,
   },
@@ -110,13 +106,13 @@ const NAVIGATION = [
   {
     name: "Giảm giá sản phẩm",
     tooltip: "Giảm giá sản phẩm",
-    path: "/promotions/product-discount",
+    path: "/seller/promotions/product-discount",
     icon: <SellOutlinedIcon />,
   },
   {
     name: "Mã giảm giá",
     tooltip: "Mã giảm giá",
-    path: "/promotions/coupon",
+    path: "/seller/promotions/coupon",
     icon: <LocalAtmOutlinedIcon />,
     divider: true,
   },
@@ -129,13 +125,13 @@ const NAVIGATION = [
   {
     name: "Thông tin cửa hàng",
     tooltip: "Thông tin cửa hàng",
-    path: "/settings/shop",
+    path: "/seller/settings/shop",
     icon: <StorefrontOutlinedIcon />,
   },
   {
     name: "Thông tin thanh toán",
     tooltip: "Thông tin thanh toán",
-    path: "/settings/payment",
+    path: "/seller/settings/payment",
     icon: <PaymentOutlinedIcon />,
     divider: true,
   },
@@ -143,7 +139,6 @@ const NAVIGATION = [
 
 const ManageLayout = ({ children }) => {
   const theme = useTheme();
-  const [open, setOpen] = useState(true);
 
   return (
     <>
@@ -168,15 +163,7 @@ const ManageLayout = ({ children }) => {
               padding: "0px !important",
             }}
           >
-            <Box>
-              <IconButton
-                onClick={() => setOpen(!open)}
-                sx={{ color: theme.palette.primary.light }}
-              >
-                {open ? <MenuOpenIcon /> : <MenuIcon />}
-              </IconButton>
-              Logo
-            </Box>
+            <Box>Logo</Box>
           </Toolbar>
         </Container>
       </AppBar>
@@ -189,23 +176,14 @@ const ManageLayout = ({ children }) => {
             gap: 2,
           }}
         >
-          <PaperCustom
+          <SidebarTab
+            navigation={NAVIGATION}
             sx={{
               pr: 0,
               marginTop: 3,
               height: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
             }}
-          >
-            <Box
-              sx={{
-                pr: 2,
-                height: `calc(100vh - ${theme.custom.headerHeight} - 3.5 * ${theme.custom.containerGap})`,
-                overflowY: "auto",
-              }}
-            >
-              <SidebarTab navigation={NAVIGATION} open={open} />
-            </Box>
-          </PaperCustom>
+          />
 
           <Box
             sx={{

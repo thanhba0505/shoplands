@@ -125,4 +125,6 @@ class SellerModel {
 
         return $result;
     }
+
+   
 }

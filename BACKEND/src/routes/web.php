@@ -40,13 +40,14 @@ $router->get('api/shipping-fees', 'ShippingFeeController@get');
 
 // API ORDER
 $router->get('api/user/orders', 'OrderController@userGet', ['App\Middlewares\UserMiddleware']);
-$router->get('api/user/orders/{order_id}', 'OrderController@userFind', ['App\Middlewares\UserMiddleware']);
-$router->post('api/user/orders', 'OrderController@userAdd', ['App\Middlewares\UserMiddleware']);
-$router->post('api/user/orders/{order_id}', 'OrderController@userAddStatus', ['App\Middlewares\UserMiddleware']); // Cập nhật trạng thái đơn hàng
 $router->post('api/user/orders/check-payment', 'OrderController@userCheckPayment', ['App\Middlewares\UserMiddleware']);
+$router->get('api/user/orders/{order_id}', 'OrderController@userFind', ['App\Middlewares\UserMiddleware']);
+$router->post('api/user/orders/{order_id}', 'OrderController@userAddStatus', ['App\Middlewares\UserMiddleware']); // Cập nhật trạng thái đơn hàng
+$router->post('api/user/orders', 'OrderController@userAdd', ['App\Middlewares\UserMiddleware']);
 
 $router->get('api/seller/orders', 'OrderController@sellerGet', ['App\Middlewares\SellerMiddleware']);
 $router->get('api/seller/orders/{order_id}', 'OrderController@sellerFind', ['App\Middlewares\SellerMiddleware']);
 $router->post('api/seller/orders/{order_id}', 'OrderController@sellerAddStatus', ['App\Middlewares\SellerMiddleware']); // Cập nhật trạng thái đơn hàng
 
 $router->get('api/shipper/orders', 'OrderController@shipperGet', ['App\Middlewares\ShipperMiddleware']);
+$router->post('api/shipper/orders/{order_id}', 'OrderController@shipperAddStatus', ['App\Middlewares\ShipperMiddleware']);
