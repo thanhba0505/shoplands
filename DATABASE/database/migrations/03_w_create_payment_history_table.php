@@ -8,14 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('sellers', function (Blueprint $table) {
+        Schema::create('payment_history', function (Blueprint $table) {
             $table->id();
-            $table->string('store_name');
-            $table->string('owner_name');
-            $table->enum('status', ['pending', 'approved', 'rejected']);
-            $table->text('description')->nullable();
-            $table->string('background')->nullable();
-            $table->string('logo')->nullable();
+            $table->decimal('amount', 15, 2);
+            $table->enum('status', ['request', 'sent', 'completed']);
+            $table->string('content')->nullable();
+            $table->dateTime('created_at');
             $table->unsignedBigInteger('account_id'); // Foreign key
 
             $table->foreign('account_id')->references('id')->on('accounts');
@@ -24,10 +22,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('sellers', function (Blueprint $table) {
+        Schema::table('payment_history', function (Blueprint $table) {
             $table->dropForeign(['account_id']);
         });
 
-        Schema::dropIfExists('sellers');
+        Schema::dropIfExists('payment_history');
     }
 };
