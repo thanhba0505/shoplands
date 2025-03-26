@@ -35,7 +35,15 @@ class OrderController {
 
             $orders = OrderModel::getByUserId($user["user_id"], $status, $limit, $page);
 
-            $orders = $this->hanldeGetOrder($orders);
+            if (!empty($orders)) {
+                // Duyệt qua từng đơn hàng và thêm thông tin vào
+                foreach ($orders as $key => $order) {
+                    $orders[$key] = array_merge(
+                        $order,
+                        $this->getOrderDetails($order)  // Lấy thông tin chi tiết cho từng đơn hàng
+                    );
+                }
+            }
 
             $result = [
                 "count" => $count,
@@ -45,6 +53,27 @@ class OrderController {
             Response::json($result, 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userGet: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy 1 đơn hàng 
+    public function userFind($order_id) {
+        try {
+            $user = Auth::user();
+
+            // Lấy danh sách đơn hàng
+            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+            }
+
+            $order = array_merge($order, $this->getOrderDetails($order));
+
+            Response::json($order, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> userFind: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -250,7 +279,15 @@ class OrderController {
             // Lấy danh sách đơn hàng
             $orders = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
 
-            $orders = $this->hanldeGetOrder($orders);
+            if (!empty($orders)) {
+                // Duyệt qua từng đơn hàng và thêm thông tin vào
+                foreach ($orders as $key => $order) {
+                    $orders[$key] = array_merge(
+                        $order,
+                        $this->getOrderDetails($order)  // Lấy thông tin chi tiết cho từng đơn hàng
+                    );
+                }
+            }
 
             $result = [
                 "count" => $count,
@@ -264,74 +301,80 @@ class OrderController {
         }
     }
 
-    // Xử lý lấy thêm thông tin đơn hàng
-    private function hanldeGetOrder($orders) {
-        if (!empty($orders)) {
-            foreach ($orders as $key => $order) {
-                // Lấy thông tin người mua hàng
-                $user = UserModel::findByUserId($order['user_id']);
-                $orders[$key]["user"]["user_id"] = $user["user_id"];
-                $orders[$key]["user"]["name"] = $user["name"];
-                $orders[$key]["user"]["avatar"] = $user["avatar"];
+    // Phương thức giúp lấy các thông tin chi tiết cho một đơn hàng
+    private function getOrderDetails($order) {
+        // Lấy thông tin người mua hàng
+        $orderDetails = [
+            "user" => $this->getUserDetails($order['user_id']),
+            "seller" => $this->getSellerDetails($order['seller_id']),
+            "from_address" => $this->getAddressDetails($order["from_address_id"], $order["seller_id"], 'seller'),
+            "to_address" => $this->getAddressDetails($order["to_address_id"], $order["user_id"], 'user'),
+            "shipping_fee" => $this->getShippingFeeDetails($order["shipping_fee_id"]),
+            "coupon" => CouponModel::find($order["coupon_id"], $order["seller_id"]),
+            "order_status" => OrderStatusModel::getByOrderId($order["order_id"]),
+            "latest_status" => OrderStatusModel::findLatest($order["order_id"]),
+            "order_items" => $this->getOrderItems($order["order_id"])
+        ];
 
-                // Lấy thông tin người bán hàng
-                $seller = SellerModel::findBySellerId($order['seller_id']);
-                $orders[$key]["seller"]["seller_id"] = $seller["seller_id"];
-                $orders[$key]["seller"]["store_name"] = $seller["store_name"];
-                $orders[$key]["seller"]["logo"] = $seller["logo"];
+        return $orderDetails;
+    }
 
-                // Lấy thông tin địa chỉ người bán
-                $toAddress = AddressModel::findSellerAddress($order["from_address_id"], $order["seller_id"]);
-                $orders[$key]["from_address"]["address_id"] = $toAddress["address_id"];
-                $orders[$key]["from_address"]["province_name"] = $toAddress["province_name"];
-                $orders[$key]["from_address"]["address_line"] = $toAddress["address_line"];
+    // Lấy thông tin người mua
+    private function getUserDetails($user_id) {
+        $user = UserModel::findByUserId($user_id);
+        return [
+            "user_id" => $user["user_id"],
+            "name" => $user["name"],
+            "avatar" => $user["avatar"]
+        ];
+    }
 
-                // Lấy thông tin địa chỉ người mua
-                $toAddress = AddressModel::findToAddress($order["to_address_id"], $order["user_id"]);
-                $orders[$key]["to_address"]["address_id"] = $toAddress["address_id"];
-                $orders[$key]["to_address"]["province_name"] = $toAddress["province_name"];
-                $orders[$key]["to_address"]["address_line"] = $toAddress["address_line"];
+    // Lấy thông tin người bán
+    private function getSellerDetails($seller_id) {
+        $seller = SellerModel::findBySellerId($seller_id);
+        return [
+            "seller_id" => $seller["seller_id"],
+            "store_name" => $seller["store_name"],
+            "logo" => $seller["logo"]
+        ];
+    }
 
-                // Lấy thông tin vận chuyển
-                $shippingFee = ShippingFeeModel::find($order["shipping_fee_id"]);
-                $orders[$key]["shipping_fee"]["shipping_fee_id"] = $shippingFee["shipping_fee_id"];
-                $orders[$key]["shipping_fee"]["method"] = $shippingFee["method"];
-                $orders[$key]["shipping_fee"]["price"] = $shippingFee["price"];
-
-                // Lấy thông tin giảm giá
-                $coupon = CouponModel::find($order["coupon_id"], $order["seller_id"]);
-                $orders[$key]["coupon"] = $coupon;
-
-                // Lấy danh sách trạng thái
-                $orderStatus = OrderStatusModel::getByOrderId($order["order_id"]);
-                $orders[$key]["order_status"] = $orderStatus;
-
-                // Lấy trạng thái cuối cùng
-                $status = OrderStatusModel::findLatest($order["order_id"]);
-                $orders[$key]["latest_status"] = $status;
-
-                // Lấy danh sách order item
-                $orderItems = OrderItemModel::getByOrderId($order["order_id"]);
-                $orders[$key]["order_items"] = $orderItems;
-                foreach ($orders[$key]["order_items"] as $key2 => $orderItem) {
-                    // Lấy thuộc tính
-                    $attributes = ProductVariantValueModel::getByProductVariantId($orderItem["product_variant_id"]);
-                    $orders[$key]["order_items"][$key2]["attributes"] = $attributes;
-
-                    // Lấy thông tin 
-                    $product = ProductModel::getByProductVariantId($orderItem["product_variant_id"]);
-                    $orders[$key]["order_items"][$key2]["product"] = $product;
-
-                    // Lấy hình ảnh
-                    $images = ProductImageModel::getDefault($product["product_id"]);
-                    $orders[$key]["order_items"][$key2]["image"] = $images;
-                }
-            }
-
-            return $orders;
+    // Lấy thông tin địa chỉ
+    private function getAddressDetails($address_id, $user_id, $type = 'user') {
+        if ($type == 'seller') {
+            $address = AddressModel::findSellerAddress($address_id, $user_id);
         } else {
-            return [];
+            $address = AddressModel::findToAddress($address_id, $user_id);
         }
+
+        return [
+            "address_id" => $address["address_id"],
+            "province_name" => $address["province_name"],
+            "address_line" => $address["address_line"]
+        ];
+    }
+
+    // Lấy thông tin vận chuyển
+    private function getShippingFeeDetails($shipping_fee_id) {
+        $shippingFee = ShippingFeeModel::find($shipping_fee_id);
+        return [
+            "shipping_fee_id" => $shippingFee["shipping_fee_id"],
+            "method" => $shippingFee["method"],
+            "price" => $shippingFee["price"]
+        ];
+    }
+
+    // Lấy thông tin order items
+    private function getOrderItems($order_id) {
+        $orderItems = OrderItemModel::getByOrderId($order_id);
+        foreach ($orderItems as $key => $orderItem) {
+            $orderItems[$key]["attributes"] = ProductVariantValueModel::getByProductVariantId($orderItem["product_variant_id"]);
+            $product = ProductModel::getByProductVariantId($orderItem["product_variant_id"]);
+            $orderItems[$key]["product"] = $product;
+            $images = ProductImageModel::getDefault($product["product_id"]);
+            $orderItems[$key]["image"] = $images;
+        }
+        return $orderItems;
     }
 
     // Lấy 1 đơn hàng
@@ -340,61 +383,13 @@ class OrderController {
             $seller = Auth::seller();
 
             // Lấy danh sách đơn hàng
-            $order = OrderModel::findByOrderId($order_id, $seller["seller_id"]);
+            $order = OrderModel::findByOrderIdAndSellerId($order_id, $seller["seller_id"]);
 
-            // Lấy thông tin người mua hàng
-            $user = UserModel::findByUserId($order['user_id']);
-            $order["user"]["user_id"] = $user["user_id"];
-            $order["user"]["name"] = $user["name"];
-            $order["user"]["avatar"] = $user["avatar"];
-
-            // Lấy thông tin địa chỉ người bán
-            $toAddress = AddressModel::findSellerAddress($order["from_address_id"], $order["seller_id"]);
-            $order["from_address"]["address_id"] = $toAddress["address_id"];
-            $order["from_address"]["province_name"] = $toAddress["province_name"];
-            $order["from_address"]["address_line"] = $toAddress["address_line"];
-
-            // Lấy thông tin địa chỉ người mua
-            $toAddress = AddressModel::findToAddress($order["to_address_id"], $order["user_id"]);
-            $order["to_address"]["address_id"] = $toAddress["address_id"];
-            $order["to_address"]["province_name"] = $toAddress["province_name"];
-            $order["to_address"]["address_line"] = $toAddress["address_line"];
-
-            // Lấy thông tin vận chuyển
-            $shippingFee = ShippingFeeModel::find($order["shipping_fee_id"]);
-            $order["shipping_fee"]["shipping_fee_id"] = $shippingFee["shipping_fee_id"];
-            $order["shipping_fee"]["method"] = $shippingFee["method"];
-            $order["shipping_fee"]["price"] = $shippingFee["price"];
-
-            // Lấy thông tin giảm giá
-            $coupon = CouponModel::find($order["coupon_id"], $order["seller_id"]);
-            $order["coupon"] = $coupon;
-
-            // Lấy danh sách trạng thái
-            $orderStatus = OrderStatusModel::getByOrderId($order["order_id"]);
-            $order["order_status"] = $orderStatus;
-
-            // Lấy trạng thái cuối cùng
-            $status = OrderStatusModel::findLatest($order["order_id"]);
-            $order["latest_status"] = $status;
-
-            // Lấy danh sách order item
-            $orderItems = OrderItemModel::getByOrderId($order["order_id"]);
-            $order["order_items"] = $orderItems;
-            foreach ($order["order_items"] as $key2 => $orderItem) {
-                // Lấy thuộc tính
-                $attributes = ProductVariantValueModel::getByProductVariantId($orderItem["product_variant_id"]);
-                $order["order_items"][$key2]["attributes"] = $attributes;
-
-                // Lấy thông tin 
-                $product = ProductModel::getByProductVariantId($orderItem["product_variant_id"]);
-                $order["order_items"][$key2]["product"] = $product;
-
-                // Lấy hình ảnh
-                $images = ProductImageModel::getDefault($product["product_id"]);
-                $order["order_items"][$key2]["image"] = $images;
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
             }
 
+            $order = array_merge($order, $this->getOrderDetails($order));
 
             Response::json($order, 200);
         } catch (\Throwable $th) {
@@ -408,7 +403,7 @@ class OrderController {
         try {
             $seller = Auth::seller();
 
-            $order = OrderModel::findByOrderId($order_id, $seller["seller_id"]);
+            $order = OrderModel::findByOrderIdAndSellerId($order_id, $seller["seller_id"]);
 
             if (!$order) {
                 Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
@@ -431,5 +426,38 @@ class OrderController {
             Log::throwable("OrderController -> sellerAddStatus: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
+    }
+
+    // User thêm 1 status cho đơn hàng
+    public function userAddStatus($order_id) {
+        try {
+            $user = Auth::user();
+
+            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+            }
+
+            $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
+            if (!$orderStatus) {
+                throw new \Exception("Không tìm thấy trạng thái");
+            }
+            if ($orderStatus['status'] == 'delivered') {
+                OrderStatusModel::add($order["order_id"], 'completed');
+                $orderStatus = OrderStatusModel::findLatest($order["order_id"]);
+                Response::json($orderStatus, 200);
+            } else {
+                Response::json(['message' => 'Đơn hàng chưa được giao'], 400);
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> sellerAddStatus: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Shipper lấy danh sách đơn hàng đang giao
+    public function shipperGet() {
+        Response::json(["Danh sách đơn hàng"], 200);
     }
 }

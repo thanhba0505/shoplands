@@ -34,13 +34,12 @@ if (($origin && $origin === $allowedOrigin)) {
 
 if (!$isDevelopment) {
     // Nếu không phải từ địa chỉ frontend cho phép, từ chối yêu cầu (hoặc trả về lỗi)
-    Response::json(['success' => false, 'message' => 'Địa chỉ này không có quyền truy cập'], 401);
+    Response::json(['message' => 'Địa chỉ này không có quyền truy cập'], 401);
 }
 
 // Xử lý request cho các phương thức OPTIONS (preflight request)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    Response::json(['success' => true, 'message' => 'OK']);
-    exit(0);  // Kết thúc yêu cầu OPTIONS
+    Response::json(['message' => 'OK'], 200);
 }
 
 

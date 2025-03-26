@@ -13,7 +13,7 @@ return new class extends Migration
             $table->text('phone')->unique();
             $table->text('phoneHash');
             $table->text('password');
-            $table->enum('role', ['user', 'seller', 'admin']);
+            $table->enum('role', ['user', 'seller', 'admin', 'shipper']);
             $table->enum('status', ['active', 'inactive', 'banned']);
             $table->text('device_token')->nullable();
             $table->text('access_token')->nullable();

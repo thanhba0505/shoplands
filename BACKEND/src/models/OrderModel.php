@@ -160,6 +160,7 @@ class OrderModel {
 
         return $result ?? [];
     }
+
     // Lấy danh sách đơn hàng theo selelr id theo trang thai
     public static function getBySellerId($seller_id, $status = "all", $limit = 12, $page = 1) {
         $query = new ConnectDatabase();
@@ -225,7 +226,7 @@ class OrderModel {
     }
 
     // Lấy danh 1 đơn hàng theo order_id
-    public static function findByOrderId($order_id, $seller_id) {
+    public static function findByOrderIdAndSellerId($order_id, $seller_id) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -261,6 +262,47 @@ class OrderModel {
         ";
 
         $result = $query->query($sql, ['order_id' => $order_id, 'seller_id' => $seller_id])->fetch();
+
+        return $result ?? [];
+    }
+
+    // Lấy danh 1 đơn hàng theo order_id
+    public static function findByOrderIdAndUserId($order_id, $user_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.seller_id,
+                o.user_id,
+                o.from_address_id,
+                o.to_address_id,
+                o.shipping_fee_id,
+                o.subtotal_price,
+                o.discount,
+                o.final_price,
+                o.paid,
+                o.revenue,
+                o.cancel_reason,
+                o.coupon_id,
+                o.created_at
+            FROM
+                orders o
+                JOIN (
+                    SELECT order_id, status
+                    FROM order_status
+                    WHERE (order_id, created_at) IN (
+                        SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
+                    )
+                ) os ON os.order_id = o.id
+            WHERE
+                o.id = :order_id
+                AND o.user_id = :user_id
+            ORDER BY
+                o.created_at DESC
+        ";
+
+        $result = $query->query($sql, ['order_id' => $order_id, 'user_id' => $user_id])->fetch();
 
         return $result ?? [];
     }
