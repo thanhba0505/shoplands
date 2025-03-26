@@ -24,7 +24,7 @@ use App\Models\UserModel;
 
 class OrderController {
     // Lấy danh sách đơn hàng của người dùng
-    public function getAllByUser() {
+    public function userGet() {
         try {
             $user = Auth::user();
             $status = Request::get('status', 'all');
@@ -44,13 +44,13 @@ class OrderController {
 
             Response::json($result, 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> getAll: " . $th->getMessage());
+            Log::throwable("OrderController -> userGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Tạo đơn hàng
-    public function add() {
+    public function userAdd() {
         try {
             $user = Auth::user();
 
@@ -190,13 +190,13 @@ class OrderController {
                 "orderId" => $orderId
             ], 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> add:" . $th->getMessage());
+            Log::throwable("OrderController -> userAdd:" . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Kiểm tra thanh toán
-    public function checkPayment() {
+    public function userCheckPayment() {
         try {
             $user = Auth::user();
             $orderId = Request::json('order_id');
@@ -231,13 +231,13 @@ class OrderController {
                 Response::json(['message' => 'Bạn chưa thanh toán'], 400);
             }
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> checkPayment:" . $th->getMessage());
+            Log::throwable("OrderController -> userCheckPayment:" . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Lấy danh sách đơn hàng của người dùng theo người bán
-    public function getAllBySeller() {
+    public function sellerGet() {
         try {
             $seller = Auth::seller();
             $status = Request::get('status', 'all');
@@ -259,7 +259,7 @@ class OrderController {
 
             Response::json($result, 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> getAllBySeller: " . $th->getMessage());
+            Log::throwable("OrderController -> sellerGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -335,7 +335,7 @@ class OrderController {
     }
 
     // Lấy 1 đơn hàng
-    public function getByOrderId($order_id) {
+    public function sellerFind($order_id) {
         try {
             $seller = Auth::seller();
 
@@ -398,7 +398,7 @@ class OrderController {
 
             Response::json($order, 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> getByOrderId: " . $th->getMessage());
+            Log::throwable("OrderController -> sellerFind: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

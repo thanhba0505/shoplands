@@ -9,7 +9,7 @@ use App\Helpers\Log;
 
 class AddressController
 {
-    public function getAll()
+    public function userGet()
     {
         try {
             $user = Auth::user();
@@ -18,12 +18,12 @@ class AddressController
 
             Response::json($result);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi lấy danh sách địa chỉ: " . $th->getMessage());
+            Log::throwable("AddressController -> userGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
-    public function fineBySellerId($seller_id)
+    public function find($seller_id)
     {
         try {
             $result = AddressModel::getAllBySellerId($seller_id);
@@ -34,7 +34,7 @@ class AddressController
 
             Response::json($result);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi tìm kiếm địa chỉ theo người bán: " . $th->getMessage());
+            Log::throwable("AddressController -> find: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
