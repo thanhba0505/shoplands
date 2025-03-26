@@ -133,6 +133,25 @@ class AuthController {
                 $account = UserModel::findById($account['account_id']);
             } else if ($account['role'] == 'seller') {
                 $account = SellerModel::findById($account['account_id']);
+            } else if ($account['role'] == 'admin') {
+                $result['account_id'] = $account['account_id'];
+                $result['phone'] = $account['phone'];
+                $result['role'] = $account['role'];
+                $result['status'] = $account['status'];
+                $result['created_at'] = $account['created_at'];
+                $account = $result;
+            } else if ($account['role'] == 'shipper') {
+                $result['account_id'] = $account['account_id'];
+                $result['phone'] = $account['phone'];
+                $result['role'] = $account['role'];
+                $result['coin'] = $account['coin'];
+                $result['bank_number'] = $account['bank_number'];
+                $result['bank_name'] = $account['bank_name'];
+                $result['status'] = $account['status'];
+                $result['created_at'] = $account['created_at'];
+                $account = $result;
+            } else {
+                Response::json(['message' => 'Vai trò không hợp lệ'], 400);
             }
 
             Response::json([

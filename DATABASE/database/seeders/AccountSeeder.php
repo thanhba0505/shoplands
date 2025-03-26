@@ -54,8 +54,8 @@ class AccountSeeder extends Seeder
         // id 27
         Account::factory()->create([
             'phone' => $this->encodeAes('111'),
-            'phoneHash' => $this->encodeSha256("123"),
-            'password' => $this->encodeArgon2i('123'),
+            'phoneHash' => $this->encodeSha256("111"),
+            'password' => $this->encodeArgon2i('111'),
             'role' => 'shipper',
             'status' => 'active',
         ]);
