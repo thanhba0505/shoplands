@@ -18,6 +18,9 @@ class UserModel {
                 a.id AS account_id,
                 a.phone,
                 a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
                 a.status,
                 a.created_at
             FROM
@@ -31,6 +34,8 @@ class UserModel {
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;
@@ -60,6 +65,9 @@ class UserModel {
                 a.id AS account_id,
                 a.phone,
                 a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
                 a.status,
                 a.created_at
             FROM
@@ -73,6 +81,8 @@ class UserModel {
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;

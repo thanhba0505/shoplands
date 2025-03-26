@@ -18,6 +18,9 @@ class AccountModel
                 a.id as account_id,
                 a.phone,
                 a.password,
+                a.bank_number,
+                a.bank_name,
+                a.coin,
                 a.role,
                 a.status,
                 a.created_at,
@@ -34,6 +37,8 @@ class AccountModel
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;
@@ -51,7 +56,10 @@ class AccountModel
                 a.phone,
                 a.password,
                 a.role,
+                a.bank_number,
+                a.bank_name,
                 a.status,
+                a.coin,
                 a.created_at,
                 a.device_token,
                 a.access_token,
@@ -66,6 +74,8 @@ class AccountModel
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;
@@ -81,6 +91,9 @@ class AccountModel
                 a.phone,
                 a.password,
                 a.role,
+                a.bank_number,
+                a.bank_name,
+                a.coin,
                 a.status,
                 a.created_at,
                 a.device_token,
@@ -93,6 +106,12 @@ class AccountModel
         ";
 
         $result = $query->query($sql, ['accessToken' => $accessToken])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
+        }
 
         return $result;
     }

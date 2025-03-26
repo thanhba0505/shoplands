@@ -10,19 +10,13 @@ use App\Helpers\Log;
 use App\Helpers\Validator;
 use App\Helpers\SendMessage;
 use App\Models\AccountModel;
-use App\Models\DeviceLoginModel;
 use App\Models\MessageModel;
 use App\Models\SellerModel;
 use App\Models\UserModel;
-use App\Models\VerificationCodeModel;
-use Exception;
-use GuzzleHttp\Psr7\Message;
 
-class AuthController
-{
+class AuthController {
     // Đăng ký
-    public function register()
-    {
+    public function register() {
         try {
             $name = Request::json('name');
             $phone = Request::json('phone');
@@ -68,14 +62,13 @@ class AuthController
                 Response::json(['message' => 'Tài khoản đã đăng ký'], 409);
             }
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi đăng ký: " . $th->getMessage());
+            Log::throwable("AuthController -> register: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Đăng nhập
-    public function login()
-    {
+    public function login() {
         try {
             $phone = Request::json('phone');
             $password = Request::json('password');
@@ -86,7 +79,7 @@ class AuthController
             if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
                 Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
             }
-
+            
             // Kiểm tra thiết bị lạ đăng nhập
             $account_id = $account['account_id'];
             $ip_address = Request::getServer('REMOTE_ADDR');
@@ -114,14 +107,13 @@ class AuthController
             Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], 'Số điện thoại: ' . $account['phone']);
             $this->handleLogin($account);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi đăng nhập: " . $th->getMessage());
+            Log::throwable("AuthController -> login: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Private handle login
-    private function handleLogin($account)
-    {
+    private function handleLogin($account) {
         try {
             // Thêm thông tin thiết bị
             $ip_address = Request::getServer('REMOTE_ADDR');
@@ -149,14 +141,13 @@ class AuthController
                 'account' => $account
             ]);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi xử lý đăng nhập: " . $th->getMessage());
+            Log::throwable("AuthController -> handleLogin: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Refresh token
-    public function refreshToken()
-    {
+    public function refreshToken() {
         try {
             $refreshToken = Request::json('refresh_token');
 
@@ -199,14 +190,13 @@ class AuthController
                 'account' => $account
             ]);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi xử lý refresh token: " . $th->getMessage());
+            Log::throwable("AuthController -> refreshToken: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Đăng xuất
-    public function logout()
-    {
+    public function logout() {
         try {
             // Lấy access token từ request
             $accessToken = Request::getHeader('Authorization');
@@ -245,14 +235,13 @@ class AuthController
 
             Response::json(['message' => 'Đăng xuất thành công']);
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi xử lý đăng xuất: " . $th->getMessage());
+            Log::throwable("AuthController -> logout: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
     // Kiểm tra đăng ký
-    private function checkInfoRegister($name, $phone, $password)
-    {
+    private function checkInfoRegister($name, $phone, $password) {
         // Kiểm tra tên tài khoản
         $nameCheck = Validator::isText($name, 'Tên tài khoản', 3, 20);
         if ($nameCheck !== true) {
@@ -273,8 +262,7 @@ class AuthController
     }
 
     // Lấy lại mật khẩu
-    public function forgotPassword()
-    {
+    public function forgotPassword() {
         try {
             $phone = Request::json('phone');
             $passwordNew = Request::json('password');
@@ -290,7 +278,7 @@ class AuthController
                 if (!Hash::verifyArgon2i($code, $message['code'])) {
                     Response::json(['message' => 'Mã xác nhận không khớp'], 400);
                 }
-                
+
                 MessageModel::deleteMessage($message['message_id']);
                 AccountModel::updatePassword($account['account_id'], $passwordNew);
 
@@ -305,7 +293,7 @@ class AuthController
                 }
             }
         } catch (\Throwable $th) {
-            Log::throwable("Lỗi lấy lại mật khẩu: " . $th->getMessage());
+            Log::throwable("AuthController -> forgotPassword: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

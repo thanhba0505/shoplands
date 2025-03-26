@@ -66,7 +66,7 @@ class Hash
 
     $encrypted = openssl_encrypt($data, "AES-256-CBC", $key, 0, $iv);
     if ($encrypted === false) {
-      throw new \Exception("Encryption failed.");
+      return null;
     }
 
     return base64_encode($iv . $encrypted);
@@ -75,12 +75,15 @@ class Hash
   // Giải mã dữ liệu bằng AES-256-CBC
   public static function decodeAes($encryptedData)
   {
+    if (empty($encryptedData)) {
+      return null;
+    }
     $key = self::getAesKey();
     $decoded = base64_decode($encryptedData);
 
     $ivLength = openssl_cipher_iv_length("AES-256-CBC");
     if (strlen($decoded) < $ivLength) {
-      throw new \Exception("Invalid encrypted data.");
+      return null;
     }
 
     $iv = substr($decoded, 0, $ivLength);
@@ -88,7 +91,7 @@ class Hash
 
     $decrypted = openssl_decrypt($ciphertext, "AES-256-CBC", $key, 0, $iv);
     if ($decrypted === false) {
-      throw new \Exception("Decryption failed.");
+      return null;
     }
 
     return $decrypted;

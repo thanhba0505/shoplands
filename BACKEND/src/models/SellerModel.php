@@ -5,11 +5,9 @@ namespace App\Models;
 use App\Helpers\Hash;
 use App\Models\ConnectDatabase;
 
-class SellerModel
-{
+class SellerModel {
     // Lấy seller theo account id
-    public static function findById($account_id)
-    {
+    public static function findById($account_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -17,8 +15,6 @@ class SellerModel
                 s.id AS seller_id,
                 s.store_name,
                 s.owner_name,
-                s.bank_name,
-                s.bank_number,
                 s.status,
                 s.description,
                 s.logo,
@@ -26,6 +22,9 @@ class SellerModel
                 a.id AS account_id,
                 a.phone,
                 a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
                 a.status,
                 a.created_at
             FROM
@@ -39,14 +38,15 @@ class SellerModel
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;
     }
 
     // Lấy seller theo seller id
-    public static function findBySellerId($seller_id)
-    {
+    public static function findBySellerId($seller_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -54,8 +54,6 @@ class SellerModel
                 s.id AS seller_id,
                 s.store_name,
                 s.owner_name,
-                s.bank_name,                
-                s.bank_number,
                 s.status,
                 s.description,
                 s.logo,
@@ -63,6 +61,9 @@ class SellerModel
                 a.id AS account_id,
                 a.phone,
                 a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
                 a.status,
                 a.created_at
             FROM
@@ -76,6 +77,8 @@ class SellerModel
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;
@@ -90,8 +93,6 @@ class SellerModel
                 s.id AS seller_id,
                 s.store_name,
                 s.owner_name,
-                s.bank_name,                
-                s.bank_number,
                 s.status,
                 s.description,
                 s.logo,
@@ -99,6 +100,9 @@ class SellerModel
                 a.id AS account_id,
                 a.phone,
                 a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
                 a.status,
                 a.created_at
             FROM
@@ -115,6 +119,8 @@ class SellerModel
 
         if ($result && isset($result['phone'])) {
             $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
         }
 
         return $result;
