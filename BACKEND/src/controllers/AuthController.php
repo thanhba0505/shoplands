@@ -79,7 +79,7 @@ class AuthController {
             if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
                 Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
             }
-            
+
             // Kiểm tra thiết bị lạ đăng nhập
             $account_id = $account['account_id'];
             $ip_address = Request::getServer('REMOTE_ADDR');
@@ -313,6 +313,54 @@ class AuthController {
             }
         } catch (\Throwable $th) {
             Log::throwable("AuthController -> forgotPassword: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Đăng ký người bán
+    public function registerSeller() {
+        try {
+            $phone = Request::json('phone');
+            $password = Request::json('password');
+            $store_name = Request::json('store_namme');
+            $owner_name = Request::json('owner_name');
+            $description = Request::json('description');
+            $bank_number = Request::json('bank_number');
+            $bank_name = Request::json('bank_name');
+
+            $account = AccountModel::findByPhone($phone);
+            if ($account) {
+                Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
+            }
+
+            $phoneCheck = Validator::isPhone($phone);
+            if ($phoneCheck !== true) {
+                Response::json(['message' => $phoneCheck], 400);
+            }
+
+            $passwordCheck = Validator::isPasswordStrength($password);
+            if ($passwordCheck !== true) {
+                Response::json(['message' => $passwordCheck], 400);
+            }
+
+            $storeNameCheck = Validator::isText($store_name, 'Tên cửa hàng', 3, 100);
+            if ($storeNameCheck !== true) {
+                Response::json(['message' => $storeNameCheck], 400);
+            }
+
+            $ownerNameCheck = Validator::isText($owner_name, 'Tên chủ cửa hàng', 3, 50);
+            if ($ownerNameCheck !== true) {
+                Response::json(['message' => $ownerNameCheck], 400);
+            }
+
+            $descriptionCheck = Validator::isText($description, 'Mô tả', 1, 10000);
+            if ($descriptionCheck !== true) {
+                Response::json(['message' => $descriptionCheck], 400);
+            }
+
+            Response::json(['message' => 'Đăng ký người bán thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> registerSeller: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

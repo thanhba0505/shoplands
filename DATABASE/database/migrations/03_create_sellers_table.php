@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('store_name');
             $table->string('owner_name');
-            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->text('description')->nullable();
             $table->string('background')->nullable();
             $table->string('logo')->nullable();

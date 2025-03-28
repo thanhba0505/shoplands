@@ -12,7 +12,6 @@ class SellerSeeder extends Seeder {
             [
                 'store_name' => 'Thế Giới Thời Trang',
                 'owner_name' => 'Phạm Thị Ngọc',
-                'status' => 'approved',
                 'description' => 'Cung cấp các sản phẩm thời trang cao cấp dành cho nam, nữ và trẻ em.',
                 'background' => 'seller-1.jpg',
                 'logo' => 'logo-1.jpg',
@@ -21,7 +20,6 @@ class SellerSeeder extends Seeder {
             [
                 'store_name' => 'Phụ Kiện Sành Điệu',
                 'owner_name' => 'Hoàng Văn Bình',
-                'status' => 'approved',
                 'description' => 'Chuyên phụ kiện thời trang, trang sức và đồng hồ.',
                 'background' => 'seller-2.jpg',
                 'logo' => 'logo-2.jpg',
@@ -30,7 +28,6 @@ class SellerSeeder extends Seeder {
             [
                 'store_name' => 'Công Nghệ Số',
                 'owner_name' => 'Nguyễn Thị Hạnh',
-                'status' => 'approved',
                 'description' => 'Nhà cung cấp thiết bị điện tử, điện thoại và máy tính hàng đầu.',
                 'background' => 'seller-3.jpg',
                 'logo' => 'logo-3.jpg',
@@ -39,7 +36,6 @@ class SellerSeeder extends Seeder {
             [
                 'store_name' => 'Nhà Cửa Online',
                 'owner_name' => 'Trần Văn Minh',
-                'status' => 'pending',
                 'description' => 'Đầy đủ các sản phẩm phục vụ cho cuộc sống gia đình và nhà cửa.',
                 'background' => 'seller-4.jpg',
                 'logo' => 'logo-4.jpg',
@@ -48,7 +44,6 @@ class SellerSeeder extends Seeder {
             [
                 'store_name' => 'Thể Thao và Sách',
                 'owner_name' => 'Phạm Thị Lan',
-                'status' => 'rejected',
                 'description' => 'Các sản phẩm thể thao và sách phục vụ nhu cầu giải trí và rèn luyện.',
                 'background' => 'seller-5.jpg',
                 'logo' => 'logo-5.jpg',

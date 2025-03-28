@@ -9,6 +9,7 @@ $router->post('api/auth/login', 'AuthController@login');
 $router->post('api/auth/refresh-token', 'AuthController@refreshToken');
 $router->post('api/auth/logout', 'AuthController@logout');
 $router->post('api/auth/register', 'AuthController@register');
+$router->post('api/auth/register-seller', 'AuthController@registerSeller');
 $router->post('api/auth/forgot-password', 'AuthController@forgotPassword');
 
 // API COUPON
