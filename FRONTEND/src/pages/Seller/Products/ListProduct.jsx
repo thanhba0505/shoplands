@@ -1,15 +1,33 @@
-import { Box, TablePagination, TextField } from "@mui/material";
+import { useTheme } from "@emotion/react";
+import {
+  Avatar,
+  Box,
+  Rating,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
+import NoContent from "~/components/NoContent";
 import Api from "~/helpers/Api";
+import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
+import Path from "~/helpers/Path";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
 const ListProduct = ({ status, loading, setLoading }) => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const [products, setProducts] = useState([]);
   const [count, setCount] = useState(0);
@@ -58,6 +76,15 @@ const ListProduct = ({ status, loading, setLoading }) => {
     fetchApi(page, rowsPerPage);
   }, [seller_id, page, rowsPerPage, status, fetchApi]);
 
+  const formatAttributes = (attributes) => {
+    return Object.entries(attributes).map(([key, value], index) => (
+      <span key={index}>
+        {key}: {value.join(", ")}
+        <br />
+      </span>
+    ));
+  };
+
   return (
     <>
       <Box
@@ -92,19 +119,115 @@ const ListProduct = ({ status, loading, setLoading }) => {
         />
       </Box>
 
-      <div>
-        {loading ? (
-          <CircularProgressLoading sx={{ height: 300 }} />
-        ) : (
-          <div>
-            {products &&
-              products.length > 0 &&
-              products.map((product) => (
-                <div key={product.product_id}>{product.name}</div>
-              ))}
-          </div>
-        )}
-      </div>
+      <TableContainer sx={{ borderRadius: 1 }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
+              <TableCell align="left" width={300}>
+                Sản phẩm
+              </TableCell>
+              <TableCell align="center">Giá</TableCell>
+              <TableCell align="center" width={200}>
+                Thuộc tính
+              </TableCell>
+              <TableCell align="center">Danh mục</TableCell>
+              <TableCell align="center">Đánh giá</TableCell>
+              <TableCell align="center">Tồn kho</TableCell>
+              <TableCell align="right">Đã bán</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7}>
+                  <CircularProgressLoading sx={{ height: 300 }} />
+                </TableCell>
+              </TableRow>
+            ) : (
+              <>
+                {products && products.length > 0 ? (
+                  products.map((product) => (
+                    <TableRow
+                      hover
+                      sx={{ cursor: "pointer" }}
+                      key={product.product_id}
+                      onClick={() => navigate(Path.sellerProducts(product.product_id))}
+                    >
+                      <TableCell>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        >
+                          <Avatar
+                            alt={product.name}
+                            variant="square"
+                            src={
+                              product.images &&
+                              Path.publicProduct(
+                                product.images.find(
+                                  (image) => image.default === 1
+                                )?.image_path
+                              )
+                            }
+                            sx={{ width: 50, height: 50 }}
+                          />
+                          <Typography className="line-clamp-2" variant="body2">
+                            {product.name}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography
+                          color="error"
+                          variant="body2"
+                          fontWeight="bold"
+                        >
+                          {product.min_price === product.max_price
+                            ? Format.formatCurrency(product.min_price)
+                            : `${Format.formatCurrency(
+                                product.min_price
+                              )} - ${Format.formatCurrency(product.max_price)}`}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        {product.attributes &&
+                          formatAttributes(product.attributes)}
+                      </TableCell>
+                      <TableCell align="center">
+                        {product.category && product.category.name}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Rating
+                          size="small"
+                          name="read-only"
+                          readOnly
+                          value={
+                            product.average_rating
+                              ? parseFloat(product.average_rating)
+                              : 0
+                          }
+                          precision={0.1}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
+                        {product.quantity || 0}
+                      </TableCell>
+                      <TableCell align="right">
+                        {product.sold_quantity || 0}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7}>
+                      <NoContent height={300} text="Không có sản phẩm nào" />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <TablePagination
         disabled={loading}

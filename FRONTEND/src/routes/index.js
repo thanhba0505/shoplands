@@ -29,6 +29,7 @@ import OrdersSeller from "~/pages/Seller/Orders";
 import ProductSellers from "~/pages/Seller/Products";
 import Promotions from "~/pages/Seller/Promotions";
 import Settings from "~/pages/Seller/Settings";
+import SellerProductDetail from "~/pages/Seller/Products/ProductDetail";
 
 // Admin
 import DashboardAdmin from "~/pages/Admin/Dashboard";
@@ -87,6 +88,7 @@ const sellerRoutes = [
   { path: "/seller/products/inventory", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/import-products", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/reviews", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products/:productId", component: SellerProductDetail, layout: ManageLayout },
 
   // Khuyến mãi
   { path: "/seller/promotions", component: Promotions, layout: ManageLayout },
