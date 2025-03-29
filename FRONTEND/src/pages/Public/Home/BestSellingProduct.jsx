@@ -5,6 +5,7 @@ import CircularProgressLoading from "~/components/CircularProgressLoading";
 import PaperCustom from "~/components/PaperCustom";
 import ShowProducts from "~/components/ShowProducts";
 import Api from "~/helpers/Api";
+import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
@@ -23,13 +24,11 @@ const BestSellingProducts = () => {
       });
       setProducts(response.data);
     } catch (error) {
-      if (error.response) {
-        navigate(Path.login());
-      }
+      Log.error(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     fetchProducts();

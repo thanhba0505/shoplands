@@ -28,7 +28,7 @@ class SendMessage
   public static function send($phoneNumber, $messageBody)
   {
     try {
-      $phoneNumber = Validator::formatPhone($phoneNumber, '+84');
+      $phoneNumberFormat = Validator::formatPhone($phoneNumber, '+84');
       // Giả sử gửi tin nhắn
       Log::sms([
         'body' => $messageBody
