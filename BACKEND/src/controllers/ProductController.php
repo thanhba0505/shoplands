@@ -24,7 +24,10 @@ class ProductController {
     public function get() {
         try {
             $limit = Request::get('limit', 12);
-            $products = ProductModel::getAll($limit);
+            $page = Request::get('page', 1);
+
+            $count = ProductModel::count();
+            $products = ProductModel::getAll($limit, $page);
 
             foreach ($products as $key => $product) {
                 $products[$key]['variants'] = ProductVariantModel::getByProductId($product['product_id']);
@@ -89,7 +92,7 @@ class ProductController {
                 $products[$key]['details'] = ProductDetailModel::getByProductId($product['product_id']);
             }
 
-            Response::json($products);
+            Response::json(['count' => $count, 'products' => $products], 200);
         } catch (\Throwable $th) {
             Log::throwable("Lỗi lấy danh sách sản phẩm: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

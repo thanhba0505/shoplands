@@ -6,8 +6,10 @@ use App\Models\ConnectDatabase;
 
 class ProductModel {
     // Lấy danh sách sản phẩm
-    public static function getAll($limit = 12) {
+    public static function getAll($limit = 12, $page = 1) {
         $query = new ConnectDatabase();
+
+        $offset = ($page - 1) * $limit;
 
         $sql = "
             SELECT
@@ -22,6 +24,8 @@ class ProductModel {
                 p.status = :status
             LIMIT 
                 $limit
+            OFFSET 
+                $offset
         ";
 
         $result = $query->query($sql, ['status' => 'active'])->fetchAll();
@@ -96,6 +100,38 @@ class ProductModel {
                 products p
             WHERE
                 p.seller_id = :seller_id
+                $statusCondition
+        ";
+
+        // Thực hiện truy vấn với các tham số
+        $result = $query->query($sql, $params)->fetch();
+
+        return $result['total'] ?? 0;
+    }
+
+
+    // Đếm toàn bộ sản phẩm
+    public static function count($status = 'all') {
+        $query = new ConnectDatabase();
+
+        // Tạo điều kiện cho status
+        $statusCondition = $status !== 'all' ? "AND p.status = :status" : "";
+
+        // Tạo mảng params chúa các tham số truyện vào query
+        $params = [];
+
+        // Nếu status không phải là 'all', thêm tham số status vào mảng params
+        if ($status !== 'all') {
+            $params['status'] = $status;
+        }
+
+        $sql = "
+            SELECT
+                COUNT(*) AS total
+            FROM
+                products p
+            WHERE
+                1=1
                 $statusCondition
         ";
 

@@ -223,14 +223,14 @@ const Products = () => {
         const response = await axiosDefault.get(Api.products(), {
           params: {
             limit: limit,
-            page: page,
+            page: page + 1,
             orderByPrice: orderByPrice,
             orderByRating: orderByRating,
             categories: checkedCategories,
           },
         });
 
-        setProducts(response.data);
+        setProducts(response.data.products);
         setCount(response.data.count);
       } catch (error) {
         Log.error(error.response?.data?.message);
@@ -330,7 +330,7 @@ const Products = () => {
         </Grid2>
         <Grid2 size={8}>
           <PaperCustom>
-            <Grid2 container spacing={2} sx={{ mt: 1 }}>
+            <Grid2 container spacing={2} sx={{ mt: 1, mb: 1 }}>
               <Grid2 size={"auto"}>
                 <FormControl size="small">
                   <InputLabel

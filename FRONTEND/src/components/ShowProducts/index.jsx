@@ -23,14 +23,15 @@ const ShowProducts = ({ products, columns = 12, size = 2 }) => {
               sx={{
                 boxShadow: 1,
                 borderRadius: 2,
+                height: "360px",
                 cursor: "pointer",
-                transition: "all 0.3s ease-out",
+                transition: "transform 0.3s ease-out, box-shadow 0.3s ease-out",
                 "& img": {
-                  transition: "all 0.3s ease-out",
+                  transition: "transform 0.3s ease-out",
                 },
                 "&:hover": {
                   boxShadow: 3,
-                  scale: 1.02,
+                  transform: "scale(1.02)",
                   "& img": {
                     transform: "scale(1.05)",
                   },
@@ -41,7 +42,7 @@ const ShowProducts = ({ products, columns = 12, size = 2 }) => {
               <CardMedia
                 component="img"
                 alt={product.name}
-                // height="100"
+                height="200"
                 image={Path.publicProduct(product.images[0].image_path)} // Lấy ảnh đầu tiên của sản phẩm
                 sx={{ objectFit: "cover" }}
               />
@@ -105,6 +106,7 @@ const ShowProducts = ({ products, columns = 12, size = 2 }) => {
                     display: "flex",
                     alignItems: "end",
                     justifyContent: "space-between",
+                    alignContent: "flex-end",
                     gap: 1,
                   }}
                 >
