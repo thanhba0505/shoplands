@@ -3,13 +3,17 @@ import {
   Box,
   Checkbox,
   Container,
+  FormControl,
   Grid2,
   InputAdornment,
+  InputLabel,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
+  Select,
   Slider,
   TextField,
   Typography,
@@ -17,6 +21,8 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import PaperCustom from "~/components/PaperCustom";
+import ShowProducts from "~/components/ShowProducts";
+import TablePaginationCustom from "~/components/TablePaginationCustom";
 import Api from "~/helpers/Api";
 import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
@@ -90,16 +96,13 @@ const Price = () => {
   const handleChange2 = (event, newValue, activeThumb) => {
     if (newValue[1] - newValue[0] < minDistance) {
       if (activeThumb === 0) {
-        // Nếu thanh trượt trái được thay đổi, giữ khoảng cách với thanh trượt phải
         const clamped = Math.min(newValue[0], value2[1] - minDistance);
         setValue2([clamped, clamped + minDistance]);
       } else {
-        // Nếu thanh trượt phải được thay đổi, giữ khoảng cách với thanh trượt trái
         const clamped = Math.max(newValue[1], value2[0] + minDistance);
         setValue2([clamped - minDistance, clamped]);
       }
     } else {
-      // Cập nhật giá trị nếu khoảng cách giữa min và max hợp lệ
       setValue2([
         Math.max(min, Math.min(newValue[0], max)),
         Math.max(min, Math.min(newValue[1], max)),
@@ -137,7 +140,7 @@ const Price = () => {
           onChange={(e) => {
             const newValue = Math.max(
               min,
-              Math.min(e.target.value, value2[1] - minDistance)
+              Math.min(Number(e.target.value) || 0, value2[1] - minDistance)
             );
             setValue2([newValue, value2[1]]);
           }}
@@ -187,13 +190,21 @@ const Price = () => {
 };
 
 const Products = () => {
-  const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
-  const [checkedCategories, setCheckedCategories] = useState([0]);
+  const [categories, setCategories] = useState([]);
+  const [checkedCategories, setCheckedCategories] = useState([]);
+  const [orderByPrice, setOrderByPrice] = useState("");
+  const [orderByRating, setOrderByRating] = useState("");
+
+  const [products, setProducts] = useState([]);
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
 
-  const fetchCarts = useCallback(async () => {
+  const fetchCategories = useCallback(async () => {
     setLoadingCategories(true);
     try {
       const response = await axiosDefault.get(Api.categories());
@@ -205,9 +216,72 @@ const Products = () => {
     }
   }, []);
 
+  const fetchProducts = useCallback(
+    async (page = 0, limit = 20) => {
+      setLoading(true);
+      try {
+        const response = await axiosDefault.get(Api.products(), {
+          params: {
+            limit: limit,
+            page: page,
+            orderByPrice: orderByPrice,
+            orderByRating: orderByRating,
+            categories: checkedCategories,
+          },
+        });
+
+        setProducts(response.data);
+        setCount(response.data.count);
+      } catch (error) {
+        Log.error(error.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [checkedCategories, orderByPrice, orderByRating]
+  );
+
+  const [timeoutId, setTimeoutId] = useState(null);
+  
   useEffect(() => {
-    fetchCarts();
-  }, [fetchCarts]);
+    fetchCategories();
+  }, [fetchCategories]);
+
+  useEffect(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    const newTimeoutId = setTimeout(() => {
+      fetchProducts(page, rowsPerPage);
+    }, 500);
+
+    setTimeoutId(newTimeoutId);
+
+    return () => {
+      if (newTimeoutId) {
+        clearTimeout(newTimeoutId);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    checkedCategories,
+    orderByPrice,
+    orderByRating,
+    page,
+    rowsPerPage,
+    fetchProducts,
+  ]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+    setPage(0);
+  };
 
   const handleToggle = (value) => () => {
     const currentIndex = checkedCategories.indexOf(value);
@@ -255,7 +329,69 @@ const Products = () => {
           </PaperCustom>
         </Grid2>
         <Grid2 size={8}>
-          <PaperCustom sx={{ height: "500px" }}>ádlfj</PaperCustom>
+          <PaperCustom>
+            <Grid2 container spacing={2} sx={{ mt: 1 }}>
+              <Grid2 size={"auto"}>
+                <FormControl size="small">
+                  <InputLabel
+                    id="demo-select-small-label"
+                    sx={{ backgroundColor: "white", pr: 1 }}
+                  >
+                    Sắp xếp theo giá
+                  </InputLabel>
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={orderByPrice}
+                    label="price"
+                    onChange={(e) => setOrderByPrice(e.target.value)}
+                    sx={{ minWidth: "170px" }}
+                  >
+                    <MenuItem value="">
+                      <em>Không</em>
+                    </MenuItem>
+                    <MenuItem value={"asc"}>Giá cao trước</MenuItem>
+                    <MenuItem value={"desc"}>Giá thấp trước</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid2>
+              <Grid2 size={"auto"}>
+                <FormControl size="small">
+                  <InputLabel
+                    id="demo-select-small-label"
+                    sx={{ backgroundColor: "white", pr: 1 }}
+                  >
+                    Sắp xếp theo đánh giá
+                  </InputLabel>
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={orderByRating}
+                    label="rating"
+                    onChange={(e) => setOrderByRating(e.target.value)}
+                    sx={{ minWidth: "220px" }}
+                  >
+                    <MenuItem value="">
+                      <em>Không</em>
+                    </MenuItem>
+                    <MenuItem value={"asc"}>Đánh giá cao trước</MenuItem>
+                    <MenuItem value={"desc"}>Đánh giá thấp trước</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid2>
+              <Grid2 size={"auto"}>
+                <TablePaginationCustom
+                  loading={loading}
+                  count={count}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  handleChangePage={handleChangePage}
+                  handleChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+              </Grid2>
+            </Grid2>
+            <ShowProducts products={products} columns={10} />
+          </PaperCustom>
         </Grid2>
       </Grid2>
     </Container>
