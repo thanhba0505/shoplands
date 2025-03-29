@@ -224,8 +224,8 @@ const Products = () => {
           params: {
             limit: limit,
             page: page + 1,
-            orderByPrice: orderByPrice,
-            orderByRating: orderByRating,
+            order_by_price: orderByPrice,
+            order_by_rating: orderByRating,
             categories: checkedCategories,
           },
         });

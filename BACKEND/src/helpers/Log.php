@@ -41,27 +41,27 @@ class Log {
 
 
     // Log global
-    public static function global($logData, $title = 'Lỗi:') {
+    public static function global($logData, $title = 'Global:') {
         self::json($logData, $title, 'global.log');
     }
 
     // Log debug
-    public static function debug($logData, $title = 'Lỗi:') {
+    public static function debug($logData, $title = 'Debug:') {
         self::json($logData, $title, 'debug.log');
     }
 
     // Log throwable
-    public static function throwable($logData, $title = 'Lỗi:') {
+    public static function throwable($logData, $title = 'Throwable:') {
         self::json($logData, $title, 'throwable.log');
     }
 
     // Log sms
-    public static function sms($logData, $title = 'Lỗi:') {
+    public static function sms($logData, $title = 'SMS:') {
         self::json($logData, $title, 'sms.log');
     }
 
     // Log login
-    public static function login($logData, $title = 'Lỗi:') {
+    public static function login($logData, $title = 'Login:') {
         self::json($logData, $title, 'login.log');
     }
 }
