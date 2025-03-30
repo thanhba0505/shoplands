@@ -91,19 +91,19 @@ const max = 5000000;
 const minDistance = 100000;
 
 const Price = () => {
-  const [value2, setValue2] = useState([min, min + minDistance]);
+  const [price, setPrice] = useState([min, min + minDistance]); // Đổi từ value2 thành price
 
   const handleChange2 = (event, newValue, activeThumb) => {
     if (newValue[1] - newValue[0] < minDistance) {
       if (activeThumb === 0) {
-        const clamped = Math.min(newValue[0], value2[1] - minDistance);
-        setValue2([clamped, clamped + minDistance]);
+        const clamped = Math.min(newValue[0], price[1] - minDistance);
+        setPrice([clamped, clamped + minDistance]);
       } else {
-        const clamped = Math.max(newValue[1], value2[0] + minDistance);
-        setValue2([clamped - minDistance, clamped]);
+        const clamped = Math.max(newValue[1], price[0] + minDistance);
+        setPrice([clamped - minDistance, clamped]);
       }
     } else {
-      setValue2([
+      setPrice([
         Math.max(min, Math.min(newValue[0], max)),
         Math.max(min, Math.min(newValue[1], max)),
       ]);
@@ -136,13 +136,13 @@ const Price = () => {
           placeholder="10000"
           size="small"
           fullWidth
-          value={value2[0]}
+          value={price[0]} // Đổi từ value2[0] thành price[0]
           onChange={(e) => {
             const newValue = Math.max(
               min,
-              Math.min(Number(e.target.value) || 0, value2[1] - minDistance)
+              Math.min(Number(e.target.value) || 0, price[1] - minDistance)
             );
-            setValue2([newValue, value2[1]]);
+            setPrice([newValue, price[1]]); // Đổi từ value2 thành price
           }}
           slotProps={{
             input: {
@@ -159,10 +159,10 @@ const Price = () => {
           placeholder="100000"
           size="small"
           fullWidth
-          value={value2[1]}
+          value={price[1]} // Đổi từ value2[1] thành price[1]
           onChange={(e) => {
             const newValue = Math.max(min, Math.min(e.target.value, max));
-            setValue2([value2[0], newValue]);
+            setPrice([price[0], newValue]); // Đổi từ value2 thành price
           }}
           slotProps={{
             input: {
@@ -175,7 +175,7 @@ const Price = () => {
         <Slider
           sx={{ mt: 2 }}
           getAriaLabel={() => "Minimum distance shift"}
-          value={value2}
+          value={price} // Đổi từ value2 thành price
           onChange={handleChange2}
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => Format.formatCurrency(value)}
@@ -199,10 +199,8 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [loading, setLoading] = useState(false);
-
-  const theme = useTheme();
 
   const fetchCategories = useCallback(async () => {
     setLoadingCategories(true);
@@ -223,7 +221,7 @@ const Products = () => {
         const response = await axiosDefault.get(Api.products(), {
           params: {
             limit: limit,
-            page: page + 1,
+            page: page + 1, // Cộng thêm 1 nếu API của bạn yêu cầu phân trang bắt đầu từ 1
             order_by_price: orderByPrice,
             order_by_rating: orderByRating,
             categories: checkedCategories,
@@ -242,7 +240,7 @@ const Products = () => {
   );
 
   const [timeoutId, setTimeoutId] = useState(null);
-  
+
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -254,7 +252,7 @@ const Products = () => {
 
     const newTimeoutId = setTimeout(() => {
       fetchProducts(page, rowsPerPage);
-    }, 500);
+    }, 400); // Đặt thời gian debounce là 300ms
 
     setTimeoutId(newTimeoutId);
 
@@ -263,6 +261,7 @@ const Products = () => {
         clearTimeout(newTimeoutId);
       }
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     checkedCategories,
@@ -280,7 +279,7 @@ const Products = () => {
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0);
+    setPage(0); // Reset page khi thay đổi số dòng mỗi trang
   };
 
   const handleToggle = (value) => () => {
@@ -306,7 +305,6 @@ const Products = () => {
               flexDirection: "column",
               justifyContent: "space-between",
               gap: 2,
-              height: `calc(100vh - ${theme.custom.headerHeight} - 2 * ${theme.custom.containerGap})`,
               pr: 0,
             }}
           >
@@ -330,7 +328,12 @@ const Products = () => {
         </Grid2>
         <Grid2 size={8}>
           <PaperCustom>
-            <Grid2 container spacing={2} alignItems={"center"} sx={{ mt: 2, mb: 1 }}>
+            <Grid2
+              container
+              spacing={2}
+              alignItems={"center"}
+              sx={{ mt: 2, mb: 1 }}
+            >
               <Grid2 size={"auto"}>
                 <FormControl size="small">
                   <InputLabel
@@ -374,12 +377,12 @@ const Products = () => {
                     <MenuItem value="">
                       <em>Không</em>
                     </MenuItem>
-                    <MenuItem value={"asc"}>Đánh giá cao trước</MenuItem>
-                    <MenuItem value={"desc"}>Đánh giá thấp trước</MenuItem>
+                    <MenuItem value={"asc"}>Đánh giá thấp trước</MenuItem>
+                    <MenuItem value={"desc"}>Đánh giá cao trước</MenuItem>
                   </Select>
                 </FormControl>
               </Grid2>
-              <Grid2 size={"auto"}>
+              <Grid2 size={"auto"} ml={"auto"}>
                 <TablePaginationCustom
                   loading={loading}
                   count={count}
@@ -387,10 +390,30 @@ const Products = () => {
                   rowsPerPage={rowsPerPage}
                   handleChangePage={handleChangePage}
                   handleChangeRowsPerPage={handleChangeRowsPerPage}
+                  labelRowsPerPage="Số sản phẩm mỗi trang"
+                  rowsPerPageOptions={[20, 50, 100]} // Các giá trị mặc định cho số phần tử mỗi trang
+                />
+              </Grid2>
+              <Grid2 size={12} sx={{ mt: 1 }}>
+                {loading ? (
+                  <CircularProgressLoading sx={{ height: 400 }} />
+                ) : (
+                  <ShowProducts products={products} columns={10} />
+                )}
+              </Grid2>{" "}
+              <Grid2 size={12}>
+                <TablePaginationCustom
+                  loading={loading}
+                  count={count}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  handleChangePage={handleChangePage}
+                  handleChangeRowsPerPage={handleChangeRowsPerPage}
+                  labelRowsPerPage="Số sản phẩm mỗi trang"
+                  rowsPerPageOptions={[20, 50, 100]} // Các giá trị mặc định cho số phần tử mỗi trang
                 />
               </Grid2>
             </Grid2>
-            <ShowProducts products={products} columns={10} sx={{mt:2}} />
           </PaperCustom>
         </Grid2>
       </Grid2>

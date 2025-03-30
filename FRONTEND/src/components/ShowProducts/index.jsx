@@ -54,86 +54,109 @@ const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
               />
               <CardContent>
                 {/* Tên sản phẩm */}
-                <Typography variant="body2" noWrap className="line-clamp-2">
-                  {product.name}
-                </Typography>
-
-                {/* Giá */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "end",
-                    marginTop: 1,
-                  }}
-                >
+                <Box>
                   <Typography
-                    variant="body1"
-                    color="error"
-                    lineHeight={1}
+                    sx={{ flexGrow: 1 }}
+                    variant="body2"
+                    noWrap
+                    className="line-clamp-2"
+                  >
+                    {product.name}
+                  </Typography>
+
+                  {/* Giá */}
+                  <Box
                     sx={{
-                      fontWeight: "bold",
-                      marginRight: product.price_from_min_price ? 1 : 0,
+                      display: "flex",
+                      alignItems: "end",
+                      marginTop: 1,
                     }}
                   >
-                    {Format.formatCurrency(product.min_price)}
-                  </Typography>
-
-                  {product.price_from_min_price && (
                     <Typography
-                      fontSize={13}
-                      lineHeight={1}
+                      variant="body1"
                       color="error"
+                      lineHeight={1}
+                      fontSize={18}
                       sx={{
-                        textDecoration: "line-through",
+                        fontWeight: "bold",
+                        mt: 1,
+                        marginRight: product.price_from_min_price ? 1 : 0,
                       }}
                     >
-                      {Format.formatCurrency(product.price_from_min_price)}
+                      {Format.formatCurrency(product.min_price)}
                     </Typography>
-                  )}
-                </Box>
 
-                {/* Rating */}
-                <Rating
-                  sx={{ mt: 1 }}
-                  size="small"
-                  name="read-only"
-                  readOnly
-                  value={
-                    product.average_rating
-                      ? parseFloat(product.average_rating)
-                      : 0
-                  }
-                  precision={0.1}
-                />
+                    {product.price_from_min_price && (
+                      <Typography
+                        fontSize={13}
+                        lineHeight={1}
+                        color="error"
+                        sx={{
+                          textDecoration: "line-through",
+                        }}
+                      >
+                        {Format.formatCurrency(product.price_from_min_price)}
+                      </Typography>
+                    )}
+                  </Box>
 
-                {/* Lượt dánh giá */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "end",
-                    justifyContent: "space-between",
-                    alignContent: "flex-end",
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    fontSize={11}
-                    lineHeight={1}
-                    color="textSecondary"
+                  {/* Rating */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mt: 1,
+                      gap: 0.5,
+                    }}
                   >
-                    ({product.count_reviews} đánh giá)
-                  </Typography>
+                    <Rating
+                      size="small"
+                      name="read-only"
+                      readOnly
+                      value={
+                        product.average_rating
+                          ? parseFloat(product.average_rating)
+                          : 0
+                      }
+                      precision={0.1}
+                    />
+                    <Typography
+                      color="textSecondary"
+                      sx={{ mt: "1px" }}
+                      fontSize={11}
+                    >
+                      ({product.average_rating})
+                    </Typography>
+                  </Box>
 
-                  <Typography
-                    fontSize={12}
-                    lineHeight={1}
-                    color="textSecondary"
+                  {/* Lượt dánh giá */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "end",
+                      justifyContent: "space-between",
+                      alignContent: "flex-end",
+                      gap: 1,
+                      mt: 1,
+                    }}
                   >
-                    Đã bán: {product.sold_quantity}
-                  </Typography>
-                </Box>
+                    <Typography
+                      fontSize={11}
+                      lineHeight={1}
+                      color="textSecondary"
+                    >
+                      ({product.count_reviews} đánh giá)
+                    </Typography>
 
-                {/* Lượt bán */}
+                    <Typography
+                      fontSize={12}
+                      lineHeight={1}
+                      color="textSecondary"
+                    >
+                      Đã bán: {product.sold_quantity}
+                    </Typography>
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
           </Grid2>

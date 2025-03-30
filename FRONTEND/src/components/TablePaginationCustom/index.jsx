@@ -7,6 +7,7 @@ const TablePaginationCustom = ({
   rowsPerPage,
   handleChangePage,
   handleChangeRowsPerPage,
+  rowsPerPageOptions = [10, 25, 50, 100],
   ...props
 }) => {
   return (
@@ -18,7 +19,8 @@ const TablePaginationCustom = ({
       onPageChange={handleChangePage}
       rowsPerPage={rowsPerPage}
       onRowsPerPageChange={handleChangeRowsPerPage}
-      labelRowsPerPage="Số dòng mỗi trang"
+      rowsPerPageOptions={rowsPerPageOptions}
+      labelRowsPerPage="Số phần tử mỗi trang"
       labelDisplayedRows={({ from, to, count }) =>
         `${from}-${to} trên ${count}`
       }
