@@ -22,7 +22,7 @@ const BestSellingProducts = () => {
           limit: 15,
         },
       });
-      setProducts(response.data);
+      setProducts(response.data.products);
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {

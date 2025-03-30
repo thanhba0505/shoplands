@@ -330,7 +330,7 @@ const Products = () => {
         </Grid2>
         <Grid2 size={8}>
           <PaperCustom>
-            <Grid2 container spacing={2} sx={{ mt: 1, mb: 1 }}>
+            <Grid2 container spacing={2} alignItems={"center"} sx={{ mt: 2, mb: 1 }}>
               <Grid2 size={"auto"}>
                 <FormControl size="small">
                   <InputLabel
@@ -350,8 +350,8 @@ const Products = () => {
                     <MenuItem value="">
                       <em>Không</em>
                     </MenuItem>
-                    <MenuItem value={"asc"}>Giá cao trước</MenuItem>
-                    <MenuItem value={"desc"}>Giá thấp trước</MenuItem>
+                    <MenuItem value={"asc"}>Giá thấp trước</MenuItem>
+                    <MenuItem value={"desc"}>Giá cao trước</MenuItem>
                   </Select>
                 </FormControl>
               </Grid2>
@@ -390,7 +390,7 @@ const Products = () => {
                 />
               </Grid2>
             </Grid2>
-            <ShowProducts products={products} columns={10} />
+            <ShowProducts products={products} columns={10} sx={{mt:2}} />
           </PaperCustom>
         </Grid2>
       </Grid2>

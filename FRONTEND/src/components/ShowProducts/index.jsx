@@ -11,11 +11,17 @@ import { useNavigate } from "react-router-dom";
 import Format from "~/helpers/Format";
 import Path from "~/helpers/Path";
 
-const ShowProducts = ({ products, columns = 12, size = 2 }) => {
+const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
   const navigate = useNavigate();
 
   return (
-    <Grid2 container columnSpacing={2} rowSpacing={3} columns={columns}>
+    <Grid2
+      container
+      columnSpacing={2}
+      rowSpacing={3}
+      columns={columns}
+      sx={{ ...sx }}
+    >
       {products &&
         products.map((product, index) => (
           <Grid2 key={index} size={size}>
