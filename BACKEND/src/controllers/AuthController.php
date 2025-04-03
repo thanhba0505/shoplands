@@ -23,6 +23,62 @@ class AuthController {
             $password = Request::json('password');
             $code = Request::json('code');
 
+            $account = AccountModel::findByPhone($phone);
+
+            if (!$account) {
+                Response::json(['message' => 'Số điện thoại chưa được xác thực'], 400);
+            }
+
+            if ($account['status'] == 'inactive') {
+                if (!$account) {
+                    AccountModel::addAccount($phone, $password, 'user', 'inactive');
+                    $account_new = AccountModel::findByPhone($phone);
+                    UserModel::addUser($name, $account_new['account_id']);
+                }
+                $account_new = AccountModel::findByPhone($phone);
+
+                if (!Hash::verifyArgon2i($password, $account_new['password'])) {
+                    Response::json(['message' => 'Mật khẩu không đúng'], 400);
+                }
+
+                $message = MessageModel::getLastMessage($account_new['account_id']);
+
+                if (!$message) {
+                    Response::json(['message' => 'Vui lòng lấy mã xác nhận'], 409);
+                }
+
+                if (!$code) {
+                    Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 400);
+                }
+
+                if (!Hash::verifyArgon2i($code, $message['code'])) {
+                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+                }
+
+                if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                    Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
+                }
+
+                MessageModel::deleteMessage($message['message_id']);
+                AccountModel::activeAccount($account_new['account_id']);
+
+                $this->handleLogin($account_new);
+            } else {
+                Response::json(['message' => 'Tài khoản đã đăng ký'], 400);
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> register: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy mã xác nhận đăng ký
+    public function getCodeRegister() {
+        try {
+            $name = Request::json('name');
+            $phone = Request::json('phone');
+            $password = Request::json('password');
+
             // Kiểm tra thông tin đăng ký
             $this->checkInfoRegister($name, $phone, $password);
 
@@ -39,27 +95,15 @@ class AuthController {
                     Response::json(['message' => 'Mật khẩu không đúng'], 400);
                 }
 
-                $message = MessageModel::getLastMessage($account_new['account_id']);
+                $result = SendMessage::sendMessageCode($account_new['phone'], $account_new['account_id']);
 
-                if ($code && $message && SendMessage::checkMessageCodeExpired($message['created_at'])) {
-                    if (!Hash::verifyArgon2i($code, $message['code'])) {
-                        Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-                    }
-
-                    MessageModel::deleteMessage($message['message_id']);
-                    AccountModel::activeAccount($account_new['account_id']);
-
-                    $this->handleLogin($account_new);
+                if ($result) {
+                    Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 201);
                 } else {
-                    $result = SendMessage::sendMessageCode($phone, $account_new['account_id']);
-
-                    if ($result) {
-                        Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 409);
-                    }
+                    throw new \Exception("Lỗi gửi mã xác nhận");
                 }
-                Response::json(['message' => 'Đăng ký thất bại'], 500);
             } else {
-                Response::json(['message' => 'Tài khoản đã đăng ký'], 409);
+                Response::json(['message' => 'Tài khoản đã đăng ký'], 400);
             }
         } catch (\Throwable $th) {
             Log::throwable("AuthController -> register: " . $th->getMessage());
@@ -86,26 +130,53 @@ class AuthController {
             $user_agent = Request::getServer('HTTP_USER_AGENT');
 
             if (!$account['device_token'] || !Hash::verifyArgon2i($ip_address . $user_agent, $account['device_token'])) {
-                // Gửi sms và tạo
                 $message = MessageModel::getLastMessage($account_id);
-                if ($code && $message && SendMessage::checkMessageCodeExpired($message['created_at'])) {
-                    if (!Hash::verifyArgon2i($code, $message['code'])) {
-                        Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-                    }
 
-                    // Tiếp tục đăng nhập nếu đúng
-                    MessageModel::deleteMessage($message['message_id']);
-                } else {
-                    $result = SendMessage::sendMessageCode($account['phone'], $account_id);
-
-                    if ($result) {
-                        Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 409);
-                    }
+                if (!$message) {
+                    Response::json(['message' => 'Vui lòng lấy mã xác nhận'], 409);
                 }
+
+                if (!$code) {
+                    Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 400);
+                }
+
+                if (!Hash::verifyArgon2i($code, $message['code'])) {
+                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+                }
+
+                if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                    Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
+                }
+
+                MessageModel::deleteMessage($message['message_id']);
             }
 
-            Log::login(['ip_address' => $ip_address, 'user_agent' => $user_agent], 'Số điện thoại: ' . $account['phone']);
             $this->handleLogin($account);
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> login: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy mã xác nhận đăng nhập
+    public function getCodeLogin() {
+        try {
+            $phone = Request::json('phone');
+            $password = Request::json('password');
+
+            // Kiểm tra tài khoản
+            $account = AccountModel::findByPhone($phone);
+            if (!$account || !Hash::verifyArgon2i($password, $account['password'])) {
+                Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
+            }
+
+            $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
+
+            if ($result) {
+                Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 201);
+            } else {
+                throw new \Exception("Lỗi gửi mã xác nhận");
+            }
         } catch (\Throwable $th) {
             Log::throwable("AuthController -> login: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -292,24 +363,57 @@ class AuthController {
                 Response::json(['message' => 'Tài khoản không tồn tại'], 400);
             }
 
+            // Kiểm tra độ mạnh của mật khẩu
+            $passwordCheck = Validator::isPasswordStrength($passwordNew);
+            if ($passwordCheck !== true) {
+                Response::json(['message' => $passwordCheck], 400);
+            }
+
             $message = MessageModel::getLastMessage($account['account_id']);
-            if ($code && $message && SendMessage::checkMessageCodeExpired($message['created_at'])) {
-                if (!Hash::verifyArgon2i($code, $message['code'])) {
-                    Response::json(['message' => 'Mã xác nhận không khớp'], 400);
-                }
+            if (!$message) {
+                Response::json(['message' => 'Vui lòng lấy mã xác nhận'], 409);
+            }
 
-                MessageModel::deleteMessage($message['message_id']);
-                AccountModel::updatePassword($account['account_id'], $passwordNew);
+            if (!$code) {
+                Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 400);
+            }
 
-                $account = AccountModel::findById($account['account_id']);
+            if (!Hash::verifyArgon2i($code, $message['code'])) {
+                Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+            }
 
-                $this->handleLogin($account);
+            if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
+            }
+
+            MessageModel::deleteMessage($message['message_id']);
+            AccountModel::updatePassword($account['account_id'], $passwordNew);
+
+            $account = AccountModel::findById($account['account_id']);
+
+            $this->handleLogin($account);
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> forgotPassword: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy mã xác nhận lấy lại mật khẩu
+    public function getCodeForgotPassword() {
+        try {
+            $phone = Request::json('phone');
+
+            $account = AccountModel::findByPhone($phone);
+            if (!$account) {
+                Response::json(['message' => 'Tài khoản không tồn tại'], 400);
+            }
+
+            $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
+
+            if ($result) {
+                Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 201);
             } else {
-                $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
-
-                if ($result) {
-                    Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 409);
-                }
+                throw new \Exception("Lỗi gửi mã xác nhận");
             }
         } catch (\Throwable $th) {
             Log::throwable("AuthController -> forgotPassword: " . $th->getMessage());

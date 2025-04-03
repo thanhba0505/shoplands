@@ -4,7 +4,7 @@ import { loginSuccess } from "~/redux/authSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import { useSnackbar } from "notistack";
 import Api from "~/helpers/Api";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Grid2, TextField, Typography } from "@mui/material";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +14,9 @@ import { useTheme } from "@emotion/react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const [code, setCode] = useState("");
@@ -115,17 +115,33 @@ const Login = () => {
           disabled={isLoading}
         />
         {open && (
-          <TextField
-            autoComplete="off"
-            fullWidth
-            label="Mã xác nhận"
-            variant="outlined"
-            margin="normal"
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            disabled={isLoading}
-          />
+          <Grid2 container spacing={2}>
+            <Grid2 size={6}>
+              <TextField
+                autoComplete="off"
+                fullWidth
+                label="Mã xác nhận"
+                variant="outlined"
+                margin="normal"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                disabled={isLoading}
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <ButtonLoading
+                fullWidth
+                sx={{ mt: 2, height: 56 }}
+                variant="outlined"
+                color="success"
+                // onClick={handleLogin}
+                // loading={isLoading}
+              >
+                Gửi lại mã
+              </ButtonLoading>
+            </Grid2>
+          </Grid2>
         )}
         <ButtonLoading
           fullWidth

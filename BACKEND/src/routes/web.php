@@ -6,11 +6,14 @@ $router->get('api/sql', 'Controller@sql');
 
 // API AUTH
 $router->post('api/auth/login', 'AuthController@login');
+$router->post('api/auth/code-login', 'AuthController@getCodeLogin');
 $router->post('api/auth/refresh-token', 'AuthController@refreshToken');
 $router->post('api/auth/logout', 'AuthController@logout');
 $router->post('api/auth/register', 'AuthController@register');
+$router->post('api/auth/code-register', 'AuthController@getCodeRegister');
 $router->post('api/auth/register-seller', 'AuthController@registerSeller');
 $router->post('api/auth/forgot-password', 'AuthController@forgotPassword');
+$router->post('api/auth/code-forgot-password', 'AuthController@getCodeForgotPassword');
 
 // API COUPON
 $router->get('api/coupons/{seller_id}', 'CouponController@get');
