@@ -29,9 +29,17 @@ class Api {
     static register(endpoint = "") {
         return this.buildPath("auth/register", endpoint);
     }
+    
+    static codeRegister(endpoint = "") {
+        return this.buildPath("auth/code-register", endpoint);
+    }
 
     static forgotPassword(endpoint = "") {
         return this.buildPath("auth/forgot-password", endpoint);
+    }
+    
+    static codeForgotPassword(endpoint = "") {
+        return this.buildPath("auth/code-forgot-password", endpoint);
     }
 
     static refreshToken(endpoint = "") {

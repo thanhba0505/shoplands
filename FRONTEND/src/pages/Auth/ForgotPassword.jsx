@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Grid2, TextField, Typography } from "@mui/material";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
@@ -11,6 +11,7 @@ import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import Api from "~/helpers/Api";
 import { loginSuccess } from "~/redux/authSlice";
+import Log from "~/helpers/Log";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -24,9 +25,49 @@ const ForgotPassword = () => {
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingGetCode, setIsLoadingGetCode] = useState(false);
+
+  const [disabled, setDisabled] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  const reset = () => {
+    setCode("");
+    setConfirmPassword("");
+    setPassword("");
+    setPhone("");
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    let timer;
+    if (timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  useEffect(() => {
+    if (
+      !phone ||
+      !password ||
+      !confirmPassword ||
+      password !== confirmPassword ||
+      (open && code.length !== 6)
+    ) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [phone, password, code, open, confirmPassword]);
 
   const handleRegister = async () => {
-    if (!checkInfo()) return;
+    if (!open) {
+      handleGetCodeForgot();
+      return;
+    }
 
     dispatch(startLoading());
     setIsLoading(true);
@@ -54,26 +95,23 @@ const ForgotPassword = () => {
     }
   };
 
-  const checkInfo = () => {
-    // Kiểm tra số điện thoại
-    if (!phone) {
-      enqueueSnackbar("Số điện thoại được rỗng!", { variant: "error" });
-      return false;
+  const handleGetCodeForgot = async () => {
+    try {
+      if (!open) setIsLoading(true);
+      setIsLoadingGetCode(true);
+      const response = await axiosDefault.post(Api.codeForgotPassword(), {
+        phone,
+        password,
+      });
+      setOpen(true);
+      enqueueSnackbar(response.data.message, { variant: "info" });
+      setTimeLeft(60);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setIsLoadingGetCode(false);
+      if (!open) setIsLoading(false);
     }
-
-    // Kiểm tra độ mạnh mật khẩu
-    if (!password) {
-      enqueueSnackbar("Mật khẩu không được rỗng", { variant: "error" });
-      return false;
-    }
-
-    // Kiểm tra mật khẩu và nhập lại mật khẩu
-    if (password !== confirmPassword) {
-      enqueueSnackbar("Nhập lại mật khẩu không đúng!", { variant: "error" });
-      return false;
-    }
-
-    return true;
   };
 
   return (
@@ -110,7 +148,7 @@ const ForgotPassword = () => {
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open} 
         />
 
         <TextField
@@ -122,7 +160,7 @@ const ForgotPassword = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
         <TextField
           autoComplete="off"
@@ -133,20 +171,37 @@ const ForgotPassword = () => {
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
         {open && (
-          <TextField
-            autoComplete="off"
-            fullWidth
-            label="Nhập mã xác nhận"
-            variant="outlined"
-            margin="normal"
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            disabled={isLoading}
-          />
+          <Grid2 container spacing={2}>
+            <Grid2 size={6}>
+              <TextField
+                autoComplete="off"
+                fullWidth
+                label="Mã xác nhận"
+                variant="outlined"
+                margin="normal"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                disabled={isLoading || isLoadingGetCode}
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <ButtonLoading
+                fullWidth
+                sx={{ mt: 2, height: 56 }}
+                variant="outlined"
+                color="success"
+                onClick={handleGetCodeForgot}
+                loading={isLoadingGetCode}
+                disabled={timeLeft > 0} // Disable button nếu còn thời gian đếm ngược
+              >
+                Gửi lại mã {timeLeft > 0 ? " (" + timeLeft + "s)" : ""}
+              </ButtonLoading>
+            </Grid2>
+          </Grid2>
         )}
         <ButtonLoading
           fullWidth
@@ -155,9 +210,24 @@ const ForgotPassword = () => {
           color="primary"
           onClick={handleRegister}
           loading={isLoading}
+          disabled={disabled}
         >
           Xác nhận
         </ButtonLoading>
+        {open && (
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 2,
+              color: "primary.main",
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+            onClick={reset}
+          >
+            Làm mới quên mật khẩu
+          </Typography>
+        )}
         <Typography
           variant="body2"
           sx={{

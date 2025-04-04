@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Grid2, TextField, Typography } from "@mui/material";
 import ButtonLoading from "~/components/ButtonLoading";
 import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
@@ -11,6 +11,7 @@ import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import axiosDefault from "~/utils/axiosDefault";
 import Api from "~/helpers/Api";
 import { loginSuccess } from "~/redux/authSlice";
+import Log from "~/helpers/Log";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,9 +26,51 @@ const Register = () => {
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingGetCode, setIsLoadingGetCode] = useState(false);
+
+  const [disabled, setDisabled] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  const reset = () => {
+    setCode("");
+    setConfirmPassword("");
+    setPassword("");
+    setName("");
+    setPhone("");
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    let timer;
+    if (timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  useEffect(() => {
+    if (
+      !phone ||
+      !password ||
+      !name ||
+      !confirmPassword ||
+      password !== confirmPassword ||
+      (open && code.length !== 6)
+    ) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [phone, password, code, open, name, confirmPassword]);
 
   const handleRegister = async () => {
-    if (!checkInfo()) return;
+    if (!open) {
+      handleGetCodeRegister();
+      return;
+    }
 
     dispatch(startLoading());
     setIsLoading(true);
@@ -45,37 +88,31 @@ const Register = () => {
       enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
       navigate(Path.home());
     } catch (error) {
-      if (error.response?.status === 409) {
-        setOpen(true);
-      } else {
-        console.error("Đăng nhập thất bại: " + error.response.data.message);
-      }
+      Log.error(error.response?.data?.message);
     } finally {
       setIsLoading(false);
       dispatch(stopLoading());
     }
   };
 
-  const checkInfo = () => {
-    // Kiểm tra số điện thoại
-    if (!phone) {
-      enqueueSnackbar("Số điện thoại được rỗng!", { variant: "error" });
-      return false;
+  const handleGetCodeRegister = async () => {
+    try {
+      if (!open) setIsLoading(true);
+      setIsLoadingGetCode(true);
+      const response = await axiosDefault.post(Api.codeRegister(), {
+        name,
+        phone,
+        password,
+      });
+      setOpen(true);
+      enqueueSnackbar(response.data.message, { variant: "info" });
+      setTimeLeft(60);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setIsLoadingGetCode(false);
+      if (!open) setIsLoading(false);
     }
-
-    // Kiểm tra độ mạnh mật khẩu
-    if (!password) {
-      enqueueSnackbar("Mật khẩu không được rỗng", { variant: "error" });
-      return false;
-    }
-
-    // Kiểm tra mật khẩu và nhập lại mật khẩu
-    if (password !== confirmPassword) {
-      enqueueSnackbar("Nhập lại mật khẩu không đúng!", { variant: "error" });
-      return false;
-    }
-
-    return true;
   };
 
   return (
@@ -111,7 +148,7 @@ const Register = () => {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
 
         <TextField
@@ -123,7 +160,7 @@ const Register = () => {
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
 
         <TextField
@@ -135,7 +172,7 @@ const Register = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
         <TextField
           autoComplete="off"
@@ -146,20 +183,37 @@ const Register = () => {
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
         {open && (
-          <TextField
-            autoComplete="off"
-            fullWidth
-            label="Nhập mã xác nhận"
-            variant="outlined"
-            margin="normal"
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            disabled={isLoading}
-          />
+          <Grid2 container spacing={2}>
+            <Grid2 size={6}>
+              <TextField
+                autoComplete="off"
+                fullWidth
+                label="Mã xác nhận"
+                variant="outlined"
+                margin="normal"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                disabled={isLoading || isLoadingGetCode}
+              />
+            </Grid2>
+            <Grid2 size={6}>
+              <ButtonLoading
+                fullWidth
+                sx={{ mt: 2, height: 56 }}
+                variant="outlined"
+                color="success"
+                onClick={handleGetCodeRegister}
+                loading={isLoadingGetCode}
+                disabled={timeLeft > 0}
+              >
+                Gửi lại mã {timeLeft > 0 ? " (" + timeLeft + "s)" : ""}
+              </ButtonLoading>
+            </Grid2>
+          </Grid2>
         )}
         <ButtonLoading
           fullWidth
@@ -168,9 +222,24 @@ const Register = () => {
           color="primary"
           onClick={handleRegister}
           loading={isLoading}
+          disabled={disabled}
         >
           Đăng ký
         </ButtonLoading>
+        {open && (
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 2,
+              color: "primary.main",
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+            onClick={reset}
+          >
+            Làm mới đăng ký
+          </Typography>
+        )}
         <Typography
           variant="body2"
           sx={{
@@ -181,7 +250,7 @@ const Register = () => {
           }}
           onClick={() => navigate(Path.login())}
         >
-          Đã có tài khoản? Đăng nhập!
+          Đã có tài khoản? Đăng nhập?
         </Typography>
       </PaperCustom>
     </Box>

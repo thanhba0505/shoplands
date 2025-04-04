@@ -26,7 +26,7 @@ class AuthController {
             $account = AccountModel::findByPhone($phone);
 
             if (!$account) {
-                Response::json(['message' => 'Số điện thoại chưa được xác thực'], 400);
+                Response::json(['message' => 'Số điện thoại chưa được xác thực'], 409);
             }
 
             if ($account['status'] == 'inactive') {
@@ -64,7 +64,7 @@ class AuthController {
 
                 $this->handleLogin($account_new);
             } else {
-                Response::json(['message' => 'Tài khoản đã đăng ký'], 400);
+                Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
             }
         } catch (\Throwable $th) {
             Log::throwable("AuthController -> register: " . $th->getMessage());
@@ -103,7 +103,7 @@ class AuthController {
                     throw new \Exception("Lỗi gửi mã xác nhận");
                 }
             } else {
-                Response::json(['message' => 'Tài khoản đã đăng ký'], 400);
+                Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
             }
         } catch (\Throwable $th) {
             Log::throwable("AuthController -> register: " . $th->getMessage());

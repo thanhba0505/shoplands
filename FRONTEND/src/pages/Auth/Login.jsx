@@ -28,7 +28,7 @@ const Login = () => {
   const [open, setOpen] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const [timeLeft, setTimeLeft] = useState(0); // Trạng thái đếm ngược thời gian
+  const [timeLeft, setTimeLeft] = useState(0);
   const theme = useTheme();
 
   const handleOpen = () => {
