@@ -23,6 +23,7 @@ import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import ShowProducts from "~/components/ShowProducts";
+import SkeletonProducts from "~/components/SkeletonProducts";
 import TablePaginationCustom from "~/components/TablePaginationCustom";
 import Api from "~/helpers/Api";
 import Format from "~/helpers/Format";
@@ -331,7 +332,7 @@ const Products = () => {
           </PaperCustom>
         </Grid2>
         <Grid2 size={8}>
-          <PaperCustom>
+          <PaperCustom sx={{ height: "100%" }}>
             <Grid2
               container
               columnSpacing={2}
@@ -413,25 +414,27 @@ const Products = () => {
               </Grid2>
               <Grid2 size={12} sx={{ mt: 1 }}>
                 {loading ? (
-                  <CircularProgressLoading sx={{ height: 400 }} />
+                  <SkeletonProducts count={10} columns={10} />
                 ) : products.length > 0 ? (
                   <ShowProducts products={products} columns={10} />
                 ) : (
-                  <NoContent text="Không có sản phẩm" />
+                  <NoContent text="Không tìm thấy sản phẩm nào" />
                 )}
               </Grid2>{" "}
-              <Grid2 size={12}>
-                <TablePaginationCustom
-                  loading={loading}
-                  count={count}
-                  page={page}
-                  rowsPerPage={rowsPerPage}
-                  handleChangePage={handleChangePage}
-                  handleChangeRowsPerPage={handleChangeRowsPerPage}
-                  labelRowsPerPage="Số sản phẩm mỗi trang"
-                  rowsPerPageOptions={[20, 50, 100]} // Các giá trị mặc định cho số phần tử mỗi trang
-                />
-              </Grid2>
+              {count > 0 && (
+                <Grid2 size={12}>
+                  <TablePaginationCustom
+                    loading={loading}
+                    count={count}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    labelRowsPerPage="Số sản phẩm mỗi trang"
+                    rowsPerPageOptions={[20, 50, 100]} // Các giá trị mặc định cho số phần tử mỗi trang
+                  />
+                </Grid2>
+              )}
             </Grid2>
           </PaperCustom>
         </Grid2>

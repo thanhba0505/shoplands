@@ -1,9 +1,9 @@
 import { Button, Container, Typography } from "@mui/material";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import CircularProgressLoading from "~/components/CircularProgressLoading";
 import PaperCustom from "~/components/PaperCustom";
 import ShowProducts from "~/components/ShowProducts";
+import SkeletonProducts from "~/components/SkeletonProducts";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
@@ -41,7 +41,7 @@ const BestSellingProducts = () => {
           Sản phẩm bán chạy
         </Typography>
         {loading ? (
-          <CircularProgressLoading />
+          <SkeletonProducts count={15} columns={10} size={2} />
         ) : (
           <>
             <ShowProducts products={products} columns={10} size={2} />
