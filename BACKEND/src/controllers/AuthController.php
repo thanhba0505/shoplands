@@ -48,7 +48,7 @@ class AuthController {
                 }
 
                 if (!$code) {
-                    Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 400);
+                    Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 409);
                 }
 
                 if (!Hash::verifyArgon2i($code, $message['code'])) {
@@ -137,7 +137,7 @@ class AuthController {
                 }
 
                 if (!$code) {
-                    Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 400);
+                    Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 409);
                 }
 
                 if (!Hash::verifyArgon2i($code, $message['code'])) {
@@ -375,7 +375,7 @@ class AuthController {
             }
 
             if (!$code) {
-                Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 400);
+                Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 409);
             }
 
             if (!Hash::verifyArgon2i($code, $message['code'])) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "~/redux/authSlice";
 import axiosDefault from "~/utils/axiosDefault";
@@ -11,17 +11,24 @@ import { useNavigate } from "react-router-dom";
 import Path from "~/helpers/Path";
 import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
+import Log from "~/helpers/Log";
+import axiosDefaultNoEnq from "~/utils/axiosDefaultNoEnq";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const { enqueueSnackbar } = useSnackbar();
-  const [isLoading, setIsLoading] = useState(false);
   const [code, setCode] = useState("");
-  const [open, setOpen] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingGetCode, setIsLoadingGetCode] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+
+  const [timeLeft, setTimeLeft] = useState(0); // Trạng thái đếm ngược thời gian
   const theme = useTheme();
 
   const handleOpen = () => {
@@ -31,15 +38,30 @@ const Login = () => {
     setOpen(false);
   };
 
-  const handleLogin = async () => {
-    if (!phone || !password) {
-      enqueueSnackbar("Vui lòng nhập đầy đủ thông tin", { variant: "error" });
-      return;
+  useEffect(() => {
+    if (!phone || !password || (open && code.length !== 6)) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
     }
+  }, [phone, password, code, open]);
+
+  useEffect(() => {
+    let timer;
+    if (timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(timer); // Clear interval khi component unmount hoặc timeLeft = 0
+  }, [timeLeft]);
+
+  const handleLogin = async () => {
     dispatch(startLoading());
     setIsLoading(true);
     try {
-      const response = await axiosDefault.post(Api.login(), {
+      const response = await axiosDefaultNoEnq.post(Api.login(), {
         phone,
         password,
         code: code ? code : null,
@@ -52,19 +74,50 @@ const Login = () => {
 
       if (account.role === "user") {
         navigate(Path.home());
-      } else {
+      } else if (account.role === "seller") {
         navigate(Path.sellerDashboard());
+      } else if (account.role === "admin") {
+        // navigate(Path.adminDashboard());
       }
     } catch (error) {
       if (error.response?.status === 409) {
+        if (!open) {
+          handleGetCodeLogin();
+        }
         handleOpen();
-      } else {
-        console.error("Đăng nhập thất bại: " + error.response.data.message);
       }
+      if (error.response?.status === 401 || error.response?.status === 400) {
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
+      }
+      Log.error(error.response?.data?.message);
     } finally {
       setIsLoading(false);
       dispatch(stopLoading());
     }
+  };
+
+  const handleGetCodeLogin = async () => {
+    try {
+      setIsLoadingGetCode(true);
+      const response = await axiosDefault.post(Api.codeLogin(), {
+        phone,
+        password,
+      });
+
+      enqueueSnackbar(response.data.message, { variant: "info" });
+      setTimeLeft(60); // Đặt thời gian đếm ngược lại 60 giây khi gửi mã thành công
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setIsLoadingGetCode(false);
+    }
+  };
+
+  const reset = () => {
+    setPhone("");
+    setPassword("");
+    setCode("");
+    setOpen(false);
   };
 
   return (
@@ -101,7 +154,7 @@ const Login = () => {
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
         <TextField
           autoComplete="off"
@@ -112,7 +165,7 @@ const Login = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || isLoadingGetCode || open}
         />
         {open && (
           <Grid2 container spacing={2}>
@@ -126,7 +179,7 @@ const Login = () => {
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading || isLoadingGetCode}
               />
             </Grid2>
             <Grid2 size={6}>
@@ -135,10 +188,11 @@ const Login = () => {
                 sx={{ mt: 2, height: 56 }}
                 variant="outlined"
                 color="success"
-                // onClick={handleLogin}
-                // loading={isLoading}
+                onClick={handleGetCodeLogin}
+                loading={isLoadingGetCode}
+                disabled={timeLeft > 0} // Disable button nếu còn thời gian đếm ngược
               >
-                Gửi lại mã
+                Gửi lại mã {timeLeft > 0 ? " (" + timeLeft + "s)" : ""}
               </ButtonLoading>
             </Grid2>
           </Grid2>
@@ -150,9 +204,25 @@ const Login = () => {
           color="primary"
           onClick={handleLogin}
           loading={isLoading}
+          disabled={disabled}
         >
           Đăng nhập
         </ButtonLoading>
+
+        {open && (
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 2,
+              color: "primary.main",
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+            onClick={reset}
+          >
+            Làm mới đăng nhập
+          </Typography>
+        )}
 
         <Typography
           variant="body2"

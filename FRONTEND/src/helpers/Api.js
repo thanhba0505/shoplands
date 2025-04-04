@@ -18,6 +18,10 @@ class Api {
         return this.buildPath("auth/login", endpoint);
     }
     
+    static codeLogin(endpoint = "") {
+        return this.buildPath("auth/code-login", endpoint);
+    }
+    
     static logout(endpoint = "") {
         return this.buildPath("auth/logout", endpoint);
     }
