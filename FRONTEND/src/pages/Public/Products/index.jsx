@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
+import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import ShowProducts from "~/components/ShowProducts";
 import TablePaginationCustom from "~/components/TablePaginationCustom";
@@ -90,9 +91,7 @@ const min = 0;
 const max = 5000000;
 const minDistance = 100000;
 
-const Price = () => {
-  const [price, setPrice] = useState([min, min + minDistance]); // Đổi từ value2 thành price
-
+const Price = ({ price, setPrice }) => {
   const handleChange2 = (event, newValue, activeThumb) => {
     if (newValue[1] - newValue[0] < minDistance) {
       if (activeThumb === 0) {
@@ -190,8 +189,10 @@ const Price = () => {
 };
 
 const Products = () => {
+  const [price, setPrice] = useState([min, max]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [search, setSearch] = useState([]);
   const [checkedCategories, setCheckedCategories] = useState([]);
   const [orderByPrice, setOrderByPrice] = useState("");
   const [orderByRating, setOrderByRating] = useState("");
@@ -200,7 +201,7 @@ const Products = () => {
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchCategories = useCallback(async () => {
     setLoadingCategories(true);
@@ -225,6 +226,9 @@ const Products = () => {
             order_by_price: orderByPrice,
             order_by_rating: orderByRating,
             categories: checkedCategories,
+            min_price: price[0],
+            max_price: price[1],
+            search: search,
           },
         });
 
@@ -236,7 +240,7 @@ const Products = () => {
         setLoading(false);
       }
     },
-    [checkedCategories, orderByPrice, orderByRating]
+    [checkedCategories, orderByPrice, orderByRating, price, search]
   );
 
   const [timeoutId, setTimeoutId] = useState(null);
@@ -252,7 +256,7 @@ const Products = () => {
 
     const newTimeoutId = setTimeout(() => {
       fetchProducts(page, rowsPerPage);
-    }, 400); // Đặt thời gian debounce là 300ms
+    }, 500); // Đặt thời gian debounce là 300ms
 
     setTimeoutId(newTimeoutId);
 
@@ -315,7 +319,7 @@ const Products = () => {
               }}
             >
               <List disablePadding>
-                <Price />
+                <Price price={price} setPrice={setPrice} />
                 <Categories
                   categories={categories}
                   loadingCategories={loadingCategories}
@@ -330,10 +334,23 @@ const Products = () => {
           <PaperCustom>
             <Grid2
               container
-              spacing={2}
+              columnSpacing={2}
+              rowSpacing={1}
               alignItems={"center"}
               sx={{ mt: 2, mb: 1 }}
             >
+              <Grid2 size={12}>
+                <TextField
+                  variant="outlined"
+                  autoComplete="off"
+                  type="text"
+                  label="Tìm kiếm"
+                  placeholder="Tìm kiếm"
+                  size="small"
+                  sx={{ width: "50%" }}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </Grid2>
               <Grid2 size={"auto"}>
                 <FormControl size="small">
                   <InputLabel
@@ -397,8 +414,10 @@ const Products = () => {
               <Grid2 size={12} sx={{ mt: 1 }}>
                 {loading ? (
                   <CircularProgressLoading sx={{ height: 400 }} />
-                ) : (
+                ) : products.length > 0 ? (
                   <ShowProducts products={products} columns={10} />
+                ) : (
+                  <NoContent text="Không có sản phẩm" />
                 )}
               </Grid2>{" "}
               <Grid2 size={12}>

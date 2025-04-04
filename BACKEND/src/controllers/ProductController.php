@@ -25,12 +25,16 @@ class ProductController {
             $limit = Request::get('limit', 12);
             $page = max(1, Request::get('page', 1));
             $categories = Request::get('categories', []);
+            $min_price = Request::get('min_price', null);
+            $max_price = Request::get('max_price', null);
+            $search = Request::get('search', "");
             $order_by_price = Request::get('order_by_price', '');
             $order_by_rating = Request::get('order_by_rating', '');
 
             // Lấy tổng số sản phẩm và danh sách sản phẩm
-            $count = ProductModel::count();
-            $products = ProductModel::getAll($limit, $page);
+            $result = ProductModel::getByOption($categories, $search, $min_price, $max_price, $limit, $page);
+            $products = $result['products'];
+            $count = $result['count'];
 
             // Enrich dữ liệu sản phẩm
             foreach ($products as $key => $product) {
@@ -42,7 +46,7 @@ class ProductController {
 
             Response::json(['count' => $count, 'products' => $products], 200);
         } catch (\Throwable $th) {
-            $this->logAndRespond("Lỗi lấy danh sách sản phẩm", $th);
+            $this->logAndRespond("ProductController -> get: ", $th);
         }
     }
 

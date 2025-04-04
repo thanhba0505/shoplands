@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class ProductModel {
@@ -32,6 +33,128 @@ class ProductModel {
 
         return $result ?? [];
     }
+
+    // Lấy danh sách sản phẩm
+    public static function getByOption($category_ids = [], $search = null, $min_price = 0, $max_price = 5000000, $limit = 12, $page = 1) {
+        $query = new ConnectDatabase();
+
+        $min_price = empty($min_price) ? 0 : $min_price;
+        $max_price = empty($max_price) ? 5000000 : $max_price;
+
+        $offset = ($page - 1) * $limit;
+
+        // Start building the count query
+        $countSql = "
+            SELECT COUNT(DISTINCT p.id) AS total_count
+            FROM
+                products p
+            WHERE
+                p.status = :status
+        ";
+
+        // Add conditions for category if provided
+        if (!empty($category_ids)) {
+            $countSql .= " AND p.category_id IN (" . implode(',', $category_ids) . ")";
+        }
+
+        // Add search condition if provided
+        if (!empty($search)) {
+            $countSql .= " AND p.name LIKE :search";
+        }
+
+        // Query to check if all product_variants' minimum price of the product is within the min_price and max_price range
+        $countSql .= "
+            AND p.id IN (
+                SELECT pv.product_id
+                FROM product_variants pv
+                GROUP BY pv.product_id
+                HAVING MIN(LEAST(IFNULL(pv.price, 5000000), IFNULL(pv.promotion_price, 5000000))) BETWEEN :min_price AND :max_price
+            )
+        ";
+
+        // Execute the count query
+        $countParams = [
+            'status' => 'active',
+            'min_price' => $min_price,
+            'max_price' => $max_price
+        ];
+
+        if (!empty($search)) {
+            $countParams['search'] = "%" . $search . "%";
+        }
+
+        $countResult = $query->query($countSql, $countParams)->fetch();
+        $totalCount = $countResult['total_count'];
+
+        // Start building the main query to get the actual results
+        $sql = "
+            SELECT DISTINCT
+                p.id AS product_id,
+                p.name,
+                p.description,
+                p.status,
+                p.seller_id,
+                p.category_id
+            FROM
+                products p
+            WHERE
+                p.status = :status
+        ";
+
+        // Add conditions for category if provided
+        if (!empty($category_ids)) {
+            $sql .= " AND p.category_id IN (" . implode(',', $category_ids) . ")";
+        }
+
+        // Add search condition if provided
+        if (!empty($search)) {
+            $sql .= " AND p.name LIKE :search";
+        }
+
+        // Query to check if all product_variants' minimum price of the product is within the min_price and max_price range
+        $sql .= "
+            AND p.id IN (
+                SELECT pv.product_id
+                FROM product_variants pv
+                GROUP BY pv.product_id
+                HAVING MIN(LEAST(IFNULL(pv.price, 5000000), IFNULL(pv.promotion_price, 5000000))) BETWEEN :min_price AND :max_price
+            )
+        ";
+
+        // Adding limit and offset
+        $sql .= "
+            LIMIT 
+                :limit
+            OFFSET 
+                :offset
+        ";
+
+        // Prepare parameters for the main query
+        $params = [
+            'status' => 'active',
+            'min_price' => $min_price,
+            'max_price' => $max_price,
+            'limit' => $limit,
+            'offset' => $offset
+        ];
+
+        if (!empty($search)) {
+            $params['search'] = "%" . $search . "%";
+        }
+
+        // Execute the main query to get results
+        $result = $query->query($sql, $params)->fetchAll();
+
+        // Return both the count and the result
+        return [
+            'count' => $totalCount,
+            'products' => $result ?? []
+        ];
+    }
+
+
+
+
 
     // Lấy danh sách sản phẩm theo seller
     public static function getBySellerId($seller_id, $status = 'all', $limit = 12, $page = 1) {
