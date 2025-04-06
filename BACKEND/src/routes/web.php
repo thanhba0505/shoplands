@@ -27,7 +27,6 @@ $router->get('api/products/{id}', 'ProductController@find');
 
 $router->get('api/seller/products', 'ProductController@sellerGet', ['App\Middlewares\SellerMiddleware']);
 $router->post('api/seller/products', 'ProductController@sellerAdd', ['App\Middlewares\SellerMiddleware']);
-// $router->put('api/seller/products/{product_id}/quantity', 'ProductController@sellerUpdateQuantity', ['App\Middlewares\SellerMiddleware']);
 
 // API CART
 $router->get('api/user/cart', 'CartController@userGet', ['App\Middlewares\UserMiddleware']);
@@ -56,3 +55,6 @@ $router->post('api/seller/orders/{order_id}', 'OrderController@sellerAddStatus',
 
 $router->get('api/shipper/orders', 'OrderController@shipperGet', ['App\Middlewares\ShipperMiddleware']);
 $router->post('api/shipper/orders/{order_id}', 'OrderController@shipperAddStatus', ['App\Middlewares\ShipperMiddleware']);
+
+// API SELLER
+$router->get('api/sellers/{seller_id}', 'SellerController@find');
