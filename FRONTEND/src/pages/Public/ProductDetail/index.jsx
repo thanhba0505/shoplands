@@ -7,40 +7,52 @@ import Api from "~/helpers/Api";
 import Path from "~/helpers/Path";
 import SimilarProducts from "./SimilarProducts";
 import SellerProduct from "./SellerProduct";
+import ProductDetails from "./ProductDetails";
+import SellerProducts from "./SellerProducts";
+import SuggestProducts from "./SuggestProducts";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState([]);
-  const [loadingProduct, setLoadingProduct] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchProducts = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axiosDefault.get(Api.products(id));
       setProduct(response.data);
     } catch (error) {
       console.log(error.response?.data?.message);
       navigate(Path.home());
+    } finally {
+      setLoading(false);
     }
   }, [navigate, id]);
 
-  
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
   return (
     <>
-      {product && (
-        <Container>
-          <ProductInfo product={product} />
-        </Container>
-      )}
+      <Container>
+        <ProductInfo product={product} loading={loading} />
+      </Container>
       <Container>
         <SimilarProducts />
       </Container>
       <Container>
-        <SellerProduct />
+        <ProductDetails productDetails={product?.details} loading={loading} />
+      </Container>
+      <Container>
+        <SellerProduct sellerId={product?.seller_id} />
+      </Container>
+      <Container>
+        <SellerProducts />
+      </Container>
+      <Container>
+        <SuggestProducts />
       </Container>
     </>
   );

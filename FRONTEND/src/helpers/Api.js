@@ -74,6 +74,10 @@ class Api {
         return this.buildPath("shipping-fees", endpoint);
     }
 
+    static sellers(endpoint = "") {
+        return this.buildPath("sellers", endpoint);
+    }
+
     // Seller
     static sellerOrders(endpoint = "") {
         return this.buildPath("seller/orders", endpoint);

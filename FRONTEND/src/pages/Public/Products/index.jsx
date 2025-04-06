@@ -233,6 +233,10 @@ const Products = () => {
           },
         });
 
+        if (limit * (page + 1) > response.data.count) {
+          setPage(0);
+        }
+
         setProducts(response.data.products);
         setCount(response.data.count);
       } catch (error) {
@@ -346,7 +350,7 @@ const Products = () => {
                   autoComplete="off"
                   type="text"
                   label="Tìm kiếm"
-                  placeholder="Tìm kiếm"
+                  placeholder="Quần, áo,..."
                   size="small"
                   sx={{ width: "50%" }}
                   onChange={(e) => setSearch(e.target.value)}

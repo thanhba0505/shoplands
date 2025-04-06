@@ -9,7 +9,7 @@ import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
-const SimilarProducts = () => {
+const SellerProducts = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ const SimilarProducts = () => {
   return (
     <PaperCustom sx={{ px: 3 }}>
       <Typography variant="h6" sx={{ mb: 1.5, mt: 1 }} textAlign={"center"}>
-        Sản phẩm tương tự
+        Sản phẩm của cửa hàng
       </Typography>
       {loading ? (
         <SkeletonProducts count={5} columns={10} size={2} />
@@ -56,4 +56,4 @@ const SimilarProducts = () => {
   );
 };
 
-export default SimilarProducts;
+export default SellerProducts;

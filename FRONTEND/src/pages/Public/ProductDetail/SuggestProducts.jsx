@@ -9,7 +9,7 @@ import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
-const SimilarProducts = () => {
+const SuggestProducts = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ const SimilarProducts = () => {
     try {
       const response = await axiosDefault.get(Api.products(), {
         params: {
-          limit: 5,
+          limit: 20,
         },
       });
       setProducts(response.data.products);
@@ -37,10 +37,10 @@ const SimilarProducts = () => {
   return (
     <PaperCustom sx={{ px: 3 }}>
       <Typography variant="h6" sx={{ mb: 1.5, mt: 1 }} textAlign={"center"}>
-        Sản phẩm tương tự
+        Sản phẩm gợi ý khác
       </Typography>
       {loading ? (
-        <SkeletonProducts count={5} columns={10} size={2} />
+        <SkeletonProducts count={20} columns={10} size={2} />
       ) : (
         <>
           <ShowProducts products={products} columns={10} size={2} />
@@ -56,4 +56,4 @@ const SimilarProducts = () => {
   );
 };
 
-export default SimilarProducts;
+export default SuggestProducts;

@@ -9,6 +9,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Skeleton,
 } from "@mui/material";
 import PaperCustom from "~/components/PaperCustom";
 import Path from "~/helpers/Path";
@@ -22,8 +23,7 @@ import { useSnackbar } from "notistack";
 import Auth from "~/helpers/Auth";
 
 // Hình ảnh
-const ImageProduct = ({ images }) => {
-  // const defaultImage = images && images.find((image) => image.default === 1);
+const ImageProduct = ({ images, loading }) => {
   const [defaultImage, setDefaultImage] = useState(null);
 
   useEffect(() => {
@@ -33,17 +33,24 @@ const ImageProduct = ({ images }) => {
 
   return (
     <>
-      {images && (
-        <Box
-          sx={{
-            width: "40%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "start",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ padding: 2 }}>
+      <Box
+        sx={{
+          width: "40%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "start",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ padding: 2, pt: 0 }}>
+          {loading ? (
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              height={400}
+              width={400}
+            />
+          ) : (
             <img
               src={Path.publicProduct(defaultImage?.image_path)}
               alt="Product Image"
@@ -53,21 +60,51 @@ const ImageProduct = ({ images }) => {
                 objectFit: "contain",
                 margin: "auto",
                 userSelect: "none",
+                display: "block",
               }}
             />
-          </Box>
-          <Box sx={{ width: "100%", overflowX: "auto" }}>
-            <Box
-              sx={{
-                paddingBottom: 2,
-                display: "flex",
-                gap: 2,
-                flexWrap: "nowrap",
-                justifyContent: "center",
-              }}
-            >
-              {images &&
-                images.map((image, key) => (
+          )}
+        </Box>
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <Box
+            sx={{
+              paddingBottom: 2,
+              display: "flex",
+              gap: 1,
+              flexWrap: "nowrap",
+              justifyContent: images && images.length > 4 ? "start" : "center", 
+            }}
+          >
+            {loading ? (
+              <>
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  height={100}
+                  width={100}
+                />
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  height={100}
+                  width={100}
+                />
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  height={100}
+                  width={100}
+                />
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  height={100}
+                  width={100}
+                />
+              </>
+            ) : (
+              <>
+                {images.map((image, key) => (
                   <img
                     key={key}
                     src={Path.publicProduct(image.image_path)}
@@ -84,16 +121,17 @@ const ImageProduct = ({ images }) => {
                     }}
                   />
                 ))}
-            </Box>
+              </>
+            )}
           </Box>
         </Box>
-      )}
+      </Box>
     </>
   );
 };
 
 // Thống tin sản phẩm
-const InfoProduct = ({ product }) => {
+const InfoProduct = ({ product, loading }) => {
   const [selectedValues, setSelectedValues] = useState({});
   const [quantity, setQuantity] = useState(1);
   const variants = product?.variants;
@@ -161,15 +199,85 @@ const InfoProduct = ({ product }) => {
 
   return (
     <>
-      {product && (
+      {loading ? (
+        <>
+          <Box
+            sx={{
+              width: "60%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              justifyContent: "space-between",
+              pb: 2,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                flexWrap: "wrap",
+              }}
+            >
+              <Skeleton
+                animation="pulse"
+                variant="rounded"
+                height={30}
+                width={"100%"}
+              />
+              <Skeleton
+                animation="pulse"
+                variant="rounded"
+                height={30}
+                width={"80%"}
+              />
+              <Skeleton animation="pulse" variant="text" width={"50%"} />
+              <Skeleton
+                animation="pulse"
+                variant="text"
+                height={60}
+                width={"100%"}
+              />
+              <Box display={"flex"} gap={2} width={"100%"} mt={1}>
+                <Skeleton animation="pulse" variant="text" width={"30%"} />
+                <Skeleton animation="pulse" variant="text" width={"60%"} />
+              </Box>
+              <Box display={"flex"} gap={2} width={"100%"} mt={1}>
+                <Skeleton animation="pulse" variant="text" width={"30%"} />
+                <Skeleton animation="pulse" variant="text" width={"50%"} />
+              </Box>
+              <Box display={"flex"} gap={2} width={"100%"} mt={1}>
+                <Skeleton animation="pulse" variant="text" width={"30%"} />
+                <Skeleton animation="pulse" variant="text" width={"70%"} />
+              </Box>
+              <Box display={"flex"} gap={2} width={"100%"} mt={1}>
+                <Skeleton animation="pulse" variant="text" width={"30%"} />
+                <Skeleton animation="pulse" variant="text" width={"40%"} />
+              </Box>
+              <Box display={"flex"} gap={2} width={"100%"} mt={1}>
+                <Skeleton animation="pulse" variant="text" width={"30%"} />
+                <Skeleton animation="pulse" variant="text" width={"50%"} />
+              </Box>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Skeleton
+                animation="pulse"
+                variant="rounded"
+                height={45}
+                width={"100%"}
+              />
+            </Box>
+          </Box>
+        </>
+      ) : (
         <Box
           sx={{
             width: "60%",
-            padding: 2,
             display: "flex",
             flexDirection: "column",
             gap: 2,
             justifyContent: "space-between",
+            pb: 2,
           }}
         >
           <Box
@@ -226,7 +334,10 @@ const InfoProduct = ({ product }) => {
                 mt: 0.5,
               }}
             >
-              <Typography variant="h5" sx={{ color: "white", fontWeight: "bold", lineHeight: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{ color: "white", fontWeight: "bold", lineHeight: 1 }}
+              >
                 {priceToShow
                   ? `${Format.formatCurrency(priceToShow)}`
                   : `${Format.formatCurrency(
@@ -475,11 +586,11 @@ const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
   );
 };
 
-const ProductInfo = ({ product }) => {
+const ProductInfo = ({ product, loading }) => {
   return (
-    <PaperCustom sx={{ display: "flex", gap: 2 }}>
-      <ImageProduct images={product?.images} />
-      <InfoProduct product={product} />
+    <PaperCustom sx={{ display: "flex", gap: 3, px: 3, pt: 4 }}>
+      <ImageProduct images={product?.images} loading={loading} />
+      <InfoProduct product={product} loading={loading} />
     </PaperCustom>
   );
 };
