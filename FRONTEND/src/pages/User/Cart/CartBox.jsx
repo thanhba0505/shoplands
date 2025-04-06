@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCartIds } from "~/redux/orderSlice";
 import { useSnackbar } from "notistack";
+import PaperCustom from "~/components/PaperCustom";
 
 const CartBox = ({ cart }) => {
   const navigate = useNavigate();
@@ -123,11 +124,14 @@ const CartBox = ({ cart }) => {
 
   return (
     <>
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        {cart.store_name}
-      </Typography>
-
-      <Box>
+      <PaperCustom sx={{ px: 3 }}>
+        <Typography
+          variant="body1"
+          fontWeight={"bold"}
+          sx={{ marginBottom: 2, mt: 1 }}
+        >
+          {cart.store_name}
+        </Typography>
         <TableContainer>
           <Table sx={{ borderCollapse: "collapse", border: "none" }}>
             <TableHead>
@@ -260,24 +264,30 @@ const CartBox = ({ cart }) => {
             position: "sticky",
             bottom: 0,
             background: "white",
-            pt: 2,
-            pb: 4,
+            pt: 3,
+            pb: 2,
             borderTop: "1px solid #e0e0e0",
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="body1">
+          <Typography variant="body1" lineHeight={1}>
             Đã chọn: {selectedItems.length}
           </Typography>
-          <Typography variant="h6" color="error" fontWeight="bold">
+          <Typography
+            variant="h6"
+            color="error"
+            fontWeight="bold"
+            lineHeight={1}
+          >
             Tổng tiền: {Format.formatCurrency(totalAmount)}
           </Typography>
-          <Button variant="contained" onClick={handleCheckout}>
-            Thanh toán
+          <Button variant="contained" sx={{ px: 4 }} onClick={handleCheckout}>
+            Mua hàng
           </Button>
         </Box>
-      </Box>
+      </PaperCustom>
     </>
   );
 };

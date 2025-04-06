@@ -138,6 +138,11 @@ const InfoProduct = ({ product, loading }) => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setSelectedValues({});
+    setQuantity(1);
+  }, [product]);
+
   const handleShowPrice = (key, value) => {
     setSelectedValues((prev) => {
       const newSelectedValues = { ...prev }; // Sao chép đối tượng cũ
@@ -358,7 +363,7 @@ const InfoProduct = ({ product, loading }) => {
                       color: "#fff",
                     }}
                   >
-                    {Format.formatCurrency(selectedVariant.promotion_price)}
+                    {Format.formatCurrency(selectedVariant.price)}
                   </Typography>
                 )}
               {priceToShow &&

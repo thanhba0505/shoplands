@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import PaperCustom from "~/components/PaperCustom";
 
-const ProductDetails = ({ productDetails, loading }) => {
+const ProductDetails = ({ productDetails, description, loading }) => {
   return (
     <PaperCustom sx={{ px: 3 }}>
       {loading ? (
@@ -35,6 +35,14 @@ const ProductDetails = ({ productDetails, loading }) => {
             <Grid2 container size={9}>
               <Skeleton height={36} width={600} />
             </Grid2>
+            <Grid2 container size={12} mt={2}>
+              <Skeleton variant="text" width={"100%"} />
+              <Skeleton variant="text" width={"100%"} />
+              <Skeleton variant="text" width={"100%"} />
+              <Skeleton variant="text" width={"100%"} />
+              <Skeleton variant="text" width={"100%"} />
+              <Skeleton variant="text" width={"60%"} />
+            </Grid2>
           </Grid2>
         </>
       ) : (
@@ -49,19 +57,6 @@ const ProductDetails = ({ productDetails, loading }) => {
           <TableContainer sx={{ pb: 1.5 }}>
             <Table>
               <TableBody>
-                <TableRow>
-                  <TableCell width={"30%"}>
-                    <Typography variant="body1" fontWeight={"bold"}>
-                      Chi tiết
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body1" fontWeight={"bold"}>
-                      Mô tả
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-
                 {productDetails.map((detail, index) => (
                   <TableRow key={index}>
                     <TableCell width={"30%"}>
@@ -76,6 +71,22 @@ const ProductDetails = ({ productDetails, loading }) => {
                 ))}
               </TableBody>
             </Table>
+
+            <Typography
+              variant="h6"
+              sx={{ mb: 1.5, my: 1, mt: 3, px: 2 }}
+              textAlign={"start"}
+            >
+              Mô tả
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{ mb: 1.5, my: 1, mt: 3, px: 2, whiteSpace: "pre-line" }}
+              textAlign={"start"}
+            >
+              {description}
+            </Typography>
           </TableContainer>
         </>
       )}

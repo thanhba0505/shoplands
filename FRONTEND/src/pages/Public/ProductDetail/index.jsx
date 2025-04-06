@@ -43,7 +43,7 @@ const ProductDetail = () => {
         <SimilarProducts />
       </Container>
       <Container>
-        <ProductDetails productDetails={product?.details} loading={loading} />
+        <ProductDetails productDetails={product?.details} description={product?.description} loading={loading} />
       </Container>
       <Container>
         <SellerProduct sellerId={product?.seller_id} />

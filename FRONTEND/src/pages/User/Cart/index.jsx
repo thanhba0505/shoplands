@@ -1,21 +1,27 @@
 import { useEffect, useState, useCallback } from "react";
-import { Box, Container } from "@mui/material";
+import { Container, Grid2, Skeleton } from "@mui/material";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import CartBox from "./CartBox";
 import { useNavigate } from "react-router-dom";
 import Log from "~/helpers/Log";
+import PaperCustom from "~/components/PaperCustom";
 
 const Cart = () => {
-  const [carts, setCarts] = useState([]);
   const navigate = useNavigate();
 
+  const [carts, setCarts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const fetchCarts = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axiosWithAuth.get(Api.cart(), { navigate });
       setCarts(response.data);
     } catch (error) {
       Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   }, [navigate]);
 
@@ -24,15 +30,68 @@ const Cart = () => {
   }, [fetchCarts]);
 
   return (
-    <Container>
-      <Box sx={{ width: "100%", padding: 2 }}>
-        {carts?.groups?.map((cart, index) => (
-          <Box key={index} sx={{ marginBottom: 4 }}>
+    <>
+      {!loading ? (
+        <Container>
+          <PaperCustom sx={{ px: 3 }}>
+            <Skeleton height={40} width={400} sx={{ mb: 1.5, my: 1, px: 2 }} />
+            <Grid2 container spacing={2} sx={{ pb: 1.5 }}>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={3}>
+                <Skeleton height={50} width={600} />
+              </Grid2>
+              <Grid2 container justifyContent={"center"} size={6}>
+                <Skeleton height={50} width={300} />
+              </Grid2>
+              <Grid2 container size={3}>
+                <Skeleton height={50} width={600} />
+              </Grid2>
+            </Grid2>
+          </PaperCustom>
+        </Container>
+      ) : (
+        carts?.groups?.map((cart, index) => (
+          <Container key={index}>
             <CartBox cart={cart} />
-          </Box>
-        ))}
-      </Box>
-    </Container>
+          </Container>
+        ))
+      )}
+    </>
   );
 };
 
