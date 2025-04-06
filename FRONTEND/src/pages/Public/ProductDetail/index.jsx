@@ -5,13 +5,15 @@ import { useCallback, useEffect, useState } from "react";
 import axiosDefault from "~/utils/axiosDefault";
 import Api from "~/helpers/Api";
 import Path from "~/helpers/Path";
+import SimilarProducts from "./SimilarProducts";
+import SellerProduct from "./SellerProduct";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState([]);
+  const [loadingProduct, setLoadingProduct] = useState(false);
 
-  // 🔹 Hàm gọi API lấy danh sách sản phẩm bán chạy
   const fetchProducts = useCallback(async () => {
     try {
       const response = await axiosDefault.get(Api.products(id));
@@ -22,7 +24,7 @@ const ProductDetail = () => {
     }
   }, [navigate, id]);
 
-  // 🔥 Gọi API khi component mount
+  
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -34,6 +36,12 @@ const ProductDetail = () => {
           <ProductInfo product={product} />
         </Container>
       )}
+      <Container>
+        <SimilarProducts />
+      </Container>
+      <Container>
+        <SellerProduct />
+      </Container>
     </>
   );
 };

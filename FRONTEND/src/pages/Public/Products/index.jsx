@@ -332,7 +332,7 @@ const Products = () => {
           </PaperCustom>
         </Grid2>
         <Grid2 size={8}>
-          <PaperCustom sx={{ height: "100%" }}>
+          <PaperCustom sx={{ height: "100%", px: 3 }}>
             <Grid2
               container
               columnSpacing={2}

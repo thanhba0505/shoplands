@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -23,7 +23,13 @@ import Auth from "~/helpers/Auth";
 
 // Hình ảnh
 const ImageProduct = ({ images }) => {
-  const defaultImage = images && images.find((image) => image.default === 1);
+  // const defaultImage = images && images.find((image) => image.default === 1);
+  const [defaultImage, setDefaultImage] = useState(null);
+
+  useEffect(() => {
+    const defaultImage = images && images.find((image) => image.default === 1);
+    setDefaultImage(defaultImage);
+  }, [images]);
 
   return (
     <>
@@ -46,24 +52,39 @@ const ImageProduct = ({ images }) => {
                 maxWidth: "400px",
                 objectFit: "contain",
                 margin: "auto",
+                userSelect: "none",
               }}
             />
           </Box>
-          <Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-            {images &&
-              images.map((image, key) => (
-                <img
-                  key={key}
-                  src={Path.publicProduct(image.image_path)}
-                  alt="Product Image"
-                  style={{
-                    width: "100px",
-                    maxWidth: "400px",
-                    objectFit: "contain",
-                    margin: "auto",
-                  }}
-                />
-              ))}
+          <Box sx={{ width: "100%", overflowX: "auto" }}>
+            <Box
+              sx={{
+                paddingBottom: 2,
+                display: "flex",
+                gap: 2,
+                flexWrap: "nowrap",
+                justifyContent: "center",
+              }}
+            >
+              {images &&
+                images.map((image, key) => (
+                  <img
+                    key={key}
+                    src={Path.publicProduct(image.image_path)}
+                    alt="Product Image"
+                    style={{
+                      width: "100px",
+                      maxWidth: "400px",
+                      objectFit: "contain",
+                      cursor: "pointer",
+                      userSelect: "none",
+                    }}
+                    onClick={() => {
+                      setDefaultImage(image);
+                    }}
+                  />
+                ))}
+            </Box>
           </Box>
         </Box>
       )}
@@ -97,7 +118,8 @@ const InfoProduct = ({ product }) => {
 
   const getSelectedVariant = () => {
     if (
-      variants && product.attributes &&
+      variants &&
+      product.attributes &&
       Object.keys(selectedValues).length ===
         Object.keys(product.attributes).length
     ) {
@@ -140,12 +162,38 @@ const InfoProduct = ({ product }) => {
   return (
     <>
       {product && (
-        <Box sx={{ width: "60%", padding: 2 }}>
-          <Typography className="line-clamp-3" variant="h5">
-            {product.name}
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography variant="body2" color="textSecondary">
+        <Box
+          sx={{
+            width: "60%",
+            padding: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              flexWrap: "wrap",
+            }}
+          >
+            <Typography
+              sx={{ width: "100%" }}
+              className="line-clamp-3"
+              variant="h5"
+            >
+              {product.name}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              lineHeight={1}
+              sx={{ mt: 0.5 }}
+            >
               {product.average_rating}
             </Typography>
 
@@ -160,183 +208,213 @@ const InfoProduct = ({ product }) => {
             />
             <Typography
               variant="body2"
+              lineHeight={1}
               color="textSecondary"
-              sx={{ marginLeft: 1 }}
+              sx={{ marginLeft: 1, mt: 0.5 }}
             >
               ({product.count_reviews} đánh giá)
             </Typography>
-          </Box>
-          <Typography
-            variant="h5"
-            fontWeight={"bold"}
-            color="#fff"
-            sx={{ padding: 2, bgcolor: "primary.light" }}
-          >
-            {priceToShow
-              ? `${Format.formatCurrency(priceToShow)}`
-              : `${Format.formatCurrency(priceFrom)} - ${Format.formatCurrency(
-                  priceTo
-                )}`}
-            {priceToShow &&
-              selectedVariant &&
-              selectedVariant.promotion_price && (
-                <Typography
-                  variant="body2"
-                  color="error"
-                  sx={{ display: "inline", marginLeft: 1 }}
-                >
-                  {Format.formatCurrency(selectedVariant.promotion_price)}
-                </Typography>
-              )}
-            {priceToShow &&
-              selectedVariant &&
-              selectedVariant.promotion_price && (
-                <Typography
-                  variant="body2"
-                  color="error"
-                  sx={{ display: "inline", marginLeft: 1 }}
-                >
-                  {Format.formatPercentage(
-                    (selectedVariant.price - selectedVariant.promotion_price) /
-                      selectedVariant.price
-                  )}
-                </Typography>
-              )}
-          </Typography>
-          <TableContainer>
-            <Table sx={{ borderCollapse: "collapse", border: "none" }}>
-              <TableBody>
-                <TableRow>
-                  <TableCell
+
+            <Box
+              sx={{
+                width: "100%",
+                padding: 2,
+                backgroundColor: "primary.light",
+                display: "flex",
+                alignItems: "end",
+                gap: 1,
+                mt: 0.5,
+              }}
+            >
+              <Typography variant="h5" sx={{ color: "white", fontWeight: "bold", lineHeight: 1 }}>
+                {priceToShow
+                  ? `${Format.formatCurrency(priceToShow)}`
+                  : `${Format.formatCurrency(
+                      priceFrom
+                    )} - ${Format.formatCurrency(priceTo)}`}
+              </Typography>
+
+              {priceToShow &&
+                selectedVariant &&
+                selectedVariant.promotion_price && (
+                  <Typography
+                    variant="body2"
                     sx={{
-                      width: "20%",
-                      px: 0,
-                      py: 1,
-                      border: "none",
+                      display: "inline",
+                      marginLeft: 1,
+                      textDecoration: "line-through",
+                      lineHeight: 1,
+                      color: "#fff",
                     }}
                   >
-                    Tồn kho
-                  </TableCell>
-                  <TableCell
+                    {Format.formatCurrency(selectedVariant.promotion_price)}
+                  </Typography>
+                )}
+              {priceToShow &&
+                selectedVariant &&
+                selectedVariant.promotion_price && (
+                  <Typography
+                    variant="body2"
+                    color="textPrimary"
                     sx={{
-                      px: 0,
-                      py: 1,
-                      border: "none",
+                      display: "inline",
+                      marginLeft: 1,
+                      backgroundColor: "#fff",
+                      px: 1,
+                      py: 0.5,
+                      borderRadius: 1,
+                      lineHeight: 1,
                     }}
                   >
-                    {productQuantity}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell
-                    sx={{
-                      width: "20%",
-                      px: 0,
-                      py: 1,
-                      border: "none",
-                    }}
-                  >
-                    Đã bán
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      px: 0,
-                      py: 1,
-                      border: "none",
-                    }}
-                  >
-                    {soldQuantity}
-                  </TableCell>
-                </TableRow>
-                {product.attributes &&
-                  Object.keys(product.attributes).map((key, index) => (
-                    <TableRow key={index}>
-                      <TableCell
-                        sx={{
-                          width: "20%",
-                          px: 0,
-                          py: 1,
-                          border: "none",
-                        }}
-                      >
-                        {key}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          px: 0,
-                          py: 1,
-                          border: "none",
-                        }}
-                      >
-                        <Box
+                    {Format.formatPercentage(
+                      (selectedVariant.price -
+                        selectedVariant.promotion_price) /
+                        selectedVariant.price
+                    )}
+                  </Typography>
+                )}
+            </Box>
+
+            <TableContainer sx={{ width: "100%", mt: 2 }}>
+              <Table sx={{ borderCollapse: "collapse", border: "none" }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        width: "20%",
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      Tồn kho
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      {productQuantity}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        width: "20%",
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      Đã bán
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      {soldQuantity}
+                    </TableCell>
+                  </TableRow>
+                  {product.attributes &&
+                    Object.keys(product.attributes).map((key, index) => (
+                      <TableRow key={index}>
+                        <TableCell
                           sx={{
-                            display: "flex",
-                            gap: 1,
-                            flexWrap: "wrap",
+                            width: "20%",
+                            px: 0,
+                            py: 1,
+                            border: "none",
                           }}
                         >
-                          {" "}
-                          {product.attributes[key].map((value, subIndex) => (
-                            <Button
-                              variant="outlined"
-                              key={subIndex}
-                              onClick={() => handleShowPrice(key, value)}
-                              sx={{
-                                backgroundColor:
-                                  selectedValues[key] === value
-                                    ? "primary.light"
-                                    : "#fff",
-                                color:
-                                  selectedValues[key] === value
-                                    ? "#fff"
-                                    : "primary.light",
-                              }}
-                            >
-                              {value}
-                            </Button>
-                          ))}
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                {/* Số lượng */}
-                <TableRow>
-                  <TableCell
-                    sx={{
-                      width: "20%",
-                      px: 0,
-                      py: 1,
-                      border: "none",
-                    }}
-                  >
-                    Số lượng
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      px: 0,
-                      py: 1,
-                      border: "none",
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <QuantityInput
-                        min={1}
-                        max={productQuantity}
-                        value={quantity}
-                        onChange={handleQuantityChange}
-                      />
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+                          {key}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            px: 0,
+                            py: 1,
+                            border: "none",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 1,
+                              flexWrap: "wrap",
+                            }}
+                          >
+                            {" "}
+                            {product.attributes[key].map((value, subIndex) => (
+                              <Button
+                                variant="outlined"
+                                key={subIndex}
+                                onClick={() => handleShowPrice(key, value)}
+                                sx={{
+                                  backgroundColor:
+                                    selectedValues[key] === value
+                                      ? "primary.light"
+                                      : "#fff",
+                                  color:
+                                    selectedValues[key] === value
+                                      ? "#fff"
+                                      : "primary.light",
+                                }}
+                              >
+                                {value}
+                              </Button>
+                            ))}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  {/* Số lượng */}
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        width: "20%",
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      Số lượng
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <QuantityInput
+                          min={1}
+                          max={productQuantity}
+                          value={quantity}
+                          onChange={handleQuantityChange}
+                        />
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
 
           {/* Nút xử lý */}
           {Auth.checkUser() ? (
-            <BtnHandle selectedVariant={selectedVariant} quantity={quantity} attributes={product?.attributes} />
+            <BtnHandle
+              selectedVariant={selectedVariant}
+              quantity={quantity}
+              attributes={product?.attributes}
+            />
           ) : (
             <ButtonLoading
+              size="large"
               variant="contained"
               sx={{ width: "100%" }}
               onClick={() => navigate(Path.login())}
@@ -354,7 +432,7 @@ const InfoProduct = ({ product }) => {
 const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const handleAddToCart = async () => {
     if (!selectedVariant && attributes && Object.keys(attributes).length > 0) {
       enqueueSnackbar("Hãy chọn thuộc tính sản phẩm", { variant: "warning" });
@@ -386,10 +464,11 @@ const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
         sx={{ width: "50%" }}
         variant="outlined"
         onClick={handleAddToCart}
+        size="large"
       >
         Thêm vào giỏ hàng
       </ButtonLoading>
-      <ButtonLoading sx={{ width: "50%" }} variant="contained">
+      <ButtonLoading size="large" sx={{ width: "50%" }} variant="contained">
         Mua ngay
       </ButtonLoading>
     </Box>
@@ -398,7 +477,7 @@ const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
 
 const ProductInfo = ({ product }) => {
   return (
-    <PaperCustom sx={{ display: "flex" }}>
+    <PaperCustom sx={{ display: "flex", gap: 2 }}>
       <ImageProduct images={product?.images} />
       <InfoProduct product={product} />
     </PaperCustom>

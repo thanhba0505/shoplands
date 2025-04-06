@@ -1,4 +1,4 @@
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
@@ -9,7 +9,7 @@ import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
-const BestSellingProducts = () => {
+const SimilarProducts = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ const BestSellingProducts = () => {
     try {
       const response = await axiosDefault.get(Api.products(), {
         params: {
-          limit: 15,
+          limit: 5,
         },
       });
       setProducts(response.data.products);
@@ -35,27 +35,25 @@ const BestSellingProducts = () => {
   }, [fetchProducts]);
 
   return (
-    <Container maxWidth="lg">
-      <PaperCustom sx={{ px: 3 }}>
-        <Typography variant="h6" sx={{ mt: 2, mb: 3 }} textAlign={"center"}>
-          Sản phẩm bán chạy
-        </Typography>
-        {loading ? (
-          <SkeletonProducts count={15} columns={10} size={2} />
-        ) : (
-          <>
-            <ShowProducts products={products} columns={10} size={2} />
-            <Button
-              sx={{ mt: 2, mx: "auto", display: "block" }}
-              onClick={() => navigate(Path.products())}
-            >
-              Xem thêm
-            </Button>
-          </>
-        )}
-      </PaperCustom>
-    </Container>
+    <PaperCustom>
+      <Typography variant="h6" sx={{ mb: 1.5 }} textAlign={"center"}>
+        Sản phẩm tương tự
+      </Typography>
+      {loading ? (
+        <SkeletonProducts count={5} columns={10} size={2} />
+      ) : (
+        <>
+          <ShowProducts products={products} columns={10} size={2} />
+          <Button
+            sx={{ mt: 2, mx: "auto", display: "block", px: 3 }}
+            onClick={() => navigate(Path.products())}
+          >
+            Xem thêm
+          </Button>
+        </>
+      )}
+    </PaperCustom>
   );
 };
 
-export default BestSellingProducts;
+export default SimilarProducts;
