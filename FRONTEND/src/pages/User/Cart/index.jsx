@@ -1,17 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
-import { Container, Grid2, Skeleton } from "@mui/material";
+import { Button, Container, Grid2, Skeleton, Typography } from "@mui/material";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import CartBox from "./CartBox";
 import { useNavigate } from "react-router-dom";
 import Log from "~/helpers/Log";
 import PaperCustom from "~/components/PaperCustom";
+import Path from "~/helpers/Path";
 
 const Cart = () => {
   const navigate = useNavigate();
 
   const [carts, setCarts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchCarts = useCallback(async () => {
     setLoading(true);
@@ -31,11 +32,65 @@ const Cart = () => {
 
   return (
     <>
-      {!loading ? (
+      {loading ? (
         <Container>
           <PaperCustom sx={{ px: 3 }}>
             <Skeleton height={40} width={400} sx={{ mb: 1.5, my: 1, px: 2 }} />
             <Grid2 container spacing={2} sx={{ pb: 1.5 }}>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
+              <Grid2 container size={2}>
+                <Skeleton height={36} width={"100%"} />
+              </Grid2>
               <Grid2 container size={2}>
                 <Skeleton height={36} width={"100%"} />
               </Grid2>
@@ -84,6 +139,23 @@ const Cart = () => {
             </Grid2>
           </PaperCustom>
         </Container>
+      ) : carts.length == 0 ? (
+        <>
+          <Container>
+            <PaperCustom
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                py: 30
+              }}
+            >
+              <Typography variant="body1">Giỏ hàng trống</Typography>
+              <Button sx={{ px: 2, mt: 1 }} onClick={() => navigate(Path.products())}>Mua ngay</Button>
+            </PaperCustom>
+          </Container>
+        </>
       ) : (
         carts?.groups?.map((cart, index) => (
           <Container key={index}>
