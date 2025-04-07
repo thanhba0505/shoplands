@@ -2,7 +2,6 @@ import { Container } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ButtonLoading from "~/components/ButtonLoading";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
@@ -31,11 +30,11 @@ const Checkout = () => {
   const [coupon, setCoupon] = useState(null);
   const [shippingFee, setShippingFee] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
     dispatch(startLoading());
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axiosWithAuth.post(
         Api.orders(),
@@ -55,7 +54,7 @@ const Checkout = () => {
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
       dispatch(stopLoading());
     }
   };
@@ -81,16 +80,14 @@ const Checkout = () => {
         />
       </Container>
 
-      <Price subTotal={subTotal} shippingFee={shippingFee} coupon={coupon} />
-
       <Container>
-        <ButtonLoading
-          onClick={handleCheckout}
-          variant="contained"
-          loading={isLoading}
-        >
-          Thanh toán
-        </ButtonLoading>
+        <Price
+          subTotal={subTotal}
+          shippingFee={shippingFee}
+          coupon={coupon}
+          handleCheckout={handleCheckout}
+          loading={loading}
+        />
       </Container>
     </>
   );

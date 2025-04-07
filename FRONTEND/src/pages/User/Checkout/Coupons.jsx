@@ -17,7 +17,7 @@ import axiosDefault from "~/utils/axiosDefault";
 const Coupons = ({ subTotal, setCoupon, coupon }) => {
   const seller_id = useSelector((state) => state.order.seller_id);
   const [coupons, setCoupons] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchApi = useCallback(async () => {
     setLoading(true);
@@ -86,8 +86,8 @@ const Coupons = ({ subTotal, setCoupon, coupon }) => {
 
           <Box sx={{ maxHeight: "430px", overflowY: "auto", mb: 2 }}>
             <Box display="flex" flexWrap="wrap" gap={2} py={1}>
-              {coupons.length == 0 ? (
-                <>ádfasd</>
+              {coupons.length === 0 ? (
+                <>Không có mã giảm giá</>
               ) : (
                 coupons.map((coupon) => (
                   <Box

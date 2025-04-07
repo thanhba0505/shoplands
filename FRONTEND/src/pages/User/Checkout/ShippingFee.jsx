@@ -4,6 +4,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
@@ -15,8 +16,10 @@ import axiosDefault from "~/utils/axiosDefault";
 
 const ShippingFee = ({ setShippingFee, shippingFee }) => {
   const [shippingFees, setShippingFees] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchApi = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axiosDefault.get(Api.shippingFees());
       setShippingFees(response.data);
@@ -27,6 +30,8 @@ const ShippingFee = ({ setShippingFee, shippingFee }) => {
       }
     } catch (error) {
       Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   }, [setShippingFee]);
 
@@ -42,36 +47,55 @@ const ShippingFee = ({ setShippingFee, shippingFee }) => {
   };
 
   return (
-    <PaperCustom>
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Phương thức giao hàng
-      </Typography>
+    <PaperCustom sx={{ px: 3 }}>
+      {loading ? (
+        <>
+          <Skeleton
+            variant="rounded"
+            height={32}
+            width={350}
+            sx={{ mb: 2, my: 1, px: 2 }}
+          />
+          <Skeleton
+            variant="rounded"
+            height={56}
+            width={"100%"}
+            sx={{ mb: 2, mt: 2, px: 2 }}
+          />
+        </>
+      ) : (
+        <>
+          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+            Phương thức giao hàng
+          </Typography>
 
-      <Box sx={{ pt: 1, pb: 2 }}>
-        {shippingFee && (
-          <FormControl fullWidth>
-            <InputLabel id="shipping-fee-select-label">
-              Chọn phương thức giao hàng
-            </InputLabel>
-            <Select
-              labelId="shipping-fee-select-label"
-              value={shippingFee.shipping_fee_id} // Đảm bảo rằng giá trị luôn hợp lệ
-              onChange={handleChange}
-              label="Chọn phương thức giao hàng"
-            >
-              {shippingFees.map((item) => (
-                <MenuItem
-                  key={item.shipping_fee_id}
-                  value={item.shipping_fee_id}
+          <Box sx={{ pt: 1, pb: 2 }}>
+            {shippingFee && (
+              <FormControl fullWidth>
+                <InputLabel id="shipping-fee-select-label">
+                  Chọn phương thức giao hàng
+                </InputLabel>
+                <Select
+                  labelId="shipping-fee-select-label"
+                  value={shippingFee.shipping_fee_id} // Đảm bảo rằng giá trị luôn hợp lệ
+                  onChange={handleChange}
+                  label="Chọn phương thức giao hàng"
                 >
-                  {item.method} - {Format.formatCurrency(item.price)}{" "}
-                  {/* Hiển thị phương thức và giá */}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-      </Box>
+                  {shippingFees.map((item) => (
+                    <MenuItem
+                      key={item.shipping_fee_id}
+                      value={item.shipping_fee_id}
+                    >
+                      {item.method} - {Format.formatCurrency(item.price)}{" "}
+                      {/* Hiển thị phương thức và giá */}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </Box>
+        </>
+      )}
     </PaperCustom>
   );
 };
