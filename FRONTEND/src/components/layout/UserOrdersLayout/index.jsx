@@ -5,14 +5,14 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import MarkunreadMailboxOutlinedIcon from "@mui/icons-material/MarkunreadMailboxOutlined";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
 import AllInboxRoundedIcon from "@mui/icons-material/AllInboxRounded";
 import SidebarTab from "../SidebarTab";
 import Header from "../Header";
 
 const NAVIGATION = [
   {
-    group: "Tài khoản của tôi",
+    group: "Tài khoản",
   },
   {
     name: "Thông tin tài khoản",
@@ -41,6 +41,12 @@ const NAVIGATION = [
     tooltip: "Đang đóng gói",
     path: "/user/orders/packing",
     icon: <MarkunreadMailboxOutlinedIcon />,
+  },
+  {
+    name: "Đã đóng gói",
+    tooltip: "Đã đóng gói",
+    path: "/user/orders/packed",
+    icon: <CardTravelRoundedIcon />,
   },
   {
     name: "Đang giao hàng",

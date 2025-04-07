@@ -215,6 +215,9 @@ class OrderController {
                 throw new \Exception("Lỗi tạo QR code thanh toán");
             }
 
+            // Lưu link thanh toán
+            // OrderModel::updatePaymentLink($orderId, $paymentLink);
+
             Response::json([
                 "pathQr" => $paymentPath,
                 "orderId" => $orderId

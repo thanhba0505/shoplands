@@ -39,6 +39,27 @@ class OrderModel {
         return $orderId > 0 ? $orderId : $orderId;
     }
 
+    // Lưu link thanh toán 
+    public static function updatePaymentLink($orderId, $payment_link) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                orders
+            SET
+                payment_link = :payment_link
+            WHERE
+                id = :orderId
+        ";
+
+        $result = $query->query($sql, [
+            'payment_link' => $payment_link,
+            'orderId' => $orderId
+        ])->rowCount();
+
+        return $result > 0 ? true : false;
+    }
+
     // Tìm đơn hàng theo id và user id
     public static function find($orderId, $userId) {
         $query = new ConnectDatabase();

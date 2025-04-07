@@ -214,7 +214,14 @@ const OrdersTable = ({ orders, setOrders }) => {
                     {Format.formatCurrency(order.shipping_fee.price)}
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatCurrency(order.final_price)}
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold" }}
+                      lineHeight={1}
+                      color="red"
+                    >
+                      {Format.formatCurrency(order.final_price)}
+                    </Typography>
                   </TableCell>
                   <TableCell align="center">
                     {Format.formatCurrency(order.paid)}

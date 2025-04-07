@@ -59,6 +59,7 @@ const userRoutes = [
   { path: "/user/orders", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/all", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/packing", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/packed", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/shipping", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/delivered", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/completed", component: Orders, layout: UserOrdersLayout },

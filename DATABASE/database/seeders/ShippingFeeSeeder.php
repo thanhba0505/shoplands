@@ -11,7 +11,7 @@ class ShippingFeeSeeder extends Seeder
     {
         $data = [
             [
-                'method' => 'Giao hàng nhanh (2 - 4 ngày',
+                'method' => 'Giao hàng nhanh (2 - 4 ngày)',
                 'price' => 25000,
             ],
             [
