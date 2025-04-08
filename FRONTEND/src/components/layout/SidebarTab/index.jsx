@@ -157,6 +157,7 @@ const SidebarTab = ({ navigation, sx }) => {
         sx={{
           pr: 2,
           overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <List

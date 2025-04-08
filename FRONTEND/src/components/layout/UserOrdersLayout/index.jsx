@@ -68,7 +68,7 @@ const NAVIGATION = [
   },
 ];
 
-const ManageLayout = ({ children }) => {
+const UserOrdersLayout = ({ children }) => {
   const theme = useTheme();
 
   return (
@@ -115,4 +115,4 @@ const ManageLayout = ({ children }) => {
   );
 };
 
-export default ManageLayout;
+export default UserOrdersLayout;

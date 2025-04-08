@@ -133,7 +133,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
               <TableCell align="center">Danh mục</TableCell>
               <TableCell align="center">Đánh giá</TableCell>
               <TableCell align="center">Tồn kho</TableCell>
-              <TableCell align="right">Đã bán</TableCell>
+              <TableCell align="center">Đã bán</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -211,7 +211,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
                       <TableCell align="center">
                         {product.quantity || 0}
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell align="center">
                         {product.sold_quantity || 0}
                       </TableCell>
                     </TableRow>

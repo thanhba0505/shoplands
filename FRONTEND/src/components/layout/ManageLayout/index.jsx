@@ -76,6 +76,18 @@ const NAVIGATION = [
     icon: <BallotOutlinedIcon />,
   },
   {
+    name: "Còn hoạt động",
+    tooltip: "Còn hoạt động",
+    path: "/seller/products/active",
+    icon: <BallotOutlinedIcon />,
+  },
+  {
+    name: "Đã bị khóa",
+    tooltip: "Đã bị khóa",
+    path: "/seller/products/locked",
+    icon: <BallotOutlinedIcon />,
+  },
+  {
     name: "Thêm sản phẩm",
     tooltip: "Thêm sản phẩm",
     path: "/seller/products/new",
