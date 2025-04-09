@@ -17,6 +17,8 @@ use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
 use App\Models\ProductVariantValueModel;
 use App\Models\ReviewModel;
+use App\Models\Seller;
+use App\Models\SellerModel;
 
 class ProductController {
     public function get() {
@@ -449,6 +451,75 @@ class ProductController {
             if (isset($variant['promotion_price']) && $variant['promotion_price'] <= 0) {
                 Response::json(['message' => "Giá khuyến mãi phải lớn hơn 0"], 400);
             }
+        }
+    }
+
+    public function sellerUpdate($product_id) {
+        try {
+            $seller = Auth::seller();
+
+            $product = ProductModel::getByProductId($product_id);
+            if (!$product) {
+                Response::json(['message' => 'Không tìm thấy sản phẩm'], 400);
+            }
+
+            $sellerByProductId = SellerModel::findSellerByProductId($product_id);
+            if (!$sellerByProductId || $sellerByProductId['seller_id'] != $seller['seller_id']) {
+                Response::json(['message' => 'Sản phẩm không phải của bạn'], 400);
+            }
+            // Cập nhật mô tả
+            $description = Request::json("description", null);
+
+            $checkDescription = Validator::isText($description, 'Mô tả', 0, 5000, true);
+            if ($checkDescription !== true) {
+                Response::json(['message' => $checkDescription], 400);
+            }
+
+            if (!empty($description)) {
+                ProductModel::updateDescription($product_id, $description);
+            }
+
+            // Cập nhật giá và tồn kho
+            $variants = Request::json("variants", []);
+
+            if (!empty($variants)) {
+                foreach ($variants as $key => $variant) {
+                    $productByVariantId = ProductModel::getByProductVariantId($variant['product_variant_id']);
+
+                    if ($product_id != $productByVariantId['product_id']) {
+                        Response::json(['message' => 'Thuộc tính không thuộc sản phẩm này'], 400);
+                    }
+
+                    $checkPrice = Validator::isNumber($variant['price'], 'Giá', 1, 5000000);
+                    $checkPromotionPrice = Validator::isNumber($variant['promotion_price'], 'Giá khuyến mãi', 0, 5000000);
+                    $checkQuantity = Validator::isNumber($variant['quantity'], 'Số lượng', 1, 10000);
+
+                    if ($checkPrice  !== true) {
+                        Response::json(['message' => $checkPrice], 400);
+                    }
+
+                    if ($checkPromotionPrice !== true) {
+                        Response::json(['message' => $checkPromotionPrice], 400);
+                    }
+
+                    if ($checkQuantity !== true) {
+                        Response::json(['message' => $checkQuantity], 400);
+                    }
+
+                    if ($variant['promotion_price'] && $variant['promotion_price'] >= $variant['price']) {
+                        Response::json(['message' => "Giá khuyến mãi phải nhỏ hơn giá bán"], 400);
+                    }
+
+                    ProductVariantModel::updateVariant($variant['product_variant_id'], $variant['price'], $variant['promotion_price'], $variant['quantity']);
+                }
+            }
+
+            $product = ProductModel::getByProductId($product_id);
+            $product = $this->enrichProductData($product);
+
+            Response::json($product, 200);
+        } catch (\Throwable $th) {
+            $this->logAndRespond("AddressController -> sellerUpdate", $th);
         }
     }
 }

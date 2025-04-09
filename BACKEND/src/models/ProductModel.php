@@ -152,10 +152,6 @@ class ProductModel {
         ];
     }
 
-
-
-
-
     // Lấy danh sách sản phẩm theo seller
     public static function getBySellerId($seller_id, $status = 'all', $limit = 12, $page = 1) {
         $query = new ConnectDatabase();
@@ -231,7 +227,6 @@ class ProductModel {
 
         return $result['total'] ?? 0;
     }
-
 
     // Đếm toàn bộ sản phẩm
     public static function count($status = 'all') {
@@ -353,5 +348,26 @@ class ProductModel {
         ]);
 
         return $conn->getConnection()->lastInsertId();
+    }
+
+    // Cập nhật description
+    public static function updateDescription($product_id, $description) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                products
+            SET
+                description = :description
+            WHERE    
+                id = :product_id
+        ";
+
+        $result = $conn->query($sql, [
+            'description' => $description,
+            'product_id' => $product_id
+        ]);
+
+        return $result->rowCount() > 0 ? true : false;
     }
 }

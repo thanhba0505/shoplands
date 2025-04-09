@@ -140,4 +140,31 @@ class ProductVariantModel {
 
         return $result ?? null;
     }
+
+    // Cập nhật variant
+    public static function updateVariant($product_variant_id, $price, $promotion_price, $quantity) {
+        $conn = new ConnectDatabase();
+
+        $promotion_price = empty($promotion_price) ? null : $promotion_price;
+
+        $sql = "
+            UPDATE 
+                product_variants
+            SET
+                price = :price,
+                promotion_price = :promotion_price,
+                quantity = :quantity
+            WHERE
+                id = :product_variant_id
+        ";
+
+        $result = $conn->query($sql, [
+            'price' => $price,
+            'promotion_price' => $promotion_price,
+            'quantity' => $quantity,
+            'product_variant_id' => $product_variant_id
+        ]);
+
+        return $result;
+    }
 }

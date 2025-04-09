@@ -123,5 +123,42 @@ class SellerModel {
         return $result;
     }
 
-   
+//    Lấy seller theo product id
+    public static function findSellerByProductId($productId) {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                s.id AS seller_id,
+                s.store_name,
+                s.owner_name,
+                s.description,
+                s.logo,
+                s.background,
+                a.id AS account_id,
+                a.phone,
+                a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
+                a.status,
+                a.created_at
+            FROM
+                accounts a
+                JOIN sellers s ON s.account_id = a.id
+                JOIN products p ON p.seller_id = s.id
+            WHERE
+                p.id = :productId
+        ";
+
+        $result = $query->query($sql, ['productId' => $productId])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
+        }
+
+        return $result;
+    }
 }
