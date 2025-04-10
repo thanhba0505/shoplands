@@ -14,7 +14,7 @@ return new class extends Migration
             $table->decimal('subtotal_price', 15, 2);
             $table->decimal('discount', 15, 2)->default(0)->nullable();
             $table->decimal('final_price', 15, 2);
-            $table->decimal('paid', 15, 2)->default(0);
+            $table->boolean('paid')->default(false);
             $table->decimal('revenue', 15, 2);
             $table->string('cancel_reason')->nullable();
             $table->unsignedBigInteger('from_address_id'); // Foreign key

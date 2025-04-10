@@ -6,8 +6,10 @@ use App\Helpers\Auth;
 use App\Helpers\Format;
 use App\Helpers\Log;
 use App\Helpers\QRCode;
+use App\Helpers\Redirect;
 use App\Helpers\Request;
 use App\Helpers\Response;
+use App\Helpers\VNpay;
 use App\Models\AccountModel;
 use App\Models\AddressModel;
 use App\Models\CartModel;
@@ -200,30 +202,25 @@ class OrderController {
                     );
 
                     // Xóa giỏ hàng
-                    CartModel::delete($userId, $cart["cart_id"]);
+                    // CartModel::delete($userId, $cart["cart_id"]);
                 }
             }
 
             // Tạo trạng thái đơn hàng
             OrderStatusModel::add($orderId, 'unpaid');
 
-            // Xử lý tạo QR code thanh toán
-            $paymentLink = "aaa";
-            $paymentPath = QRCode::createPayment($paymentLink);
+            // Thanh toán
+            $result = VNpay::createPaymentUrl($finalPrice);
 
-            if (!$paymentPath) {
-                throw new \Exception("Lỗi tạo QR code thanh toán");
-            }
-
-            // Lưu link thanh toán
-            // OrderModel::updatePaymentLink($orderId, $paymentLink);
+            // Lưu vnp_TxnRef
+            OrderModel::updateVnpTxnRef($orderId, $result["vnp_txnref"]);
 
             Response::json([
-                "pathQr" => $paymentPath,
+                "url" => $result["vnp_url"],
                 "orderId" => $orderId
             ], 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> userAdd:" . $th->getMessage());
+            Log::throwable("OrderController -> userAdd: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -231,40 +228,29 @@ class OrderController {
     // Kiểm tra thanh toán
     public function userCheckPayment() {
         try {
-            $user = Auth::user();
-            $orderId = Request::json('order_id');
+            $vnp_TxnRef = Request::get('vnp_TxnRef');
 
-            if (!$orderId) {
-                Response::json(['message' => 'Thông tin không đầy đủ'], 400);
+            if (!$vnp_TxnRef) {
+                Response::json(['message' => 'Không tìm thấy thông tin thanh toán'], 400);
             }
 
-            $order = OrderModel::find($orderId, $user["user_id"]);
+            $order = OrderModel::findByVnpTxnRef($vnp_TxnRef);
+
             if (!$order) {
                 Response::json(['message' => 'Không tìm thấy thông tin đơn hàng'], 400);
             }
 
-            $status = OrderStatusModel::findLatest($orderId, 'unpaid');
-            if (!$status) {
-                Response::json(['message' => 'Không tìm thấy trạng thái'], 400);
+            // Kiểm tra
+            $result = VNpay::handleReturn();
+
+            if ($result['RspCode'] == '00') {
+                OrderModel::updatePaid($order["order_id"], true);
             }
 
-            if ($status['status'] != 'unpaid') {
-                Response::json(['message' => 'Đơn hàng đã được thanh toán trước đó'], 400);
-            }
-
-            // Kiểm tra ở đây, giả bộ nó đã thanh toán
-            $check = true;
-
-            if ($check) {
-                OrderModel::updatePaid($orderId, $user["user_id"], $order["final_price"]);
-                OrderStatusModel::add($orderId, 'packing');
-
-                Response::json(['message' => 'Xác nhận đã thanh toán thành công'], 200);
-            } else {
-                Response::json(['message' => 'Bạn chưa thanh toán'], 400);
-            }
+            // Redirect::to("/user/orders/" . $order["order_id"]);
+            Response::json($result, 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> userCheckPayment:" . $th->getMessage());
+            Log::throwable("OrderController -> userCheckPayment: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

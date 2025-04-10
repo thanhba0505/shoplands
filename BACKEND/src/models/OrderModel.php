@@ -40,24 +40,44 @@ class OrderModel {
     }
 
     // Lưu link thanh toán 
-    public static function updatePaymentLink($orderId, $payment_link) {
+    public static function updateVnpTxnRef($orderId, $vnp_TxnRef) {
         $query = new ConnectDatabase();
 
         $sql = "
             UPDATE
                 orders
             SET
-                payment_link = :payment_link
+                vnp_txnref = :vnp_TxnRef
             WHERE
                 id = :orderId
         ";
 
         $result = $query->query($sql, [
-            'payment_link' => $payment_link,
+            'vnp_TxnRef' => $vnp_TxnRef,
             'orderId' => $orderId
         ])->rowCount();
 
         return $result > 0 ? true : false;
+    }
+
+    // Tìm kiếm đơn hàng theo  vnp_TxnRef
+    public static function findByVnpTxnRef($vnp_TxnRef) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id
+            FROM
+                orders o
+            WHERE
+                o.vnp_txnref = :vnp_TxnRef
+        ";
+
+        $result = $query->query($sql, [
+            'vnp_TxnRef' => $vnp_TxnRef
+        ])->fetch();
+
+        return $result;
     }
 
     // Tìm đơn hàng theo id và user id
@@ -96,7 +116,7 @@ class OrderModel {
     }
 
     // Cập nhật thanh toán theo id và user id
-    public static function updatePaid($orderId, $userId, $paid) {
+    public static function updatePaid($orderId, $paid) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -106,12 +126,10 @@ class OrderModel {
                 paid = :paid
             WHERE
                 id = :orderId
-                AND user_id = :userId
         ";
 
         $result = $query->query($sql, [
             'paid' => $paid,
-            'userId' => $userId,
             'orderId' => $orderId
         ]);
 
