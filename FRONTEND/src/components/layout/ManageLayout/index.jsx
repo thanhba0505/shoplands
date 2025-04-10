@@ -7,10 +7,7 @@ import MarkunreadMailboxOutlinedIcon from "@mui/icons-material/MarkunreadMailbox
 import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
-import AddCardRoundedIcon from "@mui/icons-material/AddCardRounded";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import BallotOutlinedIcon from "@mui/icons-material/BallotOutlined";
-import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
 import AssignmentReturnOutlinedIcon from "@mui/icons-material/AssignmentReturnOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
@@ -94,18 +91,6 @@ const NAVIGATION = [
     icon: <AddShoppingCartRoundedIcon />,
   },
   {
-    name: "Kho hàng",
-    tooltip: "Kho hàng",
-    path: "/seller/products/inventory",
-    icon: <Inventory2OutlinedIcon />,
-  },
-  {
-    name: "Nhập kho",
-    tooltip: "Nhập kho",
-    path: "/seller/products/import-products",
-    icon: <AddCardRoundedIcon />,
-  },
-  {
     name: "Đánh giá sản phẩm",
     tooltip: "Đánh giá sản phẩm",
     path: "/seller/products/reviews",
@@ -114,12 +99,6 @@ const NAVIGATION = [
   },
   {
     group: "Quản lý khuyến mãi",
-  },
-  {
-    name: "Giảm giá sản phẩm",
-    tooltip: "Giảm giá sản phẩm",
-    path: "/seller/promotions/product-discount",
-    icon: <SellOutlinedIcon />,
   },
   {
     name: "Mã giảm giá",

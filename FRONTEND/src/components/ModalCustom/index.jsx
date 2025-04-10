@@ -64,7 +64,7 @@ const ModalCustom = React.forwardRef(
               <></>
             )}
 
-            <Box sx={{ mt: 3, maxHeight: 500, overflowY: "auto", px: 1 }}>
+            <Box sx={{ mt: 3, maxHeight: "calc(100vh - 200px)", overflowY: "auto", px: 1 }}>
               {children}
             </Box>
           </PaperCustom>

@@ -86,14 +86,11 @@ const sellerRoutes = [
   { path: "/seller/products/active", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/locked", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/new", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/inventory", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/import-products", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/reviews", component: ProductSellers, layout: ManageLayout },
   { path: "/seller/products/:productId", component: SellerProductDetail, layout: ManageLayout },
 
   // Khuyến mãi
   { path: "/seller/promotions", component: Promotions, layout: ManageLayout },
-  { path: "/seller/promotions/product-discount", component: Promotions, layout: ManageLayout },
   { path: "/seller/promotions/coupon", component: Promotions, layout: ManageLayout },
 
   // Cài đặt

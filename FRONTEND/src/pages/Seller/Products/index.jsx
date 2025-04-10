@@ -7,14 +7,6 @@ import Path from "~/helpers/Path";
 import ListProduct from "./ListProduct";
 import NewProducts from "./NewProducts";
 
-const Inventory = () => {
-  return <div>inventory</div>;
-};
-
-const ImportProducts = () => {
-  return <div>import-products</div>;
-};
-
 const Reviews = () => {
   return <div>reviews</div>;
 };
@@ -54,10 +46,6 @@ const Products = () => {
         );
       case "new":
         return <NewProducts />;
-      case "inventory":
-        return <Inventory />;
-      case "import-products":
-        return <ImportProducts />;
       case "reviews":
         return <Reviews />;
     }
@@ -73,12 +61,6 @@ const Products = () => {
               <Tab disabled={loading} label="Còn hoạt động" value="active" />
               <Tab disabled={loading} label="Đã bị khóa" value="locked" />
               <Tab disabled={loading} label="Thêm sản phẩm" value="new" />
-              <Tab disabled={loading} label="Kho hàng" value="inventory" />
-              <Tab
-                disabled={loading}
-                label="Nhập kho"
-                value="import-products"
-              />
               <Tab
                 disabled={loading}
                 label="Đánh giá sản phẩm"

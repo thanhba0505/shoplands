@@ -134,7 +134,7 @@ const ModalUpdateProduct = ({
                 <TextField
                   size="small"
                   sx={{ "& input": { textAlign: "center" } }}
-                  value={variant.quantity}
+                  value={variant.quantity || ""}
                   onChange={(e) =>
                     handleInputChange(index, "quantity", e.target.value)
                   }
@@ -145,7 +145,7 @@ const ModalUpdateProduct = ({
                 <TextField
                   size="small"
                   sx={{ "& input": { textAlign: "center" } }}
-                  value={variant.price}
+                  value={variant.price || ""}
                   onChange={(e) =>
                     handleInputChange(index, "price", e.target.value)
                   }
@@ -156,7 +156,7 @@ const ModalUpdateProduct = ({
                 <TextField
                   size="small"
                   sx={{ "& input": { textAlign: "center" } }}
-                  value={variant.promotion_price}
+                  value={variant.promotion_price || ""}
                   onChange={(e) =>
                     handleInputChange(index, "promotion_price", e.target.value)
                   }
@@ -168,8 +168,8 @@ const ModalUpdateProduct = ({
         <Grid2
           container
           columns={2}
-          spacingX={3}
-          spacingY={1}
+          rowSpacing={1}
+          columnSpacing={4}
           pt={1}
           size={5}
           sx={{ position: "sticky", bottom: 0, backgroundColor: "white" }}
