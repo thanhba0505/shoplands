@@ -499,7 +499,9 @@ class ProductController {
                     }
 
                     if ($checkPromotionPrice !== true) {
-                        Response::json(['message' => $checkPromotionPrice], 400);
+                        if ($variant['promotion_price'] !== null) {
+                            Response::json(['message' => $checkPromotionPrice], 400);
+                        }
                     }
 
                     if ($checkQuantity !== true) {

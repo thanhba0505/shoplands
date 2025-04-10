@@ -2,8 +2,13 @@ class Format {
   // Định dạng tiền tệ
   static formatCurrency(amount, currency = "VND", locale = "vi-VN") {
     const number = parseFloat(amount);
+
+    if (number === 0) {
+      return `0đ`;
+    }
+
     if (isNaN(number)) {
-      return `${currency} 0`;
+      return ``;
     }
     // Định dạng tiền tệ với "đ" và không có khoảng cách
     return new Intl.NumberFormat(locale, {

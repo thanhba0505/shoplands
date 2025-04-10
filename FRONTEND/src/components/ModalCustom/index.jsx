@@ -3,7 +3,20 @@ import { Box, Modal, Typography } from "@mui/material";
 import PaperCustom from "~/components/PaperCustom";
 
 const ModalCustom = React.forwardRef(
-  ({ open, handleClose, title, subtitle, children, sx, ...props }, ref) => {
+  (
+    {
+      open,
+      handleClose,
+      title,
+      subtitle,
+      children,
+      sx,
+      alignTitle = "center",
+      alignSubtitle = "center",
+      ...props
+    },
+    ref
+  ) => {
     return (
       <Modal
         sx={{
@@ -26,14 +39,34 @@ const ModalCustom = React.forwardRef(
             }}
             {...props}
           >
-            <Typography id="modal-modal-title" variant="h6" component="h2">
+            <Typography
+              id="modal-modal-title"
+              variant="h5"
+              component="h2"
+              align={alignTitle}
+              fontWeight={"bold"}
+              lineHeight={1}
+              textTransform={"uppercase"}
+            >
               {title}
             </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              {subtitle}
-            </Typography>
 
-            {children}
+            {subtitle ? (
+              <Typography
+                id="modal-modal-description"
+                sx={{ mt: 2 }}
+                lineHeight={1}
+                align={alignSubtitle}
+              >
+                {subtitle}
+              </Typography>
+            ) : (
+              <></>
+            )}
+
+            <Box sx={{ mt: 3, maxHeight: 500, overflowY: "auto", px: 1 }}>
+              {children}
+            </Box>
           </PaperCustom>
         </Box>
       </Modal>
