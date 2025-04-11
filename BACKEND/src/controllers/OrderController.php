@@ -16,6 +16,7 @@ use App\Models\CartModel;
 use App\Models\CouponModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
+use App\Models\OrderPaymentModel;
 use App\Models\OrderStatusModel;
 use App\Models\ProductImageModel;
 use App\Models\ProductModel;
@@ -212,8 +213,8 @@ class OrderController {
             // Thanh toán
             $result = VNpay::createPaymentUrl($finalPrice);
 
-            // Lưu vnp_TxnRef
-            OrderModel::updateVnpTxnRef($orderId, $result["vnp_txnref"]);
+            // Lưu vnp_TxnRef và vnp_url
+            OrderModel::updateVnpTxnRef($orderId, $result["vnp_txnref"], $result["vnp_url"]);
 
             Response::json([
                 "url" => $result["vnp_url"],
@@ -243,9 +244,11 @@ class OrderController {
             // Kiểm tra
             $result = VNpay::handleReturn();
 
-            if ($result['RspCode'] == '00') {
+            if ($result['code'] == '00') {
                 OrderModel::updatePaid($order["order_id"], true);
             }
+
+            OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
 
             // Redirect::to("/user/orders/" . $order["order_id"]);
             Response::json($result, 200);

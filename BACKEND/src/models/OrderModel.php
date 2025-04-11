@@ -40,21 +40,23 @@ class OrderModel {
     }
 
     // Lưu link thanh toán 
-    public static function updateVnpTxnRef($orderId, $vnp_TxnRef) {
+    public static function updateVnpTxnRef($orderId, $vnp_TxnRef, $vnp_Url) {
         $query = new ConnectDatabase();
 
         $sql = "
             UPDATE
                 orders
             SET
-                vnp_txnref = :vnp_TxnRef
+                vnp_txnref = :vnp_TxnRef,
+                vnp_url = :vnp_Url
             WHERE
                 id = :orderId
         ";
 
         $result = $query->query($sql, [
             'vnp_TxnRef' => $vnp_TxnRef,
-            'orderId' => $orderId
+            'orderId' => $orderId,
+            'vnp_Url' => $vnp_Url
         ])->rowCount();
 
         return $result > 0 ? true : false;

@@ -103,25 +103,26 @@ class VNPAY {
       if ($secureHash == $vnp_SecureHash) {
         // Kiểm tra kết quả thanh toán từ VNPAY
         if ($inputData['vnp_ResponseCode'] == '00' && $inputData['vnp_TransactionStatus'] == '00') {
-          $returnData['RspCode'] = '00';
-          $returnData['Message'] = self::getErrorMessage('00');
+          $returnData['code'] = '00';
+          $returnData['message'] = self::getErrorMessage('00');
         } else {
           // Trả về các mã lỗi cụ thể dựa trên mã lỗi của VNPAY
           $errorCode = $inputData['vnp_ResponseCode'];
-          $returnData['RspCode'] = $errorCode;
-          $returnData['Message'] = self::getErrorMessage($errorCode);
+          $returnData['code'] = $errorCode;
+          $returnData['message'] = self::getErrorMessage($errorCode);
         }
       } else {
         // Kiểm tra lỗi khi không khớp hash
-        $returnData['RspCode'] = '97';
-        $returnData['Message'] = self::getErrorMessage('97');
+        $returnData['code'] = '97';
+        $returnData['message'] = self::getErrorMessage('97');
       }
     } catch (\Exception $e) {
       // Xử lý lỗi trong trường hợp có exception
-      $returnData['RspCode'] = '99';
-      $returnData['Message'] = self::getErrorMessage('99');
+      $returnData['code'] = '99';
+      $returnData['message'] = self::getErrorMessage('99');
     }
 
+    $returnData['json'] = $inputData;
     return $returnData;
   }
 

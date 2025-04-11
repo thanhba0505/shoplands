@@ -5,16 +5,16 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->decimal('subtotal_price', 15, 2);
             $table->decimal('discount', 15, 2)->default(0)->nullable();
             $table->decimal('final_price', 15, 2);
             $table->boolean('paid')->default(false);
+            $table->string('vnp_txnref')->nullable()->index();
+            $table->text('vnp_url')->nullable();
             $table->decimal('revenue', 15, 2);
             $table->string('cancel_reason')->nullable();
             $table->unsignedBigInteger('from_address_id'); // Foreign key
@@ -36,8 +36,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE orders AUTO_INCREMENT = 123456;');
     }
 
-    public function down(): void
-    {
+    public function down(): void {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropForeign(['from_address_id']);
             $table->dropForeign(['to_address_id']);
