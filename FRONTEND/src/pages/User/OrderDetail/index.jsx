@@ -1,10 +1,25 @@
-import { Container, Typography } from "@mui/material";
+import { useTheme } from "@emotion/react";
+import {
+  Box,
+  Container,
+  Grid2,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
+import StepCustom from "~/components/StepCustom";
 import Api from "~/helpers/Api";
+import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
+import Path from "~/helpers/Path";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
 const OrderDetail = () => {
@@ -12,6 +27,7 @@ const OrderDetail = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -52,12 +68,65 @@ const OrderDetail = () => {
   }, [fetchApi]);
 
   return (
-    <Container maxWidth="lg">
-      <PaperCustom sx={{ px: 3 }}>
-        <Typography variant="h6" sx={{ mt: 1, mb: 1 }} textAlign={"start"}>
-          Chi tiết đơn hàng #{params.id}
-        </Typography>
-      </PaperCustom>
+    <Container maxWidth="xl">
+      {loading ? (
+        <>Loading...</>
+      ) : (
+        <Grid2 container spacing={2}>
+          <Grid2 size={12}>
+            <PaperCustom sx={{ px: 3 }}>
+              <Typography variant="h6" textAlign={"start"}>
+                Chi tiết đơn hàng #{params.id}
+              </Typography>
+            </PaperCustom>
+          </Grid2>
+
+          <Grid2 size={8}>
+            <PaperCustom sx={{ px: 3 }}>
+              <TableContainer sx={{ py: 2 }}>
+                <Table sx={{ borderCollapse: "collapse", border: "none" }}>
+                  <TableHead>
+                    <TableRow
+                      sx={{ backgroundColor: theme.custom?.primary.light }}
+                    >
+                      <TableCell sx={{ textAlign: "center" }} width={"40%"}>
+                        Sản phẩm
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        Phân loại
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>Giá</TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        Số lượng
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        Thành tiền
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </PaperCustom>
+          </Grid2>
+
+          <Grid2 size={4}>
+            <PaperCustom sx={{ px: 3 }}>Người mua</PaperCustom>
+          </Grid2>
+
+          <Grid2 size={12}>
+            <PaperCustom sx={{ px: 3 }}>
+              <StepCustom />
+            </PaperCustom>
+          </Grid2>
+
+          <Grid2 size={12}>
+            <PaperCustom sx={{ px: 3 }}>Thông tin thanh toán</PaperCustom>
+          </Grid2>
+        </Grid2>
+      )}
     </Container>
   );
 };
