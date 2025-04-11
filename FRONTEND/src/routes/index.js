@@ -21,7 +21,6 @@ import AddressBook from "~/pages/User/AddressBook";
 import Orders from "~/pages/User/Orders";
 import OrderDetail from "~/pages/User/OrderDetail";
 import Checkout from "~/pages/User/Checkout";
-import Payment from "~/pages/User/Payment";
 
 // Seller
 import Dashboard from "~/pages/Seller/Dashboard";
@@ -55,17 +54,32 @@ const publicRoutes = [
 const userRoutes = [
   { path: "/user/cart", component: Cart },
   { path: "/user/profile", component: Profile, layout: UserOrdersLayout },
-  { path: "/user/address-book", component: AddressBook, layout: UserOrdersLayout },
+  {
+    path: "/user/address-book",
+    component: AddressBook,
+    layout: UserOrdersLayout,
+  },
   { path: "/user/orders", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/all", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/packing", component: Orders, layout: UserOrdersLayout },
   { path: "/user/orders/packed", component: Orders, layout: UserOrdersLayout },
-  { path: "/user/orders/shipping", component: Orders, layout: UserOrdersLayout },
-  { path: "/user/orders/delivered", component: Orders, layout: UserOrdersLayout },
-  { path: "/user/orders/completed", component: Orders, layout: UserOrdersLayout },
+  {
+    path: "/user/orders/shipping",
+    component: Orders,
+    layout: UserOrdersLayout,
+  },
+  {
+    path: "/user/orders/delivered",
+    component: Orders,
+    layout: UserOrdersLayout,
+  },
+  {
+    path: "/user/orders/completed",
+    component: Orders,
+    layout: UserOrdersLayout,
+  },
   { path: "/user/orders/detail/:id", component: OrderDetail },
   { path: "/user/orders/checkout", component: Checkout },
-  { path: "/user/orders/payment", component: Payment },
 ];
 
 // SELLER ROUTES
@@ -74,29 +88,81 @@ const sellerRoutes = [
   // Đơn hàng
   { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
   { path: "/seller/orders/all", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/packing", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/packed", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/shipping", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/delivered", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/completed", component: OrdersSeller, layout: ManageLayout },
+  {
+    path: "/seller/orders/packing",
+    component: OrdersSeller,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/orders/packed",
+    component: OrdersSeller,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/orders/shipping",
+    component: OrdersSeller,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/orders/delivered",
+    component: OrdersSeller,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/orders/completed",
+    component: OrdersSeller,
+    layout: ManageLayout,
+  },
 
   // Sản phẩm
   { path: "/seller/products", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/all", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/active", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/locked", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/new", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/reviews", component: ProductSellers, layout: ManageLayout },
-  { path: "/seller/products/:productId", component: SellerProductDetail, layout: ManageLayout },
+  {
+    path: "/seller/products/all",
+    component: ProductSellers,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/products/active",
+    component: ProductSellers,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/products/locked",
+    component: ProductSellers,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/products/new",
+    component: ProductSellers,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/products/reviews",
+    component: ProductSellers,
+    layout: ManageLayout,
+  },
+  {
+    path: "/seller/products/:productId",
+    component: SellerProductDetail,
+    layout: ManageLayout,
+  },
 
   // Khuyến mãi
   { path: "/seller/promotions", component: Promotions, layout: ManageLayout },
-  { path: "/seller/promotions/coupon", component: Promotions, layout: ManageLayout },
+  {
+    path: "/seller/promotions/coupon",
+    component: Promotions,
+    layout: ManageLayout,
+  },
 
   // Cài đặt
   { path: "/seller/settings", component: Settings, layout: ManageLayout },
   { path: "/seller/settings/shop", component: Settings, layout: ManageLayout },
-  { path: "/seller/settings/payment", component: Settings, layout: ManageLayout },
+  {
+    path: "/seller/settings/payment",
+    component: Settings,
+    layout: ManageLayout,
+  },
 ];
 
 // ADMIN ROUTES

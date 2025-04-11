@@ -45,38 +45,20 @@ const AcctionButton = ({ handleOnClick, title, ...props }) => {
   );
 };
 
-const HandleRender = ({ status, orderId, setOrders }) => {
+const HandleRender = ({ status, orderId, setOrders, url }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const handlePaid = async () => {
-    // setLoading(true);
-    // try {
-    //   const response = await axiosWithAuth.post(
-    //     Api.sellerOrders(orderId),
-    //     {},
-    //     {
-    //       navigate,
-    //     }
-    //   );
-    //   if (response.status === 200) {
-    //     setOrders((prevOrders) =>
-    //       prevOrders.map((order) =>
-    //         order.order_id === orderId
-    //           ? { ...order, latest_status: response.data }
-    //           : order
-    //       )
-    //     );
-    //     enqueueSnackbar("Đã đóng gói đơn hàng " + orderId, {
-    //       variant: "success",
-    //     });
-    //   }
-    // } catch (error) {
-    //   Log.error(error.response?.data?.message);
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      window.location.href = url;
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleComplete = async () => {
@@ -134,6 +116,7 @@ const HandleRender = ({ status, orderId, setOrders }) => {
 
 const OrdersTable = ({ orders, setOrders }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -230,7 +213,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                     Thành tiền đơn hàng
                   </TableCell>
                   <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Đã thanh toán
+                    Trạng thái thanh toán
                   </TableCell>
                 </TableRow>
 
@@ -255,7 +238,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatCurrency(order.paid)}
+                    {order.paid ? "Đã thanh toán" : "Chưa thanh toán"}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -269,6 +252,9 @@ const OrdersTable = ({ orders, setOrders }) => {
                         sx={{
                           px: 6,
                         }}
+                        onClick={() =>
+                          navigate(Path.userOrders("detail/") + order.order_id)
+                        }
                       >
                         Chi tiết đơn hàng
                       </ButtonLoading>
@@ -276,6 +262,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                       <HandleRender
                         setOrders={setOrders}
                         orderId={order.order_id}
+                        url={order?.vnp_url}
                         status={order.latest_status.status}
                       />
                     </Box>

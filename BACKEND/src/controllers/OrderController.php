@@ -250,8 +250,9 @@ class OrderController {
 
             OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
 
-            // Redirect::to("/user/orders/" . $order["order_id"]);
-            Response::json($result, 200);
+            Redirect::to($_ENV["FRONTEND_URL"] . "/user/orders/detail/" .
+                $order["order_id"] . "?success=" . ($result['code'] == '00' ? "1" : "0"));;
+            // Response::json($result, 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userCheckPayment: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

@@ -6,7 +6,6 @@ import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
-import { setQrAndOrderId } from "~/redux/orderSlice";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Address from "./Address";
 import Products from "./Products";
@@ -48,9 +47,8 @@ const Checkout = () => {
           navigate,
         }
       );
-
-      dispatch(setQrAndOrderId(response.data));
-      navigate(Path.userOrders("payment"));
+      
+      window.location.replace(response.data.url);
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
