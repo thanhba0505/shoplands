@@ -14,12 +14,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
             WHERE
                 a.account_id = :account_id
         ";
@@ -38,12 +41,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
                 JOIN sellers s ON s.id = a.account_id
             WHERE
                 s.id = :seller_id
@@ -63,12 +69,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
             WHERE
                 a.account_id, = :account_id,
                 AND a.default = :default
@@ -88,12 +97,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
                 JOIN sellers s ON s.id = a.account_id
             WHERE
                 s.id = :seller_id
@@ -114,12 +126,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
                 JOIN sellers s ON s.account_id = a.account_id
             WHERE
                 s.id = :seller_id
@@ -140,12 +155,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
                 JOIN users u ON u.account_id = a.account_id
             WHERE
                 a.id = :address_id
@@ -166,12 +184,15 @@ class AddressModel {
                 a.id AS address_id,
                 a.address_line,
                 a.default,
-                a.account_id,
-                p.name AS province_name,
-                p.id AS province_id
+                a.province_id,
+                a.province_name,
+                a.district_id,
+                a.district_name,
+                a.ward_id,
+                a.ward_name,
+                a.account_id
             FROM
                 addresses a
-                JOIN provinces p ON p.id = a.province_id
                 JOIN sellers s ON s.account_id = a.account_id
             WHERE
                 a.id = :address_id
@@ -181,5 +202,41 @@ class AddressModel {
         $result = $query->query($sql, ['address_id' => $address_id, 'seller_id' => $seller_id])->fetch();
 
         return $result;
+    }
+
+    // Thêm địa chỉ
+    public static function create(
+        $address_line,
+        $default,
+        $province_id,
+        $province_name,
+        $district_id,
+        $district_name,
+        $ward_id,
+        $ward_name,
+        $account_id
+    ) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO
+                addresses (address_line, `default`, province_id, province_name, district_id, district_name, ward_id, ward_name, account_id)
+            VALUES
+                (:address_line, :default, :province_id, :province_name, :district_id, :district_name, :ward_id, :ward_name, :account_id)
+        ";
+
+        $result = $query->query($sql, [
+            'address_line' => $address_line,
+            'default' => $default,
+            'province_id' => $province_id,
+            'province_name' => $province_name,
+            'district_id' => $district_id,
+            'district_name' => $district_name,
+            'ward_id' => $ward_id,
+            'ward_name' => $ward_name,
+            'account_id' => $account_id
+        ]);
+
+        return $result->rowCount() ? true : false;
     }
 }

@@ -37,7 +37,13 @@ $router->delete('api/user/cart', 'CartController@userDelete', ['App\Middlewares\
 $router->post('api/user/cart/ids', 'CartController@find', ['App\Middlewares\UserMiddleware']);
 
 // API ADRESS
+$router->get('api/address/provinces', 'AddressController@getProvinces');
+$router->get('api/address/districts', 'AddressController@getDistricts');
+$router->get('api/address/wards', 'AddressController@getWards');
+
 $router->get('api/user/address', 'AddressController@userGet', ['App\Middlewares\UserMiddleware']);
+$router->post('api/user/address', 'AddressController@userAdd', ['App\Middlewares\UserMiddleware']);
+
 $router->get('api/address/{seller_id}', 'AddressController@find');
 
 // API SHIPPING FEE
