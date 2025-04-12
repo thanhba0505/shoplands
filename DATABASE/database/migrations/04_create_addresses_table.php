@@ -12,10 +12,14 @@ return new class extends Migration
             $table->id();
             $table->string('address_line');
             $table->boolean('default')->default(false);
-            $table->unsignedBigInteger('province_id'); // Foreign key
+            $table->string('province_id');
+            $table->string('province_name');
+            $table->string('district_id');
+            $table->string('district_name');
+            $table->string('ward_id');
+            $table->string('ward_name');
             $table->unsignedBigInteger('account_id')->nullable(); // Foreign key
 
-            $table->foreign('province_id')->references('id')->on('provinces');
             $table->foreign('account_id')->references('id')->on('accounts');
         });
     }
@@ -23,7 +27,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('addresses', function (Blueprint $table) {
-            $table->dropForeign(['province_id']);
             $table->dropForeign(['account_id']);
         });
 

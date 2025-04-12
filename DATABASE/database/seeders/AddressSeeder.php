@@ -7,28 +7,24 @@ use Illuminate\Database\Seeder;
 use App\Models\Address;
 use App\Models\User;
 use App\Models\Seller;
-use App\Models\Province;
 
-class AddressSeeder extends Seeder
-{
-    public function run(): void
-    {
-        // Lấy danh sách các tỉnh
-        $provinces = Province::all();
+class AddressSeeder extends Seeder {
+    public function run(): void {
 
         // Thêm địa chỉ cho User
-        $accounts = Account::all();
-        foreach ($accounts as $account) {
-            $addressCount = rand(1, 5); // Mỗi account có từ 1-3 địa chỉ
-
-            for ($i = 0; $i < $addressCount; $i++) {
-                Address::create([
-                    'address_line' => fake()->address(),
-                    'default' => $i === 0, // Địa chỉ đầu tiên là mặc định
-                    'province_id' => $provinces->random()->id,
-                    'account_id' => $account->id,
-                ]);
-            }
+        $sellers = Seller::all();
+        foreach ($sellers as $seller) {
+            Address::create([
+                'address_line' => "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
+                'default' => 1,
+                'province_id' => 202,
+                'province_name' => "Hồ Chí Minh",
+                'district_id' => 1452,
+                'district_name' => "Quán 10",
+                'ward_id' => 21014,
+                'ward_name' => "Phường 14",
+                'account_id' => $seller->account_id,
+            ]);
         }
     }
 }

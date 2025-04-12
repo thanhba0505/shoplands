@@ -13,14 +13,13 @@ class Address extends Model
         'address_line',
         'default',
         'province_id',
+        'province_name',
+        'district_id',
+        'district_name',
+        'ward_id',
+        'ward_name',
         'account_id',
     ];
-
-    // Mối quan hệ với Province
-    public function province()
-    {
-        return $this->belongsTo(Province::class);
-    }
 
     // Mối quan hệ với Seller
     public function seller()
