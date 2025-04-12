@@ -10,8 +10,8 @@ class AccountSeeder extends Seeder
     public function run(): void
     {
         Account::factory()->create([
-            'phone' => $this->encodeAes('789'),
-            'phoneHash' => $this->encodeSha256("789"),
+            'phone' => $this->encodeAes('0833333333'),
+            'phoneHash' => $this->encodeSha256("0833333333"),
             'password' => $this->encodeArgon2i('789'),
             'role' => 'admin',
             'status' => 'active',
@@ -20,9 +20,9 @@ class AccountSeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             if ($i == 0) {
                 Account::factory()->create([
-                    'phone' => $this->encodeAes('456'),
-                    'phoneHash' => $this->encodeSha256("456"),
-                    'password' => $this->encodeArgon2i('456'),
+                    'phone' => $this->encodeAes('0822222222'),
+                    'phoneHash' => $this->encodeSha256("0822222222"),
+                    'password' => $this->encodeArgon2i('123'),
                     'role' => 'seller',
                     'status' => 'active',
                 ]);
@@ -37,8 +37,8 @@ class AccountSeeder extends Seeder
         for ($i = 0; $i < 20; $i++) {
             if ($i == 0) {
                 Account::factory()->create([
-                    'phone' => $this->encodeAes('123'),
-                    'phoneHash' => $this->encodeSha256("123"),
+                    'phone' => $this->encodeAes('0811111111'),
+                    'phoneHash' => $this->encodeSha256("0811111111"),
                     'password' => $this->encodeArgon2i('123'),
                     'role' => 'user',
                     'status' => 'active',

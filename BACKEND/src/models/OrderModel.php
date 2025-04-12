@@ -8,16 +8,16 @@ use App\Models\ConnectDatabase;
 
 class OrderModel {
     // Tạo đơn hàng
-    public static function add($seller_id, $user_id, $from_address_id, $to_address_id, $shipping_fee_id, $subtotal_price, $discount, $final_price, $revenue, $coupon_id = null) {
+    public static function add($seller_id, $user_id, $from_address_id, $to_address_id, $shipping_fee, $subtotal_price, $discount, $final_price, $revenue, $coupon_id = null) {
         $query = new ConnectDatabase();
 
         $created_at = Carbon::now();
 
         $sql =  "
             INSERT INTO
-                orders (seller_id, user_id, from_address_id, to_address_id, shipping_fee_id, subtotal_price, discount, final_price, revenue, coupon_id, created_at)
+                orders (seller_id, user_id, from_address_id, to_address_id, shipping_fee, subtotal_price, discount, final_price, revenue, coupon_id, created_at)
             VALUES
-                (:seller_id, :user_id, :from_address_id, :to_address_id, :shipping_fee_id, :subtotal_price, :discount, :final_price, :revenue, :coupon_id, :created_at)
+                (:seller_id, :user_id, :from_address_id, :to_address_id, :shipping_fee, :subtotal_price, :discount, :final_price, :revenue, :coupon_id, :created_at)
         ";
 
         $query->query($sql, [
@@ -25,7 +25,7 @@ class OrderModel {
             'user_id' => $user_id,
             'from_address_id' => $from_address_id,
             'to_address_id' => $to_address_id,
-            'shipping_fee_id' => $shipping_fee_id,
+            'shipping_fee' => $shipping_fee,
             'subtotal_price' => $subtotal_price,
             'discount' => $discount,
             'final_price' => $final_price,
@@ -37,6 +37,27 @@ class OrderModel {
         $orderId = $query->getConnection()->lastInsertId();
 
         return $orderId > 0 ? $orderId : $orderId;
+    }
+
+    // Cập nhật ghn_order_code
+    public static function updateGhnOrderCode($orderId, $ghn_order_code) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                orders
+            SET
+                ghn_order_code = :ghn_order_code
+            WHERE
+                id = :orderId
+        ";
+
+        $result = $query->query($sql, [
+            'ghn_order_code' => $ghn_order_code,
+            'orderId' => $orderId
+        ]);
+
+        return $result;
     }
 
     // Lưu link thanh toán 
@@ -68,7 +89,12 @@ class OrderModel {
 
         $sql = "
             SELECT
-                o.id AS order_id
+                o.id AS order_id,
+                o.seller_id,
+                o.user_id,
+                o.from_address_id,
+                o.to_address_id,
+                o.paid
             FROM
                 orders o
             WHERE

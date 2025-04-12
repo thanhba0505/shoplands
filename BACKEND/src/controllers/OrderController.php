@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Helpers\Auth;
 use App\Helpers\Format;
+use App\Helpers\GHN;
 use App\Helpers\Log;
 use App\Helpers\QRCode;
 use App\Helpers\Redirect;
@@ -89,11 +90,10 @@ class OrderController {
 
             $userId = $user["user_id"];
             $toAddressId = Request::json("address_id");
-            $shippingFeeId = Request::json("shipping_fee_id");
             $couponId = Request::json("coupon_id");
             $cartIds = Request::json("cart_ids");
 
-            if (empty($toAddressId) || empty($shippingFeeId) || empty($cartIds)) {
+            if (empty($toAddressId) || empty($cartIds)) {
                 Response::json(['message' => 'Thông tin tạo đơn hàng không đủ'], 400);
             }
 
@@ -137,13 +137,26 @@ class OrderController {
                 Response::json(['message' => 'Không tìm thấy địa chỉ người mua'], 400);
             }
 
-            // Kiểm tra phí vận chuyển
-            $shippingPrice = 0;
-            $shippingFee = ShippingFeeModel::find($shippingFeeId);
-            if (!$shippingFee) {
+            // Giả sử tạo đơn hàng
+            $fromAddress["name"] = $seller["store_name"] . " - " . $seller["owner_name"];
+            $fromAddress["phone"] = $seller["phone"];
+
+            $toAddress["name"] = $user["name"];
+            $toAddress["phone"] = $user["phone"];
+            
+            $ghnPreview = GHN::previewOrder($fromAddress, $toAddress);
+            
+            if (!$ghnPreview || $ghnPreview["code"] != "200") {
+                Response::json(['message' => $ghnPreview["message"]], 400);
+            }
+
+            // Tính phí vận chuyển
+            $fee = GHN::calculateFee($fromAddress, $toAddress);
+            if (!$fee || $fee["code"] != "200") {
                 Response::json(['message' => 'Không tìm thấy thông tin vận chuyển'], 400);
             }
-            $shippingPrice = floatval($shippingFee["price"]);
+
+            $shippingPrice = $fee["data"]["total"];
 
             // Kiểm tra mã giảm giá
             $coupon = null;
@@ -181,10 +194,13 @@ class OrderController {
             $finalPrice = $subtotalPrice + $shippingPrice - $discount;
 
             // Tính doanh thu cho người bán
-            $revenue = Format::number(($finalPrice - $shippingPrice) * (1 - $_ENV["REVENUE_PROPORTION"]), 0);
+            $revenue = Format::number(
+                ($subtotalPrice - $discount) * (1 - $_ENV["REVENUE_PROPORTION"]) + $shippingPrice,
+                0
+            );
 
             // Tạo đơn hàng
-            $orderId = OrderModel::add($seller["seller_id"], $userId, $fromAddressId, $toAddressId, $shippingFeeId, $subtotalPrice, $discount, $finalPrice, $revenue, $couponId);
+            $orderId = OrderModel::add($seller["seller_id"], $userId, $fromAddressId, $toAddressId, $shippingPrice, $subtotalPrice, $discount, $finalPrice, $revenue, $couponId);
 
             if (!$orderId) {
                 throw new \Exception("Lỗi tạo đơn hàng");
@@ -206,9 +222,6 @@ class OrderController {
                     // CartModel::delete($userId, $cart["cart_id"]);
                 }
             }
-
-            // Tạo trạng thái đơn hàng
-            OrderStatusModel::add($orderId, 'unpaid');
 
             // Thanh toán
             $result = VNpay::createPaymentUrl($finalPrice);
@@ -241,18 +254,58 @@ class OrderController {
                 Response::json(['message' => 'Không tìm thấy thông tin đơn hàng'], 400);
             }
 
+            $url = $_ENV["FRONTEND_URL"] . "/user/orders/detail/" . $order["order_id"];
+            $success = "1";
+            $message = "";
+
+            if ($order["paid"]) {
+                $success = "0";
+                $message = "Đơn hàng đã thanh toán";
+                // Redirect::to($url . "?success=" . $success . "&message=" . $message);
+                Response::json(['success' => $success, 'message' => $message], 400);
+            }
+
             // Kiểm tra
             $result = VNpay::handleReturn();
 
             if ($result['code'] == '00') {
                 OrderModel::updatePaid($order["order_id"], true);
+            } else {
+                $success = "0";
+                $message = "Thanh toán không thành công";
+                // Redirect::to($url . "?success=" . $success . "&message=" . $message);
+                Response::json(['success' => $success, 'message' => $message], 400);
             }
 
             OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
 
-            Redirect::to($_ENV["FRONTEND_URL"] . "/user/orders/detail/" .
-                $order["order_id"] . "?success=" . ($result['code'] == '00' ? "1" : "0"));;
-            // Response::json($result, 200);
+            $fromAddress = AddressModel::findFromAddress($order["from_address_id"]);
+            $toAddress = AddressModel::findToAddress($order["to_address_id"], $order["user_id"]);
+
+            $user = UserModel::findByUserId($order["user_id"]);
+            $seller = SellerModel::findBySellerId($order["seller_id"]);
+
+            $fromAddress["name"] = $seller["store_name"] . " - " . $seller["owner_name"];
+            $fromAddress["phone"] = $seller["phone"];
+
+            $toAddress["name"] = $user["name"];
+            $toAddress["phone"] = $user["phone"];
+
+
+            $ghnOrder = GHN::createOrder(
+                $fromAddress,
+                $toAddress
+            );
+
+            if ($ghnOrder['code'] == '200') {
+                OrderModel::updateGhnOrderCode($order["order_id"], $ghnOrder['data']['order_code']);
+            }
+
+            $success = $ghnOrder['code'] == '200' ? "1" : "0";
+            $message = $ghnOrder['code'] == '200' ? "Thanh toán thành công" : $ghnOrder['message'];
+
+            // Redirect::to($url . "?success=" . $success . "&message=" . $message);
+            Response::json(['success' => $success, 'message' => $message], 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userCheckPayment: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
