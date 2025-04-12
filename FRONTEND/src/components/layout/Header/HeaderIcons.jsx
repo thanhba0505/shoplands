@@ -68,17 +68,6 @@ const MenuIcon = ({ icon, menuItems }) => {
 const ShoppingCartMenu = () => {
   const navigate = useNavigate();
   return (
-    // <MenuIcon
-    //   icon={<ShoppingCart />}
-    //   menuItems={[
-    //     { label: "Sản phẩm 1" },
-    //     { label: "Sản phẩm 2" },
-    //     {
-    //       label: "Xem giỏ hàng",
-    //       onClick: () => navigate(Path.userCart()),
-    //     },
-    //   ]}
-    // />
     <IconButton
       size="medium"
       onClick={() => navigate(Path.userCart())}
@@ -140,7 +129,7 @@ const UserAccountMenu = () => {
     },
     {
       label: "Lịch sử đơn hàng",
-      onClick: () => navigate(Path.userOrders()),
+      onClick: () => navigate(Path.userOrders("all")),
     },
     { label: "Đăng xuất", onClick: handleLogout },
   ];

@@ -130,7 +130,7 @@ const OrdersTable = ({ orders, setOrders }) => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
-                  <TableCell>
+                  <TableCell align="center">
                     Mã Đơn Hàng: {order.order_id} <br />
                     {Format.formatDateTime(order.created_at)}
                   </TableCell>
