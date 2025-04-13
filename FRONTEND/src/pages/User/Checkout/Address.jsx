@@ -50,7 +50,7 @@ const Address = ({ setAddress, address }) => {
   };
 
   return (
-    <PaperCustom sx={{ px: 3 }}>
+    <PaperCustom sx={{ px: 3, height: "100%" }}>
       {loading ? (
         <>
           <Skeleton
@@ -119,10 +119,11 @@ const Address = ({ setAddress, address }) => {
                     key={item.address_id}
                     value={item.address_id}
                     control={<Radio />}
-                    sx={{ width: "49%", m: 0 }}
+                    sx={{ width: "100%", m: 0 }}
                     label={
                       <Box py={1}>
                         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                          {item.ward_name}, {item.district_name},{" "}
                           {item.province_name}
                         </Typography>
                         {item.address_line}

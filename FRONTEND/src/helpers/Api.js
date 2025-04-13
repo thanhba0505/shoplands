@@ -70,8 +70,8 @@ class Api {
         return this.buildPath("coupons", endpoint);
     }
 
-    static shippingFees(endpoint = "") {
-        return this.buildPath("shipping-fees", endpoint);
+    static shippingFee(endpoint = "") {
+        return this.buildPath("user/orders/shipping-fee", endpoint);
     }
 
     static sellers(endpoint = "") {

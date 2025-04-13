@@ -20,6 +20,70 @@ class Format {
       .replace(/\s/g, "");
   }
 
+  // Cộng thời gian vào ngày (Ngày, Giờ, Phút, Giây)
+  static addTime(date, days = 0, hours = 0, minutes = 0, seconds = 0) {
+    const dateObj = new Date(date);
+
+    if (isNaN(dateObj)) {
+      return "Ngày không hợp lệ";
+    }
+
+    dateObj.setDate(dateObj.getDate() + days); // Cộng ngày
+    dateObj.setHours(dateObj.getHours() + hours); // Cộng giờ
+    dateObj.setMinutes(dateObj.getMinutes() + minutes); // Cộng phút
+    dateObj.setSeconds(dateObj.getSeconds() + seconds); // Cộng giây
+
+    return dateObj;
+  }
+
+  // Trừ thời gian từ ngày (Ngày, Giờ, Phút, Giây)
+  static subtractTime(date, days = 0, hours = 0, minutes = 0, seconds = 0) {
+    const dateObj = new Date(date);
+
+    if (isNaN(dateObj)) {
+      return "Ngày không hợp lệ";
+    }
+
+    dateObj.setDate(dateObj.getDate() - days); // Trừ ngày
+    dateObj.setHours(dateObj.getHours() - hours); // Trừ giờ
+    dateObj.setMinutes(dateObj.getMinutes() - minutes); // Trừ phút
+    dateObj.setSeconds(dateObj.getSeconds() - seconds); // Trừ giây
+
+    return dateObj;
+  }
+
+  // Hàm tính số ngày từ hiện tại đến date1 và từ hiện tại đến date2, sau đó trả về "X đến Y ngày"
+  static calculateEstimatedTime(date1, date2) {
+    const currentDate = new Date(); // Lấy thời gian hiện tại
+
+    const startDate = new Date(date1); // Convert date1 thành Date
+    const endDate = new Date(date2); // Convert date2 thành Date
+
+    if (isNaN(startDate) || isNaN(endDate)) {
+      return "Ngày không hợp lệ";
+    }
+
+    // Cộng thêm 1 ngày vào cả hai ngày
+    startDate.setDate(startDate.getDate() + 1);
+    endDate.setDate(endDate.getDate() + 1);
+
+    // Tính số ngày từ hiện tại đến date1
+    const diff1 = Math.abs(currentDate - startDate); // Lấy sự khác biệt về thời gian
+    const daysToDate1 = Math.floor(diff1 / (1000 * 3600 * 24)); // Chuyển đổi từ milliseconds sang ngày
+
+    // Tính số ngày từ hiện tại đến date2
+    const diff2 = Math.abs(currentDate - endDate); // Lấy sự khác biệt về thời gian
+    const daysToDate2 = Math.floor(diff2 / (1000 * 3600 * 24)); // Chuyển đổi từ milliseconds sang ngày
+
+    // Nếu hai ngày giống nhau, chỉ cần trả về số ngày từ hiện tại đến date1 hoặc date2
+    if (daysToDate1 === daysToDate2) {
+      return `${daysToDate1} ngày`;
+    }
+
+    // Trả về kết quả theo định dạng "X đến Y ngày"
+    return `${daysToDate1} đến ${daysToDate2} ngày`;
+  }
+
   // Định dạng ngày giờ
   static formatDate(date, format = "DD/MM/YYYY", locale = "vi-VN") {
     const options = {

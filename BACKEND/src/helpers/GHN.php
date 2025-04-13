@@ -166,4 +166,19 @@ class GHN {
 
     return self::ghnPost('/v2/shipping-order/fee', $data);
   }
+
+  // Tính thời gian dự kiến
+  public static function calculateLeadtime($from, $to) {
+    $data = [
+      "from_district_id" => intval($from['district_id']),
+      "from_ward_code" => $from['ward_id'],
+
+      "to_district_id" => intval($to['district_id']),
+      "to_ward_code" => $to['ward_id'],
+
+      "service_id" => 53320
+    ];
+
+    return self::ghnPost('/v2/shipping-order/leadtime', $data);
+  }
 }

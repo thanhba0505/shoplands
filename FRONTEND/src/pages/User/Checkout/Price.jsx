@@ -6,11 +6,11 @@ import PaperCustom from "~/components/PaperCustom";
 import Format from "~/helpers/Format";
 import Path from "~/helpers/Path";
 
-const Price = ({ subTotal, shippingFee, coupon, handleCheckout, loading }) => {
+const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
   const navigate = useNavigate();
 
   const [discount, setDiscount] = useState(0);
-  const shippingFeePrice = shippingFee ? shippingFee.price : 0;
+  const shippingFee = shipping.fee ? shipping.fee : 0;
 
   useEffect(() => {
     if (coupon) {
@@ -44,33 +44,34 @@ const Price = ({ subTotal, shippingFee, coupon, handleCheckout, loading }) => {
   }, [subTotal, coupon, shippingFee]);
 
   return (
-    <PaperCustom sx={{ px: 3 }}>
+    <PaperCustom sx={{ px: 3, height: "100%" }}>
       <Grid2
         container
         alignItems={"center"}
         spacing={2}
         sx={{ fontSize: "h6.fontSize", py: 2 }}
+        fontSize={"body2.fontSize"}
       >
-        {!subTotal || !shippingFeePrice ? (
+        {!subTotal ? (
           <>
-            <Grid2 size={3}>
+            <Grid2 size={4}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={9}>
+            <Grid2 size={8}>
               <Skeleton height={30} width={"50%"} variant="rounded" />
             </Grid2>
 
-            <Grid2 size={3}>
+            <Grid2 size={4}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={9}>
+            <Grid2 size={8}>
               <Skeleton height={30} width={"30%"} variant="rounded" />
             </Grid2>
 
-            <Grid2 size={3}>
+            <Grid2 size={4}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={9}>
+            <Grid2 size={8}>
               <Skeleton height={30} width={"40%"} variant="rounded" />
             </Grid2>
 
@@ -78,10 +79,10 @@ const Price = ({ subTotal, shippingFee, coupon, handleCheckout, loading }) => {
               <Divider color="#ccc" />
             </Grid2>
 
-            <Grid2 size={3}>
+            <Grid2 size={4}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={9}>
+            <Grid2 size={8}>
               <Skeleton height={36} width={"35%"} variant="rounded" />
             </Grid2>
 
@@ -97,54 +98,70 @@ const Price = ({ subTotal, shippingFee, coupon, handleCheckout, loading }) => {
           </>
         ) : (
           <>
-            <Grid2 size={3}>Tổng tiền sản phẩm:</Grid2>
-            <Grid2 size={9}>{Format.formatCurrency(subTotal)}</Grid2>
+            <Grid2 fontSize={"body2.fontSize"} size={4} fontWeight={"bold"}>
+              Tổng tiền sản phẩm:
+            </Grid2>
+            <Grid2 fontSize={"body2.fontSize"} size={8}>
+              {Format.formatCurrency(subTotal)}
+            </Grid2>
 
-            <Grid2 size={3}>Phí vận chuyển:</Grid2>
-            <Grid2 size={9}>{Format.formatCurrency(shippingFeePrice)}</Grid2>
+            <Grid2 fontSize={"body2.fontSize"} size={4} fontWeight={"bold"}>
+              Phí vận chuyển:
+            </Grid2>
+            <Grid2 fontSize={"body2.fontSize"} size={8}>
+              {shippingFee > 0
+                ? Format.formatCurrency(shippingFee)
+                : "Vui lòng chọn dịa chỉ giao hàng"}
+            </Grid2>
 
-            <Grid2 size={3}>Giảm giá:</Grid2>
-            <Grid2 size={9}>{Format.formatCurrency(discount)}</Grid2>
+            <Grid2 fontSize={"body2.fontSize"} size={4} fontWeight={"bold"}>
+              Giảm giá:
+            </Grid2>
+            <Grid2 fontSize={"body2.fontSize"} size={8}>
+              {Format.formatCurrency(discount)}
+            </Grid2>
 
-            <Grid2 size={12}>
+            <Grid2 fontSize={"body2.fontSize"} size={12}>
               <Divider color="#ccc" />
             </Grid2>
 
-            <Grid2 size={3} sx={{ fontWeight: "bold" }}>
+            <Grid2
+              fontSize={"body2.fontSize"}
+              size={4}
+              sx={{ fontWeight: "bold" }}
+            >
               Thành tiền:
             </Grid2>
             <Grid2
-              size={9}
-              sx={{ fontWeight: "bold", color: "red", fontSize: "h5.fontSize" }}
+              size={8}
+              sx={{ fontWeight: "bold", color: "red", fontSize: "h6.fontSize" }}
             >
               {Format.formatCurrency(
-                subTotal + parseFloat(shippingFeePrice) - discount
+                subTotal + parseFloat(shippingFee) - discount
               )}
             </Grid2>
 
-            <Grid2
-              container
-              alignContent={"center"}
-              size={12}
-              sx={{ height: 40 }}
-            >
-              <ButtonLoading
-                onClick={() => navigate(Path.userCart())}
-                loading={loading}
-                variant="outlined"
-                sx={{ width: "20%" }}
-              >
-                Hủy
-              </ButtonLoading>
+            <Grid2 container size={12} sx={{ height: 40, mt: 2 }} spacing={2}>
+              <Grid2 size={6}>
+                <ButtonLoading
+                  onClick={() => navigate(Path.userCart())}
+                  variant="outlined"
+                  fullWidth
+                >
+                  Hủy
+                </ButtonLoading>
+              </Grid2>
 
-              <ButtonLoading
-                onClick={handleCheckout}
-                loading={loading}
-                variant="contained"
-                sx={{ width: "20%", ml: 3 }}
-              >
-                Thanh toán
-              </ButtonLoading>
+              <Grid2 size={6}>
+                <ButtonLoading
+                  onClick={handleCheckout}
+                  variant="contained"
+                  fullWidth
+                  disabled={!subTotal || shippingFee === 0}
+                >
+                  Thanh toán
+                </ButtonLoading>
+              </Grid2>
             </Grid2>
           </>
         )}

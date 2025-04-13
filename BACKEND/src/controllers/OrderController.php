@@ -143,9 +143,9 @@ class OrderController {
 
             $toAddress["name"] = $user["name"];
             $toAddress["phone"] = $user["phone"];
-            
+
             $ghnPreview = GHN::previewOrder($fromAddress, $toAddress);
-            
+
             if (!$ghnPreview || $ghnPreview["code"] != "200") {
                 Response::json(['message' => $ghnPreview["message"]], 400);
             }
@@ -311,6 +311,63 @@ class OrderController {
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
+
+    // Lấy phí vận chuyển
+    public function userGetShippingFee($address_id, $seller_id) {
+        try {
+            $user = Auth::user();
+            $seller = SellerModel::findBySellerId($seller_id);
+
+            if (!$seller) {
+                Response::json(['message' => 'Không tìm thấy người bán'], 400);
+            }
+
+            $fromAddress = AddressModel::findFromAddress($seller["seller_id"]);
+            if (!$fromAddress) {
+                Response::json(['message' => 'Không tìm thấy địa chỉ người bán'], 400);
+            }
+
+            $toAddress = AddressModel::findToAddress($address_id, $user["user_id"]);
+            if (!$toAddress) {
+                Response::json(['message' => 'Không tìm thấy địa chỉ người mua'], 400);
+            }
+            // Giả sử tạo đơn hàng
+            $fromAddress["name"] = $seller["store_name"] . " - " . $seller["owner_name"];
+            $fromAddress["phone"] = $seller["phone"];
+
+            $toAddress["name"] = $user["name"];
+            $toAddress["phone"] = $user["phone"];
+
+            $ghnPreview = GHN::previewOrder($fromAddress, $toAddress);
+
+            if (!$ghnPreview || $ghnPreview["code"] != "200") {
+                Response::json(['message' => $ghnPreview["message"]], 400);
+            }
+
+            // Tính phí vận chuyển
+            $fee = GHN::calculateFee($fromAddress, $toAddress);
+            if (!$fee || $fee["code"] != "200") {
+                Response::json(['message' => 'Không tìm thấy thông tin vận chuyển'], 400);
+            }
+
+            // Tính thời gian dự kiến
+            $leadtime = GHN::calculateLeadtime($fromAddress, $toAddress);
+            if (!$leadtime || $leadtime["code"] != "200") {
+                Response::json(['message' => 'Không tìm thấy thời gian dự kiến'], 400);
+            }
+
+            Response::json([
+                'fee' => $fee["data"]['total'],
+                'leadtime' => $leadtime["data"]['leadtime_order']
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> userGetShippingFee: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+
+
 
     // Lấy danh sách đơn hàng của người dùng theo người bán
     public function sellerGet() {

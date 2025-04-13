@@ -15,7 +15,7 @@ function DefaultLayout({ children }) {
                     display: "flex",
                     flexDirection: "column",
                     paddingY: theme.custom?.containerGap,
-                    gap: 2,
+                    gap: 3,
                     backgroundColor: theme.palette.common.white,
                 }}
             >

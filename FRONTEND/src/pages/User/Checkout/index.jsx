@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -27,65 +27,68 @@ const Checkout = () => {
   const [address, setAddress] = useState(null);
   const [subTotal, setSubTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
-  const [shippingFee, setShippingFee] = useState(null);
-
-  const [loading, setLoading] = useState(false);
+  const [shipping, setShipping] = useState({});
 
   const handleCheckout = async () => {
     dispatch(startLoading());
-    setLoading(true);
     try {
       const response = await axiosWithAuth.post(
         Api.orders(),
         {
           cart_ids: cartIds,
           address_id: address.address_id,
-          shipping_fee_id: shippingFee.shipping_fee_id,
           coupon_id: coupon ? coupon.coupon_id : null,
         },
         {
           navigate,
         }
       );
-      
+
       window.location.replace(response.data.url);
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
-      setLoading(false);
       dispatch(stopLoading());
     }
   };
 
   return (
     <>
-      <Container>
-        <Address setAddress={setAddress} address={address} />
-      </Container>
+      <Container maxWidth="lg">
+        <Grid2 container spacing={3} columns={3}>
+          <Grid2 size={2}>
+            <Address setAddress={setAddress} address={address} />
+          </Grid2>
 
-      <Container>
-        <Products setSubTotal={setSubTotal} />
-      </Container>
+          <Grid2 size={1}>
+            <Price
+              subTotal={subTotal}
+              coupon={coupon}
+              handleCheckout={handleCheckout}
+              shipping={shipping}
+            />
+          </Grid2>
 
-      <Container>
-        <Coupons subTotal={subTotal} setCoupon={setCoupon} coupon={coupon} />
-      </Container>
+          <Grid2 size={3}>
+            <ShippingFee
+              addressId={address?.address_id}
+              shipping={shipping}
+              setShipping={setShipping}
+            />
+          </Grid2>
 
-      <Container>
-        <ShippingFee
-          setShippingFee={setShippingFee}
-          shippingFee={shippingFee}
-        />
-      </Container>
+          <Grid2 size={3}>
+            <Coupons
+              subTotal={subTotal}
+              setCoupon={setCoupon}
+              coupon={coupon}
+            />
+          </Grid2>
 
-      <Container>
-        <Price
-          subTotal={subTotal}
-          shippingFee={shippingFee}
-          coupon={coupon}
-          handleCheckout={handleCheckout}
-          loading={loading}
-        />
+          <Grid2 size={3}>
+            <Products setSubTotal={setSubTotal} />
+          </Grid2>
+        </Grid2>
       </Container>
     </>
   );
