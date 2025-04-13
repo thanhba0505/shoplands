@@ -181,4 +181,9 @@ class GHN {
 
     return self::ghnPost('/v2/shipping-order/leadtime', $data);
   }
+
+  // Lấy chi tiết đơn hàng theo order code
+  public static function getOrder($order_code) {
+    return self::ghnPost('/v2/shipping-order/detail', ['order_code' => strval($order_code)]);
+  }
 }
