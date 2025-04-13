@@ -186,4 +186,9 @@ class GHN {
   public static function getOrder($order_code) {
     return self::ghnPost('/v2/shipping-order/detail', ['order_code' => strval($order_code)]);
   }
+
+  // Lấy 
+  public static function getTrackingUrl($order_code) {
+    return $order_code ? "https://tracking.ghn.dev/?order_code=" . $order_code : "";
+  }
 }

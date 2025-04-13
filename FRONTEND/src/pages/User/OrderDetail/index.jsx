@@ -1,7 +1,10 @@
 import { useTheme } from "@emotion/react";
 import {
+  Avatar,
   Box,
+  Button,
   Container,
+  Divider,
   Grid2,
   Table,
   TableBody,
@@ -43,7 +46,9 @@ const OrderDetail = () => {
         variant: "error",
       });
     }
-  }, [location.search, enqueueSnackbar, params.id]);
+
+    navigate(Path.userOrders("detail/" + params.orderId), { replace: true });
+  }, [location.search, enqueueSnackbar, params.orderId, navigate]);
 
   // fetch order
   const [order, setOrder] = useState({});
@@ -52,38 +57,62 @@ const OrderDetail = () => {
   const fetchApi = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axiosWithAuth.get(Api.orders(params.id), {
-        navigate,
-      });
+      const queryParams = new URLSearchParams(location.search);
+      const success = queryParams.get("success");
+      const message = queryParams.get("message");
+      if (!success && !message) {
+        const response = await axiosWithAuth.get(Api.orders(params.orderId), {
+          navigate,
+        });
 
-      setOrder(response.data);
+        setOrder(response.data);
+      }
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
-  }, [navigate, params.id]);
+  }, [navigate, params.orderId, location.search]);
 
   useEffect(() => {
     fetchApi();
   }, [fetchApi]);
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       {loading ? (
         <>Loading...</>
       ) : (
-        <Grid2 container spacing={2}>
+        <Grid2 container spacing={3}>
           <Grid2 size={12}>
-            <PaperCustom sx={{ px: 3 }}>
+            <PaperCustom
+              sx={{
+                px: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <Typography variant="h6" textAlign={"start"}>
-                Chi tiết đơn hàng #{params.id}
+                Chi tiết đơn hàng #{order.order_id} -{" "}
+                {order.current_status_name}
               </Typography>
+              {order.current_status !== "unpaid" && (
+                <Typography
+                  variant="body2"
+                  textAlign={"end"}
+                  color="primary"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => window.open(order.tracking_url, "_blank")}
+                >
+                  Xem chi tiết vận chuyển
+                </Typography>
+              )}
             </PaperCustom>
           </Grid2>
 
           <Grid2 size={8}>
-            <PaperCustom sx={{ px: 3 }}>
+            <PaperCustom sx={{ px: 3, height: "100%" }}>
               <TableContainer sx={{ py: 2 }}>
                 <Table sx={{ borderCollapse: "collapse", border: "none" }}>
                   <TableHead>
@@ -106,7 +135,47 @@ const OrderDetail = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    
+                    {order?.order_items?.map((item) => (
+                      <TableRow key={item.product_id}>
+                        <TableCell>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "20px",
+                            }}
+                          >
+                            <img
+                              src={Path.publicProduct(item.image)}
+                              alt={item.product.name}
+                              width="50"
+                            />
+                            <Typography
+                              variant="body2"
+                              className="line-clamp-2"
+                            >
+                              {item.product.name}
+                            </Typography>
+                          </div>
+                        </TableCell>
+                        <TableCell sx={{ textAlign: "center" }}>
+                          {item.attributes.map((attr) => (
+                            <div key={attr.name}>
+                              {attr.name}: {attr.value}
+                            </div>
+                          ))}
+                        </TableCell>
+                        <TableCell sx={{ textAlign: "center" }}>
+                          {Format.formatCurrency(item.price)}
+                        </TableCell>
+                        <TableCell sx={{ textAlign: "center" }}>
+                          {item.quantity}
+                        </TableCell>
+                        <TableCell sx={{ textAlign: "center" }}>
+                          {Format.formatCurrency(item.price * item.quantity)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -114,17 +183,70 @@ const OrderDetail = () => {
           </Grid2>
 
           <Grid2 size={4}>
-            <PaperCustom sx={{ px: 3 }}>Người mua</PaperCustom>
-          </Grid2>
+            <PaperCustom sx={{ px: 3, height: "100%" }}>
+              <Grid2
+                container
+                alignItems={"center"}
+                spacing={2}
+                sx={{ fontSize: "h6.fontSize", py: 2 }}
+                fontSize={"body2.fontSize"}
+              >
+                <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
+                  Tổng tiền sản phẩm:
+                </Grid2>
+                <Grid2 fontSize={"body2.fontSize"} size={6}>
+                  {Format.formatCurrency(order.subtotal_price)}
+                </Grid2>
 
-          <Grid2 size={12}>
-            <PaperCustom sx={{ px: 3 }}>
-              <StepCustom />
+                <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
+                  Phí vận chuyển:
+                </Grid2>
+                <Grid2 fontSize={"body2.fontSize"} size={6}>
+                  {Format.formatCurrency(order.shipping_fee)}
+                </Grid2>
+
+                <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
+                  Giảm giá:
+                </Grid2>
+                <Grid2 fontSize={"body2.fontSize"} size={6}>
+                  {Format.formatCurrency(order.discount)}
+                </Grid2>
+
+                <Grid2 fontSize={"body2.fontSize"} size={12}>
+                  <Divider color="#ccc" />
+                </Grid2>
+
+                <Grid2
+                  fontSize={"body2.fontSize"}
+                  size={6}
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Thành tiền:
+                </Grid2>
+                <Grid2
+                  size={6}
+                  sx={{
+                    fontWeight: "bold",
+                    color: "red",
+                    fontSize: "h6.fontSize",
+                  }}
+                >
+                  {Format.formatCurrency(order.final_price)}
+                </Grid2>
+
+                {order.paid === 0 && (
+                  <Grid2 fontSize={"body2.fontSize"} size={12}>
+                    <Button size="small" variant="outlined" sx={{ px: 3 }}>
+                      Thanh toán
+                    </Button>
+                  </Grid2>
+                )}
+              </Grid2>
             </PaperCustom>
           </Grid2>
 
           <Grid2 size={12}>
-            <PaperCustom sx={{ px: 3 }}>Thông tin thanh toán</PaperCustom>
+            <PaperCustom sx={{ px: 3 }}></PaperCustom>
           </Grid2>
         </Grid2>
       )}

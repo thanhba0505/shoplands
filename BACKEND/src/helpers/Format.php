@@ -14,7 +14,7 @@ class Format {
   public static function getOrderStatusInVie($status) {
     $statusMapping = [
       "unpaid" => "Chưa thanh toán",
-      "ready_to_pick" => "Mới tạo đơn hàng",
+      "ready_to_pick" => "Đã thanh toán",
       "picking" => "Nhân viên đang lấy hàng",
       "cancel" => "Hủy đơn hàng",
       "money_collect_picking" => "Đang thu tiền người gửi",

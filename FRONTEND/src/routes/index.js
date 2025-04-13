@@ -59,7 +59,7 @@ const userRoutes = [
     component: AddressBook,
     layout: UserOrdersLayout,
   },
-  { path: "/user/orders/detail/:id", component: OrderDetail },
+  { path: "/user/orders/detail/:orderId", component: OrderDetail },
   { path: "/user/orders/checkout", component: Checkout },
   { path: "/user/orders/:status", component: Orders, layout: UserOrdersLayout },
 ];

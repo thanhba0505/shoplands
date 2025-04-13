@@ -140,6 +140,7 @@ class OrderController {
     private function getOrderDetails($order) {
         // Lấy thông tin người mua hàng
         $orderDetails = [
+            "tracking_url" => GHN::getTrackingUrl($order["ghn_order_code"]),
             "user" => $this->getUserDetails($order['user_id']),
             "seller" => $this->getSellerDetails($order['seller_id']),
             "from_address" => $this->getAddressDetails($order["from_address_id"], $order["seller_id"], 'seller'),
