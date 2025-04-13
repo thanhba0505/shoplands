@@ -26,7 +26,7 @@ import ButtonLoading from "~/components/ButtonLoading";
 import { TabContext, TabList } from "@mui/lab";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 const AcctionButton = ({ handleOnClick, title, ...props }) => {
@@ -148,12 +148,12 @@ const OrdersTable = ({ orders, setOrders }) => {
                   </TableCell>
                   <TableCell align="center">
                     Phương thức giao hàng: <br />
-                    {order.shipping_fee.method}
+                    Giao hàng nhanh
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatOrderStatus(order.latest_status.status)}
+                    {order.current_status_name}
                     <br />
-                    {Format.formatDateTime(order.latest_status.created_at)}
+                    {Format.formatDateTime(order.created_at)}
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -263,7 +263,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                         setOrders={setOrders}
                         orderId={order.order_id}
                         url={order?.vnp_url}
-                        status={order.latest_status.status}
+                        status={order.current_status}
                       />
                     </Box>
                   </TableCell>
@@ -281,16 +281,32 @@ const OrdersTable = ({ orders, setOrders }) => {
 
 const Orders = () => {
   const user_id = useSelector((state) => state.auth?.account?.user_id);
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const value = Path.getElement(location.pathname, 3) ?? "all";
+  const params = useParams();
+  const value = params.status ?? "all";
 
   const [orders, setOrders] = useState([]);
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
+
+  // Kiểm tra params.status trước khi thực hiện navigate
+  useEffect(() => {
+    const validStatuses = [
+      "all",
+      "unpaid",
+      "waiting",
+      "shipping",
+      "completed",
+      "return",
+      "other",
+    ];
+
+    if (!validStatuses.includes(value)) {
+      navigate(Path.userOrders("all"));
+    }
+  }, [value, navigate]);
 
   const handleChange = (event, newValue) => {
     navigate(Path.userOrders(newValue));
@@ -319,7 +335,7 @@ const Orders = () => {
             params: {
               status: status,
               limit: limit,
-              page: page + 1,
+              page: page,
             },
             navigate,
           });
@@ -346,11 +362,12 @@ const Orders = () => {
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={handleChange} aria-label="lab API tabs example">
               <Tab disabled={loading} label="Tất cả" value="all" />
-              <Tab disabled={loading} label="Đang đóng gói" value="packing" />
-              <Tab disabled={loading} label="Đã đóng gói" value="packed" />
+              <Tab disabled={loading} label="Chưa thanh toán" value="unpaid" />
+              <Tab disabled={loading} label="Chờ giao hàng" value="waiting" />
               <Tab disabled={loading} label="Đang giao hàng" value="shipping" />
-              <Tab disabled={loading} label="Đã giao hàng" value="delivered" />
-              <Tab disabled={loading} label="Hoàn thành" value="completed" />
+              <Tab disabled={loading} label="Đã hoàn thành" value="completed" />
+              <Tab disabled={loading} label="Đơn hoàn trả" value="return" />
+              <Tab disabled={loading} label="Đơn khác" value="other" />
             </TabList>
           </Box>
         </TabContext>
@@ -410,4 +427,5 @@ const Orders = () => {
     </PaperCustom>
   );
 };
+
 export default Orders;

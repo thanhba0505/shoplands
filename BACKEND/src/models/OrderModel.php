@@ -16,9 +16,9 @@ class OrderModel {
 
         $sql =  "
             INSERT INTO
-                orders (seller_id, user_id, from_address_id, to_address_id, shipping_fee, subtotal_price, discount, final_price, revenue, coupon_id, created_at)
+                orders (seller_id, user_id, from_address_id, to_address_id, shipping_fee, subtotal_price, discount, final_price, revenue, coupon_id, created_at, current_status, current_status_name)
             VALUES
-                (:seller_id, :user_id, :from_address_id, :to_address_id, :shipping_fee, :subtotal_price, :discount, :final_price, :revenue, :coupon_id, :created_at)
+                (:seller_id, :user_id, :from_address_id, :to_address_id, :shipping_fee, :subtotal_price, :discount, :final_price, :revenue, :coupon_id, :created_at, :current_status, :current_status_name)
         ";
 
         $query->query($sql, [
@@ -32,7 +32,9 @@ class OrderModel {
             'final_price' => $final_price,
             'revenue' => $revenue,
             'coupon_id' => $coupon_id,
-            'created_at' => $created_at
+            'created_at' => $created_at,
+            'current_status' => "unpaid",
+            'current_status_name' => Format::getOrderStatusInVie("unpaid")
         ]);
 
         $orderId = $query->getConnection()->lastInsertId();
@@ -230,12 +232,12 @@ class OrderModel {
     }
 
     // Lấy danh sach đơn hang theo user id
-    public static function getByUserId($user_id, $status = null, $limit = 12, $page = 0) {
+    public static function getByUserId($user_id, $status = [], $limit = 12, $page = 0) {
         $query = new ConnectDatabase();
 
         $offset = ($page) * $limit;
 
-        // Xây dựng câu lệnh SQL
+        // Xây dựng câu lệnh SQL cơ bản
         $sql = "
             SELECT
                 o.id AS order_id,
@@ -262,11 +264,16 @@ class OrderModel {
                 o.user_id = :user_id
         ";
 
-        // Nếu có status, thêm điều kiện vào câu lệnh SQL
-        if ($status !== null) {
-            $sql .= " AND o.current_status = :status";
+        // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
+        if (!empty($status)) {
+            $statusPlaceholders = implode(',', array_map(function ($key) {
+                return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
+            }, array_keys($status)));
+
+            $sql .= " AND o.current_status IN ($statusPlaceholders)";
         }
 
+        // Thêm các điều kiện sắp xếp và phân trang
         $sql .= "
             ORDER BY
                 o.created_at DESC
@@ -274,27 +281,31 @@ class OrderModel {
                 :limit OFFSET :offset
         ";
 
-        // Xây dựng các tham số
+        // Xây dựng các tham số cho câu lệnh SQL
         $params = [
             'user_id' => $user_id,
             'limit' => $limit,
             'offset' => $offset
         ];
 
-        // Nếu có status, thêm tham số status vào mảng params
-        if ($status !== null) {
-            $params['status'] = $status;
+        // Nếu có trạng thái, thêm các trạng thái vào mảng params
+        if (!empty($status)) {
+            foreach ($status as $key => $value) {
+                $params["status" . $key] = $value; // Thêm các trạng thái vào params với tên tham số
+            }
         }
 
-        // Thực thi câu lệnh và lấy kết quả
+        // Thực thi câu lệnh SQL và lấy kết quả
         $result = $query->query($sql, $params)->fetchAll();
 
         // Trả về kết quả hoặc mảng rỗng nếu không có kết quả
         return $result ?? [];
     }
 
-    // // Lấy tổng số đơn hàng theo user id
-    public static function countByUserId($user_id, $status = null) {
+
+
+    // Lấy tổng số đơn hàng theo user id
+    public static function countByUserId($user_id, $status = []) {
         $query = new ConnectDatabase();
 
         $sql = "
@@ -306,22 +317,33 @@ class OrderModel {
                 o.user_id = :user_id
         ";
 
-        if ($status !== null) {
-            $sql .= " AND o.current_status = :status";
+        // Nếu có mảng trạng thái, thay đổi điều kiện để sử dụng IN với named parameters
+        if (!empty($status)) {
+            $sql .= " AND o.current_status IN (" . implode(',', array_map(function ($key) {
+                return ":status" . $key;
+            }, array_keys($status))) . ")";
         }
 
+        // Xây dựng tham số cho câu lệnh SQL
         $params = [
             'user_id' => $user_id
         ];
 
-        if ($status !== null) {
-            $params['status'] = $status;
+        // Nếu có trạng thái, thêm các trạng thái vào mảng params với named parameters
+        if (!empty($status)) {
+            foreach ($status as $key => $value) {
+                $params["status" . $key] = $value;
+            }
         }
 
+        // Thực thi câu lệnh SQL và lấy kết quả
         $result = $query->query($sql, $params)->fetch();
 
+        // Trả về số lượng đơn hàng hoặc 0 nếu không có kết quả
         return $result['total'] ?? 0;
     }
+
+
 
 
     // // Lấy danh sách đơn hàng theo selelr id theo trang thai

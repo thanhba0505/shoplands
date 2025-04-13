@@ -20,4 +20,48 @@ class Other {
 
     return $fileName;
   }
+
+  // Nhóm status
+  public static function groupStatus($status) {
+    if (empty($status)) {
+      return [];
+    }
+    
+    $groupedStatus = [
+      "unpaid" => ["unpaid"],
+      "waiting" => [
+        "ready_to_pick",
+        "picking",
+        "money_collect_picking",
+        "picked",
+        "storing",
+        "transporting",
+        "sorting"
+      ],
+      "shipping" => [
+        "delivering",
+        "money_collect_delivering",
+        "delivery_fail",
+      ],
+      "completed" => [
+        "delivered",
+      ],
+      "return" => [
+        "waiting_to_return",
+        "return",
+        "return_transporting",
+        "return_sorting",
+        "returning",
+        "return_fail",
+        "returned",
+      ],
+      "other" => [
+        "cancel",
+        "exception",
+        "damage",
+        "lost",
+      ]
+    ];
+    return $groupedStatus[$status];
+  }
 }

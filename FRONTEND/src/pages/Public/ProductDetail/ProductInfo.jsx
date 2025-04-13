@@ -72,7 +72,7 @@ const ImageProduct = ({ images, loading }) => {
               display: "flex",
               gap: 1,
               flexWrap: "nowrap",
-              justifyContent: images && images.length > 4 ? "start" : "center", 
+              justifyContent: images && images.length > 4 ? "start" : "center",
             }}
           >
             {loading ? (
@@ -584,8 +584,13 @@ const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
       >
         Thêm vào giỏ hàng
       </ButtonLoading>
-      <ButtonLoading size="large" sx={{ width: "50%" }} variant="contained">
-        Mua ngay
+      <ButtonLoading
+        size="large"
+        sx={{ width: "50%" }}
+        variant="contained"
+        onClick={() => navigate(Path.userCart())}
+      >
+        Xem giỏ hàng
       </ButtonLoading>
     </Box>
   );

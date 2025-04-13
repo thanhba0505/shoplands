@@ -28,8 +28,10 @@ const Checkout = () => {
   const [subTotal, setSubTotal] = useState(0);
   const [coupon, setCoupon] = useState(null);
   const [shipping, setShipping] = useState({});
+  const [loading, setLoading] = useState(false); 
 
   const handleCheckout = async () => {
+    setLoading(true);
     dispatch(startLoading());
     try {
       const response = await axiosWithAuth.post(
@@ -48,6 +50,7 @@ const Checkout = () => {
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
+      setLoading(false);
       dispatch(stopLoading());
     }
   };
@@ -66,6 +69,7 @@ const Checkout = () => {
               coupon={coupon}
               handleCheckout={handleCheckout}
               shipping={shipping}
+              loading={loading}
             />
           </Grid2>
 

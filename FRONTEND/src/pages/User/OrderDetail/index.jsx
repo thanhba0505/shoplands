@@ -32,13 +32,14 @@ const OrderDetail = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const success = queryParams.get("success");
+    const message = queryParams.get("message");
 
     if (success === "1") {
-      enqueueSnackbar("Đã thanh toán đơn hàng " + params.id, {
+      enqueueSnackbar(message, {
         variant: "success",
       });
     } else if (success === "0") {
-      enqueueSnackbar("Thanh toán đơn hàng thất bại", {
+      enqueueSnackbar(message, {
         variant: "error",
       });
     }

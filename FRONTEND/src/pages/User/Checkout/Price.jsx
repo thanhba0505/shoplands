@@ -6,7 +6,7 @@ import PaperCustom from "~/components/PaperCustom";
 import Format from "~/helpers/Format";
 import Path from "~/helpers/Path";
 
-const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
+const Price = ({ subTotal, shipping, coupon, handleCheckout, loading }) => {
   const navigate = useNavigate();
 
   const [discount, setDiscount] = useState(0);
@@ -54,24 +54,24 @@ const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
       >
         {!subTotal ? (
           <>
-            <Grid2 size={4}>
+            <Grid2 size={6}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={8}>
+            <Grid2 size={6}>
               <Skeleton height={30} width={"50%"} variant="rounded" />
             </Grid2>
 
-            <Grid2 size={4}>
+            <Grid2 size={6}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={8}>
+            <Grid2 size={6}>
               <Skeleton height={30} width={"30%"} variant="rounded" />
             </Grid2>
 
-            <Grid2 size={4}>
+            <Grid2 size={6}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={8}>
+            <Grid2 size={6}>
               <Skeleton height={30} width={"40%"} variant="rounded" />
             </Grid2>
 
@@ -79,10 +79,10 @@ const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
               <Divider color="#ccc" />
             </Grid2>
 
-            <Grid2 size={4}>
+            <Grid2 size={6}>
               <Skeleton height={30} variant="rounded" />
             </Grid2>
-            <Grid2 size={8}>
+            <Grid2 size={6}>
               <Skeleton height={36} width={"35%"} variant="rounded" />
             </Grid2>
 
@@ -98,26 +98,26 @@ const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
           </>
         ) : (
           <>
-            <Grid2 fontSize={"body2.fontSize"} size={4} fontWeight={"bold"}>
+            <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
               Tổng tiền sản phẩm:
             </Grid2>
-            <Grid2 fontSize={"body2.fontSize"} size={8}>
+            <Grid2 fontSize={"body2.fontSize"} size={6}>
               {Format.formatCurrency(subTotal)}
             </Grid2>
 
-            <Grid2 fontSize={"body2.fontSize"} size={4} fontWeight={"bold"}>
+            <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
               Phí vận chuyển:
             </Grid2>
-            <Grid2 fontSize={"body2.fontSize"} size={8}>
+            <Grid2 fontSize={"body2.fontSize"} size={6}>
               {shippingFee > 0
                 ? Format.formatCurrency(shippingFee)
                 : "Vui lòng chọn dịa chỉ giao hàng"}
             </Grid2>
 
-            <Grid2 fontSize={"body2.fontSize"} size={4} fontWeight={"bold"}>
+            <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
               Giảm giá:
             </Grid2>
-            <Grid2 fontSize={"body2.fontSize"} size={8}>
+            <Grid2 fontSize={"body2.fontSize"} size={6}>
               {Format.formatCurrency(discount)}
             </Grid2>
 
@@ -127,13 +127,13 @@ const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
 
             <Grid2
               fontSize={"body2.fontSize"}
-              size={4}
+              size={6}
               sx={{ fontWeight: "bold" }}
             >
               Thành tiền:
             </Grid2>
             <Grid2
-              size={8}
+              size={6}
               sx={{ fontWeight: "bold", color: "red", fontSize: "h6.fontSize" }}
             >
               {Format.formatCurrency(
@@ -158,6 +158,7 @@ const Price = ({ subTotal, shipping, coupon, handleCheckout }) => {
                   variant="contained"
                   fullWidth
                   disabled={!subTotal || shippingFee === 0}
+                  loading={loading}
                 >
                   Thanh toán
                 </ButtonLoading>

@@ -6,6 +6,7 @@ use App\Helpers\Auth;
 use App\Helpers\Format;
 use App\Helpers\GHN;
 use App\Helpers\Log;
+use App\Helpers\Other;
 use App\Helpers\QRCode;
 use App\Helpers\Redirect;
 use App\Helpers\Request;
@@ -72,9 +73,11 @@ class OrderController {
     public function userGet() {
         try {
             $user = Auth::user();
-            $status = Request::get('status') ? Request::get('status') : null;
+            $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
             $limit = Request::get('limit', 12);
             $page = Request::get('page', 0);
+
+            $status = Other::groupStatus($status);
 
             $count = OrderModel::countByUserId($user["user_id"], $status);
 
@@ -374,8 +377,8 @@ class OrderController {
             if ($order["paid"]) {
                 $success = "0";
                 $message = "Đơn hàng đã thanh toán";
-                // Redirect::to($url . "?success=" . $success . "&message=" . $message);
-                Response::json(['success' => $success, 'message' => $message], 400);
+                Redirect::to($url . "?success=" . $success . "&message=" . $message);
+                // Response::json(['success' => $success, 'message' => $message], 400);
             }
 
             // Kiểm tra
@@ -386,8 +389,8 @@ class OrderController {
             } else {
                 $success = "0";
                 $message = "Thanh toán không thành công";
-                // Redirect::to($url . "?success=" . $success . "&message=" . $message);
-                Response::json(['success' => $success, 'message' => $message], 400);
+                Redirect::to($url . "?success=" . $success . "&message=" . $message);
+                // Response::json(['success' => $success, 'message' => $message], 400);
             }
 
             OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
@@ -415,10 +418,10 @@ class OrderController {
             }
 
             $success = $ghnOrder['code'] == '200' ? "1" : "0";
-            $message = $ghnOrder['code'] == '200' ? "Thanh toán thành công" : $ghnOrder['message'];
+            $message = $ghnOrder['code'] == '200' ? "Thanh toán đơn hàng thành công" : $ghnOrder['message'];
 
-            // Redirect::to($url . "?success=" . $success . "&message=" . $message);
-            Response::json(['success' => $success, 'message' => $message], 200);
+            Redirect::to($url . "?success=" . $success . "&message=" . $message);
+            // Response::json(['success' => $success, 'message' => $message], 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userCheckPayment: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
