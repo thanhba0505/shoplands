@@ -26,7 +26,7 @@ class Other {
     if (empty($status)) {
       return [];
     }
-    
+
     $groupedStatus = [
       "unpaid" => ["unpaid"],
       "waiting" => [
@@ -62,6 +62,6 @@ class Other {
         "lost",
       ]
     ];
-    return $groupedStatus[$status];
+    return isset($groupedStatus[$status]) ? $groupedStatus[$status] : [];
   }
 }

@@ -57,3 +57,9 @@ Mã HTTP	    Ý nghĩa	                    Ví dụ sử dụng
 502	Bad Gateway	                        Lỗi kết nối giữa các máy chủ
 503	Service Unavailable	                Dịch vụ tạm thời không khả dụng
 504	Gateway Timeout	                    Lỗi khi máy chủ không phản hồi kịp thời
+
+
+
+
+--- Cần làm
+tạo api xóa đơn hàng chưa thanh toán 10p 1 lần

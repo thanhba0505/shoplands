@@ -302,8 +302,6 @@ class OrderModel {
         return $result ?? [];
     }
 
-
-
     // Lấy tổng số đơn hàng theo user id
     public static function countByUserId($user_id, $status = []) {
         $query = new ConnectDatabase();
@@ -342,6 +340,170 @@ class OrderModel {
         // Trả về số lượng đơn hàng hoặc 0 nếu không có kết quả
         return $result['total'] ?? 0;
     }
+
+    // Lấy tổng số đơn hàng theo seller id
+    public static function countBySellerId($seller_id, $status = []) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                COUNT(*) AS total
+            FROM
+                orders o
+            WHERE
+                o.seller_id = :seller_id
+        ";
+
+        // Nếu có mảng trạng thái, thay đổi điều kiện để sử dụng IN với named parameters
+        if (!empty($status)) {
+            $sql .= " AND o.current_status IN (" . implode(',', array_map(function ($key) {
+                return ":status" . $key;
+            }, array_keys($status))) . ")";
+        }
+
+        // Xây dựng tham số cho câu lệnh SQL
+        $params = [
+            'seller_id' => $seller_id
+        ];
+
+        // Nếu có trạng thái, thêm các trạng thái vào mảng params với named parameters
+        if (!empty($status)) {
+            foreach ($status as $key => $value) {
+                $params["status" . $key] = $value;
+            }
+        }
+
+        // Thực thi câu lệnh SQL và lấy kết quả
+        $result = $query->query($sql, $params)->fetch();
+
+        // Trả về số lượng đơn hàng hoặc 0 nếu không có kết quả
+        return $result['total'] ?? 0;
+    }
+
+    // Lấy danh sach đơn hang theo seller id
+    public static function getBySellerId($seller_id, $status = [], $limit = 12, $page = 0) {
+        $query = new ConnectDatabase();
+
+        $offset = ($page) * $limit;
+
+        // Xây dựng câu lệnh SQL cơ bản
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.subtotal_price,
+                o.shipping_fee,
+                o.discount,
+                o.final_price,
+                o.revenue,
+                o.paid,
+                o.vnp_txnref,
+                o.vnp_url,
+                o.created_at,
+                o.ghn_order_code,
+                o.current_status,
+                o.current_status_name,
+                o.from_address_id,
+                o.to_address_id,
+                o.seller_id,
+                o.user_id,
+                o.coupon_id
+            FROM
+                orders o
+            WHERE
+                o.seller_id = :seller_id
+        ";
+
+        // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
+        if (!empty($status)) {
+            $statusPlaceholders = implode(',', array_map(function ($key) {
+                return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
+            }, array_keys($status)));
+
+            $sql .= " AND o.current_status IN ($statusPlaceholders)";
+        }
+
+        // Thêm các điều kiện sắp xếp và phân trang
+        $sql .= "
+            ORDER BY
+                o.created_at DESC
+            LIMIT
+                :limit OFFSET :offset
+        ";
+
+        // Xây dựng các tham số cho câu lệnh SQL
+        $params = [
+            'seller_id' => $seller_id,
+            'limit' => $limit,
+            'offset' => $offset
+        ];
+
+        // Nếu có trạng thái, thêm các trạng thái vào mảng params
+        if (!empty($status)) {
+            foreach ($status as $key => $value) {
+                $params["status" . $key] = $value; // Thêm các trạng thái vào params với tên tham số
+            }
+        }
+
+        // Thực thi câu lệnh SQL và lấy kết quả
+        $result = $query->query($sql, $params)->fetchAll();
+
+        // Trả về kết quả hoặc mảng rỗng nếu không có kết quả
+        return $result ?? [];
+    }
+
+    // Tìm đơn hàng theo order_id và seller_id
+    public static function findByOrderIdAndSellerId($orderId, $sellerId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.subtotal_price,
+                o.shipping_fee,
+                o.discount,
+                o.final_price,
+                o.revenue,
+                o.paid,
+                o.vnp_txnref,
+                o.vnp_url,
+                o.created_at,
+                o.ghn_order_code,
+                o.current_status,
+                o.current_status_name,
+                o.from_address_id,
+                o.to_address_id,
+                o.seller_id,
+                o.user_id,
+                o.coupon_id
+            FROM
+                orders o
+            WHERE
+                o.id = :orderId
+                AND o.seller_id = :sellerId
+        ";
+
+        $result = $query->query($sql, [
+            'orderId' => $orderId,
+            'sellerId' => $sellerId
+        ])->fetch();
+
+        return $result;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
