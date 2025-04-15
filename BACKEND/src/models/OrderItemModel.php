@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Carbon;
 use App\Models\ConnectDatabase;
 
 class OrderItemModel {
@@ -46,6 +47,27 @@ class OrderItemModel {
         $result = $query->query($sql, [
             "orderId" => $orderId
         ])->fetchAll();
+
+        return $result;
+    }
+
+    // Xóa sản phẩm trong đơn hàng
+    public static function delete($orderItemId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                order_items
+            SET
+                deleted_at = :deleted_at
+            WHERE
+                id = :orderItemId
+        ";
+
+        $result = $query->query($sql, [
+            "deleted_at" => Carbon::now(),
+            "orderItemId" => $orderItemId
+        ]);
 
         return $result;
     }

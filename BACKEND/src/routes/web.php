@@ -51,6 +51,10 @@ $router->get('api/user/orders', 'OrderController@userGet', ['App\Middlewares\Use
 $router->get('api/user/orders/check-payment', 'OrderController@userCheckPayment');
 $router->get('api/user/orders/shipping-fee/{address_id}/{seller_id}', 'OrderController@userGetShippingFee', ['App\Middlewares\UserMiddleware']);
 $router->get('api/user/orders/{order_id}', 'OrderController@userFind', ['App\Middlewares\UserMiddleware']);
+$router->post('api/user/orders/link-payment', 'OrderController@userGetPaymentLink', ['App\Middlewares\UserMiddleware']);
+$router->put('api/user/orders/delete/{order_id}', 'OrderController@userDelete', ['App\Middlewares\UserMiddleware']);
+$router->put('api/user/orders/cancel/{order_id}', 'OrderController@userCancel', ['App\Middlewares\UserMiddleware']);
+$router->put('api/user/orders/return/{order_id}', 'OrderController@userReturn', ['App\Middlewares\UserMiddleware']);
 $router->post('api/user/orders', 'OrderController@userAdd', ['App\Middlewares\UserMiddleware']);
 
 $router->get('api/seller/orders', 'OrderController@sellerGet', ['App\Middlewares\SellerMiddleware']);
@@ -58,3 +62,10 @@ $router->get('api/seller/orders/{order_id}', 'OrderController@sellerFind', ['App
 
 // API SELLER
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
+
+
+// API WEBHOOK
+$router->post('api/webhook/update-status', 'WebhookController@handleUpdateStatus');
+
+// API AUTO RUN
+// $router->get('auto-run/delete-orders-unpaid', 'AutoRunController@deleteOrdersUnpaid');

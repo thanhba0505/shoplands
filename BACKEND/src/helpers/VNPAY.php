@@ -14,7 +14,7 @@ class VNPAY {
    * Tạo URL thanh toán
    */
   public static function createPaymentUrl($amount, $language = "vn", $bankCode = null) {
-    $vnp_TxnRef = time() . rand(1, 10000); // Mã giao dịch thanh toán tham chiếu của merchant
+    $vnp_TxnRef = time() . rand(10000, 99999); // Mã giao dịch thanh toán tham chiếu của merchant
     $startTime = date("YmdHis"); // Thời gian tạo giao dịch
     $expire = date('YmdHis', strtotime('+' . self::$vnp_Expire . ' minutes', strtotime($startTime))); // Thời gian hết hạn
 

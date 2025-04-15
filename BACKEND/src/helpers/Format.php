@@ -16,6 +16,7 @@ class Format {
       "unpaid" => "Chưa thanh toán",
       "ready_to_pick" => "Đã thanh toán",
       "picking" => "Nhân viên đang lấy hàng",
+      "deleted" => "Đã xóa khi không thanh toán",
       "cancel" => "Hủy đơn hàng",
       "money_collect_picking" => "Đang thu tiền người gửi",
       "picked" => "Nhân viên đã lấy hàng",

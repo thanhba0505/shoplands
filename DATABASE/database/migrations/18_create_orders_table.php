@@ -17,14 +17,17 @@ return new class extends Migration {
             $table->boolean('paid')->default(false);
             $table->string('vnp_txnref')->nullable()->index();
             $table->text('vnp_url')->nullable();
+            $table->string('vnp_created_at')->nullable();
             $table->string('ghn_order_code')->nullable();
-            $table->string('ghn_status')->nullable();
+            $table->string('current_status')->nullable();
+            $table->string('current_status_name')->nullable();
             $table->unsignedBigInteger('from_address_id'); // Foreign key
             $table->unsignedBigInteger('to_address_id'); // Foreign key
             $table->unsignedBigInteger('user_id'); // Foreign key
             $table->unsignedBigInteger('seller_id'); // Foreign key
             $table->unsignedBigInteger('coupon_id')->nullable(); // Foreign key
             $table->dateTime('created_at');
+            $table->dateTime('deleted_at')->nullable();
 
             $table->foreign('from_address_id')->references('id')->on('addresses');
             $table->foreign('to_address_id')->references('id')->on('addresses');

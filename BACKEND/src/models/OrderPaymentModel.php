@@ -29,4 +29,22 @@ class OrderPaymentModel {
 
         return $result->rowCount() > 0 ? true : false;
     }
+
+    // Xóa theo vnp_txnref
+    public static function delete($vnp_txnref) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            DELETE FROM
+                order_payments
+            WHERE
+                vnp_txnref = :vnp_txnref
+        ";
+
+        $result = $query->query($sql, [
+            'vnp_txnref' => $vnp_txnref
+        ]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
 }

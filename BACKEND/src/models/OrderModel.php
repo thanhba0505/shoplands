@@ -42,6 +42,45 @@ class OrderModel {
         return $orderId > 0 ? $orderId : $orderId;
     }
 
+    // Tìm đơn hàng theo ghn_order_code
+    public static function findByGhnOrderCode($ghn_order_code) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.subtotal_price,
+                o.shipping_fee,
+                o.discount,
+                o.final_price,
+                o.revenue,
+                o.paid,
+                o.vnp_txnref,
+                o.vnp_url,
+                o.vnp_created_at,
+                o.created_at,
+                o.ghn_order_code,
+                o.current_status,
+                o.current_status_name,
+                o.from_address_id,
+                o.to_address_id,
+                o.seller_id,
+                o.user_id,
+                o.coupon_id
+            FROM
+                orders o
+            WHERE
+                o.ghn_order_code = :ghn_order_code
+                AND o.deleted_at IS NULL
+        ";
+
+        $result = $query->query($sql, [
+            'ghn_order_code' => $ghn_order_code
+        ]);
+
+        return $result->fetch();
+    }
+
     // Cập nhật ghn_order_code
     public static function updateGhnOrderCode($orderId, $ghn_order_code) {
         $query = new ConnectDatabase();
@@ -86,6 +125,31 @@ class OrderModel {
         return $result;
     }
 
+    // Xóa đơn hàng
+    public static function delete($orderId) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                orders
+            SET
+                deleted_at = :deleted_at,
+                current_status = :current_status,
+                current_status_name = :current_status_name
+            WHERE
+                id = :orderId
+        ";
+
+        $result = $query->query($sql, [
+            'deleted_at' => Carbon::now(),
+            'current_status' => "deleted",
+            'current_status_name' => Format::getOrderStatusInVie("deleted"),
+            'orderId' => $orderId
+        ]);
+
+        return $result;
+    }
+
     // Lưu link thanh toán 
     public static function updateVnpTxnRef($orderId, $vnp_TxnRef, $vnp_Url) {
         $query = new ConnectDatabase();
@@ -95,7 +159,8 @@ class OrderModel {
                 orders
             SET
                 vnp_txnref = :vnp_TxnRef,
-                vnp_url = :vnp_Url
+                vnp_url = :vnp_Url,
+                vnp_created_at = :vnp_CreatedAt
             WHERE
                 id = :orderId
         ";
@@ -103,13 +168,14 @@ class OrderModel {
         $result = $query->query($sql, [
             'vnp_TxnRef' => $vnp_TxnRef,
             'orderId' => $orderId,
-            'vnp_Url' => $vnp_Url
+            'vnp_Url' => $vnp_Url,
+            'vnp_CreatedAt' => Carbon::now()
         ])->rowCount();
 
         return $result > 0 ? true : false;
     }
 
-    // Tìm kiếm đơn hàng theo  vnp_TxnRef
+    // Tìm kiếm đơn hàng theo vnp_TxnRef
     public static function findByVnpTxnRef($vnp_TxnRef) {
         $query = new ConnectDatabase();
 
@@ -125,6 +191,7 @@ class OrderModel {
                 orders o
             WHERE
                 o.vnp_txnref = :vnp_TxnRef
+                AND o.deleted_at IS NULL
         ";
 
         $result = $query->query($sql, [
@@ -149,6 +216,7 @@ class OrderModel {
                 o.paid,
                 o.vnp_txnref,
                 o.vnp_url,
+                o.vnp_created_at,
                 o.created_at,
                 o.ghn_order_code,
                 o.current_status,
@@ -163,6 +231,7 @@ class OrderModel {
             WHERE
                 o.id = :orderId
                 AND o.user_id = :userId
+                AND o.deleted_at IS NULL
         ";
 
         $result = $query->query($sql, [
@@ -188,6 +257,7 @@ class OrderModel {
                 o.paid,
                 o.vnp_txnref,
                 o.vnp_url,
+                o.vnp_created_at,
                 o.created_at,
                 o.ghn_order_code,
                 o.current_status,
@@ -201,6 +271,7 @@ class OrderModel {
                 orders o
             WHERE
                 o.id = :orderId
+                AND o.deleted_at IS NULL
         ";
 
         $result = $query->query($sql, [
@@ -249,6 +320,7 @@ class OrderModel {
                 o.paid,
                 o.vnp_txnref,
                 o.vnp_url,
+                o.vnp_created_at,
                 o.created_at,
                 o.ghn_order_code,
                 o.current_status,
@@ -262,6 +334,7 @@ class OrderModel {
                 orders o
             WHERE
                 o.user_id = :user_id
+                AND o.deleted_at IS NULL
         ";
 
         // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
@@ -313,6 +386,7 @@ class OrderModel {
                 orders o
             WHERE
                 o.user_id = :user_id
+                AND o.deleted_at IS NULL
         ";
 
         // Nếu có mảng trạng thái, thay đổi điều kiện để sử dụng IN với named parameters
@@ -352,6 +426,7 @@ class OrderModel {
                 orders o
             WHERE
                 o.seller_id = :seller_id
+                AND o.deleted_at IS NULL
         ";
 
         // Nếu có mảng trạng thái, thay đổi điều kiện để sử dụng IN với named parameters
@@ -398,6 +473,7 @@ class OrderModel {
                 o.paid,
                 o.vnp_txnref,
                 o.vnp_url,
+                o.vnp_created_at,
                 o.created_at,
                 o.ghn_order_code,
                 o.current_status,
@@ -411,6 +487,7 @@ class OrderModel {
                 orders o
             WHERE
                 o.seller_id = :seller_id
+                AND o.deleted_at IS NULL
         ";
 
         // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
@@ -466,6 +543,7 @@ class OrderModel {
                 o.paid,
                 o.vnp_txnref,
                 o.vnp_url,
+                o.vnp_created_at,
                 o.created_at,
                 o.ghn_order_code,
                 o.current_status,
@@ -480,6 +558,7 @@ class OrderModel {
             WHERE
                 o.id = :orderId
                 AND o.seller_id = :sellerId
+                AND o.deleted_at IS NULL
         ";
 
         $result = $query->query($sql, [
@@ -489,364 +568,4 @@ class OrderModel {
 
         return $result;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // // Lấy danh sách đơn hàng theo selelr id theo trang thai
-    // public static function getBySellerId($seller_id, $status = "all", $limit = 12, $page = 1) {
-    //     $query = new ConnectDatabase();
-
-    //     $status = $status ?? "all";
-
-    //     // Tính toán OFFSET
-    //     $offset = ($page - 1) * $limit;
-
-    //     // Nếu status là "all", không cần điều kiện về trạng thái
-    //     $statusCondition = ($status === "all") ? "" : "AND os.status = :status";
-
-    //     // Câu truy vấn với subquery để lấy trạng thái cuối cùng (last status) của mỗi đơn hàng
-    //     $sql = "
-    //         SELECT
-    //             o.id AS order_id,
-    //             o.seller_id,
-    //             o.user_id,
-    //             o.from_address_id,
-    //             o.to_address_id,
-    //             o.shipping_fee_id,
-    //             o.subtotal_price,
-    //             o.discount,
-    //             o.final_price,
-    //             o.paid,
-    //             o.revenue,
-    //             o.cancel_reason,
-    //             o.coupon_id,
-    //             o.created_at
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             o.seller_id = :seller_id
-    //             $statusCondition
-    //         ORDER BY
-    //             o.created_at DESC
-    //         LIMIT
-    //             :limit OFFSET :offset
-    //     ";
-
-    //     // Thực hiện truy vấn
-    //     $params = [
-    //         'seller_id' => $seller_id,
-    //         'limit' => $limit,
-    //         'offset' => $offset
-    //     ];
-
-    //     // Nếu status không phải "all", thêm tham số status vào query
-    //     if ($status !== "all") {
-    //         $params['status'] = $status;
-    //     }
-
-    //     $result = $query->query($sql, $params)->fetchAll();
-
-    //     return $result ?? [];
-    // }
-
-    // // Lấy danh 1 đơn hàng theo order_id
-    // public static function findByOrderIdAndSellerId($order_id, $seller_id) {
-    //     $query = new ConnectDatabase();
-
-    //     $sql = "
-    //         SELECT
-    //             o.id AS order_id,
-    //             o.seller_id,
-    //             o.user_id,
-    //             o.from_address_id,
-    //             o.to_address_id,
-    //             o.shipping_fee_id,
-    //             o.subtotal_price,
-    //             o.discount,
-    //             o.final_price,
-    //             o.paid,
-    //             o.revenue,
-    //             o.cancel_reason,
-    //             o.coupon_id,
-    //             o.created_at
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             o.id = :order_id
-    //             AND o.seller_id = :seller_id
-    //         ORDER BY
-    //             o.created_at DESC
-    //     ";
-
-    //     $result = $query->query($sql, ['order_id' => $order_id, 'seller_id' => $seller_id])->fetch();
-
-    //     return $result ?? [];
-    // }
-
-    // // Lấy danh 1 đơn hàng theo order_id
-    // public static function findByOrderIdAndUserId($order_id, $user_id) {
-    //     $query = new ConnectDatabase();
-
-    //     $sql = "
-    //         SELECT
-    //             o.id AS order_id,
-    //             o.seller_id,
-    //             o.user_id,
-    //             o.from_address_id,
-    //             o.to_address_id,
-    //             o.shipping_fee_id,
-    //             o.subtotal_price,
-    //             o.discount,
-    //             o.final_price,
-    //             o.paid,
-    //             o.vnp_txnref,
-    //             o.vnp_url,
-    //             o.revenue,
-    //             o.cancel_reason,
-    //             o.coupon_id,
-    //             o.created_at
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             o.id = :order_id
-    //             AND o.user_id = :user_id
-    //         ORDER BY
-    //             o.created_at DESC
-    //     ";
-
-    //     $result = $query->query($sql, ['order_id' => $order_id, 'user_id' => $user_id])->fetch();
-
-    //     return $result ?? [];
-    // }
-
-    // // Lấy tổng số đơn hàng theo seller id
-    // public static function countBySellerId($seller_id, $status = "all") {
-    //     $query = new ConnectDatabase();
-
-    //     $status = $status ?? "all";
-
-    //     // Nếu status là "all", không cần điều kiện về trạng thái
-    //     $statusCondition = ($status === "all") ? "" : "AND os.status = :status";
-
-    //     $sql = "
-    //         SELECT
-    //             COUNT(*) AS total
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             o.seller_id = :seller_id
-    //             $statusCondition
-    //     ";
-
-    //     // Truyền tham số vào câu truy vấn
-    //     $params = ['seller_id' => $seller_id];
-
-    //     // Nếu status không phải "all", thêm tham số status vào query
-    //     if ($status !== "all") {
-    //         $params['status'] = $status;
-    //     }
-
-    //     // Thực hiện truy vấn
-    //     $result = $query->query($sql, $params)->fetch();
-
-    //     return $result['total'] ?? 0;
-    // }
-
-
-
-    // // Lấy tổng số đơn hàng theo status
-    // public static function count($status = "all") {
-    //     $query = new ConnectDatabase();
-
-    //     $status = $status ?? "all";
-
-    //     // Nếu status là "all", không cần điều kiện về trạng thái
-    //     $statusCondition = ($status === "all") ? "" : "AND os.status = :status";
-
-    //     $sql = "
-    //         SELECT
-    //             COUNT(*) AS total
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             1=1 $statusCondition
-    //     ";
-
-    //     $params = [];
-
-    //     // Nếu status không phải "all", thêm tham số status vào query
-    //     if ($status !== "all") {
-    //         $params['status'] = $status;
-    //     }
-
-    //     // Thực hiện truy vấn
-    //     $result = $query->query($sql, $params)->fetch();
-
-    //     return $result['total'] ?? 0;
-    // }
-
-    // // Lấy danh sách đơn hàng theo status
-    // public static function get($status = "all", $limit = 12, $page = 1) {
-    //     $query = new ConnectDatabase();
-
-    //     $status = $status ?? "all";
-
-    //     // Tính toán OFFSET
-    //     $offset = ($page - 1) * $limit;
-
-    //     // Nếu status là "all", không cần điều kiện về trạng thái
-    //     $statusCondition = ($status === "all") ? "" : "AND os.status = :status";
-
-    //     // Câu truy vấn với subquery để lấy trạng thái cuối cùng (last status) của mỗi đơn hàng
-    //     $sql = "
-    //         SELECT
-    //             o.id AS order_id,
-    //             o.seller_id,
-    //             o.user_id,
-    //             o.from_address_id,
-    //             o.to_address_id,
-    //             o.shipping_fee_id,
-    //             o.subtotal_price,
-    //             o.discount,
-    //             o.final_price,
-    //             o.paid,
-    //             o.vnp_txnref,
-    //             o.vnp_url,
-    //             o.revenue,
-    //             o.cancel_reason,
-    //             o.coupon_id,
-    //             o.created_at
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             1=1 $statusCondition
-    //         ORDER BY
-    //             o.created_at DESC
-    //         LIMIT
-    //             :limit OFFSET :offset
-    //     ";
-
-    //     // Thực hiện truy vấn
-    //     $params = [
-    //         'limit' => $limit,
-    //         'offset' => $offset
-    //     ];
-
-    //     // Nếu status không phải "all", thêm tham số status vào query
-    //     if ($status !== "all") {
-    //         $params['status'] = $status;
-    //     }
-
-    //     $result = $query->query($sql, $params)->fetchAll();
-
-    //     return $result ?? [];
-    // }
-
-    // // Lấy danh sách đơn hàng cho shipper
-    // public static function shipperGet($status = "packed", $limit = 12, $page = 1) {
-    //     $query = new ConnectDatabase();
-
-    //     // Tính toán OFFSET
-    //     $offset = ($page - 1) * $limit;
-
-    //     $status = $status ?? "packed";
-
-    //     // Câu truy vấn với subquery để lấy trạng thái cuối cùng (last status) của mỗi đơn hàng
-    //     $sql = "
-    //         SELECT
-    //             o.id AS order_id,
-    //             o.seller_id,
-    //             o.user_id,
-    //             o.from_address_id,
-    //             o.to_address_id,
-    //             o.shipping_fee_id,
-    //             o.final_price,
-    //             o.cancel_reason,
-    //             o.created_at
-    //         FROM
-    //             orders o
-    //             JOIN (
-    //                 SELECT order_id, status
-    //                 FROM order_status
-    //                 WHERE (order_id, created_at) IN (
-    //                     SELECT order_id, MAX(created_at) FROM order_status GROUP BY order_id
-    //                 )
-    //             ) os ON os.order_id = o.id
-    //         WHERE
-    //             status = :status
-    //         ORDER BY
-    //             o.created_at DESC
-    //         LIMIT
-    //             :limit OFFSET :offset
-    //     ";
-
-    //     // Thực hiện truy vấn
-    //     $params = [
-    //         'limit' => $limit,
-    //         'offset' => $offset,
-    //         'status' => $status
-    //     ];
-
-    //     $result = $query->query($sql, $params)->fetchAll();
-
-    //     return $result ?? [];
-    // }
 }

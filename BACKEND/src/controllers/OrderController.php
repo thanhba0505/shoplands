@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers\Auth;
+use App\Helpers\Carbon;
 use App\Helpers\Format;
 use App\Helpers\GHN;
 use App\Helpers\Log;
@@ -11,7 +12,7 @@ use App\Helpers\QRCode;
 use App\Helpers\Redirect;
 use App\Helpers\Request;
 use App\Helpers\Response;
-use App\Helpers\VNpay;
+use App\Helpers\VNPAY;
 use App\Models\AccountModel;
 use App\Models\AddressModel;
 use App\Models\CartModel;
@@ -29,46 +30,6 @@ use App\Models\ShippingFeeModel;
 use App\Models\UserModel;
 
 class OrderController {
-    // Cập nhật status theo user id
-    private function updateStatus($orderId) {
-        try {
-            $order = OrderModel::find($orderId);
-
-            if (empty($order)) {
-                return null;
-            }
-
-            if (!$order["ghn_order_code"]) {
-                return null;
-            }
-
-            $ghnOrder = GHN::getOrder($order["ghn_order_code"]);
-
-            if ($ghnOrder["code"] != 200) {
-                throw new \Exception($ghnOrder["message"]);
-            }
-
-            if (!empty($ghnOrder["data"]["log"])) {
-                $log = $ghnOrder["data"]["log"];
-
-                usort($log, function ($a, $b) {
-                    return strtotime($b['updated_date']) - strtotime($a['updated_date']);
-                });
-
-                $lastStatus = $log[0]["status"];
-
-                OrderModel::updateStatus($orderId, $lastStatus);
-
-                return $lastStatus;
-            } else {
-                OrderModel::updateStatus($orderId, "ready_to_pick");
-            }
-        } catch (\Throwable $th) {
-            Log::throwable("OrderController -> updateStatusByUserId: " . $th->getMessage());
-            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
-        }
-    }
-
     // Lấy danh sách đơn hàng của người dùng
     public function userGet() {
         try {
@@ -84,12 +45,6 @@ class OrderController {
             $orders = OrderModel::getByUserId($user["user_id"], $status, $limit, $page);
 
             if (!empty($orders)) {
-                foreach ($orders as $key => $order) {
-                    $this->updateStatus($order["order_id"]);
-                }
-
-                $orders = OrderModel::getByUserId($user["user_id"], $status, $limit, $page);
-
                 // Duyệt qua từng đơn hàng và thêm thông tin vào
                 foreach ($orders as $key => $order) {
                     $orders[$key] = array_merge(
@@ -123,15 +78,47 @@ class OrderController {
                 Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
             }
 
-            $this->updateStatus($order["order_id"]);
-
-            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
-
             $order = array_merge($order, $this->getOrderDetails($order));
 
             Response::json($order, 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userFind: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Xóa đơn hàng chưa thanh toán
+    public function userDelete($order_id) {
+        try {
+            $user = Auth::user();
+
+            if (["delete", "cancel",])
+
+                $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+            }
+
+            if ($order["current_status"] != "unpaid") {
+                Response::json(['message' => 'Chỉ có thể xóa đơn hàng chưa thanh toán'], 400);
+            }
+
+            OrderModel::delete($order_id);
+
+            $order_items = OrderItemModel::getByOrderId($order_id);
+
+            foreach ($order_items as $order_item) {
+                OrderItemModel::delete($order_item["order_item_id"]);
+                ProductVariantModel::updateQuantityWhenDeleteOrder(
+                    $order_item["product_variant_id"],
+                    $order_item["quantity"]
+                );
+            }
+
+            Response::json(['message' => 'Xóa đơn hàng thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> userUpdate: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -341,7 +328,7 @@ class OrderController {
             }
 
             // Thanh toán
-            $result = VNpay::createPaymentUrl($finalPrice);
+            $result = VNPAY::createPaymentUrl($finalPrice);
 
             // Lưu vnp_TxnRef và vnp_url
             OrderModel::updateVnpTxnRef($orderId, $result["vnp_txnref"], $result["vnp_url"]);
@@ -352,6 +339,38 @@ class OrderController {
             ], 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userAdd: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Làm mới link thanh toán
+    public function userGetPaymentLink() {
+        try {
+            $order_id = Request::json('order_id');
+
+            $order = OrderModel::find($order_id);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy thông tin đơn hàng'], 400);
+            }
+
+            if ($order["paid"]) {
+                Response::json(['message' => 'Đơn hàng đã thanh toán'], 400);
+            }
+
+            $date = Carbon::now();
+            $minute = Carbon::diffInMinutes($order["vnp_created_at"], $date);
+
+            if ($minute >= 15) {
+                $result = VNPAY::createPaymentUrl($order['final_price']);
+                OrderPaymentModel::delete($order['vnp_txnref']);
+                OrderModel::updateVnpTxnRef($order['order_id'], $result["vnp_txnref"], $result["vnp_url"]);
+                $order = OrderModel::find($order_id);
+            }
+
+            Response::json($order, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> userGetPaymentLink: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -383,7 +402,7 @@ class OrderController {
             }
 
             // Kiểm tra
-            $result = VNpay::handleReturn();
+            $result = VNPAY::handleReturn();
 
             if ($result['code'] == '00') {
                 OrderModel::updatePaid($order["order_id"], true);
@@ -483,9 +502,6 @@ class OrderController {
         }
     }
 
-
-
-
     // Lấy danh sách đơn hàng của người dùng theo người bán
     public function sellerGet() {
         try {
@@ -501,12 +517,6 @@ class OrderController {
             $orders = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
 
             if (!empty($orders)) {
-                foreach ($orders as $key => $order) {
-                    $this->updateStatus($order["order_id"]);
-                }
-
-                $orders = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
-
                 // Duyệt qua từng đơn hàng và thêm thông tin vào
                 foreach ($orders as $key => $order) {
                     $orders[$key] = array_merge(
@@ -528,6 +538,7 @@ class OrderController {
         }
     }
 
+    // Lấy 1 đơn hàng theo người bán
     public function sellerFind($order_id) {
         try {
             $seller = Auth::seller();
@@ -538,10 +549,6 @@ class OrderController {
             if (!$order) {
                 Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
             }
-
-            $this->updateStatus($order["order_id"]);
-
-            $order = OrderModel::findByOrderIdAndUserId($order_id, $seller["seller_id"]);
 
             $order = array_merge($order, $this->getOrderDetails($order));
 

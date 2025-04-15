@@ -136,7 +136,7 @@ const OrderDetail = () => {
                   </TableHead>
                   <TableBody>
                     {order?.order_items?.map((item) => (
-                      <TableRow key={item.product_id}>
+                      <TableRow key={item.product_variant_id}>
                         <TableCell>
                           <div
                             style={{

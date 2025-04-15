@@ -64,4 +64,9 @@ class Log {
     public static function login($logData, $title = 'Login:') {
         self::json($logData, $title, 'login.log');
     }
+
+    // Log auto run delete order unpaid
+    public static function autoRunDeleteOrderUnpaid($logData, $title = 'Delete Order Unpaid:') {
+        self::json($logData, $title, 'auto-run-delete-order-unpaid.log');
+    }
 }

@@ -96,6 +96,29 @@ class ProductVariantModel {
         return $result;
     }
 
+    // Cập nhật số lượng tồn kho và số lượng đã bán khi hủy đơn hàng
+    public static function updateQuantityWhenDeleteOrder($product_variant_id, $quantity) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE 
+                product_variants
+            SET
+                quantity = quantity + :quantity1,
+                sold_quantity = sold_quantity - :quantity2
+            WHERE
+                id = :product_variant_id
+        ";
+
+        $result = $conn->query($sql, [
+            'quantity1' => $quantity,
+            'quantity2' => $quantity,
+            'product_variant_id' => $product_variant_id
+        ]);
+
+        return $result;
+    }
+
     // Thêm 1 sản phẩm
     public static function add($product_id, $quantity, $price, $promotion_price = null) {
         $conn = new ConnectDatabase();
