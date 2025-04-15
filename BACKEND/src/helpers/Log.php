@@ -66,7 +66,7 @@ class Log {
     }
 
     // Log auto run delete order unpaid
-    public static function autoRunDeleteOrderUnpaid($logData, $title = 'Delete Order Unpaid:') {
-        self::json($logData, $title, 'auto-run-delete-order-unpaid.log');
+    public static function autoRunUpdateOrder($logData, $title = 'Update Order:') {
+        self::json($logData, $title, 'auto-run-update-order.log');
     }
 }

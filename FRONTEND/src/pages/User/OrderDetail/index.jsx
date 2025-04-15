@@ -1,8 +1,5 @@
 import { useTheme } from "@emotion/react";
 import {
-  Avatar,
-  Box,
-  Button,
   Container,
   Divider,
   Grid2,
@@ -17,8 +14,8 @@ import {
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import ButtonLoading from "~/components/ButtonLoading";
 import PaperCustom from "~/components/PaperCustom";
-import StepCustom from "~/components/StepCustom";
 import Api from "~/helpers/Api";
 import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
@@ -78,6 +75,49 @@ const OrderDetail = () => {
     fetchApi();
   }, [fetchApi]);
 
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const handlePayment = async () => {
+    const createdAt = order.vnp_created_at;
+    const createdAtDate = new Date(createdAt.replace(" ", "T"));
+
+    const currentDate = new Date();
+
+    // Tính số phút chênh lệch
+    const diffInMilliseconds = currentDate - createdAtDate;
+    const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60); // Chuyển đổi từ milliseconds sang phút
+
+    console.log("Số phút chênh lệch:", diffInMinutes);
+
+    if (diffInMinutes < 1) {
+      // window.location.href = order.vnp_url;
+      console.log(order.vnp_url);
+      console.log("111111");
+    } else {
+      setPaymentLoading(true);
+      try {
+        const response = await axiosWithAuth.post(
+          Api.orders("link-payment"),
+          {
+            order_id: params.orderId,
+          },
+          {
+            navigate,
+          }
+        );
+
+        // window.open(response.data.url, "_blank");
+        setOrder(response.data);
+        console.log(response.data.vnp_url);
+        console.log("2222222");
+      } catch (error) {
+        Log.error(error.response?.data?.message);
+      } finally {
+        setPaymentLoading(false);
+      }
+    }
+  };
+
   return (
     <Container maxWidth="lg">
       {loading ? (
@@ -97,7 +137,7 @@ const OrderDetail = () => {
                 Chi tiết đơn hàng #{order.order_id} -{" "}
                 {order.current_status_name}
               </Typography>
-              {order.current_status !== "unpaid" && (
+              {order.tracking_url && (
                 <Typography
                   variant="body2"
                   textAlign={"end"}
@@ -236,9 +276,15 @@ const OrderDetail = () => {
 
                 {order.paid === 0 && (
                   <Grid2 fontSize={"body2.fontSize"} size={12}>
-                    <Button size="small" variant="outlined" sx={{ px: 3 }}>
+                    <ButtonLoading
+                      size="small"
+                      variant="outlined"
+                      sx={{ px: 3 }}
+                      onClick={handlePayment}
+                      loading={paymentLoading}
+                    >
                       Thanh toán
-                    </Button>
+                    </ButtonLoading>
                   </Grid2>
                 )}
               </Grid2>

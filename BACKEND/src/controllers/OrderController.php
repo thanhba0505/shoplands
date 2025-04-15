@@ -368,6 +368,8 @@ class OrderController {
                 $order = OrderModel::find($order_id);
             }
 
+            $order = array_merge($order, $this->getOrderDetails($order));
+
             Response::json($order, 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userGetPaymentLink: " . $th->getMessage());

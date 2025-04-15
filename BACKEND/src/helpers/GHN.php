@@ -187,7 +187,7 @@ class GHN {
     return self::ghnPost('/v2/shipping-order/detail', ['order_code' => strval($order_code)]);
   }
 
-  // Lấy 
+  // Lấy link trạng thái đơn hàng theo order code
   public static function getTrackingUrl($order_code) {
     return $order_code ? "https://tracking.ghn.dev/?order_code=" . $order_code : "";
   }

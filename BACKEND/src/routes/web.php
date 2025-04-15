@@ -68,4 +68,4 @@ $router->get('api/sellers/{seller_id}', 'SellerController@find');
 $router->post('api/webhook/update-status', 'WebhookController@handleUpdateStatus');
 
 // API AUTO RUN
-// $router->get('auto-run/delete-orders-unpaid', 'AutoRunController@deleteOrdersUnpaid');
+$router->get('auto-run/update-status-order', 'AutoRunController@updateStatusOrder');

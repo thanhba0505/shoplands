@@ -568,4 +568,25 @@ class OrderModel {
 
         return $result;
     }
+
+    // Lây danh sách đơn hàng đã có vận chuyển
+    public static function getDeliveredOrders() {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.ghn_order_code,
+                o.current_status
+            FROM
+                orders o
+            WHERE
+                o.ghn_order_code IS NOT NULL
+                AND o.deleted_at IS NULL
+        ";
+
+        $result = $query->query($sql, [])->fetchAll();
+
+        return $result;
+    }
 }
