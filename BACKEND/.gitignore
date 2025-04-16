@@ -3,3 +3,4 @@ vendor/
 .sql
 data.log
 src/Logs/
+.env.production

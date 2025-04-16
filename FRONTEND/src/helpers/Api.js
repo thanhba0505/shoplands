@@ -78,6 +78,11 @@ class Api {
         return this.buildPath("sellers", endpoint);
     }
 
+    // User
+    static userAddress(endpoint = "") {
+        return this.buildPath("user/address", endpoint);
+    }
+
     // Seller
     static sellerOrders(endpoint = "") {
         return this.buildPath("seller/orders", endpoint);
