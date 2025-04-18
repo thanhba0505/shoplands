@@ -46,6 +46,18 @@ class Api {
         return this.buildPath("auth/refresh-token", endpoint);
     }
 
+    static provinces(endpoint = "") {
+        return this.buildPath("address/provinces", endpoint);
+    }
+
+    static districts(endpoint = "") {
+        return this.buildPath("address/districts", endpoint);
+    }
+
+    static wards(endpoint = "") {
+        return this.buildPath("address/wards", endpoint);
+    }
+
     static categories(endpoint = "") {
         return this.buildPath("categories", endpoint);
     }

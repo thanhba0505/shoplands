@@ -90,6 +90,15 @@ class AddressController {
         try {
             $res = GHN::getProvinces();
 
+            // Loại bỏ các tỉnh có ProvinceID 290 và 286 (test)
+            $res['data'] = array_filter($res['data'], function ($province) {
+                return !in_array($province['ProvinceID'], [290, 286]);
+            });
+
+            // Re-index lại mảng để tránh có chỉ mục bị bỏ trống
+            $res['data'] = array_values($res['data']);
+
+            // Trả lại kết quả sau khi đã lọc
             Response::json($res);
         } catch (\Throwable $th) {
             Log::throwable("AddressController -> getProvinces: " . $th->getMessage());

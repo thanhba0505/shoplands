@@ -87,7 +87,7 @@ const UserOrdersLayout = ({ children }) => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            gap: 2,
+            gap: 3,
           }}
         >
           <SidebarTab
