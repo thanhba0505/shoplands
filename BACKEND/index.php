@@ -21,7 +21,7 @@ require './config.php';
 
 // Kiểm tra và thêm header CORS chỉ cho phép frontend từ một địa chỉ cụ thể
 $allowedOrigin = $_ENV['FRONTEND_URL']; // Đọc từ file .env
-$isDevelopment = $_ENV['ENVIRONMENT'] === "DEVELOPMENT";
+$isDevelopment = $_ENV['ENVIRONMENT'] === "development";
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 

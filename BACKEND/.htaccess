@@ -1,8 +1,8 @@
 RewriteEngine On
 
 # Điều kiện chuyển hướng
-# RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
 # Chuyển hướng tất cả yêu cầu về index.php
 RewriteRule ^(.*)$ index.php [QSA,L]
