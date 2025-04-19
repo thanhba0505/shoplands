@@ -45,48 +45,63 @@ const AcctionButton = ({ handleOnClick, title, ...props }) => {
   );
 };
 
-const HandleRender = ({ status, orderId, setOrders, url }) => {
-  const [loading, setLoading] = useState(false);
+const HandleRender = ({ status, orderId, url, createdAt }) => {
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [loadingComplete, setLoadingComplete] = useState(false);
+
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const handlePaid = async () => {
-    setLoading(true);
-    try {
+    const createdAtDate = new Date(createdAt.replace(" ", "T"));
+
+    const currentDate = new Date();
+
+    // Tính số phút chênh lệch
+    const diffInMilliseconds = currentDate - createdAtDate;
+    const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60); // Chuyển đổi từ milliseconds sang phút
+
+    if (diffInMinutes < 1) {
       window.location.href = url;
-    } catch (error) {
-      Log.error(error.response?.data?.message);
-    } finally {
-      setLoading(false);
+    } else {
+      setPaymentLoading(true);
+      try {
+        const response = await axiosWithAuth.post(
+          Api.orders("link-payment"),
+          {
+            order_id: orderId,
+          },
+          {
+            navigate,
+          }
+        );
+
+        window.location.href = response.data.url;
+      } catch (error) {
+        Log.error(error.response?.data?.message);
+      } finally {
+        setPaymentLoading(false);
+      }
     }
   };
 
   const handleComplete = async () => {
-    setLoading(true);
+    setLoadingComplete(true);
     try {
-      const response = await axiosWithAuth.post(
-        Api.orders(orderId),
+      const response = await axiosWithAuth.put(
+        Api.orders("complete/" + orderId),
         {},
         {
           navigate,
         }
       );
-      if (response.status === 200) {
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order.order_id === orderId
-              ? { ...order, latest_status: response.data }
-              : order
-          )
-        );
-        enqueueSnackbar("Đã xác nhận nhận hàng " + orderId, {
-          variant: "success",
-        });
-      }
+
+      navigate(Path.userOrders("detail/" + orderId));
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
-      setLoading(false);
+      setLoadingComplete(false);
     }
   };
 
@@ -94,7 +109,7 @@ const HandleRender = ({ status, orderId, setOrders, url }) => {
     case "unpaid":
       return (
         <AcctionButton
-          loading={loading}
+          loading={paymentLoading}
           onClick={handlePaid}
           title="Thanh toán"
         />
@@ -103,7 +118,7 @@ const HandleRender = ({ status, orderId, setOrders, url }) => {
       return (
         <>
           <AcctionButton
-            loading={loading}
+            loading={loadingComplete}
             onClick={handleComplete}
             title="Đã nhận hàng"
           />
@@ -264,6 +279,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                         orderId={order.order_id}
                         url={order?.vnp_url}
                         status={order.current_status}
+                        createdAt={order.vnp_created_at}
                       />
                     </Box>
                   </TableCell>

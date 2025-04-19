@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Box,
-  Container,
   Divider,
   Grid2,
   Skeleton,
@@ -19,7 +18,7 @@ import Log from "~/helpers/Log";
 import axiosDefault from "~/utils/axiosDefault";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
-const AddAddress = () => {
+const AddAddress = ({ fetchApi }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [loadingForm, setLoadingForm] = useState(false);
@@ -122,6 +121,8 @@ const AddAddress = () => {
       });
 
       enqueueSnackbar(response.data.message, { variant: "success" });
+      resetForm();
+      fetchApi();
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
@@ -324,12 +325,15 @@ const AddressBook = () => {
               {address.length > 0 ? (
                 address.map((item) => (
                   <div key={item.address_id}>
-                    <Box sx={{ px: 2 }}>
-                      <Typography>
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Typography variant="body1" sx={{ fontWeight: "semiBold" }}>
                         {item.ward_name}, {item.district_name},{" "}
                         {item.province_name}
                       </Typography>
-                      <Typography>{item.address_line}</Typography>
+                      {item.address_line}
+                      <Typography variant="body2" color="success">
+                        {item.default == 1 ? " (Mặc định)" : ""}
+                      </Typography>
                     </Box>
                     <Divider sx={{ my: 1 }} />
                   </div>
@@ -343,7 +347,7 @@ const AddressBook = () => {
       </Grid2>
 
       <Grid2 size={5}>
-        <AddAddress />
+        <AddAddress fetchApi={fetchApi} />
       </Grid2>
     </Grid2>
   );

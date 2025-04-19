@@ -7,6 +7,7 @@ use App\Helpers\Log;
 use App\Models\SellerModel;
 
 class SellerController {
+    // Tìm kiếm người bán
     public function find($seller_id) {
         try {
             $seller = SellerModel::findBySellerId($seller_id);
@@ -22,6 +23,26 @@ class SellerController {
             Response::json($seller);
         } catch (\Throwable $th) {
             Log::throwable("SellerController -> find: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Admin lấy danh sách người dùng
+    public function adminGet() {
+        try {
+            
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> adminGet: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Đăng ký người bán
+    public function register() {
+        try {
+            
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> register: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

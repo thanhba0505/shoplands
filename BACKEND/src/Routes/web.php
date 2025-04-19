@@ -55,12 +55,16 @@ $router->post('api/user/orders/link-payment', 'OrderController@userGetPaymentLin
 $router->put('api/user/orders/delete/{order_id}', 'OrderController@userDelete', ['App\Middlewares\UserMiddleware']);
 $router->put('api/user/orders/cancel/{order_id}', 'OrderController@userCancel', ['App\Middlewares\UserMiddleware']);
 $router->put('api/user/orders/return/{order_id}', 'OrderController@userReturn', ['App\Middlewares\UserMiddleware']);
+$router->put('api/user/orders/complete/{order_id}', 'OrderController@userComplete', ['App\Middlewares\UserMiddleware']);
 $router->post('api/user/orders', 'OrderController@userAdd', ['App\Middlewares\UserMiddleware']);
 
 $router->get('api/seller/orders', 'OrderController@sellerGet', ['App\Middlewares\SellerMiddleware']);
 $router->get('api/seller/orders/{order_id}', 'OrderController@sellerFind', ['App\Middlewares\SellerMiddleware']);
 
 // API SELLER
+$router->get('api/admin/sellers', 'SellerController@adminGet', ['App\Middlewares\AdminMiddleware']);
+$router->get('api/admin/sellers/', 'SellerController@adminGet', ['App\Middlewares\AdminMiddleware']);
+$router->get('api/sellers/register', 'SellerController@register');
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
 
 
@@ -69,3 +73,5 @@ $router->post('api/webhook/update-status', 'WebhookController@handleUpdateStatus
 
 // API AUTO RUN
 $router->get('auto-run/update-status-order', 'AutoRunController@updateStatusOrder');
+
+// API 

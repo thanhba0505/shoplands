@@ -269,22 +269,23 @@ class AccountModel {
         return $result;
     }
 
-    // Cập nhật coin cho seller
-    public static function updateCoin($account_id, $coin) {
+    // Cộng coin cho seller
+    public static function sellerIncreaseCoin($seller_id, $coin) {
         $query = new ConnectDatabase();
 
         $sql = "
             UPDATE
-                accounts
+                accounts a
+                JOIN sellers s ON s.account_id = a.id
             SET
-                coin = :coin
+                coin = coin + :coin
             WHERE
-                id = :account_id
+                s.id = :seller_id
         ";
 
         $result = $query->query($sql, [
             'coin' => $coin,
-            'account_id' => $account_id
+            'seller_id' => $seller_id
         ]);
 
         return $result;

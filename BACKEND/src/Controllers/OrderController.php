@@ -92,9 +92,7 @@ class OrderController {
         try {
             $user = Auth::user();
 
-            if (["delete", "cancel",])
-
-                $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
 
             if (!$order) {
                 Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
@@ -119,6 +117,39 @@ class OrderController {
             Response::json(['message' => 'Xóa đơn hàng thành công'], 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userUpdate: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Xác nhận hoàn thành đơn hàng
+    public function userComplete($order_id) {
+        try {
+            $user = Auth::user();
+
+            // Lấy thông tin đơn hàng
+            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+            }
+
+            if ($order["current_status"] == "completed") {
+                Response::json(['message' => 'Đơn hàng đã hoàn thành'], 400);
+            }
+
+            if ($order["current_status"] != "delivered") {
+                Response::json(['message' => 'Đơn hàng chưa được giao cho khách hàng'], 400);
+            }
+
+            // Cập nhật trang thai
+            OrderModel::updateStatus($order_id, "completed");
+
+            // Cộng tiền cho seller
+            AccountModel::sellerIncreaseCoin($order["seller_id"], $order["revenue"]);
+
+            Response::json(['message' => 'Đã hoàn tất đơn hàng'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> userComplete: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -361,18 +392,18 @@ class OrderController {
             $date = Carbon::now();
             $minute = Carbon::diffInMinutes($order["vnp_created_at"], $date);
 
-            if ($minute >= 15) {
+            if ($minute >= 14) {
                 $result = VNPAY::createPaymentUrl($order['final_price']);
                 OrderPaymentModel::delete($order['vnp_txnref']);
                 OrderModel::updateVnpTxnRef($order['order_id'], $result["vnp_txnref"], $result["vnp_url"]);
-                $order = OrderModel::find($order_id);
+                $url = $result["vnp_url"];
+            } else {
+                $url = $order["vnp_url"];
             }
 
-            $order = array_merge($order, $this->getOrderDetails($order));
-
-            Response::json($order, 200);
+            Response::json(['url' => $url], 200);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> userGetPaymentLink: " . $th->getMessage());
+            Log::throwable("OrderController -> userGFetPaymentLink: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

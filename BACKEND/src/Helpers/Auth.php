@@ -75,22 +75,8 @@ class Auth {
             $result['status'] = $account['status'];
             $result['created_at'] = $account['created_at'];
             $account = $result;
-        } else if ($role === 'shipper') {
-            $account = AccountModel::findById($decoded->account_id);
-            if (!$account || $account['role'] !== $role) {
-                return null;
-            }
-            $result['account_id'] = $account['account_id'];
-            $result['phone'] = $account['phone'];
-            $result['role'] = $account['role'];
-            $result['coin'] = $account['coin'];
-            $result['bank_number'] = $account['bank_number'];
-            $result['bank_name'] = $account['bank_name'];
-            $result['status'] = $account['status'];
-            $result['created_at'] = $account['created_at'];
-            $account = $result;
-        }
-
+        } 
+        
         self::$account = $account;
         return self::$account;
     }

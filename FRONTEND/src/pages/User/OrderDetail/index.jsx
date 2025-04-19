@@ -87,12 +87,8 @@ const OrderDetail = () => {
     const diffInMilliseconds = currentDate - createdAtDate;
     const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60); // Chuyển đổi từ milliseconds sang phút
 
-    console.log("Số phút chênh lệch:", diffInMinutes);
-
-    if (diffInMinutes < 1) {
-      // window.location.href = order.vnp_url;
-      console.log(order.vnp_url);
-      console.log("111111");
+    if (diffInMinutes < 10) {
+      window.location.href = order.vnp_url;
     } else {
       setPaymentLoading(true);
       try {
@@ -106,10 +102,7 @@ const OrderDetail = () => {
           }
         );
 
-        // window.open(response.data.url, "_blank");
-        setOrder(response.data);
-        console.log(response.data.vnp_url);
-        console.log("2222222");
+        window.location.href = response.data.url;
       } catch (error) {
         Log.error(error.response?.data?.message);
       } finally {

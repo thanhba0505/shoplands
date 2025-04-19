@@ -113,6 +113,12 @@ class AddressController {
 
             $res = GHN::getDistricts($province_id);
 
+            $res['data'] = array_filter($res['data'], function ($district) {
+                return !in_array($district['DistrictID'], [3451]);
+            });
+
+            $res['data'] = array_values($res['data']);
+
             Response::json($res);
         } catch (\Throwable $th) {
             Log::throwable("AddressController -> getDistricts: " . $th->getMessage());

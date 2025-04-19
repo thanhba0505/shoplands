@@ -36,7 +36,8 @@ class Format {
       "returned" => "Nhân viên trả hàng thành công",
       "exception" => "Đơn hàng ngoại lệ không nằm trong quy trình",
       "damage" => "Hàng bị hư hỏng",
-      "lost" => "Hàng bị mất"
+      "lost" => "Hàng bị mất",
+      "completed" => "Đã hoàn thành"
     ];
 
     return isset($statusMapping[$status]) ? $statusMapping[$status] : "Không xác định";

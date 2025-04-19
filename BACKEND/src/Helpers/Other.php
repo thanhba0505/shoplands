@@ -45,6 +45,7 @@ class Other {
       ],
       "completed" => [
         "delivered",
+        "completed",
       ],
       "return" => [
         "waiting_to_return",
