@@ -240,7 +240,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                     {Format.formatCurrency(order.discount)}
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatCurrency(order.shipping_fee.price)}
+                    {Format.formatCurrency(order.shipping_fee)}
                   </TableCell>
                   <TableCell colSpan={2} align="center">
                     <Typography

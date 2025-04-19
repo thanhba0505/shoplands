@@ -69,7 +69,7 @@ const NAVIGATION = [
   },
   {
     name: "Đơn hàng khác",
-    tooltip: "Đơn khác",
+    tooltip: "Đơn hàng khác",
     path: "/user/orders/other",
     icon: <FactCheckOutlinedIcon />,
   },

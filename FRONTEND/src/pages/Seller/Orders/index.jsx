@@ -26,7 +26,7 @@ import ButtonLoading from "~/components/ButtonLoading";
 import { TabContext, TabList } from "@mui/lab";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 const AcctionButton = ({ handleOnClick, title, ...props }) => {
@@ -117,7 +117,7 @@ const OrdersTable = ({ orders, setOrders }) => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
-                  <TableCell>
+                  <TableCell align="center">
                     Mã Đơn Hàng: {order.order_id} <br />
                     {Format.formatDateTime(order.created_at)}
                   </TableCell>
@@ -135,12 +135,12 @@ const OrdersTable = ({ orders, setOrders }) => {
                   </TableCell>
                   <TableCell align="center">
                     Phương thức giao hàng: <br />
-                    {order.shipping_fee.method}
+                    Giao hàng nhanh
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatOrderStatus(order.latest_status.status)}
+                    {order.current_status_name}
                     <br />
-                    {Format.formatDateTime(order.latest_status.created_at)}
+                    {Format.formatDateTime(order.created_at)}
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -183,7 +183,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                 ))}
 
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
                     Tổng giá sản phẩm
                   </TableCell>
                   <TableCell align="center" sx={{ fontWeight: "bold" }}>
@@ -196,7 +196,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                     Thành tiền đơn hàng
                   </TableCell>
                   <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                    Khách hàng thanh toán
+                    Trạng thái thanh toán
                   </TableCell>
                   <TableCell align="center" sx={{ fontWeight: "bold" }}>
                     Doanh thu
@@ -204,14 +204,14 @@ const OrdersTable = ({ orders, setOrders }) => {
                 </TableRow>
 
                 <TableRow>
-                  <TableCell>
+                  <TableCell align="center">
                     {Format.formatCurrency(order.subtotal_price)}
                   </TableCell>
                   <TableCell align="center">
                     {Format.formatCurrency(order.discount)}
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatCurrency(order.shipping_fee.price)}
+                    {Format.formatCurrency(order.shipping_fee)}
                   </TableCell>
                   <TableCell align="center">
                     <Typography
@@ -224,7 +224,7 @@ const OrdersTable = ({ orders, setOrders }) => {
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
-                    {Format.formatCurrency(order.paid)}
+                    {order.paid ? "Đã thanh toán" : "Chưa thanh toán"}
                   </TableCell>
                   <TableCell align="center">
                     {Format.formatCurrency(order.revenue)}
@@ -244,12 +244,6 @@ const OrdersTable = ({ orders, setOrders }) => {
                       >
                         Chi tiết đơn hàng
                       </ButtonLoading>
-
-                      <HandleRender
-                        setOrders={setOrders}
-                        orderId={order.order_id}
-                        status={order.latest_status.status}
-                      />
                     </Box>
                   </TableCell>
                 </TableRow>
@@ -266,13 +260,13 @@ const OrdersTable = ({ orders, setOrders }) => {
 
 const Orders = () => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
-  const location = useLocation();
   const navigate = useNavigate();
+  const params = useParams();
 
-  const value = Path.getElement(location.pathname, 3) ?? "all";
+  const value = params.status ?? "all";
 
   const [orders, setOrders] = useState([]);
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -304,7 +298,7 @@ const Orders = () => {
             params: {
               status: status,
               limit: limit,
-              page: page + 1,
+              page: page,
             },
             navigate,
           });
@@ -331,11 +325,11 @@ const Orders = () => {
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={handleChange} aria-label="lab API tabs example">
               <Tab disabled={loading} label="Tất cả" value="all" />
-              <Tab disabled={loading} label="Chờ đóng gói" value="packing" />
-              <Tab disabled={loading} label="Đã đóng gói" value="packed" />
+              <Tab disabled={loading} label="Chờ giao hàng" value="waiting" />
               <Tab disabled={loading} label="Đang giao hàng" value="shipping" />
-              <Tab disabled={loading} label="Đã giao hàng" value="delivered" />
-              <Tab disabled={loading} label="Hoàn thành" value="completed" />
+              <Tab disabled={loading} label="Đã giao hàng" value="completed" />
+              <Tab disabled={loading} label="Đơn hàng trả" value="return" />
+              <Tab disabled={loading} label="Đơn hàng khác" value="other" />
             </TabList>
           </Box>
         </TabContext>

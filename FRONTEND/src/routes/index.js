@@ -68,33 +68,9 @@ const userRoutes = [
 const sellerRoutes = [
   { path: "/seller/dashboard", component: Dashboard, layout: ManageLayout },
   // Đơn hàng
-  { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/all", component: OrdersSeller, layout: ManageLayout },
-  {
-    path: "/seller/orders/packing",
-    component: OrdersSeller,
-    layout: ManageLayout,
-  },
-  {
-    path: "/seller/orders/packed",
-    component: OrdersSeller,
-    layout: ManageLayout,
-  },
-  {
-    path: "/seller/orders/shipping",
-    component: OrdersSeller,
-    layout: ManageLayout,
-  },
-  {
-    path: "/seller/orders/delivered",
-    component: OrdersSeller,
-    layout: ManageLayout,
-  },
-  {
-    path: "/seller/orders/completed",
-    component: OrdersSeller,
-    layout: ManageLayout,
-  },
+  // { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
+  // { path: "/seller/orders/detail/:orderId", component: OrdersSeller, layout: ManageLayout },
+  { path: "/seller/orders/:status", component: OrdersSeller, layout: ManageLayout },
 
   // Sản phẩm
   { path: "/seller/products", component: ProductSellers, layout: ManageLayout },

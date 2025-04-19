@@ -3,12 +3,11 @@ import { useTheme } from "@mui/material/styles";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import MarkunreadMailboxOutlinedIcon from "@mui/icons-material/MarkunreadMailboxOutlined";
 import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import BallotOutlinedIcon from "@mui/icons-material/BallotOutlined";
-import AssignmentReturnOutlinedIcon from "@mui/icons-material/AssignmentReturnOutlined";
+import AllInboxRoundedIcon from "@mui/icons-material/AllInboxRounded";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
@@ -33,15 +32,9 @@ const NAVIGATION = [
     icon: <WysiwygRoundedIcon />,
   },
   {
-    name: "Chờ đóng gói",
-    tooltip: "Chờ đóng gói",
-    path: "/seller/orders/packing",
-    icon: <MarkunreadMailboxOutlinedIcon />,
-  },
-  {
-    name: "Đã đóng gói",
-    tooltip: "Đã đóng gói",
-    path: "/seller/orders/packed",
+    name: "Chờ giao hàng",
+    tooltip: "Chờ giao hàng",
+    path: "/seller/orders/waiting",
     icon: <CardTravelRoundedIcon />,
   },
   {
@@ -51,15 +44,21 @@ const NAVIGATION = [
     icon: <LocalShippingOutlinedIcon />,
   },
   {
-    name: "Yêu cầu trả hàng",
-    tooltip: "Yêu cầu trả hàng",
-    path: "/seller/orders/delivered",
-    icon: <AssignmentReturnOutlinedIcon />,
+    name: "Đã hoàn thành",
+    tooltip: "Đã hoàn thành",
+    path: "/seller/orders/completed",
+    icon: <LocalShippingOutlinedIcon />,
   },
   {
-    name: "Hoàn thành",
-    tooltip: "Hoàn thành",
-    path: "/seller/orders/completed",
+    name: "Đơn hoàn trả",
+    tooltip: "Đơn hoàn trả",
+    path: "/seller/orders/return",
+    icon: <AllInboxRoundedIcon />,
+  },
+  {
+    name: "Đơn hàng khác",
+    tooltip: "Đơn hàng khác",
+    path: "/seller/orders/other",
     icon: <FactCheckOutlinedIcon />,
     divider: true,
   },

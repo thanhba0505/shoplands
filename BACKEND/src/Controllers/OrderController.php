@@ -539,7 +539,7 @@ class OrderController {
     public function sellerGet() {
         try {
             $seller = Auth::seller();
-            $status = Request::get('status') ? Request::get('status') : null;
+            $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
             $limit = Request::get('limit', 12);
             $page = Request::get('page', 0);
 
