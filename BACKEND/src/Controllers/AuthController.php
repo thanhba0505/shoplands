@@ -304,19 +304,6 @@ class AuthController {
                 Response::json(['message' => 'Access token không hợp lệ'], 401);
             }
 
-            $account = AccountModel::findById($decoded->account_id);
-            if (!$account) {
-                Response::json(['message' => 'Access token không hợp lệ'], 401);
-            }
-
-            if (!$account['access_token']) {
-                Response::json(['message' => 'Tài khoản đã đăng xuất'], 401);
-            }
-
-            if ($account['access_token'] !== $accessToken) {
-                Response::json(['message' => 'Access token không hợp lệ'], 401);
-            }
-
             // Lấy ID từ access token
             $id = $decoded->account_id;
 

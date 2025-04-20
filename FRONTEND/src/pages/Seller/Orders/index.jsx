@@ -26,83 +26,9 @@ import ButtonLoading from "~/components/ButtonLoading";
 import { TabContext, TabList } from "@mui/lab";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useSnackbar } from "notistack";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AcctionButton = ({ handleOnClick, title, ...props }) => {
-  return (
-    <ButtonLoading
-      variant="outlined"
-      sx={{
-        px: 6,
-        marginLeft: "auto",
-      }}
-      onClick={handleOnClick}
-      {...props}
-    >
-      {title}
-    </ButtonLoading>
-  );
-};
-
-const HandleRender = ({ status, orderId, setOrders }) => {
-  const [loading, setLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-
-  const handlePacking = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosWithAuth.post(
-        Api.sellerOrders(orderId),
-        {},
-        {
-          navigate,
-        }
-      );
-
-      if (response.status === 200) {
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order.order_id === orderId
-              ? { ...order, latest_status: response.data }
-              : order
-          )
-        );
-
-        enqueueSnackbar("Đã đóng gói đơn hàng " + orderId, {
-          variant: "success",
-        });
-      }
-    } catch (error) {
-      Log.error(error.response?.data?.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  switch (status) {
-    case "packing":
-      return (
-        <AcctionButton
-          loading={loading}
-          onClick={handlePacking}
-          title="Đã đóng gói"
-        />
-      );
-    case "return-request":
-      return (
-        <>
-          <AcctionButton title="Từ chối" />
-          <AcctionButton title="Chấp nhận" />
-        </>
-      );
-    default:
-      return <></>;
-  }
-};
-
-const OrdersTable = ({ orders, setOrders }) => {
+const OrdersTable = ({ orders }) => {
   const theme = useTheme();
 
   return (
