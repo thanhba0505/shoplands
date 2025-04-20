@@ -1,22 +1,10 @@
 import { AppBar, Toolbar, Container, Box, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
-import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
-import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import AddShoppingCartRoundedIcon from "@mui/icons-material/AddShoppingCartRounded";
 import BallotOutlinedIcon from "@mui/icons-material/BallotOutlined";
-import AllInboxRoundedIcon from "@mui/icons-material/AllInboxRounded";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
-import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
-import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import SidebarTab from "../SidebarTab";
 import Path from "~/helpers/Path";
 import MenuIcon from "~/components/MenuIcon";
-import { AccountCircle } from "@mui/icons-material";
-import Auth from "~/helpers/Auth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
@@ -25,7 +13,6 @@ import { useSnackbar } from "notistack";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { logout } from "~/redux/authSlice";
-import Format from "~/helpers/Format";
 
 const NAVIGATION = [
   {
@@ -51,15 +38,15 @@ const NAVIGATION = [
     icon: <BallotOutlinedIcon />,
   },
   {
-    name: "Chờ duyệt",
-    tooltip: "Chờ duyệt",
-    path: "/admin/sellers/inactive",
-    icon: <BallotOutlinedIcon />,
-  },
-  {
     name: "Đã khóa",
     tooltip: "Đã khóa",
     path: "/admin/sellers/locked",
+    icon: <BallotOutlinedIcon />,
+  },
+  {
+    name: "Chờ duyệt người bán",
+    tooltip: "Chờ duyệt người bán",
+    path: "/admin/sellers/inactive",
     icon: <BallotOutlinedIcon />,
     divider: true,
   },
@@ -110,7 +97,6 @@ const NAVIGATION = [
 
 const AdminLayout = ({ children }) => {
   const theme = useTheme();
-  const admin = Auth.getAdmin();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -179,9 +165,19 @@ const AdminLayout = ({ children }) => {
                 gap: 2,
               }}
             >
-              Admin Shoplands!
+              Chào mừng Admin Shoplands
               <MenuIcon
-                icon={<Avatar sx={{ bgcolor: "white", color: "primary.main", fontWeight: "bold" }}>SL</Avatar>}
+                icon={
+                  <Avatar
+                    sx={{
+                      bgcolor: "white",
+                      color: "primary.main",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    A
+                  </Avatar>
+                }
                 menuItems={[
                   {
                     label: "Đăng xuất",

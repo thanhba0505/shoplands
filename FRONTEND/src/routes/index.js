@@ -111,10 +111,10 @@ const sellerRoutes = [
 // ADMIN ROUTES
 const adminRoutes = [
   { path: "/admin/dashboard", component: DashboardAdmin, layout: AdminLayout },
-  { path: "/admin/sellers/:page", component: Sellers, layout: AdminLayout },
-  { path: "/admin/users/:page", component: Users, layout: AdminLayout },
+  { path: "/admin/sellers/:pageName", component: Sellers, layout: AdminLayout },
+  { path: "/admin/users/:pageName", component: Users, layout: AdminLayout },
   {
-    path: "/admin/products/:page",
+    path: "/admin/products/:pageName",
     component: ProductsAdmin,
     layout: AdminLayout,
   },
