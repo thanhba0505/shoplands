@@ -77,7 +77,7 @@ const Login = () => {
       } else if (account.role === "seller") {
         navigate(Path.sellerDashboard());
       } else if (account.role === "admin") {
-        // navigate(Path.adminDashboard());
+        navigate(Path.adminDashboard());
       }
     } catch (error) {
       if (error.response?.status === 409) {

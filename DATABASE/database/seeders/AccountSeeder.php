@@ -12,7 +12,7 @@ class AccountSeeder extends Seeder
         Account::factory()->create([
             'phone' => $this->encodeAes('0833333333'),
             'phoneHash' => $this->encodeSha256("0833333333"),
-            'password' => $this->encodeArgon2i('789'),
+            'password' => $this->encodeArgon2i('123'),
             'role' => 'admin',
             'status' => 'active',
         ]);

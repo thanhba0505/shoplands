@@ -1,6 +1,7 @@
 // Layout
 import SellerLayout from "~/components/layout/SellerLayout";
 import UserLayout from "~/components/layout/UserLayout";
+import AdminLayout from "~/components/layout/AdminLayout";
 
 // Auth
 import Login from "~/pages/Auth/Login";
@@ -34,6 +35,7 @@ import SellerProductDetail from "~/pages/Seller/Products/ProductDetail";
 import DashboardAdmin from "~/pages/Admin/Dashboard";
 import Users from "~/pages/Admin/Users";
 import Sellers from "~/pages/Admin/Sellers";
+import ProductsAdmin from "~/pages/Admin/Products";
 
 //-------------------------------------------------------------//
 // PUBLIC ROUTES
@@ -108,9 +110,14 @@ const sellerRoutes = [
 
 // ADMIN ROUTES
 const adminRoutes = [
-  { path: "/admin/dashboard", component: DashboardAdmin },
-  { path: "/admin/users", component: Users },
-  { path: "/admin/sellers", component: Sellers },
+  { path: "/admin/dashboard", component: DashboardAdmin, layout: AdminLayout },
+  { path: "/admin/sellers/:page", component: Sellers, layout: AdminLayout },
+  { path: "/admin/users/:page", component: Users, layout: AdminLayout },
+  {
+    path: "/admin/products/:page",
+    component: ProductsAdmin,
+    layout: AdminLayout,
+  },
 ];
 
 export { publicRoutes, userRoutes, sellerRoutes, adminRoutes };

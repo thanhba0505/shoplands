@@ -43,6 +43,18 @@ class Path {
     return this.buildPath(this.public() + "/app/logo-1.png");
   }
 
+  static publicLogo2() {
+    return this.buildPath(this.public() + "/app/logo-2.png");
+  }
+
+  static publicLogo3() {
+    return this.buildPath(this.public() + "/app/logo-3.png");
+  }
+
+  static publicLogo4() {
+    return this.buildPath(this.public() + "/app/logo-4.png");
+  }
+
   static publicAvatar(subPath = "") {
     return this.buildPath(this.public() + "/uploaded/avatar", subPath);
   }
@@ -150,6 +162,10 @@ class Path {
 
   static adminSellers(subPath = "") {
     return this.buildPath("/admin/sellers", subPath);
+  }
+
+  static adminProducts(subPath = "") {
+    return this.buildPath("/admin/products", subPath);
   }
 
   // Helper function to format the path correctly
