@@ -1,7 +1,7 @@
 import { TabContext, TabList } from "@mui/lab";
 import { Box, Tab } from "@mui/material";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
 import Path from "~/helpers/Path";
 import ListProduct from "./ListProduct";
@@ -12,11 +12,19 @@ const Reviews = () => {
 };
 
 const Products = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const params = useParams();
 
-  const [loading, setLoading] = useState(false);
-  const value = Path.getElement(location.pathname, 3) ?? "all";
+  const [loading, setLoading] = useState(true);
+  const value = params.page || "all";
+
+  useEffect(() => {
+    const validStatuses = ["all", "active", "locked", "new", "reviews"];
+
+    if (!validStatuses.includes(value)) {
+      navigate(Path.sellerProducts("all"));
+    }
+  }, [value, navigate]);
 
   const handleChange = (event, newValue) => {
     navigate(Path.sellerProducts(newValue));

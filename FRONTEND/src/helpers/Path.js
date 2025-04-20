@@ -135,6 +135,10 @@ class Path {
     return this.buildPath("/seller/products", subPath);
   }
 
+  static sellerProductDetail(subPath = "") {
+    return this.buildPath("/seller/products/detail", subPath);
+  }
+
   // ADMIN PATHS
   static adminDashboard(subPath = "") {
     return this.buildPath("/admin/dashboard", subPath);

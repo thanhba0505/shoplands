@@ -75,7 +75,7 @@ const NAVIGATION = [
   },
 ];
 
-const UserOrdersLayout = ({ children }) => {
+const UserLayout = ({ children }) => {
   const theme = useTheme();
 
   return (
@@ -122,4 +122,4 @@ const UserOrdersLayout = ({ children }) => {
   );
 };
 
-export default UserOrdersLayout;
+export default UserLayout;

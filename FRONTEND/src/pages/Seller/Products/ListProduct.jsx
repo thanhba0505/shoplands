@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Rating,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -16,7 +17,6 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
 import Api from "~/helpers/Api";
 import Format from "~/helpers/Format";
@@ -138,11 +138,161 @@ const ListProduct = ({ status, loading, setLoading }) => {
           </TableHead>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={7}>
-                  <CircularProgressLoading sx={{ height: 300 }} />
-                </TableCell>
-              </TableRow>
+              <>
+                <TableRow>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      height={40}
+                      width={"100%"}
+                      sx={{ mb: 1.5, my: 1, px: 2 }}
+                    />
+                  </TableCell>
+                </TableRow>
+              </>
             ) : (
               <>
                 {products && products.length > 0 ? (
@@ -151,7 +301,9 @@ const ListProduct = ({ status, loading, setLoading }) => {
                       hover
                       sx={{ cursor: "pointer" }}
                       key={product.product_id}
-                      onClick={() => navigate(Path.sellerProducts(product.product_id))}
+                      onClick={() =>
+                        navigate(Path.sellerProductDetail(product.product_id))
+                      }
                     >
                       <TableCell>
                         <Box

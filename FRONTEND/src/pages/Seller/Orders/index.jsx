@@ -12,6 +12,7 @@ import {
   Tab,
   TablePagination,
   TextField,
+  Skeleton,
 } from "@mui/material";
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
@@ -24,7 +25,6 @@ import { useTheme } from "@mui/material/styles";
 import Format from "~/helpers/Format";
 import ButtonLoading from "~/components/ButtonLoading";
 import { TabContext, TabList } from "@mui/lab";
-import CircularProgressLoading from "~/components/CircularProgressLoading";
 import NoContent from "~/components/NoContent";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -188,6 +188,7 @@ const Orders = () => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
   const navigate = useNavigate();
   const params = useParams();
+  const theme = useTheme();
 
   const value = params.status ?? "all";
 
@@ -195,7 +196,22 @@ const Orders = () => {
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const validStatuses = [
+      "all",
+      "waiting",
+      "shipping",
+      "completed",
+      "return",
+      "other",
+    ];
+
+    if (!validStatuses.includes(value)) {
+      navigate(Path.sellerOrders("all"));
+    }
+  }, [value, navigate]);
 
   const handleChange = (event, newValue) => {
     navigate(Path.sellerOrders(newValue));
@@ -245,7 +261,7 @@ const Orders = () => {
   }, [seller_id, value, page, rowsPerPage, fetchApi]);
 
   return (
-    <PaperCustom>
+    <PaperCustom sx={{ px: 3 }}>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -294,7 +310,117 @@ const Orders = () => {
       </Box>
 
       {loading ? (
-        <CircularProgressLoading sx={{ height: 300 }} />
+        <>
+          <TableContainer component={Paper} sx={{ marginBottom: "20px" }}>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={3} sx={{ maxWidth: "200px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "20px",
+                      }}
+                    >
+                      <Skeleton variant="rounded" height={50} width={50} />
+                      <Skeleton height={36} sx={{ flex: 1 }} />
+                    </div>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold" }}
+                      lineHeight={1}
+                      color="red"
+                    >
+                      <Skeleton height={36} width={"auto"} />
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Skeleton height={36} width={"auto"} />
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
+        </>
       ) : (
         <OrdersTable orders={orders} setOrders={setOrders} />
       )}

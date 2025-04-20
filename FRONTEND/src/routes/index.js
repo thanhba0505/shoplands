@@ -1,6 +1,6 @@
 // Layout
 import SellerLayout from "~/components/layout/SellerLayout";
-import UserOrdersLayout from "~/components/layout/UserOrdersLayout";
+import UserLayout from "~/components/layout/UserLayout";
 
 // Auth
 import Login from "~/pages/Auth/Login";
@@ -53,15 +53,15 @@ const publicRoutes = [
 // USER ROUTES
 const userRoutes = [
   { path: "/user/cart", component: Cart },
-  { path: "/user/profile", component: Profile, layout: UserOrdersLayout },
+  { path: "/user/profile", component: Profile, layout: UserLayout },
   {
     path: "/user/address-book",
     component: AddressBook,
-    layout: UserOrdersLayout,
+    layout: UserLayout,
   },
   { path: "/user/orders/detail/:orderId", component: OrderDetail },
   { path: "/user/orders/checkout", component: Checkout },
-  { path: "/user/orders/:status", component: Orders, layout: UserOrdersLayout },
+  { path: "/user/orders/:status", component: Orders, layout: UserLayout },
 ];
 
 // SELLER ROUTES
@@ -70,37 +70,20 @@ const sellerRoutes = [
   // Đơn hàng
   // { path: "/seller/orders", component: OrdersSeller, layout: SellerLayout },
   // { path: "/seller/orders/detail/:orderId", component: OrdersSeller, layout: SellerLayout },
-  { path: "/seller/orders/:status", component: OrdersSeller, layout: SellerLayout },
+  {
+    path: "/seller/orders/:status",
+    component: OrdersSeller,
+    layout: SellerLayout,
+  },
 
   // Sản phẩm
-  { path: "/seller/products", component: ProductSellers, layout: SellerLayout },
   {
-    path: "/seller/products/all",
+    path: "/seller/products/:page",
     component: ProductSellers,
     layout: SellerLayout,
   },
   {
-    path: "/seller/products/active",
-    component: ProductSellers,
-    layout: SellerLayout,
-  },
-  {
-    path: "/seller/products/locked",
-    component: ProductSellers,
-    layout: SellerLayout,
-  },
-  {
-    path: "/seller/products/new",
-    component: ProductSellers,
-    layout: SellerLayout,
-  },
-  {
-    path: "/seller/products/reviews",
-    component: ProductSellers,
-    layout: SellerLayout,
-  },
-  {
-    path: "/seller/products/:productId",
+    path: "/seller/products/detail/:productId",
     component: SellerProductDetail,
     layout: SellerLayout,
   },
