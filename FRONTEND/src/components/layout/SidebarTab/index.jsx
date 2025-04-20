@@ -54,7 +54,7 @@ const SidebarItem = ({ item, open }) => {
                 item.path,
                 Path.getPathFromIndex(location.pathname, 1)
               )
-                ? theme.custom.primary.strongLight
+                ? theme.palette.primary.light
                 : "transparent",
               my: 0.5,
             }}
@@ -77,7 +77,12 @@ const SidebarItem = ({ item, open }) => {
                 <ListItemIcon
                   sx={[
                     {
-                      color: theme.palette.primary.light,
+                      color: Path.checkStartsWith(
+                        item.path,
+                        Path.getPathFromIndex(location.pathname, 1)
+                      )
+                        ? "#fff"
+                        : theme.palette.primary.light,
                       minWidth: 0,
                       justifyContent: "center",
                     },
@@ -97,7 +102,12 @@ const SidebarItem = ({ item, open }) => {
                   <ListItemIcon
                     sx={[
                       {
-                        color: theme.palette.primary.light,
+                        color: Path.checkStartsWith(
+                          item.path,
+                          Path.getPathFromIndex(location.pathname, 1)
+                        )
+                          ? "#fff"
+                          : theme.palette.primary.light,
                         minWidth: 0,
                         justifyContent: "center",
                       },
@@ -119,6 +129,14 @@ const SidebarItem = ({ item, open }) => {
                 primary={item.name}
                 sx={[
                   {
+                    color: Path.checkStartsWith(
+                      item.path,
+                      Path.getPathFromIndex(location.pathname, 1)
+                    )
+                      ? "#fff"
+                      : theme.palette.text.primary,
+                    fontSize: "14px",
+                    fontWeight: "500",
                     textWrap: "nowrap",
                     transition: "all 0.3s",
                   },

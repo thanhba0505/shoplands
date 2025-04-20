@@ -19,6 +19,7 @@ const SearchBar = () => {
                 "&:hover": {
                     borderColor: theme.palette.primary.main,
                 },
+                height: "50px"
             }}
         >
             <Search

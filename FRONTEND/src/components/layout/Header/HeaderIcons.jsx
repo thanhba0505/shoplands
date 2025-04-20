@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Avatar, Box, IconButton } from "@mui/material";
 import {
   ShoppingCart,
   Notifications,
@@ -15,25 +15,30 @@ import { useSnackbar } from "notistack";
 import Auth from "~/helpers/Auth";
 import MenuIcon from "~/components/MenuIcon";
 
-// 🔹 Shopping Cart Menu
 const ShoppingCartMenu = () => {
   const navigate = useNavigate();
+
   return (
     <IconButton
-      size="medium"
       onClick={() => navigate(Path.userCart())}
-      sx={{ color: "primary.light" }}
+      sx={{ color: "#fff" }}
+      size="medium"
     >
-      <ShoppingCart />
+      <Avatar sx={{ bgcolor: "white", cursor: "pointer" }}>
+        <ShoppingCart color="primary" sx={{ scale: 0.9 }} />
+      </Avatar>
     </IconButton>
   );
 };
 
-// 🔹 Notifications Menu
 const NotificationsMenu = () => {
   return (
     <MenuIcon
-      icon={<Notifications />}
+      icon={
+        <Avatar sx={{ bgcolor: "white" }}>
+          <Notifications color="primary" />
+        </Avatar>
+      }
       menuItems={[
         { label: "Thông báo 1" },
         { label: "Thông báo 2" },
@@ -43,15 +48,14 @@ const NotificationsMenu = () => {
   );
 };
 
-// 🔹 User Account Menu
 const UserAccountMenu = () => {
-  const isUser = Auth.checkUser(); // 🔥 Kiểm tra user đăng nhập
+  const user = Auth.getUser();
+  const seller = Auth.getSeller();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  // 🔥 Hàm xử lý logout
   const handleLogout = async () => {
     dispatch(startLoading());
 
@@ -68,7 +72,7 @@ const UserAccountMenu = () => {
     }
   };
 
-  // 🔹 Nếu có user, hiển thị menu tài khoản
+  // Menu item cho user, guest, và seller
   const userMenuItems = [
     {
       label: "Tài khoản của tôi",
@@ -85,21 +89,48 @@ const UserAccountMenu = () => {
     { label: "Đăng xuất", onClick: handleLogout },
   ];
 
-  // 🔹 Nếu chưa đăng nhập, chỉ hiển thị đăng nhập & đăng ký
   const guestMenuItems = [
     { label: "Đăng nhập", onClick: () => navigate(Path.login()) },
     { label: "Đăng ký", onClick: () => navigate(Path.register()) },
   ];
 
+  const sellerMenuItems = [
+    {
+      label: "Quản lý cửa hàng",
+      onClick: () => navigate(Path.sellerDashboard()),
+    },
+    { label: "Đăng xuất", onClick: handleLogout },
+  ];
+
+  // Xử lý avatar của người dùng và người bán
+  const avatarSrc =
+    (user?.avatar && Path.publicAvatar(user?.avatar)) ||
+    (seller?.logo && Path.publicAvatar(seller?.logo));
+
+  const avatarInitials =
+    user?.name?.charAt(0) || seller?.store_name?.charAt(0) || "";
+
+  // Dữ liệu menu để hiển thị
+  const menuItems = user
+    ? userMenuItems
+    : seller
+    ? sellerMenuItems
+    : guestMenuItems;
+
   return (
     <MenuIcon
-      icon={<AccountCircle />}
-      menuItems={isUser ? userMenuItems : guestMenuItems}
+      icon={
+        <Avatar
+          src={avatarSrc} // Dùng ảnh đại diện nếu có
+        >
+          {avatarInitials ? avatarInitials : <AccountCircle fontSize="large" />}
+        </Avatar>
+      }
+      menuItems={menuItems} // Chọn menu tùy thuộc vào người dùng
     />
   );
 };
 
-// 🔹 HeaderIcons (Tổng hợp)
 const HeaderIcons = () => {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

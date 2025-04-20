@@ -13,26 +13,27 @@ const Header = () => {
       position="sticky"
       sx={{
         height: theme.custom?.headerHeight,
-        backgroundColor: theme.palette.common.white,
-        color: "#333",
+        backgroundColor: theme.palette.primary.dark,
+        color: "#fff",
         padding: "5px 0",
         boxShadow: theme.custom?.boxShadow,
         justifyContent: "center",
         paddingTop: 1,
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ height: "100%" }}>
         <Toolbar
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             padding: "0px !important",
+            height: "100%",
           }}
         >
           <Logo />
           <Navigation />
-          <Box sx={{ display: "flex", gap: 3 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
             <SearchBar />
             <HeaderIcons />
           </Box>

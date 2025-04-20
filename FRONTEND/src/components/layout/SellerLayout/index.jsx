@@ -25,6 +25,7 @@ import { useSnackbar } from "notistack";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { logout } from "~/redux/authSlice";
+import Format from "~/helpers/Format";
 
 const NAVIGATION = [
   {
@@ -168,7 +169,7 @@ const SellerLayout = ({ children }) => {
         position="sticky"
         sx={{
           height: theme.custom?.headerHeight,
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: theme.palette.primary.dark,
           color: "#fff",
           padding: "5px 0",
           boxShadow: theme.custom?.boxShadow,
@@ -208,9 +209,9 @@ const SellerLayout = ({ children }) => {
                 display: "flex",
                 alignItems: "center",
                 gap: 2,
-                mr: 1,
               }}
             >
+              Ví Shoplands: {Format.formatCurrency(seller.coin)}
               <MenuIcon
                 icon={
                   <Avatar
