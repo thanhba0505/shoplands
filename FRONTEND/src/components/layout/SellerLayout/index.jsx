@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Container, Box } from "@mui/material";
+import { AppBar, Toolbar, Container, Box, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
@@ -13,6 +13,18 @@ import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import SidebarTab from "../SidebarTab";
+import Path from "~/helpers/Path";
+import MenuIcon from "~/components/MenuIcon";
+import { AccountCircle } from "@mui/icons-material";
+import Auth from "~/helpers/Auth";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { startLoading, stopLoading } from "~/redux/loadingSlice";
+import Log from "~/helpers/Log";
+import { useSnackbar } from "notistack";
+import axiosWithAuth from "~/utils/axiosWithAuth";
+import Api from "~/helpers/Api";
+import { logout } from "~/redux/authSlice";
 
 const NAVIGATION = [
   {
@@ -127,8 +139,28 @@ const NAVIGATION = [
   },
 ];
 
-const ManageLayout = ({ children }) => {
+const SellerLayout = ({ children }) => {
   const theme = useTheme();
+  const seller = Auth.getSeller();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleLogout = async () => {
+    dispatch(startLoading());
+
+    try {
+      const response = await axiosWithAuth.post(Api.logout(), {});
+      dispatch(logout());
+      enqueueSnackbar(response.data.message, { variant: "success" });
+      navigate(Path.login());
+    } catch (error) {
+      navigate(Path.login());
+      Log.error(error.response?.data?.message);
+    } finally {
+      dispatch(stopLoading());
+    }
+  };
 
   return (
     <>
@@ -136,24 +168,69 @@ const ManageLayout = ({ children }) => {
         position="sticky"
         sx={{
           height: theme.custom?.headerHeight,
-          backgroundColor: theme.palette.common.white,
-          color: "#333",
+          backgroundColor: theme.palette.primary.main,
+          color: "#fff",
           padding: "5px 0",
           boxShadow: theme.custom?.boxShadow,
           justifyContent: "center",
           paddingTop: 1,
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{ height: "100%" }}>
           <Toolbar
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               padding: "0px !important",
+              height: "100%",
             }}
           >
-            <Box>Logo</Box>
+            <Box
+              sx={{ height: "100%", cursor: "pointer" }}
+              onClick={() => navigate(Path.sellerDashboard())}
+            >
+              <img
+                style={{
+                  display: "block",
+                  objectFit: "cover",
+                  height: "100%",
+                  width: "200px",
+                }}
+                src={Path.publicLogo1()}
+                alt="logo"
+              />
+            </Box>
+
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                mr: 1,
+              }}
+            >
+              <MenuIcon
+                icon={
+                  <Avatar
+                    src={
+                      Path.publicAvatar(seller.logo)
+                        ? Path.publicAvatar(seller.logo)
+                        : ""
+                    }
+                  >
+                    <AccountCircle fontSize="large" />
+                  </Avatar>
+                }
+                menuItems={[
+                  {
+                    label: "Đăng xuất",
+                    onClick: handleLogout,
+                  },
+                ]}
+              />
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>
@@ -198,4 +275,4 @@ const ManageLayout = ({ children }) => {
   );
 };
 
-export default ManageLayout;
+export default SellerLayout;

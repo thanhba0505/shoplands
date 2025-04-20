@@ -19,7 +19,7 @@ class Path {
     if (pathSegments.length > index) {
       return "/" + pathSegments.slice(index).join("/");
     }
-    return null; 
+    return null;
   }
 
   // ASSET PATHS
@@ -35,9 +35,12 @@ class Path {
     return this.buildPath(this.public() + "/app/logo-rectangle.svg");
   }
 
-
   static publicLogoSquare() {
     return this.buildPath(this.public() + "/app/logo-square.svg");
+  }
+
+  static publicLogo1() {
+    return this.buildPath(this.public() + "/app/logo-1.png");
   }
 
   static publicAvatar(subPath = "") {
@@ -52,7 +55,6 @@ class Path {
     return this.buildPath(this.public() + "/uploaded/product", subPath);
   }
 
-  
   // BASE PATH
   static base(subPath) {
     return this.buildPath("", subPath);
@@ -147,7 +149,7 @@ class Path {
   }
 
   // Helper function to format the path correctly
-  static buildPath(basePath, subPath="") {
+  static buildPath(basePath, subPath = "") {
     const subPathString = String(subPath); // Chuyển subPath thành string
     return subPathString
       ? `${basePath}/${subPathString.replace(/^\/+/, "")}`

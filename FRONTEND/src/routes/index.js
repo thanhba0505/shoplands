@@ -1,5 +1,5 @@
 // Layout
-import ManageLayout from "~/components/layout/ManageLayout";
+import SellerLayout from "~/components/layout/SellerLayout";
 import UserOrdersLayout from "~/components/layout/UserOrdersLayout";
 
 // Auth
@@ -66,60 +66,60 @@ const userRoutes = [
 
 // SELLER ROUTES
 const sellerRoutes = [
-  { path: "/seller/dashboard", component: Dashboard, layout: ManageLayout },
+  { path: "/seller/dashboard", component: Dashboard, layout: SellerLayout },
   // Đơn hàng
-  // { path: "/seller/orders", component: OrdersSeller, layout: ManageLayout },
-  // { path: "/seller/orders/detail/:orderId", component: OrdersSeller, layout: ManageLayout },
-  { path: "/seller/orders/:status", component: OrdersSeller, layout: ManageLayout },
+  // { path: "/seller/orders", component: OrdersSeller, layout: SellerLayout },
+  // { path: "/seller/orders/detail/:orderId", component: OrdersSeller, layout: SellerLayout },
+  { path: "/seller/orders/:status", component: OrdersSeller, layout: SellerLayout },
 
   // Sản phẩm
-  { path: "/seller/products", component: ProductSellers, layout: ManageLayout },
+  { path: "/seller/products", component: ProductSellers, layout: SellerLayout },
   {
     path: "/seller/products/all",
     component: ProductSellers,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
   {
     path: "/seller/products/active",
     component: ProductSellers,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
   {
     path: "/seller/products/locked",
     component: ProductSellers,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
   {
     path: "/seller/products/new",
     component: ProductSellers,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
   {
     path: "/seller/products/reviews",
     component: ProductSellers,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
   {
     path: "/seller/products/:productId",
     component: SellerProductDetail,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
 
   // Khuyến mãi
-  { path: "/seller/promotions", component: Promotions, layout: ManageLayout },
+  { path: "/seller/promotions", component: Promotions, layout: SellerLayout },
   {
     path: "/seller/promotions/coupon",
     component: Promotions,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
 
   // Cài đặt
-  { path: "/seller/settings", component: Settings, layout: ManageLayout },
-  { path: "/seller/settings/shop", component: Settings, layout: ManageLayout },
+  { path: "/seller/settings", component: Settings, layout: SellerLayout },
+  { path: "/seller/settings/shop", component: Settings, layout: SellerLayout },
   {
     path: "/seller/settings/payment",
     component: Settings,
-    layout: ManageLayout,
+    layout: SellerLayout,
   },
 ];
 

@@ -1,11 +1,9 @@
-import { useState } from "react";
-import { Box, IconButton, Menu, MenuItem } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import {
   ShoppingCart,
   Notifications,
   AccountCircle,
 } from "@mui/icons-material";
-import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "~/redux/authSlice";
@@ -15,54 +13,7 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { useSnackbar } from "notistack";
 import Auth from "~/helpers/Auth";
-
-// 🔹 Component Menu Icon chung
-const MenuIcon = ({ icon, menuItems }) => {
-  const theme = useTheme();
-  const [menuAnchor, setMenuAnchor] = useState(null);
-
-  const handleOpenMenu = (event) => {
-    setMenuAnchor(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setMenuAnchor(null);
-  };
-
-  return (
-    <>
-      <IconButton
-        onClick={handleOpenMenu}
-        sx={{ color: theme.palette.primary.light }}
-        size="medium"
-      >
-        {icon}
-      </IconButton>
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        {menuItems.map((item, index) => (
-          <MenuItem
-            key={index}
-            sx={{ minWidth: "150px" }}
-            onClick={(event) => {
-              handleCloseMenu();
-              if (item.onClick) {
-                item.onClick(event);
-              }
-            }}
-          >
-            {item.label}
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
-  );
-};
+import MenuIcon from "~/components/MenuIcon";
 
 // 🔹 Shopping Cart Menu
 const ShoppingCartMenu = () => {
