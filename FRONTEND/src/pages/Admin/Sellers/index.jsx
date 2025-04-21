@@ -3,6 +3,7 @@ import { TabContext, TabList } from "@mui/lab";
 import {
   Avatar,
   Box,
+  Button,
   Skeleton,
   Tab,
   Table,
@@ -15,8 +16,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ConfirmModal from "~/components/ConfirmModal";
 import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
@@ -24,6 +27,102 @@ import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosWithAuth from "~/utils/axiosWithAuth";
+
+const Action = ({ sellerId, removeSeller, activeSeller }) => {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [openAccept, setOpenAccept] = useState(false);
+  const [openReject, setOpenReject] = useState(false);
+  const [loadingAccept, setLoadingAccept] = useState(false);
+  const [loadingReject, setLoadingReject] = useState(false);
+
+  const handleAccept = useCallback(async () => {
+    setLoadingAccept(true);
+    try {
+      const response = await axiosWithAuth.put(
+        Api.adminSellers("register"),
+        {
+          seller_id: sellerId,
+          accept: 1,
+        },
+        {
+          navigate,
+        }
+      );
+
+      enqueueSnackbar(response.data.message, {
+        variant: "success",
+      });
+      activeSeller(sellerId);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoadingAccept(false);
+    }
+  }, [navigate, enqueueSnackbar, sellerId, activeSeller]);
+
+  const handleReject = useCallback(async () => {
+    setLoadingReject(true);
+    try {
+      const response = await axiosWithAuth.put(
+        Api.adminSellers("register"),
+        {
+          seller_id: sellerId,
+          accept: 0,
+        },
+        {
+          navigate,
+        }
+      );
+
+      enqueueSnackbar(response.data.message, {
+        variant: "success",
+      });
+      removeSeller(sellerId);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoadingReject(false);
+    }
+  }, [navigate, enqueueSnackbar, sellerId, removeSeller]);
+
+  return (
+    <>
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={() => setOpenAccept(true)}
+      >
+        Từ chối
+      </Button>
+
+      <Button
+        sx={{ ml: 1 }}
+        variant="contained"
+        color="primary"
+        size="small"
+        onClick={() => setOpenAccept(true)}
+      >
+        Duyệt
+      </Button>
+
+      <ConfirmModal
+        open={openAccept}
+        setOpen={setOpenAccept}
+        loading={loadingAccept}
+        handleAccept={handleAccept}
+      />
+
+      <ConfirmModal
+        open={openReject}
+        setOpen={setOpenReject}
+        loading={loadingReject}
+        handleAccept={handleReject}
+      />
+    </>
+  );
+};
 
 const ListSellers = ({ status, loading, setLoading }) => {
   const navigate = useNavigate();
@@ -74,6 +173,18 @@ const ListSellers = ({ status, loading, setLoading }) => {
     fetchApi(page, rowsPerPage);
   }, [page, rowsPerPage, fetchApi]);
 
+  const removeSeller = (sellerId) => {
+    setSellers((prev) => prev.filter((item) => item.seller_id !== sellerId));
+  };
+
+  const activeSeller = (sellerId) => {
+    setSellers((prev) =>
+      prev.map((item) =>
+        item.seller_id === sellerId ? { ...item, status: "active" } : item
+      )
+    );
+  };
+
   return (
     <>
       <Box
@@ -112,17 +223,16 @@ const ListSellers = ({ status, loading, setLoading }) => {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
-              <TableCell align="center" width={300}>
+              <TableCell align="center" width={250}>
                 Người bán
               </TableCell>
               <TableCell align="center" width={300}>
                 Mô tả
               </TableCell>
-              <TableCell align="center" width={200}>
-                Số điện thoại
-              </TableCell>
+              <TableCell align="center">Số điện thoại</TableCell>
               <TableCell align="center">Trạng thái</TableCell>
               <TableCell align="center">Ngày tham gia</TableCell>
+              <TableCell align="center">Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -251,7 +361,8 @@ const ListSellers = ({ status, loading, setLoading }) => {
                       sx={{ cursor: "pointer" }}
                       key={seller.seller_id}
                       // onClick={() =>
-                      //   navigate(Path.sellerProductDetail(product.product_id))
+                      //   // navigate(Path.sellerProductDetail(product.product_id))
+                      //   console.log("clickf sadfasd")
                       // }
                     >
                       <TableCell>
@@ -283,6 +394,23 @@ const ListSellers = ({ status, loading, setLoading }) => {
                       </TableCell>
                       <TableCell align="center">
                         {Format.formatDate(seller.created_at)}
+                      </TableCell>
+                      <TableCell align="center">
+                        {seller.status === "inactive" && (
+                          <Action
+                            sellerId={seller.seller_id}
+                            removeSeller={removeSeller}
+                            activeSeller={activeSeller}
+                          />
+                        )}
+
+                        {/* {seller.status === "locked" && (
+                          <Action
+                            sellerId={seller.seller_id}
+                            removeSeller={removeSeller}
+                            activeSeller={activeSeller}
+                          />
+                        )} */}
                       </TableCell>
                     </TableRow>
                   ))
@@ -326,47 +454,6 @@ const Seller = () => {
     navigate(Path.adminSellers(newValue));
   };
 
-  const renderComponent = () => {
-    switch (pageName) {
-      case "all":
-        return (
-          <ListSellers
-            status={pageName}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        );
-      case "active":
-        return (
-          <ListSellers
-            status={pageName}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        );
-      case "locked":
-        return (
-          <ListSellers
-            status={pageName}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        );
-      case "inactive":
-        return (
-          <ListSellers
-            status={pageName}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        );
-      default:
-        return (
-          <ListSellers status="all" loading={loading} setLoading={setLoading} />
-        );
-    }
-  };
-
   return (
     <>
       <PaperCustom sx={{ px: 3 }}>
@@ -390,7 +477,11 @@ const Seller = () => {
           </TabContext>
         </Box>
 
-        {renderComponent()}
+        <ListSellers
+          status={pageName}
+          loading={loading}
+          setLoading={setLoading}
+        />
       </PaperCustom>
     </>
   );
