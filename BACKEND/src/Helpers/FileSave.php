@@ -78,9 +78,18 @@ class FileSave {
     }
   }
 
-
   // Thêm ảnh sản phẩm
   public static function productImage($file) {
     return self::image($file, 'product', 'public/uploaded/product/', 5242880); // 5MB
+  }
+
+  // Thêm ảnh sản phẩm
+  public static function avatarImage($file) {
+    return self::image($file, 'avatar', 'public/uploaded/avatar/', 5242880); // 5MB
+  }
+
+  // Thêm ảnh sản phẩm
+  public static function backgroundImage($file) {
+    return self::image($file, 'background', 'public/uploaded/background/', 5242880); // 5MB
   }
 }

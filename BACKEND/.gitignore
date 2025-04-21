@@ -4,4 +4,4 @@ vendor/
 data.log
 src/Logs/
 .env.production
-.env
+env

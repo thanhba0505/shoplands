@@ -63,7 +63,7 @@ $router->get('api/seller/orders/{order_id}', 'OrderController@sellerFind', ['App
 
 // API SELLER
 $router->get('api/admin/sellers', 'SellerController@adminGet', ['App\Middlewares\AdminMiddleware']);
-$router->get('api/sellers/register', 'SellerController@register');
+$router->post('api/sellers/register', 'SellerController@register');
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
 
 // API USER
@@ -75,4 +75,5 @@ $router->post('api/webhook/update-status', 'WebhookController@handleUpdateStatus
 // API AUTO RUN
 $router->get('auto-run/update-status-order', 'AutoRunController@updateStatusOrder');
 
-// API 
+// API OTHER
+$router->get('api/banks', 'Controller@getBanks');

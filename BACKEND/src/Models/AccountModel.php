@@ -162,6 +162,38 @@ class AccountModel {
         return $result;
     }
 
+    // Thêm account người bán 
+    public static function addAccountSeller($phone, $password, $bank_name, $bank_number, $role = 'seller', $status = 'inactive') {
+        $conn = new ConnectDatabase();
+
+        $created_at = Carbon::now();
+        $password = Hash::encodeArgon2i($password);
+        $phoneHash = Hash::encodeSha256($phone);
+        $phone = Hash::encodeAes($phone);
+        $bank_name = Hash::encodeAes($bank_name);
+        $bank_number = Hash::encodeAes($bank_number);
+
+        $sql =  "
+            INSERT INTO
+                accounts (phone, phoneHash, bank_name, bank_number, password, role, created_at, status)
+            VALUES
+                (:phone, :phoneHash, :bank_name, :bank_number, :password, :role, :created_at, :status)
+        ";
+
+        $conn->query($sql, [
+            'phone' => $phone,
+            'phoneHash' => $phoneHash,
+            'password' => $password,
+            'bank_name' => $bank_name,
+            'bank_number' => $bank_number,
+            'role' => $role,
+            'created_at' => $created_at,
+            'status' => $status
+        ]);
+
+        return $conn->getConnection()->lastInsertId();
+    }
+
     // Sửa account
     public static function activeAccount($account_id) {
         $query = new ConnectDatabase();

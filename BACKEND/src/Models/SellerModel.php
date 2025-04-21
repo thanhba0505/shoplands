@@ -244,4 +244,25 @@ class SellerModel {
 
         return $query->query($sql, $params)->fetch()['total'];
     }
+
+    // Thêm người bán
+    public static function add($store_name, $owner_name, $description, $logo, $background, $account_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO sellers (store_name, owner_name, description, logo, background, account_id)
+            VALUES (:store_name, :owner_name, :description, :logo, :background, :account_id)
+        ";
+
+        $result = $conn->query($sql, [
+            'store_name' => $store_name,
+            'owner_name' => $owner_name,
+            'description' => $description,
+            'logo' => $logo,
+            'background' => $background,
+            'account_id' => $account_id
+        ]);
+
+        return $result;
+    }
 }
