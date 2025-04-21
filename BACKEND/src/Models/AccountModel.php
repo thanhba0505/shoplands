@@ -162,6 +162,19 @@ class AccountModel {
         return $result;
     }
 
+    // Xóa account
+    public static function delete($account_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            DELETE FROM accounts WHERE id = :account_id
+        ";
+
+        $result = $conn->query($sql, ['account_id' => $account_id]);
+
+        return $result;
+    }
+
     // Thêm account người bán 
     public static function addAccountSeller($phone, $password, $bank_name, $bank_number, $role = 'seller', $status = 'inactive') {
         $conn = new ConnectDatabase();

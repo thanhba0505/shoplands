@@ -265,4 +265,17 @@ class SellerModel {
 
         return $result;
     }
+
+    // Xóa người bán chưa hoạt động
+    public static function delete($seller_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            DELETE FROM sellers WHERE id = :seller_id
+        ";
+
+        $result = $conn->query($sql, ['seller_id' => $seller_id]);
+
+        return $result;
+    }
 }

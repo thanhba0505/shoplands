@@ -151,6 +151,42 @@ class SellerController {
         }
     }
 
+    // Xử lý đăng ký người bán
+    public function adminHandleRegister() {
+        try {
+            $seller_id = Request::json('seller_id');
+            $accept = Request::json('accept');
+
+            $seller = SellerModel::findBySellerId($seller_id);
+
+            if (!$seller) {
+                Response::json(['message' => 'Không tìm thấy người bán'], 400);
+            }
+
+            if ($seller['status'] === 'active') {
+                Response::json(['message' => 'Người bán đã hoạt động'], 400);
+            }
+
+            if ($accept) {
+                AccountModel::activeAccount($seller['account_id']);
+                Response::json([
+                    'message' => 'Đã duyệt người bán'
+                ]);
+            }
+
+            SellerModel::delete($seller_id);
+            AddressModel::delete($seller['account_id']);
+            AccountModel::delete($seller['account_id']);
+
+            Response::json([
+                'message' => 'Đã từ chối người bán'
+            ]);
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> adminHandleRegister: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
     private function validateRegister(
         $store_name,
         $owner_name,

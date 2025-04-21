@@ -259,7 +259,7 @@ class Format {
     switch (status) {
       case "active":
         return "Đang hoạt động";
-      case "unactive":
+      case "inactive":
         return "Chưa hoạt động";
       case "locked":
         return "Đã bị khóa";

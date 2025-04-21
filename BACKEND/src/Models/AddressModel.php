@@ -239,4 +239,20 @@ class AddressModel {
 
         return $result->rowCount() ? true : false;
     }
+
+    // Xóa địa chỉ theo account_id
+    public static function delete($account_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            DELETE FROM 
+                addresses 
+            WHERE 
+                account_id = :account_id
+        ";
+
+        $result = $query->query($sql, ['account_id' => $account_id]);
+
+        return $result;
+    }
 }
