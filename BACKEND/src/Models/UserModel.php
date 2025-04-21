@@ -87,4 +87,83 @@ class UserModel {
 
         return $result;
     }
+
+    // Lấy tổng số người mua theo trang thai
+    public static function countByStatus($status) {
+        $query = new ConnectDatabase();
+
+        $status = empty($status) ? "all" : $status;
+
+        $params = [];
+
+        $sql = "
+            SELECT
+                COUNT(*) AS total
+            FROM    
+                accounts a
+                JOIN users u ON u.account_id = a.id
+        ";
+
+        if ($status !== "all") {
+            $params['status'] = $status;
+            $sql .= " WHERE a.status = :status";
+        }
+
+        return $query->query($sql, $params)->fetch()['total'];
+    }
+
+    // Lấy danh sách người mua
+    public static function getAll($status = null, $limit = 12, $page = 0) {
+        $query = new ConnectDatabase();
+
+        $status = empty($status) ? "all" : $status;
+
+        // Bắt đầu truy vấn cơ bản
+        $sql =  "
+            SELECT
+                u.id AS user_id,
+                u.name,
+                u.avatar,
+                a.id AS account_id,
+                a.phone,
+                a.role,
+                a.coin,
+                a.bank_number,
+                a.bank_name,
+                a.status,
+                a.created_at
+            FROM
+                accounts a
+                JOIN users u ON u.account_id = a.id
+        ";
+
+        $params = [
+            'limit' => $limit,   // Truyền limit
+            'offset' => $page * $limit // Tính offset từ page và limit
+        ];
+
+        // Thêm điều kiện cho status nếu có
+        if ($status !== "all") {
+            $sql .= " WHERE a.status = :status";
+            $params['status'] = $status;
+        }
+
+        // Thêm LIMIT và OFFSET cho phân trang
+        $sql .= " LIMIT :limit OFFSET :offset";
+
+        // Thực hiện truy vấn
+        $result = $query->query($sql, $params)->fetchAll();
+
+        if ($result) {
+            foreach ($result as $key => $value) {
+                if (isset($value['phone'])) {
+                    $result[$key]['phone'] = Hash::decodeAes($value['phone']);
+                    $result[$key]['bank_number'] = Hash::decodeAes($value['bank_number']);
+                    $result[$key]['bank_name'] = Hash::decodeAes($value['bank_name']);
+                }
+            }
+        }
+
+        return $result;
+    }
 }

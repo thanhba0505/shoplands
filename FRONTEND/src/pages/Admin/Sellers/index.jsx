@@ -352,8 +352,14 @@ const Seller = () => {
             setLoading={setLoading}
           />
         );
-      case "unactive":
-        return <>Sfasdf</>;
+      case "inactive":
+        return (
+          <ListSellers
+            status={pageName}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        );
       default:
         return (
           <ListSellers status="all" loading={loading} setLoading={setLoading} />
@@ -377,7 +383,7 @@ const Seller = () => {
                 <Tab
                   disabled={loading}
                   label="Chờ duyệt người bán"
-                  value="unactive"
+                  value="inactive"
                 />
               </TabList>
             </Box>

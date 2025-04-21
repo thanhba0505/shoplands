@@ -63,10 +63,11 @@ $router->get('api/seller/orders/{order_id}', 'OrderController@sellerFind', ['App
 
 // API SELLER
 $router->get('api/admin/sellers', 'SellerController@adminGet', ['App\Middlewares\AdminMiddleware']);
-$router->get('api/admin/sellers/', 'SellerController@adminGet', ['App\Middlewares\AdminMiddleware']);
 $router->get('api/sellers/register', 'SellerController@register');
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
 
+// API USER
+$router->get('api/admin/users', 'UserController@adminGet', ['App\Middlewares\AdminMiddleware']);
 
 // API WEBHOOK
 $router->post('api/webhook/update-status', 'WebhookController@handleUpdateStatus');
