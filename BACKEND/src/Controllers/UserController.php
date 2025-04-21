@@ -16,11 +16,11 @@ class UserController {
             $page = Request::get('page', 0);
 
             $count = UserModel::countByStatus($status == "all" ? null : $status);
-            $sellers = UserModel::getAll($status, $limit, $page);
+            $users = UserModel::getAll($status, $limit, $page);
 
             $result = [
                 "count" => $count,
-                "sellers" => $sellers
+                "users" => $users
             ];
 
             Response::json($result);

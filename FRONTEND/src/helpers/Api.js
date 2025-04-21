@@ -1,113 +1,117 @@
 class Api {
-    // 🔹 Loại bỏ dấu "/" dư thừa ở đầu và cuối
-    static cleanEndpoint(endpoint = "") {
-        return endpoint.trim().replace(/^\/+|\/+$/g, "");
-    }
+  // 🔹 Loại bỏ dấu "/" dư thừa ở đầu và cuối
+  static cleanEndpoint(endpoint = "") {
+    return endpoint.trim().replace(/^\/+|\/+$/g, "");
+  }
 
-    // 🔹 Hàm chuẩn hóa endpoint với base
-    static buildPath(base, endpoint = "") {
-        endpoint = endpoint.toString();
-        const cleanBase = this.cleanEndpoint(base);
-        const cleanEndpoint = this.cleanEndpoint(endpoint);
-        return cleanEndpoint ? `${cleanBase}/${cleanEndpoint}` : cleanBase;
-    }
+  // 🔹 Hàm chuẩn hóa endpoint với base
+  static buildPath(base, endpoint = "") {
+    endpoint = endpoint.toString();
+    const cleanBase = this.cleanEndpoint(base);
+    const cleanEndpoint = this.cleanEndpoint(endpoint);
+    return cleanEndpoint ? `${cleanBase}/${cleanEndpoint}` : cleanBase;
+  }
 
-    // 🔹 Các API route
-    
-    static login(endpoint = "") {
-        return this.buildPath("auth/login", endpoint);
-    }
-    
-    static codeLogin(endpoint = "") {
-        return this.buildPath("auth/code-login", endpoint);
-    }
-    
-    static logout(endpoint = "") {
-        return this.buildPath("auth/logout", endpoint);
-    }
+  // 🔹 Các API route
 
-    static register(endpoint = "") {
-        return this.buildPath("auth/register", endpoint);
-    }
-    
-    static codeRegister(endpoint = "") {
-        return this.buildPath("auth/code-register", endpoint);
-    }
+  static login(endpoint = "") {
+    return this.buildPath("auth/login", endpoint);
+  }
 
-    static forgotPassword(endpoint = "") {
-        return this.buildPath("auth/forgot-password", endpoint);
-    }
-    
-    static codeForgotPassword(endpoint = "") {
-        return this.buildPath("auth/code-forgot-password", endpoint);
-    }
+  static codeLogin(endpoint = "") {
+    return this.buildPath("auth/code-login", endpoint);
+  }
 
-    static refreshToken(endpoint = "") {
-        return this.buildPath("auth/refresh-token", endpoint);
-    }
+  static logout(endpoint = "") {
+    return this.buildPath("auth/logout", endpoint);
+  }
 
-    static provinces(endpoint = "") {
-        return this.buildPath("address/provinces", endpoint);
-    }
+  static register(endpoint = "") {
+    return this.buildPath("auth/register", endpoint);
+  }
 
-    static districts(endpoint = "") {
-        return this.buildPath("address/districts", endpoint);
-    }
+  static codeRegister(endpoint = "") {
+    return this.buildPath("auth/code-register", endpoint);
+  }
 
-    static wards(endpoint = "") {
-        return this.buildPath("address/wards", endpoint);
-    }
+  static forgotPassword(endpoint = "") {
+    return this.buildPath("auth/forgot-password", endpoint);
+  }
 
-    static categories(endpoint = "") {
-        return this.buildPath("categories", endpoint);
-    }
+  static codeForgotPassword(endpoint = "") {
+    return this.buildPath("auth/code-forgot-password", endpoint);
+  }
 
-    static products(endpoint = "") {
-        return this.buildPath("products", endpoint);
-    }
+  static refreshToken(endpoint = "") {
+    return this.buildPath("auth/refresh-token", endpoint);
+  }
 
-    static cart(endpoint = "") {
-        return this.buildPath("user/cart", endpoint);
-    }
+  static provinces(endpoint = "") {
+    return this.buildPath("address/provinces", endpoint);
+  }
 
-    static address(endpoint = "") {
-        return this.buildPath("user/address", endpoint);
-    }
+  static districts(endpoint = "") {
+    return this.buildPath("address/districts", endpoint);
+  }
 
-    static orders(endpoint = "") {
-        return this.buildPath("user/orders", endpoint);
-    }
+  static wards(endpoint = "") {
+    return this.buildPath("address/wards", endpoint);
+  }
 
-    static coupons(endpoint = "") {
-        return this.buildPath("coupons", endpoint);
-    }
+  static categories(endpoint = "") {
+    return this.buildPath("categories", endpoint);
+  }
 
-    static shippingFee(endpoint = "") {
-        return this.buildPath("user/orders/shipping-fee", endpoint);
-    }
+  static products(endpoint = "") {
+    return this.buildPath("products", endpoint);
+  }
 
-    static sellers(endpoint = "") {
-        return this.buildPath("sellers", endpoint);
-    }
+  static cart(endpoint = "") {
+    return this.buildPath("user/cart", endpoint);
+  }
 
-    // User
-    static userAddress(endpoint = "") {
-        return this.buildPath("user/address", endpoint);
-    }
+  static address(endpoint = "") {
+    return this.buildPath("user/address", endpoint);
+  }
 
-    // Seller
-    static sellerOrders(endpoint = "") {
-        return this.buildPath("seller/orders", endpoint);
-    }
+  static orders(endpoint = "") {
+    return this.buildPath("user/orders", endpoint);
+  }
 
-    static sellerProducts(endpoint = "") {
-        return this.buildPath("seller/products", endpoint);
-    }
+  static coupons(endpoint = "") {
+    return this.buildPath("coupons", endpoint);
+  }
 
-    // Admin
-    static adminSellers(endpoint = "") {
-        return this.buildPath("admin/sellers", endpoint);
-    }
+  static shippingFee(endpoint = "") {
+    return this.buildPath("user/orders/shipping-fee", endpoint);
+  }
+
+  static sellers(endpoint = "") {
+    return this.buildPath("sellers", endpoint);
+  }
+
+  // User
+  static userAddress(endpoint = "") {
+    return this.buildPath("user/address", endpoint);
+  }
+
+  // Seller
+  static sellerOrders(endpoint = "") {
+    return this.buildPath("seller/orders", endpoint);
+  }
+
+  static sellerProducts(endpoint = "") {
+    return this.buildPath("seller/products", endpoint);
+  }
+
+  // Admin
+  static adminSellers(endpoint = "") {
+    return this.buildPath("admin/sellers", endpoint);
+  }
+
+  static adminUsers(endpoint = "") {
+    return this.buildPath("admin/users", endpoint);
+  }
 }
 
 export default Api;
