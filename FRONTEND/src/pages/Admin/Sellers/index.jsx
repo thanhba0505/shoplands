@@ -19,7 +19,8 @@ import {
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ConfirmModal from "~/components/ConfirmModal";
+import ButtonLoading from "~/components/ButtonLoading";
+import ModalCustom from "~/components/ModalCustom";
 import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
@@ -28,100 +29,292 @@ import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
-const Action = ({ sellerId, removeSeller, activeSeller }) => {
+const ActionInactive = ({
+  sellerId,
+  removeSeller,
+  updateStatus,
+  store_name,
+}) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [openAccept, setOpenAccept] = useState(false);
-  const [openReject, setOpenReject] = useState(false);
-  const [loadingAccept, setLoadingAccept] = useState(false);
-  const [loadingReject, setLoadingReject] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [actionType, setActionType] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleAccept = useCallback(async () => {
-    setLoadingAccept(true);
-    try {
-      const response = await axiosWithAuth.put(
-        Api.adminSellers("register"),
-        {
-          seller_id: sellerId,
-          accept: 1,
-        },
-        {
-          navigate,
-        }
-      );
-
-      enqueueSnackbar(response.data.message, {
-        variant: "success",
-      });
-      activeSeller(sellerId);
-    } catch (error) {
-      Log.error(error.response?.data?.message);
-    } finally {
-      setLoadingAccept(false);
+  useEffect(() => {
+    if (store_name && actionType) {
+      if (actionType === "accept") {
+        setMessage(
+          "Cửa hàng '" +
+            store_name +
+            "' đã được duyệt. Vui lòng đăng nhập tại trang web " +
+            import.meta.env.VITE_DOMAIN
+        );
+      } else {
+        setMessage("Cửa hàng '" + store_name + "' đã bị từ chối. Lý do: ");
+      }
     }
-  }, [navigate, enqueueSnackbar, sellerId, activeSeller]);
+  }, [store_name, actionType]);
 
-  const handleReject = useCallback(async () => {
-    setLoadingReject(true);
-    try {
-      const response = await axiosWithAuth.put(
-        Api.adminSellers("register"),
-        {
-          seller_id: sellerId,
-          accept: 0,
-        },
-        {
-          navigate,
+  const handleAction = useCallback(
+    async (acceptValue) => {
+      setLoading(true);
+      try {
+        const response = await axiosWithAuth.put(
+          Api.adminSellers("register"),
+          {
+            seller_id: sellerId,
+            accept: acceptValue === "accept" ? 1 : 0,
+            reason: message,
+          },
+          { navigate }
+        );
+
+        enqueueSnackbar(response.data.message, { variant: "success" });
+
+        if (acceptValue === "accept") {
+          updateStatus(sellerId, "active");
+        } else {
+          removeSeller(sellerId);
         }
-      );
+      } catch (error) {
+        Log.error(error.response?.data?.message);
+      } finally {
+        setLoading(false);
+        setOpen(false);
+      }
+    },
+    [navigate, enqueueSnackbar, sellerId, updateStatus, removeSeller, message]
+  );
 
-      enqueueSnackbar(response.data.message, {
-        variant: "success",
-      });
-      removeSeller(sellerId);
-    } catch (error) {
-      Log.error(error.response?.data?.message);
-    } finally {
-      setLoadingReject(false);
-    }
-  }, [navigate, enqueueSnackbar, sellerId, removeSeller]);
+  const openModal = (action) => {
+    setActionType(action);
+    setOpen(true);
+  };
 
   return (
     <>
+      {/* Nút Từ chối */}
       <Button
         variant="outlined"
         size="small"
-        onClick={() => setOpenAccept(true)}
+        color="error"
+        onClick={() => openModal("reject")}
       >
         Từ chối
       </Button>
 
+      {/* Nút Duyệt */}
       <Button
         sx={{ ml: 1 }}
         variant="contained"
         color="primary"
         size="small"
-        onClick={() => setOpenAccept(true)}
+        onClick={() => openModal("accept")}
       >
         Duyệt
       </Button>
 
-      <ConfirmModal
-        open={openAccept}
-        setOpen={setOpenAccept}
-        loading={loadingAccept}
-        handleAccept={handleAccept}
-      />
+      <ModalCustom
+        open={open}
+        handleClose={() => setOpen(false)}
+        title={actionType === "accept" ? "Xác nhận duyệt" : "Xác nhận từ chối"}
+        subtitle={store_name}
+      >
+        <TextField
+          sx={{ width: "100%", mt: 1 }}
+          fullWidth
+          label={
+            actionType === "accept"
+              ? "Tin nhắn duyệt tài khoản"
+              : "Lý do từ chối"
+          }
+          multiline
+          rows={3}
+          variant="outlined"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
 
-      <ConfirmModal
-        open={openReject}
-        setOpen={setOpenReject}
-        loading={loadingReject}
-        handleAccept={handleReject}
-      />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mt: 3,
+          }}
+        >
+          <Button
+            size="large"
+            variant="outlined"
+            color="error"
+            sx={{ width: "50%" }}
+            onClick={() => setOpen(false)}
+          >
+            Hủy
+          </Button>
+          <ButtonLoading
+            size="large"
+            variant="contained"
+            sx={{ width: "50%" }}
+            onClick={() => {
+              handleAction(actionType);
+            }}
+            loading={loading}
+          >
+            {actionType === "accept" ? "Duyệt" : "Từ chối"}
+          </ButtonLoading>
+        </Box>
+      </ModalCustom>
     </>
   );
+};
+
+const ActionLocked = ({ sellerId, store_name, status, updateStatus }) => {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (store_name) {
+      if (status === "locked") {
+        setMessage(
+          "Cửa hàng '" +
+            store_name +
+            "' đã được mở khóa. Vui lòng đăng nhập tại trang web " +
+            import.meta.env.VITE_DOMAIN
+        );
+      } else {
+        setMessage("Cửa hàng '" + store_name + "' đã bị khóa. Lý do: ");
+      }
+    }
+  }, [store_name, status]);
+
+  const handleLocked = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosWithAuth.put(
+        Api.adminSellers("locked"),
+        {
+          seller_id: sellerId,
+          locked: status === "locked" ? 0 : 1,
+          reason: message,
+        },
+        {
+          navigate,
+        }
+      );
+
+      enqueueSnackbar(response.data.message, {
+        variant: "success",
+      });
+      updateStatus(sellerId, status === "locked" ? "active" : "locked");
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  }, [navigate, enqueueSnackbar, sellerId, status, updateStatus, message]);
+
+  return (
+    <>
+      <Button
+        sx={{ ml: 1 }}
+        variant="outlined"
+        color={status === "locked" ? "primary" : "error"}
+        size="small"
+        onClick={() => setOpen(true)}
+      >
+        {status === "locked" ? "Mở khóa" : "Khóa tài khoản"}
+      </Button>
+
+      <ModalCustom
+        open={open}
+        handleClose={() => setOpen(false)}
+        title={status === "locked" ? "Mở khóa tài khoản" : "Khóa tài khoản"}
+        subtitle={store_name}
+      >
+        <TextField
+          sx={{ width: "100%", mt: 1 }}
+          fullWidth
+          label={
+            status === "locked"
+              ? "Tin nhắn mở khóa tài khoản"
+              : "Lý do khóa tài khoản"
+          }
+          multiline
+          rows={3}
+          variant="outlined"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mt: 3,
+          }}
+        >
+          <Button
+            size="large"
+            variant="outlined"
+            color="error"
+            sx={{ width: "50%" }}
+            onClick={() => setOpen(false)}
+          >
+            Hủy
+          </Button>
+          <ButtonLoading
+            size="large"
+            variant="contained"
+            sx={{ width: "50%" }}
+            onClick={() => {
+              handleLocked();
+            }}
+            loading={loading}
+          >
+            {status === "locked" ? "Mở khóa" : "Khóa tài khoản"}
+          </ButtonLoading>
+        </Box>
+      </ModalCustom>
+    </>
+  );
+};
+
+const Action = ({
+  status,
+  sellerId,
+  removeSeller,
+  updateStatus,
+  store_name,
+}) => {
+  if (status === "inactive") {
+    return (
+      <ActionInactive
+        sellerId={sellerId}
+        removeSeller={removeSeller}
+        updateStatus={updateStatus}
+        store_name={store_name}
+      />
+    );
+  } else {
+    return (
+      <ActionLocked
+        sellerId={sellerId}
+        status={status}
+        updateStatus={updateStatus}
+        store_name={store_name}
+      />
+    );
+  }
 };
 
 const ListSellers = ({ status, loading, setLoading }) => {
@@ -177,10 +370,10 @@ const ListSellers = ({ status, loading, setLoading }) => {
     setSellers((prev) => prev.filter((item) => item.seller_id !== sellerId));
   };
 
-  const activeSeller = (sellerId) => {
+  const updateStatus = (sellerId, status) => {
     setSellers((prev) =>
       prev.map((item) =>
-        item.seller_id === sellerId ? { ...item, status: "active" } : item
+        item.seller_id === sellerId ? { ...item, status: status } : item
       )
     );
   };
@@ -396,21 +589,13 @@ const ListSellers = ({ status, loading, setLoading }) => {
                         {Format.formatDate(seller.created_at)}
                       </TableCell>
                       <TableCell align="center">
-                        {seller.status === "inactive" && (
-                          <Action
-                            sellerId={seller.seller_id}
-                            removeSeller={removeSeller}
-                            activeSeller={activeSeller}
-                          />
-                        )}
-
-                        {/* {seller.status === "locked" && (
-                          <Action
-                            sellerId={seller.seller_id}
-                            removeSeller={removeSeller}
-                            activeSeller={activeSeller}
-                          />
-                        )} */}
+                        <Action
+                          sellerId={seller.seller_id}
+                          removeSeller={removeSeller}
+                          updateStatus={updateStatus}
+                          status={seller.status}
+                          store_name={seller.store_name}
+                        />
                       </TableCell>
                     </TableRow>
                   ))

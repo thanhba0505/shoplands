@@ -39,7 +39,7 @@ class SendMessage {
             'body' => $messageBody
           ]
         );
-
+        
         if ($message->sid) {
           // Log thông tin tin nhắn
           Log::sms([

@@ -2,12 +2,22 @@ import { Box, Button } from "@mui/material";
 import ModalCustom from "~/components/ModalCustom";
 import ButtonLoading from "../ButtonLoading";
 
-const ConfirmModal = ({ open, setOpen, loading, handleAccept }) => {
+const ConfirmModal = ({
+  open,
+  setOpen,
+  loading,
+  handleAccept,
+  modelTitle,
+  cencelTitle = "Hủy",
+  acceptTitle = "Xác nhận",
+  ...props
+}) => {
   return (
     <ModalCustom
       open={open}
       handleClose={() => setOpen(false)}
-      title="Duyệt người bán"
+      title={modelTitle}
+      {...props}
     >
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 1 }}>
         <Button
@@ -17,7 +27,7 @@ const ConfirmModal = ({ open, setOpen, loading, handleAccept }) => {
           sx={{ width: "50%" }}
           onClick={() => setOpen(false)} // Đóng modal khi nhấn hủy
         >
-          Hủy
+          {cencelTitle}
         </Button>
         <ButtonLoading
           size="large"
@@ -29,7 +39,7 @@ const ConfirmModal = ({ open, setOpen, loading, handleAccept }) => {
           }}
           loading={loading}
         >
-          Duyệt
+          {acceptTitle}
         </ButtonLoading>
       </Box>
     </ModalCustom>

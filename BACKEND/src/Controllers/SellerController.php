@@ -6,6 +6,7 @@ use App\Helpers\FileSave;
 use App\Helpers\Response;
 use App\Helpers\Log;
 use App\Helpers\Request;
+use App\Helpers\SendMessage;
 use App\Helpers\Validator;
 use App\Models\AccountModel;
 use App\Models\AddressModel;
@@ -86,7 +87,7 @@ class SellerController {
                 if ($account['role'] === 'seller' && $account['status'] === 'inactive') {
                     Response::json(['message' => 'Số điện thoại đã đăng ký và chờ duyệt'], 400);
                 }
-                Response::json(['message' => 'Số điện thoại có tài khoản'], 400);
+                Response::json(['message' => 'Số điện thoại đã có tài khoản'], 400);
             }
 
             $this->validateRegister(
@@ -156,6 +157,7 @@ class SellerController {
         try {
             $seller_id = Request::json('seller_id');
             $accept = Request::json('accept');
+            $reason = Request::json('reason');
 
             $seller = SellerModel::findBySellerId($seller_id);
 
@@ -169,8 +171,17 @@ class SellerController {
 
             if ($accept) {
                 AccountModel::activeAccount($seller['account_id']);
+
+                // Send sms
+                $mess = "Cửa hàng '$seller[store_name]' đã được duyệt";
+
+                SendMessage::send(
+                    $seller['phone'],
+                    $reason ? $reason : $mess
+                );
+
                 Response::json([
-                    'message' => 'Đã duyệt người bán'
+                    'message' => "Đã duyệt người bán '$seller[store_name]'",
                 ]);
             }
 
@@ -178,8 +189,16 @@ class SellerController {
             AddressModel::delete($seller['account_id']);
             AccountModel::delete($seller['account_id']);
 
+            // Send sms
+            $mess = "Cửa hàng '$seller[store_name]' đã đã bị từ chối bán hàng";
+
+            SendMessage::send(
+                $seller['phone'],
+                $reason ? $reason : $mess
+            );
+
             Response::json([
-                'message' => 'Đã từ chối người bán'
+                'message' => "Đã từ chối người bán '$seller[store_name]'",
             ]);
         } catch (\Throwable $th) {
             Log::throwable("SellerController -> adminHandleRegister: " . $th->getMessage());
@@ -192,6 +211,7 @@ class SellerController {
         try {
             $seller_id = Request::json('seller_id');
             $locked = Request::json('locked');
+            $reason = Request::json('reason');
             $reason = Request::json('reason');
 
             $seller = SellerModel::findBySellerId($seller_id);
@@ -206,18 +226,32 @@ class SellerController {
 
             if ($locked) {
                 AccountModel::lockedAccount($seller['account_id']);
-                Response::json([
-                    'message' => 'Đã khóa người bán'
-                ]);
 
                 // Send sms
+                $mess = "Cửa hàng '$seller[store_name]' đã bị khóa";
+
+                SendMessage::send(
+                    $seller['phone'],
+                    $reason ? $reason : $mess
+                );
+
+                Response::json([
+                    'message' => "Đã khóa người bán '$seller[store_name]'",
+                ]);
             } else {
                 AccountModel::unlockAccount($seller['account_id']);
-                Response::json([
-                    'message' => 'Đã mở khóa người bán'
-                ]);
 
                 // Send sms
+                $mess = "Cửa hàng '$seller[store_name]' đã được mở khóa";
+
+                SendMessage::send(
+                    $seller['phone'],
+                    $reason ? $reason : $mess
+                );
+
+                Response::json([
+                    'message' => "Đã mở khóa người bán '$seller[store_name]'",
+                ]);
             }
         } catch (\Throwable $th) {
             Log::throwable("SellerController -> adminHandleLocked: " . $th->getMessage());
