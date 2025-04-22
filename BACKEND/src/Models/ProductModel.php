@@ -6,6 +6,124 @@ use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class ProductModel {
+    public static function getListProducts($limit = 12, $page = 0) {
+        $conn = new ConnectDatabase();
+
+        $offset = $page * $limit;
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name,
+                p.status,
+                p.seller_id,
+
+                pv.price,
+                pv.promotion_price,
+                pv.quantity,
+                pv.sold_quantity,
+
+                pi.image_path,
+
+                ROUND(AVG(r.rating), 1) AS average_rating,
+                COUNT(r.id) AS count_reviews
+            FROM
+                products p
+                JOIN product_variants pv ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
+                LEFT JOIN reviews r ON r.product_variant_id = pv.id
+                JOIN (
+                    SELECT 
+                        id
+                    FROM 
+                        products
+                    WHERE 
+                        status = 'active'
+                    LIMIT 
+                        $limit 
+                    OFFSET 
+                        $offset
+                ) AS limited_products ON limited_products.id = p.id
+
+            WHERE
+                p.status = :status
+                AND pi.default = 1
+
+            GROUP BY
+                p.id,
+                p.name,
+                p.status,
+                p.seller_id,
+
+                pv.price,
+                pv.promotion_price,
+                pv.quantity,
+                pv.sold_quantity,
+
+                pi.image_path
+        ";
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name,
+                p.status,
+                p.seller_id,
+
+                pi.image_path,
+
+                MAX(pv.price) AS max_price,
+                MIN(pv.price) AS min_price,
+
+                MAX(pv.promotion_price) AS max_promotion_price,
+                MIN(pv.promotion_price) AS min_promotion_price,
+
+                (
+                    SELECT
+                        pv2.price
+                    FROM
+                        product_variants pv2
+                    WHERE
+                        pv2.product_id = p.id
+                        AND pv2.promotion_price = MIN(pv.promotion_price)
+                ) AS price_from_min_price,
+                
+                SUM(pv.quantity) AS quantity,
+                SUM(pv.sold_quantity) AS sold_quantity,
+
+                ROUND(AVG(r.rating), 1) AS average_rating,
+                COUNT(r.id) AS count_reviews
+            FROM
+                products p
+                JOIN product_variants pv ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
+                LEFT JOIN reviews r ON r.product_variant_id = pv.id
+
+            WHERE
+                p.status = :status
+                AND pi.default = 1
+
+            GROUP BY
+                p.id,
+                p.name,
+                p.status,
+                p.seller_id,
+
+                pi.image_path
+            LIMIT
+                $limit
+            OFFSET
+                $offset
+        ";
+
+        $result = $conn->query($sql, [
+            'status' => 'active'
+        ])->fetchAll();
+
+        return $result ?? [];
+    }
+
+
     // Lấy danh sách sản phẩm
     public static function getAll($limit = 12, $page = 1) {
         $query = new ConnectDatabase();
