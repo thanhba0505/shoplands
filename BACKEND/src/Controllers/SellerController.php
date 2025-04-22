@@ -187,6 +187,44 @@ class SellerController {
         }
     }
 
+    // Xử lý khóa người bán
+    public function adminHandleLocked() {
+        try {
+            $seller_id = Request::json('seller_id');
+            $locked = Request::json('locked');
+            $reason = Request::json('reason');
+
+            $seller = SellerModel::findBySellerId($seller_id);
+
+            if (!$seller) {
+                Response::json(['message' => 'Không tìm thấy người bán'], 400);
+            }
+
+            if ($seller['status'] === 'inactive') {
+                Response::json(['message' => 'Người bán chưa hoạt động'], 400);
+            }
+
+            if ($locked) {
+                AccountModel::lockedAccount($seller['account_id']);
+                Response::json([
+                    'message' => 'Đã khóa người bán'
+                ]);
+
+                // Send sms
+            } else {
+                AccountModel::unlockAccount($seller['account_id']);
+                Response::json([
+                    'message' => 'Đã mở khóa người bán'
+                ]);
+
+                // Send sms
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> adminHandleLocked: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
     private function validateRegister(
         $store_name,
         $owner_name,

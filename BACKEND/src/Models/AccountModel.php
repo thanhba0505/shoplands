@@ -175,6 +175,32 @@ class AccountModel {
         return $result;
     }
 
+    // Khóa account
+    public static function lockedAccount($account_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE accounts SET status = 'locked' WHERE id = :account_id
+        ";
+
+        $result = $conn->query($sql, ['account_id' => $account_id]);
+
+        return $result;
+    }
+
+    // Mở khóa account
+    public static function unlockAccount($account_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE accounts SET status = 'active' WHERE id = :account_id
+        ";
+
+        $result = $conn->query($sql, ['account_id' => $account_id]);
+
+        return $result;
+    }
+
     // Thêm account người bán 
     public static function addAccountSeller($phone, $password, $bank_name, $bank_number, $role = 'seller', $status = 'inactive') {
         $conn = new ConnectDatabase();
