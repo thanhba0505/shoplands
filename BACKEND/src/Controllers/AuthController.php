@@ -97,8 +97,16 @@ class AuthController {
 
                 $result = SendMessage::sendMessageCode($account_new['phone'], $account_new['account_id']);
 
+                $res = [
+                    'message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại',
+                ];
+
+                if (isset($result['message'])) {
+                    $res['message_body'] = $result['message'];
+                }
+
                 if ($result) {
-                    Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 201);
+                    Response::json($res, 201);
                 } else {
                     throw new \Exception("Lỗi gửi mã xác nhận");
                 }
@@ -172,8 +180,16 @@ class AuthController {
 
             $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
 
+            $res = [
+                'message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại',
+            ];
+
+            if (isset($result['message'])) {
+                $res['message_body'] = $result['message'];
+            }
+
             if ($result) {
-                Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 201);
+                Response::json($res, 201);
             } else {
                 throw new \Exception("Lỗi gửi mã xác nhận");
             }
@@ -397,8 +413,16 @@ class AuthController {
 
             $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
 
+            $res = [
+                'message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại',
+            ];
+
+            if (isset($result['message'])) {
+                $res['message_body'] = $result['message'];
+            }
+
             if ($result) {
-                Response::json(['message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại'], 201);
+                Response::json($res, 201);
             } else {
                 throw new \Exception("Lỗi gửi mã xác nhận");
             }

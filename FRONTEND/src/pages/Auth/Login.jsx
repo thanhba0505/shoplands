@@ -106,6 +106,17 @@ const Login = () => {
 
       enqueueSnackbar(response.data.message, { variant: "info" });
       setTimeLeft(60); // Đặt thời gian đếm ngược lại 60 giây khi gửi mã thành công
+
+      if (response.data.message_body) {
+        enqueueSnackbar(response.data.message_body, {
+          variant: "info",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "left",
+          },
+          autoHideDuration: 60000,
+        });
+      }
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
