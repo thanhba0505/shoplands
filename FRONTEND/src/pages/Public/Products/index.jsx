@@ -223,7 +223,7 @@ const Products = () => {
         const response = await axiosDefault.get(Api.products(), {
           params: {
             limit: limit,
-            page: page + 1, // Cộng thêm 1 nếu API của bạn yêu cầu phân trang bắt đầu từ 1
+            page: page,
             order_by_price: orderByPrice,
             order_by_rating: orderByRating,
             categories: checkedCategories,

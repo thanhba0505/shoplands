@@ -24,63 +24,32 @@ use App\Models\SellerModel;
 class ProductController {
     public function get() {
         try {
-            // // Lấy các thông tin từ request
-            // $limit = Request::get('limit', 12);
-            // $page = max(1, Request::get('page', 1));
-            // $categories = Request::get('categories', []);
-            // $min_price = Request::get('min_price', null);
-            // $max_price = Request::get('max_price', null);
-            // $search = Request::get('search', "");
-            // $order_by_price = Request::get('order_by_price', '');
-            // $order_by_rating = Request::get('order_by_rating', '');
-
-            // // Lấy tổng số sản phẩm và danh sách sản phẩm
-            // $result = ProductModel::getByOption($categories, $search, $min_price, $max_price, $limit, $page);
-            // $products = $result['products'];
-            // $count = $result['count'];
-
-            // // Enrich dữ liệu sản phẩm
-            // foreach ($products as $key => $product) {
-            //     $products[$key] = $this->enrichProductData($product);
-            // }
-
-            // // Sắp xếp sản phẩm theo rating và price nếu có yêu cầu
-            // $this->sortProducts($products, $order_by_price, $order_by_rating);
-
-            // Response::json(['count' => $count, 'products' => $products], 200);
-
+            $status = Request::get('status', 'active');
             $limit = Request::get('limit', 10);
             $page = max(0, Request::get('page', 0));
             $categories = Request::get('categories', []);
             $min_price = Request::get('min_price', null);
             $max_price = Request::get('max_price', null);
             $search = Request::get('search', "");
-            $order_by_price = Request::get('order_by_price', '');
-            $order_by_rating = Request::get('order_by_rating', '');
+            $order_by_price = Request::get('order_by_price', null);
+            $order_by_rating = Request::get('order_by_rating', null);
 
             $count =  0;
 
-            $products = ProductModel::getListProducts(
+            $result = ProductModel::getListProducts(
+                $status,
                 $limit,
                 $page,
-                // $categories,
-                // $search,
-                // $min_price,
-                // $max_price,
-                // $order_by_price,
-                // $order_by_rating
+                $categories,
+                $search,
+                $min_price,
+                $max_price,
+                $order_by_price,
+                $order_by_rating
             );
 
-            foreach ($products as $key => $product) {
-                $min_price = $product['min_promotion_price'] ? min($product['min_price'], $product['min_promotion_price']) : $product['min_price'];
-                $max_price = $product['max_promotion_price'] ? max($product['max_price'], $product['max_promotion_price']) : $product['max_price'];
-
-                $products[$key]['min_price'] = $min_price;
-                $products[$key]['max_price'] = $max_price;
-
-                unset($products[$key]['min_promotion_price']);
-                unset($products[$key]['max_promotion_price']);
-            }
+            $products = $result['products'];
+            $count = $result['count'];
 
             Response::json(['count' => $count, 'products' => $products], 200);
         } catch (\Throwable $th) {
@@ -88,6 +57,7 @@ class ProductController {
         }
     }
 
+    // Sắp xếp sản phẩm nếu có yêu cầu
     private function sortProducts(&$products, $order_by_price, $order_by_rating) {
         // Sắp xếp sản phẩm theo giá nếu có yêu cầu
         $this->sortProductsByPrice($products, $order_by_price);
@@ -96,6 +66,7 @@ class ProductController {
         $this->sortProductsByRating($products, $order_by_rating);
     }
 
+    // Sắp xếp sản phẩm theo giá nếu có yêu cầu
     private function sortProductsByPrice(&$products, $order_by_price) {
         if ($order_by_price === 'asc') {
             usort($products, function ($a, $b) {
@@ -108,6 +79,7 @@ class ProductController {
         }
     }
 
+    // Sắp xếp sản phẩm theo đánh giá nếu có yêu cầu
     private function sortProductsByRating(&$products, $order_by_rating) {
         if ($order_by_rating === 'asc') {
             usort($products, function ($a, $b) {

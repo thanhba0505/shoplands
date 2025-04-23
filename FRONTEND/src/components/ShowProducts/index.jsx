@@ -49,7 +49,7 @@ const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
                 component="img"
                 alt={product.name}
                 height="200"
-                image={Path.publicProduct(product.images[0].image_path)} // Lấy ảnh đầu tiên của sản phẩm
+                image={Path.publicProduct(product.image_path)} // Lấy ảnh đầu tiên của sản phẩm
                 sx={{ objectFit: "cover" }}
               />
               <CardContent>
