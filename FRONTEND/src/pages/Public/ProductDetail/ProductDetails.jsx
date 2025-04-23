@@ -60,11 +60,11 @@ const ProductDetails = ({ productDetails, description, loading }) => {
                 {productDetails.map((detail, index) => (
                   <TableRow key={index}>
                     <TableCell width={"30%"}>
-                      <Typography variant="body1">{detail.name}</Typography>
+                      <Typography variant="body1">{detail.detail_name}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body1">
-                        {detail.description}
+                        {detail.detail_description}
                       </Typography>
                     </TableCell>
                   </TableRow>

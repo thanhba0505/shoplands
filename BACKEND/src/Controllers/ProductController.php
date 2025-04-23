@@ -57,6 +57,22 @@ class ProductController {
         }
     }
 
+    // Tìm kiếm 1 sản phẩm
+    public function find($id) {
+        try {
+            $product = ProductModel::find($id);
+
+            if (!$product) {
+                Response::json(['message' => 'Không tìm thấy sản phẩm'], 404);
+                return;
+            }
+
+            Response::json($product);
+        } catch (\Throwable $th) {
+            $this->logAndRespond("AddressController -> userGet", $th);
+        }
+    }
+
     // Sắp xếp sản phẩm nếu có yêu cầu
     private function sortProducts(&$products, $order_by_price, $order_by_rating) {
         // Sắp xếp sản phẩm theo giá nếu có yêu cầu
@@ -121,21 +137,6 @@ class ProductController {
 
 
 
-    public function find($id) {
-        try {
-            $product = ProductModel::getByProductId($id);
-
-            if (!$product) {
-                Response::json(['message' => 'Không tìm thấy sản phẩm'], 404);
-                return;
-            }
-
-            $product = $this->enrichProductData($product);
-            Response::json($product);
-        } catch (\Throwable $th) {
-            $this->logAndRespond("AddressController -> userGet", $th);
-        }
-    }
 
     public function sellerGet() {
         try {

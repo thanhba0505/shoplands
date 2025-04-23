@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\DataHelper;
 use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
@@ -176,6 +177,151 @@ class ProductModel {
             'products' => $result ?? []
         ];
     }
+
+    // Lấy thông tin 1 sản phẩm
+    public static function find($product_id) {
+        $max_price_product = MAX_PRICE_PRODUCT;
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name,
+                p.status,
+                p.seller_id,
+                p.description,
+                LEAST(MIN(pv.price), IFNULL(MIN(pv.promotion_price), $max_price_product)) AS min_price,
+                GREATEST(MAX(pv.price), IFNULL(MAX(pv.promotion_price), 0)) AS max_price,
+        
+                (
+                    SELECT 
+                        pv2.price
+                    FROM 
+                        product_variants pv2
+                    WHERE   
+                        pv2.product_id = p.id
+                        AND pv2.promotion_price = MIN(pv.promotion_price)
+                    ORDER BY 
+                        pv2.price ASC
+                    LIMIT 
+                        1
+                ) AS price_from_min_price,
+        
+                SUM(pv.quantity) AS quantity,
+                SUM(pv.sold_quantity) AS sold_quantity,
+                ROUND(AVG(r.rating), 1) AS average_rating,
+                COUNT(r.id) AS count_reviews,
+
+                c.name AS category_name,
+
+                pi.image_path,
+                pi.default,
+
+                pd.name AS detail_name,
+                pd.description AS detail_description
+            FROM 
+                products p
+                JOIN product_variants pv ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id 
+                LEFT JOIN reviews r ON r.product_variant_id = pv.id
+                LEFT JOIN categories c ON c.id = p.category_id
+                LEFT JOIN product_details pd ON pd.product_id = p.id
+            WHERE 
+                p.id = :product_id
+            GROUP BY
+                p.id, p.name, p.status, p.seller_id, p.description, c.name,
+                pi.image_path, pi.default,
+                pd.name, pd.description
+        ";
+
+        $params = ['product_id' => $product_id];
+        $result = $conn->query($sql, $params)->fetchAll();
+
+        $dataConfig = [
+            'keep_columns' => [
+                'product_id',
+                'name',
+                'description',
+                'status',
+                'seller_id',
+                'min_price',
+                'max_price',
+                'price_from_min_price',
+                'quantity',
+                'sold_quantity',
+                'average_rating',
+                'count_reviews',
+                'category_name',
+            ],
+            'group_columns' => [
+                'images' => ['image_path', 'default'],
+                'details' => ['detail_name', 'detail_description'],
+            ]
+        ];
+
+        $result = DataHelper::groupData($result, $dataConfig);
+
+        // Lấy thông tin thuộc tính
+        $sql = "
+            SELECT
+                pv.id AS product_variant_id,
+                pv.price,
+                pv.promotion_price,
+                pv.quantity,
+                pv.sold_quantity,
+
+                pa.name,
+                pav.value
+            FROM
+                product_variants pv
+                JOIN product_variant_values pvt ON pvt.product_variant_id = pv.id
+                JOIN product_attribute_values pav ON pav.id = pvt.product_attribute_value_id
+                JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+            WHERE
+                pv.product_id = :product_id
+        ";
+
+        $variants = $conn->query($sql, ['product_id' => $product_id])->fetchAll();
+
+        $variants = DataHelper::groupData($variants, [
+            'keep_columns' => [
+                'product_variant_id',
+                'price',
+                'promotion_price',
+                'quantity',
+                'sold_quantity',
+            ],
+            'group_columns' => [
+                'values' => ['name', 'value'],
+            ]
+        ]);
+
+        $attributes = [];
+
+        foreach ($variants as $variant) {
+            foreach ($variant['values'] as $attribute) {
+                $name = $attribute['name'];
+                $value = $attribute['value'];
+
+                // Kiểm tra nếu tên thuộc tính đã có trong mảng attributes
+                if (!isset($attributes[$name])) {
+                    $attributes[$name] = [];
+                }
+
+                // Thêm giá trị thuộc tính vào mảng nếu chưa có
+                if (!in_array($value, $attributes[$name])) {
+                    $attributes[$name][] = $value;
+                }
+            }
+        }
+
+        $result[0]['variants'] = $variants ?? [];
+        $result[0]['attributes'] = $attributes ?? [];
+
+        return $result[0] ?? null;
+    }
+
+
 
 
 
