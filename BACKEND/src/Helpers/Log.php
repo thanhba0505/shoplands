@@ -69,4 +69,11 @@ class Log {
     public static function autoRunUpdateOrder($logData, $title = 'Update Order:') {
         self::json($logData, $title, 'auto-run-update-order.log');
     }
+
+    // Log count sql
+    public static function sql(string $logData, $title = 'SQL:') {
+        $cleanString = preg_replace('/\s+/', ' ', $logData);
+        $cleanString = trim($cleanString);
+        self::json($cleanString, $title, 'sql.log');
+    }
 }

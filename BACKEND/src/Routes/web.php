@@ -25,7 +25,6 @@ $router->get('api/categories', 'CategoryController@get');
 $router->get('api/products', 'ProductController@get');
 $router->get('api/products/{id}', 'ProductController@find');
 
-$router->get('api/seller/products', 'ProductController@sellerGet', ['App\Middlewares\SellerMiddleware']);
 $router->post('api/seller/products', 'ProductController@sellerAdd', ['App\Middlewares\SellerMiddleware']);
 $router->put('api/seller/products/{product_id}', 'ProductController@sellerUpdate', ['App\Middlewares\SellerMiddleware']);
 

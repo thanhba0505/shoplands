@@ -33,6 +33,7 @@ class ProductController {
             $search = Request::get('search', "");
             $order_by_price = Request::get('order_by_price', null);
             $order_by_rating = Request::get('order_by_rating', null);
+            $seller_id = Request::get('seller_id', null);
 
             $count =  0;
 
@@ -45,7 +46,8 @@ class ProductController {
                 $min_price,
                 $max_price,
                 $order_by_price,
-                $order_by_rating
+                $order_by_rating,
+                $seller_id
             );
 
             $products = $result['products'];
@@ -73,91 +75,7 @@ class ProductController {
         }
     }
 
-    // Sắp xếp sản phẩm nếu có yêu cầu
-    private function sortProducts(&$products, $order_by_price, $order_by_rating) {
-        // Sắp xếp sản phẩm theo giá nếu có yêu cầu
-        $this->sortProductsByPrice($products, $order_by_price);
-
-        // Sắp xếp sản phẩm theo đánh giá nếu có yêu cầu
-        $this->sortProductsByRating($products, $order_by_rating);
-    }
-
-    // Sắp xếp sản phẩm theo giá nếu có yêu cầu
-    private function sortProductsByPrice(&$products, $order_by_price) {
-        if ($order_by_price === 'asc') {
-            usort($products, function ($a, $b) {
-                return $a['min_price'] - $b['min_price'];
-            });
-        } elseif ($order_by_price === 'desc') {
-            usort($products, function ($a, $b) {
-                return $b['min_price'] - $a['min_price'];
-            });
-        }
-    }
-
-    // Sắp xếp sản phẩm theo đánh giá nếu có yêu cầu
-    private function sortProductsByRating(&$products, $order_by_rating) {
-        if ($order_by_rating === 'asc') {
-            usort($products, function ($a, $b) {
-                $ratingA = $this->getValidRating($a['average_rating']);
-                $ratingB = $this->getValidRating($b['average_rating']);
-
-                if ($ratingA === $ratingB) {
-                    return 0;
-                } elseif ($ratingA < $ratingB) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            });
-        } elseif ($order_by_rating === 'desc') {
-            usort($products, function ($a, $b) {
-                $ratingA = $this->getValidRating($a['average_rating']);
-                $ratingB = $this->getValidRating($b['average_rating']);
-
-                if ($ratingA === $ratingB) {
-                    return 0;
-                } elseif ($ratingA > $ratingB) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            });
-        }
-    }
-
-    private function getValidRating($rating) {
-        // Kiểm tra rating hợp lệ (là số)
-        if (is_numeric($rating)) {
-            return (float) $rating;
-        }
-        // Nếu không hợp lệ, trả về 0 (hoặc giá trị mặc định bạn muốn)
-        return 0;
-    }
-
-
-
-
-    public function sellerGet() {
-        try {
-            $seller = Auth::seller();
-            $limit = Request::get('limit', 12);
-            $page = Request::get('page', 1);
-            $status = Request::get('status', 'all');
-
-            $count = ProductModel::countBySellerId($seller['seller_id'], $status);
-            $products = ProductModel::getBySellerId($seller['seller_id'], $status, $limit, $page);
-
-            foreach ($products as $key => $product) {
-                $products[$key] = $this->enrichProductData($product);
-            }
-
-            Response::json(['count' => $count, 'products' => $products]);
-        } catch (\Throwable $th) {
-            $this->logAndRespond("AddressController -> sellerGet", $th);
-        }
-    }
-
+    // Thêm 1 sản phẩm
     public function sellerAdd() {
         try {
             $seller = Auth::seller();

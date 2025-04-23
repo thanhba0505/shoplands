@@ -17,14 +17,15 @@ class ProductModel {
         $min_price = null,
         $max_price = null,
         $order_by_price = null, // 'asc' hoặc 'desc'
-        $order_by_rating = null // 'asc' hoặc 'desc'
+        $order_by_rating = null, // 'asc' hoặc 'desc'
+        $seller_id = null
     ) {
         $max_price_product = MAX_PRICE_PRODUCT;
 
         $conn = new ConnectDatabase();
         $offset = $page * $limit;
 
-        $whereClauses = ["p.status = :status AND pi.default = 1"];
+        $whereClauses = ["p.status = :status AND IFNULL(pi.default, 1) = 1"];
         $params = ['status' => $status];
 
         // Search
@@ -42,6 +43,12 @@ class ProductModel {
             foreach ($category_ids as $key => $category_id) {
                 $params["category_id_$key"] = $category_id;
             }
+        }
+
+        // Seller
+        if (!empty($seller_id)) {
+            $whereClauses[] = "p.seller_id = :seller_id";
+            $params['seller_id'] = $seller_id;
         }
 
         $whereSQL = implode(' AND ', $whereClauses);

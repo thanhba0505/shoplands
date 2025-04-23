@@ -7,12 +7,10 @@ use PDO;
 use PDOException;
 use Exception;
 
-class ConnectDatabase
-{
+class ConnectDatabase {
     private $connection;
 
-    public function __construct()
-    {
+    public function __construct() {
         // Load biến môi trường nếu chưa có
         if (!isset($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_CHARSET'])) {
             throw new Exception("Database configuration is missing in .env file.");
@@ -32,11 +30,13 @@ class ConnectDatabase
         }
     }
 
-    public function query($sql, $params = [])
-    {
+    public function query($sql, $params = []) {
         try {
             $stmt = $this->connection->prepare($sql);
             $stmt->execute($params);
+
+            Log::sql($sql);
+
             return $stmt;
         } catch (PDOException $e) {
             throw new Exception("Query failed: " . $e->getMessage());
@@ -44,8 +44,23 @@ class ConnectDatabase
         }
     }
 
-    public function getConnection()
-    {
+    public function getConnection() {
         return $this->connection;
+    }
+
+    public function beginTransaction() {
+        return $this->connection->beginTransaction();
+    }
+
+    public function commit() {
+        return $this->connection->commit();
+    }
+
+    public function rollBack() {
+        return $this->connection->rollBack();
+    }
+
+    public function lastInsertId() {
+        return $this->connection->lastInsertId();
     }
 }
