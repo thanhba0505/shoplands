@@ -7,6 +7,7 @@ import AdminLayout from "~/components/layout/AdminLayout";
 import Login from "~/pages/Auth/Login";
 import Register from "~/pages/Auth/Register";
 import ForgotPassword from "~/pages/Auth/ForgotPassword";
+import RegisterSeller from "~/pages/Auth/RegisterSeller";
 
 // Public
 import Home from "~/pages/Public/Home";
@@ -43,6 +44,7 @@ const publicRoutes = [
   // Auth
   { path: "/login", component: Login },
   { path: "/register", component: Register },
+  { path: "/register-seller", component: RegisterSeller },
   { path: "/forgot-password", component: ForgotPassword },
   // Public
   { path: "/", component: Home },
