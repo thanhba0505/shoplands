@@ -17,9 +17,6 @@ use App\Models\ProductImageModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
 use App\Models\ProductVariantValueModel;
-use App\Models\ReviewModel;
-use App\Models\Seller;
-use App\Models\SellerModel;
 
 class ProductController {
     // Lấy danh sách san pham

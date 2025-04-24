@@ -155,11 +155,11 @@ const OrdersTable = ({ orders, setOrders }) => {
                   </TableCell>
                   <TableCell align="center">
                     Gửi từ: <br />
-                    {order.from_address.province_name}
+                    {order.from_address.from_province_name}
                   </TableCell>
                   <TableCell align="center">
                     Đến: <br />
-                    {order.to_address.province_name}
+                    {order.to_address.to_province_name}
                   </TableCell>
                   <TableCell align="center">
                     Phương thức giao hàng: <br />
@@ -186,11 +186,11 @@ const OrdersTable = ({ orders, setOrders }) => {
                       >
                         <img
                           src={Path.publicProduct(item.image)}
-                          alt={item.product.name}
+                          alt={item.product_name}
                           width="50"
                         />
                         <Typography variant="body2" className="line-clamp-2">
-                          {item.product.name}
+                          {item.product_name}
                         </Typography>
                       </div>
                     </TableCell>

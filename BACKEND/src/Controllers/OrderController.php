@@ -30,7 +30,47 @@ use App\Models\ShippingFeeModel;
 use App\Models\UserModel;
 
 class OrderController {
-    // Lấy danh sách đơn hàng của người dùng
+    // Lấy danh sách đơn hàng của người dùng theo người bán
+    public function sellerGet() {
+        try {
+            $seller = Auth::seller();
+            $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
+            $limit = Request::get('limit', 12);
+            $page = Request::get('page', 0);
+
+            $status = Other::groupStatus($status);
+
+            $result = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
+
+            Response::json($result, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> sellerGet: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy 1 đơn hàng theo người bán
+    public function sellerFind($order_id) {
+        try {
+            // $seller = Auth::seller();
+
+            // // Lấy danh sách đơn hàng
+            // $order = OrderModel::findByOrderIdAndUserId($order_id, $seller["seller_id"]);
+
+            // if (!$order) {
+            //     Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+            // }
+
+            // $order = array_merge($order, $this->getOrderDetails($order));
+
+            // Response::json($order, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> sellerFind: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    //  Lấy danh sách đơn hàng của người dùng
     public function userGet() {
         try {
             $user = Auth::user();
@@ -40,24 +80,7 @@ class OrderController {
 
             $status = Other::groupStatus($status);
 
-            $count = OrderModel::countByUserId($user["user_id"], $status);
-
-            $orders = OrderModel::getByUserId($user["user_id"], $status, $limit, $page);
-
-            if (!empty($orders)) {
-                // Duyệt qua từng đơn hàng và thêm thông tin vào
-                foreach ($orders as $key => $order) {
-                    $orders[$key] = array_merge(
-                        $order,
-                        $this->getOrderDetails($order)  // Lấy thông tin chi tiết cho từng đơn hàng
-                    );
-                }
-            }
-
-            $result = [
-                "count" => $count,
-                "orders" => $orders
-            ];
+            $result = OrderModel::getByUserId($user["user_id"], $status, $limit, $page);
 
             Response::json($result, 200);
         } catch (\Throwable $th) {
@@ -66,19 +89,17 @@ class OrderController {
         }
     }
 
-    // Lấy 1 đơn hàng 
+    // Lấy 1 đơn hàng theo người dùng
     public function userFind($order_id) {
         try {
             $user = Auth::user();
 
             // Lấy danh sách đơn hàng
-            $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+            $order = OrderModel::findByUserIdAndOrderId($user["user_id"], $order_id);
 
             if (!$order) {
                 Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
             }
-
-            $order = array_merge($order, $this->getOrderDetails($order));
 
             Response::json($order, 200);
         } catch (\Throwable $th) {
@@ -86,6 +107,83 @@ class OrderController {
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Lấy danh sách đơn hàng của người dùng
+    // public function userGet() {
+    //     try {
+    //         $user = Auth::user();
+    //         $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
+    //         $limit = Request::get('limit', 12);
+    //         $page = Request::get('page', 0);
+
+    //         $status = Other::groupStatus($status);
+
+    //         $count = OrderModel::countByUserId($user["user_id"], $status);
+
+    //         $orders = OrderModel::getByUserId($user["user_id"], $status, $limit, $page);
+
+    //         if (!empty($orders)) {
+    //             // Duyệt qua từng đơn hàng và thêm thông tin vào
+    //             foreach ($orders as $key => $order) {
+    //                 $orders[$key] = array_merge(
+    //                     $order,
+    //                     $this->getOrderDetails($order)  // Lấy thông tin chi tiết cho từng đơn hàng
+    //                 );
+    //             }
+    //         }
+
+    //         $result = [
+    //             "count" => $count,
+    //             "orders" => $orders
+    //         ];
+
+    //         Response::json($result, 200);
+    //     } catch (\Throwable $th) {
+    //         Log::throwable("OrderController -> userGet: " . $th->getMessage());
+    //         Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+    //     }
+    // }
+
+    // Lấy 1 đơn hàng 
+    // public function userFind($order_id) {
+    //     try {
+    //         $user = Auth::user();
+
+    //         // Lấy danh sách đơn hàng
+    //         $order = OrderModel::findByOrderIdAndUserId($order_id, $user["user_id"]);
+
+    //         if (!$order) {
+    //             Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+    //         }
+
+    //         $order = array_merge($order, $this->getOrderDetails($order));
+
+    //         Response::json($order, 200);
+    //     } catch (\Throwable $th) {
+    //         Log::throwable("OrderController -> userFind: " . $th->getMessage());
+    //         Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+    //     }
+    // }
 
     // Xóa đơn hàng chưa thanh toán
     public function userDelete($order_id) {
@@ -535,60 +633,60 @@ class OrderController {
         }
     }
 
-    // Lấy danh sách đơn hàng của người dùng theo người bán
-    public function sellerGet() {
-        try {
-            $seller = Auth::seller();
-            $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
-            $limit = Request::get('limit', 12);
-            $page = Request::get('page', 0);
+    // // Lấy danh sách đơn hàng của người dùng theo người bán
+    // public function sellerGet() {
+    //     try {
+    //         $seller = Auth::seller();
+    //         $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
+    //         $limit = Request::get('limit', 12);
+    //         $page = Request::get('page', 0);
 
-            $status = Other::groupStatus($status);
+    //         $status = Other::groupStatus($status);
 
-            $count = OrderModel::countBySellerId($seller["seller_id"], $status);
+    //         $count = OrderModel::countBySellerId($seller["seller_id"], $status);
 
-            $orders = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
+    //         $orders = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
 
-            if (!empty($orders)) {
-                // Duyệt qua từng đơn hàng và thêm thông tin vào
-                foreach ($orders as $key => $order) {
-                    $orders[$key] = array_merge(
-                        $order,
-                        $this->getOrderDetails($order)  // Lấy thông tin chi tiết cho từng đơn hàng
-                    );
-                }
-            }
+    //         if (!empty($orders)) {
+    //             // Duyệt qua từng đơn hàng và thêm thông tin vào
+    //             foreach ($orders as $key => $order) {
+    //                 $orders[$key] = array_merge(
+    //                     $order,
+    //                     $this->getOrderDetails($order)  // Lấy thông tin chi tiết cho từng đơn hàng
+    //                 );
+    //             }
+    //         }
 
-            $result = [
-                "count" => $count,
-                "orders" => $orders
-            ];
+    //         $result = [
+    //             "count" => $count,
+    //             "orders" => $orders
+    //         ];
 
-            Response::json($result, 200);
-        } catch (\Throwable $th) {
-            Log::throwable("OrderController -> sellerGet: " . $th->getMessage());
-            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
-        }
-    }
+    //         Response::json($result, 200);
+    //     } catch (\Throwable $th) {
+    //         Log::throwable("OrderController -> sellerGet: " . $th->getMessage());
+    //         Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+    //     }
+    // }
 
-    // Lấy 1 đơn hàng theo người bán
-    public function sellerFind($order_id) {
-        try {
-            $seller = Auth::seller();
+    // // Lấy 1 đơn hàng theo người bán
+    // public function sellerFind($order_id) {
+    //     try {
+    //         $seller = Auth::seller();
 
-            // Lấy danh sách đơn hàng
-            $order = OrderModel::findByOrderIdAndUserId($order_id, $seller["seller_id"]);
+    //         // Lấy danh sách đơn hàng
+    //         $order = OrderModel::findByOrderIdAndUserId($order_id, $seller["seller_id"]);
 
-            if (!$order) {
-                Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
-            }
+    //         if (!$order) {
+    //             Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
+    //         }
 
-            $order = array_merge($order, $this->getOrderDetails($order));
+    //         $order = array_merge($order, $this->getOrderDetails($order));
 
-            Response::json($order, 200);
-        } catch (\Throwable $th) {
-            Log::throwable("OrderController -> sellerFind: " . $th->getMessage());
-            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
-        }
-    }
+    //         Response::json($order, 200);
+    //     } catch (\Throwable $th) {
+    //         Log::throwable("OrderController -> sellerFind: " . $th->getMessage());
+    //         Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+    //     }
+    // }
 }

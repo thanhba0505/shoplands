@@ -3,11 +3,660 @@
 namespace App\Models;
 
 use App\Helpers\Carbon;
+use App\Helpers\DataHelper;
 use App\Helpers\Format;
 use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class OrderModel {
+    // Lấy danh sach đơn hang theo seller id
+    public static function getBySellerId($seller_id, $status = [], $limit = 12, $page = 0) {
+        $query = new ConnectDatabase();
+
+        $offset = ($page) * $limit;
+
+        // Base SQL for counting total records
+        $countSql = "
+            SELECT
+                COUNT(DISTINCT o.id) as total_count
+            FROM
+                orders o
+                JOIN addresses af ON o.from_address_id = af.id
+                JOIN addresses at ON o.to_address_id = at.id
+                JOIN users u ON o.user_id = u.id
+                JOIN sellers s ON o.seller_id = s.id
+                JOIN order_items oi ON o.id = oi.order_id
+                JOIN product_variants pv ON oi.product_variant_id = pv.id
+                LEFT JOIN product_images pi ON pi.product_id = pv.id
+                JOIN products p ON pv.product_id = p.id
+            WHERE
+                o.seller_id = :seller_id
+                AND o.deleted_at IS NULL
+                AND pi.default = 1
+        ";
+
+        // Xây dựng câu lệnh SQL cơ bản
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.subtotal_price,
+                o.shipping_fee,
+                o.discount,
+                o.final_price,
+                o.revenue,
+                o.paid,
+                o.vnp_txnref,
+                o.vnp_url,
+                o.vnp_created_at,
+                o.created_at,
+                o.ghn_order_code,
+                o.current_status,
+                o.current_status_name,
+                o.seller_id,
+                o.user_id,
+
+                u.name,
+                u.avatar,
+
+                s.store_name AS store_name,  
+                s.logo AS logo,
+
+                af.province_name AS from_province_name,
+                af.address_line AS from_address_line,
+
+                at.province_name AS to_province_name,
+                at.address_line AS to_address_line,
+
+                oi.id AS order_item_id,
+                oi.product_variant_id,
+                oi.quantity,
+                oi.price,
+
+                pi.image_path AS image,
+
+                p.name AS product_name
+            FROM
+                orders o
+                JOIN addresses af ON o.from_address_id = af.id
+                JOIN addresses at ON o.to_address_id = at.id
+                JOIN users u ON o.user_id = u.id
+                JOIN sellers s ON o.seller_id = s.id
+                JOIN order_items oi ON o.id = oi.order_id
+                JOIN product_variants pv ON oi.product_variant_id = pv.id
+                LEFT JOIN product_images pi ON pi.product_id = pv.id
+                JOIN products p ON pv.product_id = p.id
+
+            WHERE
+                o.seller_id = :seller_id
+                AND o.deleted_at IS NULL
+                AND pi.default = 1
+        ";
+
+        // Build params for the query
+        $params = [
+            'seller_id' => $seller_id
+        ];
+
+        // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
+        if (!empty($status)) {
+            $statusPlaceholders = implode(',', array_map(function ($key) {
+                return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
+            }, array_keys($status)));
+
+            $sql .= " AND o.current_status IN ($statusPlaceholders)";
+            $countSql .= " AND o.current_status IN ($statusPlaceholders)";
+
+            // Add status parameters
+            foreach ($status as $key => $value) {
+                $params["status" . $key] = $value;
+            }
+        }
+
+        // Get total count before pagination
+        $totalCount = $query->query($countSql, $params)->fetch();
+        $count = $totalCount['total_count'] ?? 0;
+
+        // Add pagination parameters
+        $params['limit'] = $limit;
+        $params['offset'] = $offset;
+
+        // Thêm các điều kiện sắp xếp và phân trang
+        $sql .= "
+            ORDER BY
+                o.created_at DESC
+            LIMIT
+                :limit OFFSET :offset
+        ";
+
+        // Thực thi câu lệnh SQL và lấy kết quả
+        $result = $query->query($sql, $params)->fetchAll();
+
+        if (!empty($result)) {
+            $config = [
+                'keep_columns' => [
+                    'order_id',
+                    'subtotal_price',
+                    'shipping_fee',
+                    'discount',
+                    'final_price',
+                    'revenue',
+                    'paid',
+                    'vnp_txnref',
+                    'vnp_url',
+                    'vnp_created_at',
+                    'created_at',
+                    'ghn_order_code',
+                    'current_status',
+                    'current_status_name',
+                    'seller_id',
+                    'user_id'
+                ],
+                'group_columns' => [
+                    'user' => [
+                        'name',
+                        'avatar'
+                    ],
+                    'seller' => [
+                        'store_name',
+                        'logo'
+                    ],
+                    'from_address' => [
+                        'from_province_name',
+                        'from_address_line'
+                    ],
+                    'to_address' => [
+                        'to_province_name',
+                        'to_address_line'
+                    ],
+                    'order_items' => [
+                        'order_item_id',
+                        'order_id',
+                        'product_variant_id',
+                        'quantity',
+                        'price',
+                        'attributes',
+                        'product_name',
+                        'image'
+                    ]
+                ]
+            ];
+
+            $result = DataHelper::groupData($result, $config);
+
+            $orderIds = [];
+
+            foreach ($result as $key => $value) {
+                $result[$key]['user'] = $value['user'][0];
+                $result[$key]['seller'] = $value['seller'][0];
+                $result[$key]['from_address'] = $value['from_address'][0];
+                $result[$key]['to_address'] = $value['to_address'][0];
+                $orderIds[] = $value['order_id'];
+            }
+
+            if (!empty($orderIds)) {
+                $orderIdsString = "('" . implode("', '", $orderIds) . "')";
+
+                // Lấy thuộc tính
+                $sql = "
+                    SELECT DISTINCT
+                        pv.id AS product_variant_id,
+                        pa.name,
+                        pav.value
+                    FROM
+                        product_variants pv
+                        LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
+                        JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
+                        JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+                        JOIN order_items oi ON oi.product_variant_id = pv.id
+                        JOIN orders o ON o.id = oi.order_id
+                    WHERE
+                        o.id IN $orderIdsString
+                ";
+
+                $result_variants = $query->query($sql, [])->fetchAll();
+
+                foreach ($result as $key => $value) {
+                    foreach ($value['order_items'] as $key2 => $order_item) {
+                        $attributes = [];
+                        foreach ($result_variants as $result_variant) {
+                            if ($result_variant['product_variant_id'] === $order_item['product_variant_id']) {
+                                $attributes[] = [
+                                    'name' => $result_variant['name'],
+                                    'value' => $result_variant['value']
+                                ];
+                            }
+                        }
+
+                        $result[$key]['order_items'][$key2]['attributes'] = $attributes;
+                    }
+                }
+            }
+        }
+
+        // Return data with total count
+        return [
+            'count' => $count,
+            'orders' => $result,
+        ];
+    }
+
+    // Láy danh sách đơn hàng theo userid
+    public static function getByUserId($user_id, $status = [], $limit = 12, $page = 0) {
+        $query = new ConnectDatabase();
+
+        $offset = ($page) * $limit;
+
+        // Base SQL for counting total records
+        $countSql = "
+            SELECT
+                COUNT(DISTINCT o.id) as total_count
+            FROM
+                orders o
+                JOIN addresses af ON o.from_address_id = af.id
+                JOIN addresses at ON o.to_address_id = at.id
+                JOIN users u ON o.user_id = u.id
+                JOIN sellers s ON o.seller_id = s.id
+                JOIN order_items oi ON o.id = oi.order_id
+                JOIN product_variants pv ON oi.product_variant_id = pv.id
+                LEFT JOIN product_images pi ON pi.product_id = pv.id
+                JOIN products p ON pv.product_id = p.id
+            WHERE
+                o.user_id = :user_id
+                AND o.deleted_at IS NULL
+                AND pi.default = 1
+        ";
+
+        // Xây dựng câu lệnh SQL cơ bản
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.subtotal_price,
+                o.shipping_fee,
+                o.discount,
+                o.final_price,
+                o.revenue,
+                o.paid,
+                o.vnp_txnref,
+                o.vnp_url,
+                o.vnp_created_at,
+                o.created_at,
+                o.ghn_order_code,
+                o.current_status,
+                o.current_status_name,
+                o.seller_id,
+                o.user_id,
+
+                u.name,
+                u.avatar,
+
+                s.store_name AS store_name,  
+                s.logo AS logo,
+
+                af.province_name AS from_province_name,
+                af.address_line AS from_address_line,
+
+                at.province_name AS to_province_name,
+                at.address_line AS to_address_line,
+
+                oi.id AS order_item_id,
+                oi.product_variant_id,
+                oi.quantity,
+                oi.price,
+
+                pi.image_path AS image,
+
+                p.name AS product_name
+            FROM
+                orders o
+                JOIN addresses af ON o.from_address_id = af.id
+                JOIN addresses at ON o.to_address_id = at.id
+                JOIN users u ON o.user_id = u.id
+                JOIN sellers s ON o.seller_id = s.id
+                JOIN order_items oi ON o.id = oi.order_id
+                JOIN product_variants pv ON oi.product_variant_id = pv.id
+                LEFT JOIN product_images pi ON pi.product_id = pv.id
+                JOIN products p ON pv.product_id = p.id
+
+            WHERE
+                o.user_id = :user_id
+                AND o.deleted_at IS NULL
+                AND pi.default = 1
+        ";
+
+        // Build params for the query
+        $params = [
+            'user_id' => $user_id
+        ];
+
+        // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
+        if (!empty($status)) {
+            $statusPlaceholders = implode(',', array_map(function ($key) {
+                return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
+            }, array_keys($status)));
+
+            $sql .= " AND o.current_status IN ($statusPlaceholders)";
+            $countSql .= " AND o.current_status IN ($statusPlaceholders)";
+
+            // Add status parameters
+            foreach ($status as $key => $value) {
+                $params["status" . $key] = $value;
+            }
+        }
+
+        // Get total count before pagination
+        $totalCount = $query->query($countSql, $params)->fetch();
+        $count = $totalCount['total_count'] ?? 0;
+
+        // Add pagination parameters
+        $params['limit'] = $limit;
+        $params['offset'] = $offset;
+
+        // Thêm các điều kiện sắp xếp và phân trang
+        $sql .= "
+            ORDER BY
+                o.created_at DESC
+            LIMIT
+                :limit OFFSET :offset
+        ";
+
+        // Thực thi câu lệnh SQL và lấy kết quả
+        $result = $query->query($sql, $params)->fetchAll();
+
+        if (!empty($result)) {
+            $config = [
+                'keep_columns' => [
+                    'order_id',
+                    'subtotal_price',
+                    'shipping_fee',
+                    'discount',
+                    'final_price',
+                    'revenue',
+                    'paid',
+                    'vnp_txnref',
+                    'vnp_url',
+                    'vnp_created_at',
+                    'created_at',
+                    'ghn_order_code',
+                    'current_status',
+                    'current_status_name',
+                    'seller_id',
+                    'user_id'
+                ],
+                'group_columns' => [
+                    'user' => [
+                        'name',
+                        'avatar'
+                    ],
+                    'seller' => [
+                        'store_name',
+                        'logo'
+                    ],
+                    'from_address' => [
+                        'from_province_name',
+                        'from_address_line'
+                    ],
+                    'to_address' => [
+                        'to_province_name',
+                        'to_address_line'
+                    ],
+                    'order_items' => [
+                        'order_item_id',
+                        'order_id',
+                        'product_variant_id',
+                        'quantity',
+                        'price',
+                        'attributes',
+                        'product_name',
+                        'image'
+                    ]
+                ]
+            ];
+
+            $result = DataHelper::groupData($result, $config);
+
+            $orderIds = [];
+
+            foreach ($result as $key => $value) {
+                $result[$key]['user'] = $value['user'][0];
+                $result[$key]['seller'] = $value['seller'][0];
+                $result[$key]['from_address'] = $value['from_address'][0];
+                $result[$key]['to_address'] = $value['to_address'][0];
+                $orderIds[] = $value['order_id'];
+            }
+
+            if (!empty($orderIds)) {
+                $orderIdsString = "('" . implode("', '", $orderIds) . "')";
+
+                // Lấy thuộc tính
+                $sql = "
+                    SELECT DISTINCT
+                        pv.id AS product_variant_id,
+                        pa.name,
+                        pav.value
+                    FROM
+                        product_variants pv
+                        LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
+                        JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
+                        JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+                        JOIN order_items oi ON oi.product_variant_id = pv.id
+                        JOIN orders o ON o.id = oi.order_id
+                    WHERE
+                        o.id IN $orderIdsString
+                ";
+
+                $result_variants = $query->query($sql, [])->fetchAll();
+
+                foreach ($result as $key => $value) {
+                    foreach ($value['order_items'] as $key2 => $order_item) {
+                        $attributes = [];
+                        foreach ($result_variants as $result_variant) {
+                            if ($result_variant['product_variant_id'] === $order_item['product_variant_id']) {
+                                $attributes[] = [
+                                    'name' => $result_variant['name'],
+                                    'value' => $result_variant['value']
+                                ];
+                            }
+                        }
+
+                        $result[$key]['order_items'][$key2]['attributes'] = $attributes;
+                    }
+                }
+            }
+        }
+
+        // Return data with total count
+        return [
+            'count' => $count,
+            'orders' => $result,
+        ];
+    }
+
+    // Tìm đơn hàng theo order_id và user_id
+    public static function findByUserIdAndOrderId($user_id, $order_id) {
+        $query = new ConnectDatabase();
+
+        // Xây dựng câu lệnh SQL cơ bản
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                o.subtotal_price,
+                o.shipping_fee,
+                o.discount,
+                o.final_price,
+                o.revenue,
+                o.paid,
+                o.vnp_txnref,
+                o.vnp_url,
+                o.vnp_created_at,
+                o.created_at,
+                o.ghn_order_code,
+                o.current_status,
+                o.current_status_name,
+                o.seller_id,
+                o.user_id,
+
+                u.name,
+                u.avatar,
+
+                s.store_name AS store_name,  
+                s.logo AS logo,
+
+                af.province_name AS from_province_name,
+                af.address_line AS from_address_line,
+
+                at.province_name AS to_province_name,
+                at.address_line AS to_address_line,
+
+                oi.id AS order_item_id,
+                oi.product_variant_id,
+                oi.quantity,
+                oi.price,
+
+                pi.image_path AS image,
+
+                p.name AS product_name
+            FROM
+                orders o
+                JOIN addresses af ON o.from_address_id = af.id
+                JOIN addresses at ON o.to_address_id = at.id
+                JOIN users u ON o.user_id = u.id
+                JOIN sellers s ON o.seller_id = s.id
+                JOIN order_items oi ON o.id = oi.order_id
+                JOIN product_variants pv ON oi.product_variant_id = pv.id
+                LEFT JOIN product_images pi ON pi.product_id = pv.id
+                JOIN products p ON pv.product_id = p.id
+            WHERE
+                o.user_id = :user_id
+                AND o.id = :order_id
+                AND o.deleted_at IS NULL
+                AND pi.default = 1
+        ";
+
+        // Build params for the query
+        $params = [
+            'user_id' => $user_id,
+            'order_id' => $order_id
+        ];
+
+        // Thực thi câu lệnh SQL và lấy kết quả
+        $result = $query->query($sql, $params)->fetchAll();
+
+        $data = null;
+
+        if (!empty($result)) {
+            $config = [
+                'keep_columns' => [
+                    'order_id',
+                    'subtotal_price',
+                    'shipping_fee',
+                    'discount',
+                    'final_price',
+                    'revenue',
+                    'paid',
+                    'vnp_txnref',
+                    'vnp_url',
+                    'vnp_created_at',
+                    'created_at',
+                    'ghn_order_code',
+                    'current_status',
+                    'current_status_name',
+                    'seller_id',
+                    'user_id'
+                ],
+                'group_columns' => [
+                    'user' => [
+                        'name',
+                        'avatar'
+                    ],
+                    'seller' => [
+                        'store_name',
+                        'logo'
+                    ],
+                    'from_address' => [
+                        'from_province_name',
+                        'from_address_line'
+                    ],
+                    'to_address' => [
+                        'to_province_name',
+                        'to_address_line'
+                    ],
+                    'order_items' => [
+                        'order_item_id',
+                        'order_id',
+                        'product_variant_id',
+                        'quantity',
+                        'price',
+                        'attributes',
+                        'product_name',
+                        'image'
+                    ]
+                ]
+            ];
+
+            $result = DataHelper::groupData($result, $config);
+
+            if (isset($result[0])) {
+                $data = $result[0];
+                $data['user'] = $data['user'][0];
+                $data['seller'] = $data['seller'][0];
+                $data['from_address'] = $data['from_address'][0];
+                $data['to_address'] = $data['to_address'][0];
+
+                // Lấy thuộc tính cho các sản phẩm trong đơn hàng
+                $sql = "
+                    SELECT DISTINCT
+                        pv.id AS product_variant_id,
+                        pa.name,
+                        pav.value
+                    FROM
+                        product_variants pv
+                        LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
+                        JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
+                        JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+                        JOIN order_items oi ON oi.product_variant_id = pv.id
+                        JOIN orders o ON o.id = oi.order_id
+                    WHERE
+                        o.id = :order_id
+                ";
+
+                $result_variants = $query->query($sql, ['order_id' => $order_id])->fetchAll();
+
+                foreach ($data['order_items'] as $key => $order_item) {
+                    $attributes = [];
+                    foreach ($result_variants as $result_variant) {
+                        if ($result_variant['product_variant_id'] === $order_item['product_variant_id']) {
+                            $attributes[] = [
+                                'name' => $result_variant['name'],
+                                'value' => $result_variant['value']
+                            ];
+                        }
+                    }
+
+                    $data['order_items'][$key]['attributes'] = $attributes;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Tạo đơn hàng
     public static function add($seller_id, $user_id, $from_address_id, $to_address_id, $shipping_fee, $subtotal_price, $discount, $final_price, $revenue, $coupon_id = null) {
         $query = new ConnectDatabase();
@@ -303,77 +952,77 @@ class OrderModel {
     }
 
     // Lấy danh sach đơn hang theo user id
-    public static function getByUserId($user_id, $status = [], $limit = 12, $page = 0) {
-        $query = new ConnectDatabase();
+    // public static function getByUserId($user_id, $status = [], $limit = 12, $page = 0) {
+    //     $query = new ConnectDatabase();
 
-        $offset = ($page) * $limit;
+    //     $offset = ($page) * $limit;
 
-        // Xây dựng câu lệnh SQL cơ bản
-        $sql = "
-            SELECT
-                o.id AS order_id,
-                o.subtotal_price,
-                o.shipping_fee,
-                o.discount,
-                o.final_price,
-                o.revenue,
-                o.paid,
-                o.vnp_txnref,
-                o.vnp_url,
-                o.vnp_created_at,
-                o.created_at,
-                o.ghn_order_code,
-                o.current_status,
-                o.current_status_name,
-                o.from_address_id,
-                o.to_address_id,
-                o.seller_id,
-                o.user_id,
-                o.coupon_id
-            FROM
-                orders o
-            WHERE
-                o.user_id = :user_id
-                AND o.deleted_at IS NULL
-        ";
+    //     // Xây dựng câu lệnh SQL cơ bản
+    //     $sql = "
+    //         SELECT
+    //             o.id AS order_id,
+    //             o.subtotal_price,
+    //             o.shipping_fee,
+    //             o.discount,
+    //             o.final_price,
+    //             o.revenue,
+    //             o.paid,
+    //             o.vnp_txnref,
+    //             o.vnp_url,
+    //             o.vnp_created_at,
+    //             o.created_at,
+    //             o.ghn_order_code,
+    //             o.current_status,
+    //             o.current_status_name,
+    //             o.from_address_id,
+    //             o.to_address_id,
+    //             o.seller_id,
+    //             o.user_id,
+    //             o.coupon_id
+    //         FROM
+    //             orders o
+    //         WHERE
+    //             o.user_id = :user_id
+    //             AND o.deleted_at IS NULL
+    //     ";
 
-        // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
-        if (!empty($status)) {
-            $statusPlaceholders = implode(',', array_map(function ($key) {
-                return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
-            }, array_keys($status)));
+    //     // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
+    //     if (!empty($status)) {
+    //         $statusPlaceholders = implode(',', array_map(function ($key) {
+    //             return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
+    //         }, array_keys($status)));
 
-            $sql .= " AND o.current_status IN ($statusPlaceholders)";
-        }
+    //         $sql .= " AND o.current_status IN ($statusPlaceholders)";
+    //     }
 
-        // Thêm các điều kiện sắp xếp và phân trang
-        $sql .= "
-            ORDER BY
-                o.created_at DESC
-            LIMIT
-                :limit OFFSET :offset
-        ";
+    //     // Thêm các điều kiện sắp xếp và phân trang
+    //     $sql .= "
+    //         ORDER BY
+    //             o.created_at DESC
+    //         LIMIT
+    //             :limit OFFSET :offset
+    //     ";
 
-        // Xây dựng các tham số cho câu lệnh SQL
-        $params = [
-            'user_id' => $user_id,
-            'limit' => $limit,
-            'offset' => $offset
-        ];
+    //     // Xây dựng các tham số cho câu lệnh SQL
+    //     $params = [
+    //         'user_id' => $user_id,
+    //         'limit' => $limit,
+    //         'offset' => $offset
+    //     ];
 
-        // Nếu có trạng thái, thêm các trạng thái vào mảng params
-        if (!empty($status)) {
-            foreach ($status as $key => $value) {
-                $params["status" . $key] = $value; // Thêm các trạng thái vào params với tên tham số
-            }
-        }
+    //     // Nếu có trạng thái, thêm các trạng thái vào mảng params
+    //     if (!empty($status)) {
+    //         foreach ($status as $key => $value) {
+    //             $params["status" . $key] = $value; // Thêm các trạng thái vào params với tên tham số
+    //         }
+    //     }
 
-        // Thực thi câu lệnh SQL và lấy kết quả
-        $result = $query->query($sql, $params)->fetchAll();
+    //     // Thực thi câu lệnh SQL và lấy kết quả
+    //     $result = $query->query($sql, $params)->fetchAll();
 
-        // Trả về kết quả hoặc mảng rỗng nếu không có kết quả
-        return $result ?? [];
-    }
+    //     // Trả về kết quả hoặc mảng rỗng nếu không có kết quả
+    //     return $result ?? [];
+    // }
 
     // Lấy tổng số đơn hàng theo user id
     public static function countByUserId($user_id, $status = []) {
@@ -453,79 +1102,6 @@ class OrderModel {
 
         // Trả về số lượng đơn hàng hoặc 0 nếu không có kết quả
         return $result['total'] ?? 0;
-    }
-
-    // Lấy danh sach đơn hang theo seller id
-    public static function getBySellerId($seller_id, $status = [], $limit = 12, $page = 0) {
-        $query = new ConnectDatabase();
-
-        $offset = ($page) * $limit;
-
-        // Xây dựng câu lệnh SQL cơ bản
-        $sql = "
-            SELECT
-                o.id AS order_id,
-                o.subtotal_price,
-                o.shipping_fee,
-                o.discount,
-                o.final_price,
-                o.revenue,
-                o.paid,
-                o.vnp_txnref,
-                o.vnp_url,
-                o.vnp_created_at,
-                o.created_at,
-                o.ghn_order_code,
-                o.current_status,
-                o.current_status_name,
-                o.from_address_id,
-                o.to_address_id,
-                o.seller_id,
-                o.user_id,
-                o.coupon_id
-            FROM
-                orders o
-            WHERE
-                o.seller_id = :seller_id
-                AND o.deleted_at IS NULL
-        ";
-
-        // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
-        if (!empty($status)) {
-            $statusPlaceholders = implode(',', array_map(function ($key) {
-                return ":status" . $key;  // Tạo tham số có tên cho mảng trạng thái
-            }, array_keys($status)));
-
-            $sql .= " AND o.current_status IN ($statusPlaceholders)";
-        }
-
-        // Thêm các điều kiện sắp xếp và phân trang
-        $sql .= "
-            ORDER BY
-                o.created_at DESC
-            LIMIT
-                :limit OFFSET :offset
-        ";
-
-        // Xây dựng các tham số cho câu lệnh SQL
-        $params = [
-            'seller_id' => $seller_id,
-            'limit' => $limit,
-            'offset' => $offset
-        ];
-
-        // Nếu có trạng thái, thêm các trạng thái vào mảng params
-        if (!empty($status)) {
-            foreach ($status as $key => $value) {
-                $params["status" . $key] = $value; // Thêm các trạng thái vào params với tên tham số
-            }
-        }
-
-        // Thực thi câu lệnh SQL và lấy kết quả
-        $result = $query->query($sql, $params)->fetchAll();
-
-        // Trả về kết quả hoặc mảng rỗng nếu không có kết quả
-        return $result ?? [];
     }
 
     // Tìm đơn hàng theo order_id và seller_id
