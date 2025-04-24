@@ -2,9 +2,48 @@
 
 namespace App\Models;
 
+use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class ProductImageModel {
+
+    // Thêm 1 danh sách ảnh
+    public static function addList($product_id, $image_paths) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO
+                product_images (product_id, image_path, `default`)
+            VALUES
+        ";
+
+        $params = [];
+
+        foreach ($image_paths as $key => $image_path) {
+            $sql .= "(:product_id" . $key . ", :image_path" . $key . ", :default" . $key . ")";
+
+            if ($key < count($image_paths) - 1) {
+                $sql .= ",";
+            }
+
+            $params['product_id' . $key] = $product_id;
+            $params['image_path' . $key] = $image_path;
+            $params['default' . $key] = $key == 0 ? 1 : 0;
+        }
+        
+        $result = $conn->query($sql, $params);
+
+        return $result;
+    }
+
+
+
+
+
+
+
+
+
     // Lấy danh sách ảnh của sản phẩm theo id
     public static function getByProductId($product_id) {
         $query = new ConnectDatabase();

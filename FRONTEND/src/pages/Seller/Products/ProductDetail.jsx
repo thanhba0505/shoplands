@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -24,6 +25,7 @@ import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 import axiosWithAuth from "~/utils/axiosWithAuth";
+import HideImageRoundedIcon from "@mui/icons-material/HideImageRounded";
 
 const ModalUpdateProduct = ({
   open,
@@ -91,11 +93,17 @@ const ModalUpdateProduct = ({
       title="Cập nhật sản phẩm"
       sx={{ width: 1000 }}
     >
-      <Grid2 container spacing={1} columns={4} textAlign={"center"}>
+      <Grid2
+        container
+        spacing={1}
+        columnSpacing={3}
+        columns={variants.length > 1 ? 4 : 3}
+        textAlign={"center"}
+      >
         <Grid2
           size={5}
           container
-          columns={4}
+          columns={variants.length > 1 ? 4 : 3}
           sx={{
             fontWeight: "bold",
             position: "sticky",
@@ -105,9 +113,11 @@ const ModalUpdateProduct = ({
             pb: 1,
           }}
         >
-          <Grid2 sx={{ fontWeight: "bold" }} size={1}>
-            Thuộc tính
-          </Grid2>
+          {variants.length > 1 && (
+            <Grid2 sx={{ fontWeight: "bold" }} size={1}>
+              Thuộc tính
+            </Grid2>
+          )}
           <Grid2 sx={{ fontWeight: "bold" }} size={1}>
             Tồn kho
           </Grid2>
@@ -126,35 +136,37 @@ const ModalUpdateProduct = ({
         {variantsEdit &&
           variantsEdit.map((variant, index) => (
             <React.Fragment key={variant.product_variant_id}>
-              <Grid2 size={1}>
-                {variant.values.map((value) => value.value).join(", ")}
-              </Grid2>
-
+              {variants.length > 1 && (
+                <Grid2 size={1}>
+                  {variant.values.map((value) => value.value).join(", ")}
+                </Grid2>
+              )}
               <Grid2 size={1}>
                 <TextField
                   size="small"
                   sx={{ "& input": { textAlign: "center" } }}
+                  fullWidth
                   value={variant.quantity || ""}
                   onChange={(e) =>
                     handleInputChange(index, "quantity", e.target.value)
                   }
                 />
               </Grid2>
-
               <Grid2 size={1}>
                 <TextField
                   size="small"
                   sx={{ "& input": { textAlign: "center" } }}
                   value={variant.price || ""}
+                  fullWidth
                   onChange={(e) =>
                     handleInputChange(index, "price", e.target.value)
                   }
                 />
               </Grid2>
-
               <Grid2 size={1}>
                 <TextField
                   size="small"
+                  fullWidth
                   sx={{ "& input": { textAlign: "center" } }}
                   value={variant.promotion_price || ""}
                   onChange={(e) =>
@@ -268,7 +280,7 @@ const Description = ({ description, productId, setProduct }) => {
             className={seemore ? "" : "line-clamp-10"}
             sx={{ whiteSpace: "pre-line" }}
           >
-            {description}
+            {description ? description : "Không có mô tả"}
           </Typography>
           <Typography
             variant="body2"
@@ -308,7 +320,7 @@ const Description = ({ description, productId, setProduct }) => {
           </>
         ) : (
           <Button
-            variant="outlined"
+            variant="contained"
             size="small"
             sx={{ px: 2 }}
             onClick={() => setEdit(true)}
@@ -326,7 +338,6 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [seemore, setSeeMore] = useState(false);
 
   const [defaultImage, setDefaultImage] = useState(null);
 
@@ -489,22 +500,19 @@ const ProductDetail = () => {
                           alignItems: "center",
                         }}
                       >
-                        {product && product.images && defaultImage && (
+                        {product && product.images && (
                           <>
-                            <Box>
-                              <img
-                                src={Path.publicProduct(
-                                  defaultImage?.image_path
-                                )}
-                                alt="Product Image"
-                                style={{
-                                  width: "100%",
-                                  maxWidth: "200px",
-                                  objectFit: "contain",
-                                  margin: "auto",
-                                }}
-                              />
-                            </Box>
+                            <Avatar
+                              src={Path.publicProduct(defaultImage?.image_path)}
+                              alt="Product Image"
+                              variant="rounded"
+                              sx={{
+                                width: 200,
+                                height: 200,
+                              }}
+                            >
+                              <HideImageRoundedIcon fontSize="large" />
+                            </Avatar>
                             <Box
                               sx={{
                                 padding: 2,
@@ -514,8 +522,7 @@ const ProductDetail = () => {
                                 justifyContent: "center",
                               }}
                             >
-                              {product &&
-                                product.images &&
+                              {product?.images?.length > 1 &&
                                 product.images.map((image, key) => (
                                   <img
                                     onClick={() => setDefaultImage(image)}
@@ -541,29 +548,32 @@ const ProductDetail = () => {
 
                   <TableRow>
                     <TableCell>Danh mục</TableCell>
-                    <TableCell>{product?.category?.name}</TableCell>
+                    <TableCell>{product?.category_name}</TableCell>
                   </TableRow>
 
                   <TableRow>
                     <TableCell>Thuộc tính</TableCell>
                     <TableCell>
-                      {product?.attributes &&
-                        formatAttributes(product.attributes)}
+                      {product?.attributes?.length > 0 ? (
+                        formatAttributes(product.attributes)
+                      ) : (
+                        <>Không có thuộc tính</>
+                      )}
                     </TableCell>
                   </TableRow>
 
+                  {/* {product?.attributes?.length > 0 && ( */}
                   <TableRow>
                     <TableCell>Chi tiết thuộc tính</TableCell>
                     <TableCell sx={{ pr: 0 }}>
                       <Grid2
                         container
                         spacing={1}
-                        columns={5}
+                        columns={product.attributes ? 5 : 4}
                         textAlign={"center"}
-                        height={seemore ? "auto" : "200px"}
                         overflow={"hidden"}
                       >
-                        <Grid2 size={1}></Grid2>
+                        {product.attributes && <Grid2 size={1}></Grid2>}
                         <Grid2 size={1}>Tồn kho</Grid2>
                         <Grid2 size={1}>Đã bán</Grid2>
                         <Grid2 size={1}>Giá</Grid2>
@@ -577,11 +587,13 @@ const ProductDetail = () => {
                           product.variants.map((variant) => {
                             return (
                               <React.Fragment key={variant.product_variant_id}>
-                                <Grid2 size={1}>
-                                  {variant.values
-                                    .map((value) => value.value)
-                                    .join(", ")}
-                                </Grid2>
+                                {product.attributes && (
+                                  <Grid2 size={1}>
+                                    {variant.values
+                                      .map((value) => value.value)
+                                      .join(", ")}
+                                  </Grid2>
+                                )}
                                 <Grid2 size={1}>{variant.quantity}</Grid2>
                                 <Grid2 size={1}>{variant.sold_quantity}</Grid2>
                                 <Grid2 size={1}>
@@ -601,23 +613,10 @@ const ProductDetail = () => {
                           })}
                       </Grid2>
 
-                      <Typography
-                        variant="body2"
-                        onClick={() => setSeeMore(!seemore)}
-                        color="primary"
-                        sx={{
-                          cursor: "pointer",
-                          width: "fit-content",
-                          mt: 1,
-                        }}
-                      >
-                        {seemore ? "Ẩn" : "Xem thêm"}
-                      </Typography>
-
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         size="small"
-                        sx={{ mt: 1, px: 2 }}
+                        sx={{ mt: 2, px: 2 }}
                         onClick={() => setOpenModal(true)}
                       >
                         Chỉnh sửa
@@ -631,6 +630,7 @@ const ProductDetail = () => {
                       />
                     </TableCell>
                   </TableRow>
+                  {/* )} */}
 
                   <TableRow>
                     <TableCell>Mô tả</TableCell>

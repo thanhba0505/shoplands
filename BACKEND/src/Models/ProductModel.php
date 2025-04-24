@@ -20,13 +20,23 @@ class ProductModel {
         $order_by_rating = null, // 'asc' hoặc 'desc'
         $seller_id = null
     ) {
+        if ($status === 'all') {
+            $status = null;
+        }
+
         $max_price_product = MAX_PRICE_PRODUCT;
 
         $conn = new ConnectDatabase();
         $offset = $page * $limit;
 
-        $whereClauses = ["p.status = :status AND IFNULL(pi.default, 1) = 1"];
-        $params = ['status' => $status];
+        $whereClauses = ["IFNULL(pi.default, 1) = 1"];
+        $params = [];
+
+        // Status
+        if (!empty($status)) {
+            $whereClauses[] = "p.status = :status";
+            $params['status'] = $status;
+        }
 
         // Search
         if (!empty($search)) {
@@ -104,7 +114,11 @@ class ProductModel {
                 p.name,
                 p.status,
                 p.seller_id,
+
                 pi.image_path,
+
+                c.name AS category_name,
+
                 LEAST(MIN(pv.price), IFNULL(MIN(pv.promotion_price), $max_price_product)) AS min_price,
                 GREATEST(MAX(pv.price), IFNULL(MAX(pv.promotion_price), 0)) AS max_price,
         
@@ -281,16 +295,16 @@ class ProductModel {
                 pav.value
             FROM
                 product_variants pv
-                JOIN product_variant_values pvt ON pvt.product_variant_id = pv.id
-                JOIN product_attribute_values pav ON pav.id = pvt.product_attribute_value_id
-                JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+                LEFT JOIN product_variant_values pvt ON pvt.product_variant_id = pv.id
+                LEFT JOIN product_attribute_values pav ON pav.id = pvt.product_attribute_value_id
+                LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
             WHERE
                 pv.product_id = :product_id
         ";
 
         $variants = $conn->query($sql, ['product_id' => $product_id])->fetchAll();
 
-        $variants = DataHelper::groupData($variants, [
+        $config = [
             'keep_columns' => [
                 'product_variant_id',
                 'price',
@@ -299,33 +313,59 @@ class ProductModel {
                 'sold_quantity',
             ],
             'group_columns' => [
-                'values' => ['name', 'value'],
+                'values' => ['name', 'value']
             ]
-        ]);
+        ];
 
-        $attributes = [];
+        $variants = DataHelper::groupData($variants, $config);
 
-        foreach ($variants as $variant) {
-            foreach ($variant['values'] as $attribute) {
-                $name = $attribute['name'];
-                $value = $attribute['value'];
 
-                // Kiểm tra nếu tên thuộc tính đã có trong mảng attributes
-                if (!isset($attributes[$name])) {
-                    $attributes[$name] = [];
-                }
+        if (count($variants) > 1) {
+            $attributes = [];
+            foreach ($variants as $variant) {
+                foreach ($variant['values'] as $attribute) {
+                    $name = $attribute['name'];
+                    $value = $attribute['value'];
 
-                // Thêm giá trị thuộc tính vào mảng nếu chưa có
-                if (!in_array($value, $attributes[$name])) {
-                    $attributes[$name][] = $value;
+                    // Kiểm tra nếu tên thuộc tính đã có trong mảng attributes
+                    if (!isset($attributes[$name])) {
+                        $attributes[$name] = [];
+                    }
+
+                    // Thêm giá trị thuộc tính vào mảng nếu chưa có
+                    if (!in_array($value, $attributes[$name])) {
+                        $attributes[$name][] = $value;
+                    }
                 }
             }
+            $result[0]['attributes'] = $attributes ?? [];
         }
 
         $result[0]['variants'] = $variants ?? [];
-        $result[0]['attributes'] = $attributes ?? [];
 
         return $result[0] ?? null;
+    }
+
+    // Thêm 1 sản phẩm và trả về id
+    public static function add($name, $description, $seller_id, $category_id = null, $status = 'active') {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO 
+                products (name, description, status, seller_id, category_id)
+            VALUES
+                (:name, :description, :status, :seller_id, :category_id)
+        ";
+
+        $conn->query($sql, [
+            'name' => $name,
+            'description' => $description,
+            'status' => $status,
+            'seller_id' => $seller_id,
+            'category_id' => $category_id
+        ]);
+
+        return $conn->getConnection()->lastInsertId();
     }
 
 
@@ -654,28 +694,6 @@ class ProductModel {
         return $result ?? null;
     }
 
-    // Thêm 1 sản phẩm và trả về id
-    public static function add($name, $description, $seller_id, $category_id = null, $status = 'active') {
-        $conn = new ConnectDatabase();
-
-        $sql = "
-            INSERT INTO 
-                products (name, description, status, seller_id, category_id)
-            VALUES
-                (:name, :description, :status, :seller_id, :category_id)
-        ";
-
-        $conn->query($sql, [
-            'name' => $name,
-            'description' => $description,
-            'status' => $status,
-            'seller_id' => $seller_id,
-            'category_id' => $category_id
-        ]);
-
-        return $conn->getConnection()->lastInsertId();
-    }
-
     // Cập nhật description
     public static function updateDescription($product_id, $description) {
         $conn = new ConnectDatabase();
@@ -690,7 +708,7 @@ class ProductModel {
         ";
 
         $result = $conn->query($sql, [
-            'description' => $description,
+            'description' => $description ?? null,
             'product_id' => $product_id
         ]);
 

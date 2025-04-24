@@ -1,3 +1,4 @@
+import { useTheme } from "@emotion/react";
 import {
   Box,
   Typography,
@@ -13,6 +14,7 @@ import Path from "~/helpers/Path";
 
 const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   return (
     <Grid2
@@ -27,7 +29,7 @@ const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
           <Grid2 key={index} size={size}>
             <Card
               sx={{
-                boxShadow: 1,
+                boxShadow: theme.custom?.boxShadow,
                 borderRadius: 2,
                 height: "360px",
                 cursor: "pointer",
@@ -36,7 +38,7 @@ const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
                   transition: "transform 0.3s ease-out",
                 },
                 "&:hover": {
-                  boxShadow: 3,
+                  boxShadow: theme.custom?.boxShadow2,
                   transform: "scale(1.02)",
                   "& img": {
                     transform: "scale(1.05)",
@@ -52,6 +54,7 @@ const ShowProducts = ({ products, columns = 12, size = 2, sx }) => {
                 image={Path.publicProduct(product.image_path)} // Lấy ảnh đầu tiên của sản phẩm
                 sx={{ objectFit: "cover" }}
               />
+
               <CardContent>
                 {/* Tên sản phẩm */}
                 <Box>

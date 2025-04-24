@@ -22,9 +22,10 @@ use App\Models\Seller;
 use App\Models\SellerModel;
 
 class ProductController {
+    // Lấy danh sách san pham
     public function get() {
         try {
-            $status = Request::get('status', 'active');
+            $status = Request::get('status', 'all');
             $limit = Request::get('limit', 10);
             $page = max(0, Request::get('page', 0));
             $categories = Request::get('categories', []);
@@ -117,106 +118,40 @@ class ProductController {
             // Add product variants
             $this->addProductVariants($product_id, $data['product_variants']);
 
-            Response::json(['message' => 'Thêm sản phẩm thành công'], 201);
+            Response::json(['message' => 'Thêm sản phẩm thành công', 'product_id' => $product_id], 201);
         } catch (\Throwable $th) {
             $this->logAndRespond("AddressController -> sellerAdd", $th);
         }
     }
 
-    private function enrichProductData($product) {
-        $product['variants'] = ProductVariantModel::getByProductId($product['product_id']);
-        $product['average_rating'] = ReviewModel::getAverageRatingByProductId($product['product_id']);
-        $product['count_reviews'] = ReviewModel::getCountReviewsByProductId($product['product_id']);
-
-        $minPrice = null;
-        $maxPrice = null;
-        $priceFromMinPrice = null;
-        $quantity = 0;
-        $sold_quantity = 0;
-
-        foreach ($product['variants'] as $key => $variant) {
-            $quantity += $variant['quantity'];
-            $sold_quantity += $variant['sold_quantity'];
-
-            $values = ProductVariantValueModel::getByProductVariantId($variant['product_variant_id']);
-            $product['variants'][$key]['values'] = $values;
-
-            foreach ($values as $value) {
-                $product['attributes'][$value['name']][] = $value['value'];
-                $product['attributes'][$value['name']] = array_unique($product['attributes'][$value['name']]);
-            }
-
-            // Calculate min/max prices
-            $currentMin = ($variant['promotion_price'] === null) ?
-                $variant['price'] :
-                min($variant['price'], $variant['promotion_price']);
-
-            $currentMinPromotion = ($variant['promotion_price'] !== null && $currentMin === $variant['promotion_price']) ?
-                $variant['price'] : null;
-
-            if ($minPrice === null || $currentMin < $minPrice) {
-                $minPrice = $currentMin;
-                $priceFromMinPrice = $currentMinPromotion;
-            }
-
-            $currentMax = ($variant['promotion_price'] === null) ?
-                $variant['price'] :
-                max($variant['price'], $variant['promotion_price']);
-
-            if ($maxPrice === null || $currentMax > $maxPrice) {
-                $maxPrice = $currentMax;
-            }
-        }
-
-        // Set calculated values
-        $product['attributes'] = $product['attributes'] ?? [];
-        $product['min_price'] = $minPrice;
-        $product['max_price'] = $maxPrice;
-        $product['price_from_min_price'] = $priceFromMinPrice;
-        $product['quantity'] = $quantity;
-        $product['sold_quantity'] = $sold_quantity;
-
-        // Get additional data
-        $product['images'] = ProductImageModel::getByProductId($product['product_id']);
-        $product['category'] = CategoryModel::getByProductId($product['product_id']);
-        $product['details'] = ProductDetailModel::getByProductId($product['product_id']);
-
-        return $product;
-    }
-
-    private function logAndRespond($message, $throwable) {
-        Log::throwable($message . ": " . $throwable->getMessage());
-        Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
-    }
-
+    // Thêm ảnh cho 1 sản phẩm
     private function addProductImages($product_id, $images) {
-        $default = 1;
-        $countImageUpload = 0;
+        $fileNames = [];
 
         foreach ($images as $image) {
             $fileSave = FileSave::productImage($image);
             if ($fileSave['success'] === true) {
-                ProductImageModel::add($product_id, $fileSave['file_name'], $default);
-                $default = 0;
-                $countImageUpload++;
+                // ProductImageModel::add($product_id, $fileSave['file_name'], $default);
+                $fileNames[] = $fileSave['file_name'];
             }
         }
 
-        if ($countImageUpload === 0) {
+        if (empty($fileNames)) {
             Response::json(['message' => 'Có lỗi xảy ra, số ảnh được tải lên ít hơn 1'], 400);
         }
+
+        ProductImageModel::addList($product_id, $fileNames);
     }
 
+    // Thêm chi tiết cho 1 sản phẩm
     private function addProductDetails($product_id, $product_details) {
-        foreach ($product_details as $detail) {
-            ProductDetailModel::add(
-                $product_id,
-                $detail['name'],
-                $detail['description']
-            );
+        if (empty($product_details)) {
+            return;
         }
+        ProductDetailModel::addList($product_id, $product_details);
     }
 
+    // Thêm thuộc tính
     private function addProductVariants($product_id, $product_variants) {
         if (count($product_variants) > 1) {
             $this->addVariantsWithAttributes($product_id, $product_variants);
@@ -225,6 +160,7 @@ class ProductController {
         }
     }
 
+    // Thêm thuộc tính
     private function addVariantsWithAttributes($product_id, $product_variants) {
         $product_attributes = $this->extractUniqueAttributes($product_variants);
 
@@ -281,6 +217,7 @@ class ProductController {
         }
     }
 
+    // 
     private function addSimpleVariants($product_id, $product_variants) {
         foreach ($product_variants as $variant) {
             ProductVariantModel::add(
@@ -292,6 +229,7 @@ class ProductController {
         }
     }
 
+    // 
     private function extractUniqueAttributes($product_variants) {
         $product_attributes = [];
 
@@ -316,6 +254,7 @@ class ProductController {
         return array_values($product_attributes);
     }
 
+    // Kiểm tra thông tin thêm sản phẩm
     private function checkAddProduct($name, $description, $category_id, $images, $product_details, $product_variants) {
         // Check product name
         $checkName = Validator::isText($name, 'Tên sản phẩm', 3, 100);
@@ -381,6 +320,13 @@ class ProductController {
         }
     }
 
+    // 
+    private function logAndRespond($message, $throwable) {
+        Log::throwable($message . ": " . $throwable->getMessage());
+        Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+    }
+
+    // Cập nhật 1 sản phẩm
     public function sellerUpdate($product_id) {
         try {
             $seller = Auth::seller();
@@ -390,22 +336,19 @@ class ProductController {
                 Response::json(['message' => 'Không tìm thấy sản phẩm'], 400);
             }
 
-            $sellerByProductId = SellerModel::findSellerByProductId($product_id);
-            if (!$sellerByProductId || $sellerByProductId['seller_id'] != $seller['seller_id']) {
+            if ($product['seller_id'] != $seller['seller_id']) {
                 Response::json(['message' => 'Sản phẩm không phải của bạn'], 400);
             }
             // Cập nhật mô tả
-            $description = Request::json("description", null);
+            $description = Request::json("description", "");
 
             $checkDescription = Validator::isText($description, 'Mô tả', 0, 5000, true);
             if ($checkDescription !== true) {
                 Response::json(['message' => $checkDescription], 400);
             }
 
-            if (!empty($description)) {
-                ProductModel::updateDescription($product_id, $description);
-            }
-
+            ProductModel::updateDescription($product_id, $description);
+            
             // Cập nhật giá và tồn kho
             $variants = Request::json("variants", []);
 
@@ -443,8 +386,7 @@ class ProductController {
                 }
             }
 
-            $product = ProductModel::getByProductId($product_id);
-            $product = $this->enrichProductData($product);
+            $product = ProductModel::find($product_id);
 
             Response::json($product, 200);
         } catch (\Throwable $th) {

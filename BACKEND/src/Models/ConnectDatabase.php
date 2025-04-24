@@ -32,10 +32,10 @@ class ConnectDatabase {
 
     public function query($sql, $params = []) {
         try {
+            Log::sql($sql);
+
             $stmt = $this->connection->prepare($sql);
             $stmt->execute($params);
-
-            Log::sql($sql);
 
             return $stmt;
         } catch (PDOException $e) {

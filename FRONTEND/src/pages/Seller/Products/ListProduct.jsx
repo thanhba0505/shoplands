@@ -23,6 +23,7 @@ import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosWithAuth from "~/utils/axiosWithAuth";
+import HideImageRoundedIcon from "@mui/icons-material/HideImageRounded";
 
 const ListProduct = ({ status, loading, setLoading }) => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
@@ -51,11 +52,12 @@ const ListProduct = ({ status, loading, setLoading }) => {
       setLoading(true);
       try {
         if (seller_id) {
-          const response = await axiosWithAuth.get(Api.sellerProducts(), {
+          const response = await axiosWithAuth.get(Api.products(), {
             params: {
               limit: limit,
-              page: page + 1,
+              page: page,
               status: status,
+              seller_id: seller_id,
             },
             navigate,
           });
@@ -75,15 +77,6 @@ const ListProduct = ({ status, loading, setLoading }) => {
   useEffect(() => {
     fetchApi(page, rowsPerPage);
   }, [seller_id, page, rowsPerPage, status, fetchApi]);
-
-  const formatAttributes = (attributes) => {
-    return Object.entries(attributes).map(([key, value], index) => (
-      <span key={index}>
-        {key}: {value.join(", ")}
-        <br />
-      </span>
-    ));
-  };
 
   return (
     <>
@@ -127,9 +120,6 @@ const ListProduct = ({ status, loading, setLoading }) => {
                 Sản phẩm
               </TableCell>
               <TableCell align="center">Giá</TableCell>
-              <TableCell align="center" width={200}>
-                Thuộc tính
-              </TableCell>
               <TableCell align="center">Danh mục</TableCell>
               <TableCell align="center">Đánh giá</TableCell>
               <TableCell align="center">Tồn kho</TableCell>
@@ -182,14 +172,8 @@ const ListProduct = ({ status, loading, setLoading }) => {
                       sx={{ mb: 1.5, my: 1, px: 2 }}
                     />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton
-                      height={40}
-                      width={"100%"}
-                      sx={{ mb: 1.5, my: 1, px: 2 }}
-                    />
-                  </TableCell>
                 </TableRow>
+
                 <TableRow>
                   <TableCell>
                     <Skeleton
@@ -233,22 +217,9 @@ const ListProduct = ({ status, loading, setLoading }) => {
                       sx={{ mb: 1.5, my: 1, px: 2 }}
                     />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton
-                      height={40}
-                      width={"100%"}
-                      sx={{ mb: 1.5, my: 1, px: 2 }}
-                    />
-                  </TableCell>
                 </TableRow>
+
                 <TableRow>
-                  <TableCell>
-                    <Skeleton
-                      height={40}
-                      width={"100%"}
-                      sx={{ mb: 1.5, my: 1, px: 2 }}
-                    />
-                  </TableCell>
                   <TableCell>
                     <Skeleton
                       height={40}
@@ -312,16 +283,11 @@ const ListProduct = ({ status, loading, setLoading }) => {
                           <Avatar
                             alt={product.name}
                             variant="square"
-                            src={
-                              product.images &&
-                              Path.publicProduct(
-                                product.images.find(
-                                  (image) => image.default === 1
-                                )?.image_path
-                              )
-                            }
+                            src={Path.publicProduct(product.image_path)}
                             sx={{ width: 50, height: 50 }}
-                          />
+                          >
+                            {<HideImageRoundedIcon fontSize="large" />}
+                          </Avatar>
                           <Typography className="line-clamp-2" variant="body2">
                             {product.name}
                           </Typography>
@@ -341,11 +307,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        {product.attributes &&
-                          formatAttributes(product.attributes)}
-                      </TableCell>
-                      <TableCell align="center">
-                        {product.category && product.category.name}
+                        {product.category_name}
                       </TableCell>
                       <TableCell align="center">
                         <Rating

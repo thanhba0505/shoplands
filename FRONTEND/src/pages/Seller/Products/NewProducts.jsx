@@ -22,6 +22,8 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import axiosDefault from "~/utils/axiosDefault";
 import { useNavigate } from "react-router-dom";
+import ButtonLoading from "~/components/ButtonLoading";
+import Path from "~/helpers/Path";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -48,8 +50,24 @@ const NewProducts = () => {
   const [valuesCounts, setValuesCounts] = useState([]);
   const [countAttributes, setCountAttributes] = useState(0);
 
+  const [loading, setLoading] = useState(false);
+
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+
+  const reset = () => {
+    setName("");
+    setImages([]);
+    setDescription("");
+    setCategoryId("");
+    setProductVariants([]);
+    setDetails([]);
+    setAttributes([]);
+    setCountDetails(0);
+    setValuesCounts([]);
+    setCountAttributes(0);
+    setAttributesComplete(false);
+  };
 
   // State for product details
   const [details, setDetails] = useState([]);
@@ -334,6 +352,7 @@ const NewProducts = () => {
     });
 
     // Call the API to create the product
+    setLoading(true);
     try {
       const response = await axiosWithAuth.post(
         Api.sellerProducts(),
@@ -348,10 +367,13 @@ const NewProducts = () => {
 
       if (response.status === 201) {
         enqueueSnackbar("Tạo sản phẩm thành công", { variant: "success" });
-        // navigate(Path.sellerProducts("detail/" + response.data.id));
+        navigate(Path.sellerProducts("detail/" + response.data.product_id));
+        reset();
       }
     } catch (error) {
       Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -646,7 +668,7 @@ const NewProducts = () => {
                     <Grid2>
                       <Button
                         fullWidth
-                        color="info"
+                        color="primary"
                         variant="contained"
                         size="small"
                         disabled={countDetails >= 10}
@@ -748,7 +770,7 @@ const NewProducts = () => {
                               <Grid2>
                                 <Button
                                   fullWidth
-                                  color="info"
+                                  color="primary"
                                   variant="outlined"
                                   size="small"
                                   disabled={
@@ -785,7 +807,7 @@ const NewProducts = () => {
 
                     <Grid2>
                       <Button
-                        color="info"
+                        color="primary"
                         variant="contained"
                         size="small"
                         disabled={countAttributes >= 3}
@@ -829,7 +851,7 @@ const NewProducts = () => {
                     <Grid2 size={6}>
                       <Button
                         fullWidth
-                        variant="contained"
+                        variant="outlined"
                         color="error"
                         size="large"
                       >
@@ -837,16 +859,17 @@ const NewProducts = () => {
                       </Button>
                     </Grid2>
                     <Grid2 size={6}>
-                      <Button
+                      <ButtonLoading
                         fullWidth
-                        color="info"
+                        color="primary"
                         variant="contained"
                         size="large"
                         onClick={handleSubmit}
+                        loading={loading}
                         disabled={countAttributes > 0 && !attributesComplete}
                       >
                         Thêm sản phẩm
-                      </Button>
+                      </ButtonLoading>
                     </Grid2>
                   </Grid2>
                 </TableCell>
