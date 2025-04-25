@@ -5,7 +5,6 @@ import {
   Container,
   FormControl,
   Grid2,
-  InputAdornment,
   InputLabel,
   List,
   ListItem,
@@ -14,19 +13,19 @@ import {
   ListItemText,
   MenuItem,
   Select,
-  Slider,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import CircularProgressLoading from "~/components/CircularProgressLoading";
+import { useLocation } from "react-router-dom";
+import ButtonLoading from "~/components/ButtonLoading";
 import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import ShowProducts from "~/components/ShowProducts";
 import SkeletonProducts from "~/components/SkeletonProducts";
 import TablePaginationCustom from "~/components/TablePaginationCustom";
 import Api from "~/helpers/Api";
-import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
 import axiosDefault from "~/utils/axiosDefault";
 
@@ -52,7 +51,20 @@ const Categories = ({
         </Typography>
       </Box>
       {loadingCategories ? (
-        <CircularProgressLoading sx={{ height: 400 }} />
+        <Box>
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+          <Skeleton height={40} width={"100%"} sx={{ mb: 1.6, my: 1, px: 2 }} />
+        </Box>
       ) : (
         categories.map((category) => (
           <ListItem
@@ -88,113 +100,79 @@ const Categories = ({
   );
 };
 
-const min = 0;
-const max = 5000000;
-const minDistance = 100000;
-
 const Price = ({ price, setPrice }) => {
-  const handleChange2 = (event, newValue, activeThumb) => {
-    if (newValue[1] - newValue[0] < minDistance) {
-      if (activeThumb === 0) {
-        const clamped = Math.min(newValue[0], price[1] - minDistance);
-        setPrice([clamped, clamped + minDistance]);
-      } else {
-        const clamped = Math.max(newValue[1], price[0] + minDistance);
-        setPrice([clamped - minDistance, clamped]);
-      }
-    } else {
-      setPrice([
-        Math.max(min, Math.min(newValue[0], max)),
-        Math.max(min, Math.min(newValue[1], max)),
-      ]);
+  const priceRanges = [
+    { label: "Không", min: null, max: null },
+    { label: "0 - 100,000", min: 0, max: 100000 },
+    { label: "100,000 - 200,000", min: 100000, max: 200000 },
+    { label: "200,000 - 500,000", min: 200000, max: 500000 },
+    { label: "500,000 - 1,000,000", min: 500000, max: 1000000 },
+    { label: "1,000,000 - 2,000,000", min: 1000000, max: 2000000 },
+    { label: "2,000,000 - 5,000,000", min: 2000000, max: 5000000 },
+    { label: "Hơn 5,000,000", min: 5000000, max: null },
+  ];
+
+  // Function to handle the change in range selection
+  const handleChange = (event) => {
+    const selectedRange = priceRanges.find(
+      (range) => range.label === event.target.value
+    );
+    if (selectedRange) {
+      setPrice([selectedRange.min, selectedRange.max]);
     }
   };
 
   return (
     <>
-      <Box
-        sx={{
-          userSelect: "none",
-          px: 2,
-        }}
-      >
+      <Box sx={{ userSelect: "none", px: 2 }}>
         <Typography variant="body2" sx={{ py: 1 }} noWrap>
           Giá
         </Typography>
       </Box>
-      <Box
-        sx={{
-          mt: 2,
-          px: 2,
-        }}
-      >
-        <TextField
-          variant="outlined"
-          autoComplete="off"
-          type="number"
-          label="Min"
-          placeholder="10000"
-          size="small"
-          fullWidth
-          value={price[0]} // Đổi từ value2[0] thành price[0]
-          onChange={(e) => {
-            const newValue = Math.max(
-              min,
-              Math.min(Number(e.target.value) || 0, price[1] - minDistance)
-            );
-            setPrice([newValue, price[1]]); // Đổi từ value2 thành price
-          }}
-          slotProps={{
-            input: {
-              endAdornment: <InputAdornment position="end">đ</InputAdornment>,
-            },
-          }}
-        />
-        <TextField
-          sx={{ mt: 3 }}
-          variant="outlined"
-          autoComplete="off"
-          type="number"
-          label="Max"
-          placeholder="100000"
-          size="small"
-          fullWidth
-          value={price[1]} // Đổi từ value2[1] thành price[1]
-          onChange={(e) => {
-            const newValue = Math.max(min, Math.min(e.target.value, max));
-            setPrice([price[0], newValue]); // Đổi từ value2 thành price
-          }}
-          slotProps={{
-            input: {
-              endAdornment: <InputAdornment position="end">đ</InputAdornment>,
-            },
-          }}
-        />
-      </Box>
-      <Box sx={{ px: 3 }}>
-        <Slider
-          sx={{ mt: 2 }}
-          getAriaLabel={() => "Minimum distance shift"}
-          value={price} // Đổi từ value2 thành price
-          onChange={handleChange2}
-          valueLabelDisplay="auto"
-          valueLabelFormat={(value) => Format.formatCurrency(value)}
-          disableSwap
-          step={minDistance}
-          min={min}
-          max={max}
-        />
+
+      <Box sx={{ mt: 1 }}>
+        <FormControl fullWidth size="small">
+          <InputLabel
+            id="demo-simple-select-label"
+            sx={{ backgroundColor: "white", pr: 1 }}
+          >
+            Khoảng giá
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={
+              priceRanges.find(
+                (range) => range.min === price[0] && range.max === price[1]
+              )?.label || ""
+            }
+            label="Age"
+            onChange={handleChange}
+          >
+            {priceRanges.map((range) => (
+              <MenuItem key={range.label} value={range.label}>
+                {range.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
     </>
   );
 };
 
 const Products = () => {
-  const [price, setPrice] = useState([min, max]);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const category = parseInt(params.get("category"));
+
+  const [price, setPrice] = useState([null, null]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [search, setSearch] = useState([]);
-  const [checkedCategories, setCheckedCategories] = useState([]);
+  const [search, setSearch] = useState("");
+  const [checkedCategories, setCheckedCategories] = useState(
+    category ? [category] : []
+  );
   const [orderByPrice, setOrderByPrice] = useState("");
   const [orderByRating, setOrderByRating] = useState("");
 
@@ -217,7 +195,7 @@ const Products = () => {
   }, []);
 
   const fetchProducts = useCallback(
-    async (page = 0, limit = 20) => {
+    async (page = 0, limit = 20, search = "") => {
       setLoading(true);
       try {
         const response = await axiosDefault.get(Api.products(), {
@@ -233,8 +211,9 @@ const Products = () => {
           },
         });
 
+        // Kiểm tra tổng số phần tử và cập nhật lại trang nếu cần thiết
         if (limit * (page + 1) > response.data.count) {
-          setPage(0);
+          setPage(Math.max(0, Math.floor(response.data.count / limit)));
         }
 
         setProducts(response.data.products);
@@ -245,50 +224,29 @@ const Products = () => {
         setLoading(false);
       }
     },
-    [checkedCategories, orderByPrice, orderByRating, price, search]
+    [checkedCategories, orderByPrice, orderByRating, price]
   );
-
-  const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   useEffect(() => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-
-    const newTimeoutId = setTimeout(() => {
-      fetchProducts(page, rowsPerPage);
-    }, 500); // Đặt thời gian debounce là 300ms
-
-    setTimeoutId(newTimeoutId);
-
-    return () => {
-      if (newTimeoutId) {
-        clearTimeout(newTimeoutId);
-      }
-    };
-
+    // Gọi API khi tải lần đầu tiên
+    fetchProducts(page, rowsPerPage, search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    checkedCategories,
-    orderByPrice,
-    orderByRating,
-    page,
-    rowsPerPage,
-    fetchProducts,
-  ]);
+  }, [fetchProducts, page, rowsPerPage]); // Khi page hoặc rowsPerPage thay đổi, gọi lại API
 
+  // Xử lý khi thay đổi trang
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
+  // Xử lý khi thay đổi số lượng sản phẩm mỗi trang
   const handleChangeRowsPerPage = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
-    setPage(0); // Reset page khi thay đổi số dòng mỗi trang
+    setPage(0); // Reset page về trang đầu tiên khi thay đổi số sản phẩm mỗi trang
   };
 
   const handleToggle = (value) => () => {
@@ -302,6 +260,12 @@ const Products = () => {
     }
 
     setCheckedCategories(newChecked);
+  };
+
+  // Xử lý khi nhấn nút tìm kiếm
+  const handleSearch = () => {
+    fetchProducts(0, rowsPerPage, search); // Reset về trang đầu tiên khi tìm kiếm
+    setPage(0);
   };
 
   return (
@@ -339,12 +303,12 @@ const Products = () => {
           <PaperCustom sx={{ height: "100%", px: 3 }}>
             <Grid2
               container
-              columnSpacing={2}
-              rowSpacing={1}
+              columnSpacing={3}
+              rowSpacing={1.5}
               alignItems={"center"}
               sx={{ mt: 2, mb: 1 }}
             >
-              <Grid2 size={12}>
+              <Grid2 size={6}>
                 <TextField
                   variant="outlined"
                   autoComplete="off"
@@ -352,9 +316,19 @@ const Products = () => {
                   label="Tìm kiếm"
                   placeholder="Quần, áo,..."
                   size="small"
-                  sx={{ width: "50%" }}
+                  fullWidth
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
+              </Grid2>
+              <Grid2 size={6} height={40}>
+                <ButtonLoading
+                  variant={"contained"}
+                  onClick={handleSearch}
+                  sx={{ height: "100%" }}
+                >
+                  Tìm kiếm/Lọc
+                </ButtonLoading>
               </Grid2>
               <Grid2 size={"auto"}>
                 <FormControl size="small">
@@ -424,7 +398,7 @@ const Products = () => {
                 ) : (
                   <NoContent text="Không tìm thấy sản phẩm nào" />
                 )}
-              </Grid2>{" "}
+              </Grid2>
               {count > 0 && (
                 <Grid2 size={12}>
                   <TablePaginationCustom

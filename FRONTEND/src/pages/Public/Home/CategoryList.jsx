@@ -1,6 +1,12 @@
-import { Container, Box, Typography, Avatar } from "@mui/material";
+import {
+  Container,
+  Box,
+  Typography,
+  Avatar,
+  Grid2,
+  Skeleton,
+} from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import CircularProgressLoading from "~/components/CircularProgressLoading";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
@@ -9,7 +15,7 @@ import axiosDefault from "~/utils/axiosDefault";
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchCarts = useCallback(async () => {
     setLoading(true);
@@ -34,7 +40,140 @@ const CategoryList = () => {
           Danh mục sản phẩm
         </Typography>
         {loading ? (
-          <CircularProgressLoading sx={{ height: 400 }} />
+          <Grid2 container spacing={2} height={404.3}>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              pt={2}
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              pt={2}
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              pt={2}
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              pt={2}
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              pt={2}
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              pt={2}
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+            <Grid2
+              container
+              justifyContent={"center"}
+              size={2}
+              alignItems={"center"}
+              flexDirection={"column"}
+              
+            >
+              <Skeleton variant="circular" height={120} width={120} />
+              <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
+            </Grid2>
+          </Grid2>
         ) : (
           <Box
             sx={{
