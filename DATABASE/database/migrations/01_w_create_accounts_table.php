@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->text('bank_name')->nullable();
             $table->text('bank_number')->nullable();
             $table->text('password');
-            $table->enum('role', ['user', 'seller', 'admin', 'shipper']);
-            $table->enum('status', ['active', 'inactive', 'locked']);
+            $table->enum('role', ['user', 'seller', 'admin']);
+            $table->enum('status', ['active', 'inactive', 'locked', 'unverified']);
             $table->decimal('coin', 15, 2)->default(0);
             $table->text('device_token')->nullable();
             $table->text('access_token')->nullable();
