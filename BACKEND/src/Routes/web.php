@@ -11,9 +11,9 @@ $router->post('api/auth/refresh-token', 'AuthController@refreshToken');
 $router->post('api/auth/logout', 'AuthController@logout');
 $router->post('api/auth/register', 'AuthController@register');
 $router->post('api/auth/code-register', 'AuthController@getCodeRegister');
-$router->post('api/auth/register-seller', 'AuthController@registerSeller');
 $router->post('api/auth/forgot-password', 'AuthController@forgotPassword');
 $router->post('api/auth/code-forgot-password', 'AuthController@getCodeForgotPassword');
+// $router->post('api/auth/register-seller', 'AuthController@registerSeller');
 
 // API COUPON
 $router->get('api/coupons/{seller_id}', 'CouponController@get');
@@ -65,6 +65,7 @@ $router->get('api/admin/sellers', 'SellerController@adminGet', ['App\Middlewares
 $router->put('api/admin/sellers/register', 'SellerController@adminHandleRegister', ['App\Middlewares\AdminMiddleware']);
 $router->put('api/admin/sellers/locked', 'SellerController@adminHandleLocked', ['App\Middlewares\AdminMiddleware']);
 $router->post('api/sellers/register', 'SellerController@register');
+$router->post('api/sellers/code-register', 'SellerController@getCodeRegister');
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
 
 // API USER

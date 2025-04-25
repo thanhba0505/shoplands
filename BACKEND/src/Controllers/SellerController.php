@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers\FileSave;
+use App\Helpers\Hash;
 use App\Helpers\Response;
 use App\Helpers\Log;
 use App\Helpers\Request;
@@ -10,6 +11,7 @@ use App\Helpers\SendMessage;
 use App\Helpers\Validator;
 use App\Models\AccountModel;
 use App\Models\AddressModel;
+use App\Models\MessageModel;
 use App\Models\SellerModel;
 
 class SellerController {
@@ -56,7 +58,7 @@ class SellerController {
     }
 
     // Đăng ký người bán
-    public function register() {
+    public function getCodeRegister() {
         try {
             $store_name = Request::post('store_name');
             $owner_name = Request::post('owner_name');
@@ -87,7 +89,24 @@ class SellerController {
                 if ($account['role'] === 'seller' && $account['status'] === 'inactive') {
                     Response::json(['message' => 'Số điện thoại đã đăng ký và chờ duyệt'], 400);
                 }
-                Response::json(['message' => 'Số điện thoại đã có tài khoản'], 400);
+                if ($account['role'] === 'seller' && $account['status'] === 'unverified') {
+                    $result = SendMessage::sendMessageCode($phone, $account['account_id']);
+
+                    $res = [
+                        'message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại',
+                    ];
+
+                    if (isset($result['message'])) {
+                        $res['message_body'] = $result['message'];
+                    }
+
+                    if ($result) {
+                        Response::json($res, 201);
+                    } else {
+                        throw new \Exception("Lỗi gửi mã xác nhận");
+                    }
+                }
+                Response::json(['message' => 'Số  thoại đã có tài khoản'], 400);
             }
 
             $this->validateRegister(
@@ -121,7 +140,15 @@ class SellerController {
                 Response::json(['message' => $backgroundUpload['message']], 400);
             }
 
-            $accountId = AccountModel::addAccountSeller($phone, $password, $bank_name, $bank_number);
+            $accountId = AccountModel::addAccountSeller(
+                $phone,
+                $password,
+                $bank_name,
+                $bank_number,
+                'seller',
+                'unverified'
+            );
+
             SellerModel::add(
                 $store_name,
                 $owner_name,
@@ -143,11 +170,75 @@ class SellerController {
                 $accountId
             );
 
-            Response::json([
-                'message' => 'Đăng ký người bán thành công, vui lòng chờ quản trị viên xác nhận trong 2-3 ngày'
-            ], 201);
+            $result = SendMessage::sendMessageCode($phone, $accountId);
+
+            $res = [
+                'message' => 'Vui lòng nhập mã xác nhận được gửi về điện thoại',
+            ];
+
+            if (isset($result['message'])) {
+                $res['message_body'] = $result['message'];
+            }
+
+            if ($result) {
+                Response::json($res, 201);
+            } else {
+                throw new \Exception("Lỗi gửi mã xác nhận");
+            }
         } catch (\Throwable $th) {
             Log::throwable("SellerController -> register: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Xác thực code đăng ký
+    public function register() {
+        try {
+            $code = Request::json('code');
+            $phone = Request::json('phone');
+            $password = Request::json('password');
+
+            $account = AccountModel::findByPhone($phone);
+            if (!$account) {
+                Response::json(['message' => 'Không tìm thấy tài khoản'], 400);
+            }
+
+            if ($account['status'] !== 'unverified') {
+                Response::json(['message' => 'Tài khoản không hợp lệ'], 400);
+            }
+
+            if (!Hash::verifyArgon2i($password, $account['password'])) {
+                Response::json(['message' => 'Mật khẩu không đúng'], 400);
+            }
+
+            $message = MessageModel::getLastMessage($account['account_id']);
+
+            if (!$message) {
+                Response::json(['message' => 'Vui lòng lấy mã xác nhận'], 409);
+            }
+
+            if (!$code) {
+                Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 409);
+            }
+
+            if (!Hash::verifyArgon2i($code, $message['code'])) {
+                Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+            }
+
+            if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
+            }
+
+            MessageModel::deleteMessage($message['message_id']);
+
+            AccountModel::updateStatus(
+                $account['account_id'],
+                'inactive'
+            );
+
+            Response::json(['message' => 'Xác thực thành công, vui lòng chờ duyệt trong 2-3 ngày'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> verifyCode: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -222,6 +313,10 @@ class SellerController {
 
             if ($seller['status'] === 'inactive') {
                 Response::json(['message' => 'Người bán chưa hoạt động'], 400);
+            }
+
+            if ($seller['status'] === 'unverified') {
+                Response::json(['message' => 'Người bán chưa xác thực'], 400);
             }
 
             if ($locked) {

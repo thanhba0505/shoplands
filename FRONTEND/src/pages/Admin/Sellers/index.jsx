@@ -305,7 +305,7 @@ const Action = ({
         store_name={store_name}
       />
     );
-  } else {
+  } else if (status === "locked" || status === "active") {
     return (
       <ActionLocked
         sellerId={sellerId}

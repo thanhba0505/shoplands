@@ -1,7 +1,6 @@
 import { useTheme } from "@emotion/react";
 import {
   Autocomplete,
-  Avatar,
   Box,
   Button,
   Container,
@@ -18,8 +17,10 @@ import HideImageRoundedIcon from "@mui/icons-material/HideImageRounded";
 import Log from "~/helpers/Log";
 import Api from "~/helpers/Api";
 import axiosDefault from "~/utils/axiosDefault";
+import { useSnackbar } from "notistack";
 
 const Address = ({
+  loading,
   province,
   setProvince,
   district,
@@ -29,14 +30,14 @@ const Address = ({
   address_line,
   setAddressLine,
 }) => {
-  const [loading, setLoading] = useState(true);
+  const [loadingAddress, setLoadingAddress] = useState(true);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
 
   // Fetch API để lấy tỉnh/thành phố
   const fetchProvinces = useCallback(async () => {
-    setLoading(true);
+    setLoadingAddress(true);
     try {
       const response = await axiosDefault.get(Api.provinces());
       const provinces = response.data.data.map((province) => ({
@@ -47,13 +48,13 @@ const Address = ({
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
-      setLoading(false);
+      setLoadingAddress(false);
     }
   }, []);
 
   // Fetch API để lấy quận/huyện dựa trên province ID
   const fetchDistricts = useCallback(async (provinceId) => {
-    setLoading(true);
+    setLoadingAddress(true);
     try {
       const response = await axiosDefault.get(Api.districts(), {
         params: { province_id: provinceId },
@@ -66,13 +67,13 @@ const Address = ({
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
-      setLoading(false);
+      setLoadingAddress(false);
     }
   }, []);
 
   // Fetch API để lấy phường/xã dựa trên district ID
   const fetchWards = useCallback(async (districtId) => {
-    setLoading(true);
+    setLoadingAddress(true);
     try {
       const response = await axiosDefault.get(Api.wards(), {
         params: { district_id: districtId },
@@ -85,7 +86,7 @@ const Address = ({
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
-      setLoading(false);
+      setLoadingAddress(false);
     }
   }, []);
 
@@ -118,7 +119,7 @@ const Address = ({
         fullWidth
         value={province} // Đảm bảo giá trị province luôn có giá trị hợp lệ (null hoặc object)
         onChange={(event, value) => setProvince(value)} // Cập nhật giá trị tỉnh thành
-        disabled={loading}
+        disabled={loadingAddress || loading}
         renderInput={(params) => (
           <TextField {...params} placeholder="Tinh/Thành phố" />
         )}
@@ -132,7 +133,7 @@ const Address = ({
         fullWidth
         value={district} // Đảm bảo giá trị district luôn có giá trị hợp lệ (null hoặc object)
         onChange={(event, value) => setDistrict(value)} // Cập nhật giá trị quận huyện
-        disabled={loading || !province}
+        disabled={loadingAddress || loading || !province}
         renderInput={(params) => (
           <TextField {...params} placeholder="Quận/Huyện" />
         )}
@@ -146,7 +147,7 @@ const Address = ({
         fullWidth
         value={ward} // Đảm bảo giá trị ward luôn có giá trị hợp lệ (null hoặc object)
         onChange={(event, value) => setWard(value)} // Cập nhật giá trị phường xã
-        disabled={loading || !province || !district}
+        disabled={loadingAddress || loading || !province || !district}
         renderInput={(params) => (
           <TextField {...params} placeholder="Phường/Xã" />
         )}
@@ -161,6 +162,7 @@ const Address = ({
         value={address_line || ""}
         onChange={(e) => setAddressLine(e.target.value)}
         placeholder="Tên đường, số nhà,..."
+        disabled={loading}
       />
     </>
   );
@@ -169,9 +171,10 @@ const Address = ({
 const RegisterSeller = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [storeName, setStoreName] = useState("");
-  const [onwerName, setOnwerName] = useState("");
+  const [ownerName, setOwnerName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [description, setDescription] = useState("");
@@ -185,16 +188,26 @@ const RegisterSeller = () => {
 
   const [avatar, setAvatar] = useState(null);
   const [background, setBackground] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [backgroundFile, setBackgroundFile] = useState(null);
 
-  // Hàm xử lý thay đổi ảnh
+  const [code, setCode] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [loadingCode, setLoadingCode] = useState(false);
+  const [loadingRegister, setLoadingRegister] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatar(reader.result); // Lưu đường dẫn ảnh vào state
+        setAvatar(reader.result); // Lưu base64 để preview
       };
-      reader.readAsDataURL(file); // Đọc ảnh thành chuỗi base64
+      reader.readAsDataURL(file);
+      setAvatarFile(file); // Lưu file object để gửi lên server
     }
   };
 
@@ -203,9 +216,101 @@ const RegisterSeller = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setBackground(reader.result); // Lưu đường dẫn ảnh vào state
+        setBackground(reader.result); // Lưu base64 để preview
       };
-      reader.readAsDataURL(file); // Đọc ảnh thành chuỗi base64
+      reader.readAsDataURL(file);
+      setBackgroundFile(file); // Lưu file object để gửi lên server
+    }
+  };
+
+  useEffect(() => {
+    let timer;
+    if (timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const handleGetCode = async () => {
+    const formData = new FormData();
+
+    formData.append("store_name", storeName);
+    formData.append("owner_name", ownerName);
+    formData.append("phone", phone);
+    formData.append("description", description);
+    formData.append("password", password);
+    formData.append("bank_number", bankNumber);
+    formData.append("bank_name", bankName);
+    formData.append("logo", avatarFile);
+    formData.append("background", backgroundFile);
+    formData.append("province_id", province.id);
+    formData.append("district_id", district.id);
+    formData.append("ward_id", ward.id);
+    formData.append("province_name", province.label);
+    formData.append("district_name", district.label);
+    formData.append("ward_name", ward.label);
+    formData.append("address_line", address_line);
+
+    setLoading(true);
+    setLoadingCode(true);
+    if (!open) {
+      setLoadingRegister(true);
+    }
+    try {
+      const response = await axiosDefault.post(
+        Api.sellers("code-register"),
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setOpen(true);
+      enqueueSnackbar(response.data.message, { variant: "info" });
+      if (response.data.message_body) {
+        enqueueSnackbar(response.data.message_body, {
+          variant: "info",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "left",
+          },
+          autoHideDuration: 10000,
+        });
+      }
+      setTimeLeft(60);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+      setLoadingCode(false);
+      if (!open) {
+        setLoadingRegister(false);
+      }
+    }
+  };
+
+  const handleRegister = async () => {
+    setLoading(true);
+    setLoadingRegister(true);
+    try {
+      const response = await axiosDefault.post(Api.sellers("register"), {
+        phone: phone,
+        password: password,
+        code: code,
+      });
+
+      enqueueSnackbar(response.data.message, { variant: "success" });
+      navigate(Path.home());
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+      setLoadingRegister(false);
     }
   };
 
@@ -237,10 +342,8 @@ const RegisterSeller = () => {
 
         <Box sx={{ height: "100%", mb: 1 }}>
           <img
-            onClick={() => navigate(Path.home())}
             style={{
               display: "block",
-              cursor: "pointer",
               objectFit: "cover",
               height: "44px",
               width: "200px",
@@ -265,7 +368,7 @@ const RegisterSeller = () => {
               type="text"
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              disabled={loading || open}
             />
             <TextField
               autoComplete="off"
@@ -276,9 +379,9 @@ const RegisterSeller = () => {
               size="small"
               sx={{ mt: 1 }}
               type="text"
-              value={onwerName}
-              onChange={(e) => setOnwerName(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              value={ownerName}
+              onChange={(e) => setOwnerName(e.target.value)}
+              disabled={loading || open}
             />
             <TextField
               autoComplete="off"
@@ -289,9 +392,9 @@ const RegisterSeller = () => {
               size="small"
               sx={{ mt: 1 }}
               type="text"
-              // value={phone}
-              // onChange={(e) => setPhone(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              disabled={loading || open}
             />
             <TextField
               autoComplete="off"
@@ -302,9 +405,9 @@ const RegisterSeller = () => {
               size="small"
               sx={{ mt: 1 }}
               type="password"
-              // value={password}
-              // onChange={(e) => setPassword(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading || open}
             />
             <TextField
               autoComplete="off"
@@ -317,9 +420,9 @@ const RegisterSeller = () => {
               type="text"
               multiline
               rows={3}
-              // value={phone}
-              // onChange={(e) => setPhone(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={loading || open}
             />
           </Grid2>
 
@@ -333,9 +436,9 @@ const RegisterSeller = () => {
               size="small"
               sx={{ mt: 1 }}
               type="text"
-              // value={phone}
-              // onChange={(e) => setPhone(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              value={bankName}
+              onChange={(e) => setBankName(e.target.value)}
+              disabled={loading || open}
             />
             <TextField
               autoComplete="off"
@@ -346,9 +449,9 @@ const RegisterSeller = () => {
               size="small"
               sx={{ mt: 1 }}
               type="text"
-              // value={password}
-              // onChange={(e) => setPassword(e.target.value)}
-              // disabled={isLoading || isLoadingGetCode || open}
+              value={bankNumber}
+              onChange={(e) => setBankNumber(e.target.value)}
+              disabled={loading || open}
             />
 
             <Box
@@ -399,7 +502,7 @@ const RegisterSeller = () => {
                   {!avatar && <HideImageRoundedIcon fontSize="medium" />}
                 </Box>
 
-                <Box sx={{ textAlign: "start" }}>
+                <Box sx={{ textAlign: "start", mt: "-4px" }}>
                   <Typography
                     color="white"
                     variant="body1"
@@ -408,8 +511,11 @@ const RegisterSeller = () => {
                   >
                     {storeName ? storeName : "Tên cửa hàng"}
                   </Typography>
-                  <Typography color="white" variant="body2" sx={{ mt: "2px" }}>
-                    {onwerName ? onwerName : "Chủ cửa hàng"}
+                  <Typography color="white" variant="body2" sx={{ mt: 0.5 }}>
+                    {ownerName ? ownerName : "Chủ cửa hàng"}
+                  </Typography>
+                  <Typography color="white" variant="body2" sx={{ mt: 0.5 }}>
+                    Số điện thoại: {phone ? phone : "0XXXXXXXXX"}
                   </Typography>
                 </Box>
               </Box>
@@ -421,12 +527,14 @@ const RegisterSeller = () => {
                   variant="outlined"
                   component="label"
                   sx={{ width: "100%", height: 36 }}
+                  disabled={loading || open}
                 >
                   Chọn Avatar
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleAvatarChange}
+                    disabled={loading || open}
                     hidden
                   />
                 </Button>
@@ -437,9 +545,11 @@ const RegisterSeller = () => {
                   variant="outlined"
                   component="label"
                   sx={{ width: "100%", height: 36 }}
+                  disabled={loading || open}
                 >
                   Chọn Background
                   <input
+                    disabled={loading || open}
                     type="file"
                     accept="image/*"
                     onChange={handleBackgroundChange}
@@ -452,6 +562,7 @@ const RegisterSeller = () => {
 
           <Grid2 size={1}>
             <Address
+              loading={loading || open}
               province={province}
               setProvince={setProvince}
               district={district}
@@ -461,6 +572,36 @@ const RegisterSeller = () => {
               address_line={address_line}
               setAddressLine={setAddressLine}
             />
+
+            {open && (
+              <Grid2 container columns={2} spacing={2} height={40} mt={2}>
+                <Grid2 size="grow">
+                  <TextField
+                    autoComplete="off"
+                    fullWidth
+                    label="Mã xác thực"
+                    variant="outlined"
+                    margin="none"
+                    size="small"
+                    type="text"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    disabled={loading}
+                  />
+                </Grid2>
+                <Grid2>
+                  <ButtonLoading
+                    loading={loadingCode}
+                    variant={"contained"}
+                    sx={{ height: "100%", width: 150 }}
+                    disabled={timeLeft > 0}
+                    onClick={handleGetCode}
+                  >
+                    Gửi lại mã {timeLeft > 0 ? "(" + timeLeft + ")" : null}
+                  </ButtonLoading>
+                </Grid2>
+              </Grid2>
+            )}
           </Grid2>
         </Grid2>
 
@@ -469,11 +610,32 @@ const RegisterSeller = () => {
           sx={{ mt: 2 }}
           variant="contained"
           color="primary"
-          // onClick={handleLogin}
-          // loading={isLoading}
-          // disabled={disabled}
+          onClick={() => {
+            if (open) {
+              handleRegister();
+            } else {
+              handleGetCode();
+            }
+          }}
+          loading={loadingRegister}
+          disabled={
+            !storeName ||
+            !ownerName ||
+            !phone ||
+            !password ||
+            !description ||
+            !bankName ||
+            !bankNumber ||
+            !province ||
+            !district ||
+            !ward ||
+            !address_line ||
+            !avatar ||
+            !background ||
+            (open && code.length < 6)
+          }
         >
-          Đăng ký
+          Đăng ký bán hàng
         </ButtonLoading>
       </PaperCustom>
     </Container>

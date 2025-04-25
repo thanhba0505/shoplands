@@ -233,7 +233,7 @@ class AccountModel {
         return $conn->getConnection()->lastInsertId();
     }
 
-    // Sửa account
+    // Kích hoạt tải khoản
     public static function activeAccount($account_id) {
         $query = new ConnectDatabase();
 
@@ -247,6 +247,24 @@ class AccountModel {
         ";
 
         $result = $query->query($sql, ['account_id' => $account_id]);
+
+        return $result;
+    }
+
+    // Câp nhật trạng thái
+    public static function updateStatus($account_id, $status) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                status = :status
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, ['status' => $status, 'account_id' => $account_id]);
 
         return $result;
     }

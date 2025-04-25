@@ -132,6 +132,15 @@ class AuthController {
                 Response::json(['message' => 'Sai số điện thoại hoặc mật khẩu'], 401);
             }
 
+            // Kiểm tra trạng thái
+            if ($account['status'] == 'inactive') {
+                Response::json(['message' => 'Tài khoản chưa hoạt động'], 400);
+            } else if ($account['status'] == 'locked') {
+                Response::json(['message' => 'Tài khoản đã bị khóa'], 400);
+            } else if ($account['status'] == 'unverified') {
+                Response::json(['message' => 'Tài khoản chưa xác thực'], 400);
+            }
+
             // Kiểm tra thiết bị lạ đăng nhập
             $account_id = $account['account_id'];
             $ip_address = Request::getServer('REMOTE_ADDR');

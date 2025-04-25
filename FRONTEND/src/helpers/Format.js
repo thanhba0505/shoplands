@@ -265,6 +265,8 @@ class Format {
         return "Đã bị khóa";
       case "deleted":
         return "Đã bị xóa";
+      case "unverified":
+        return "Chưa xác thực";
       default:
         return "Lỗi trạng thái";
     }

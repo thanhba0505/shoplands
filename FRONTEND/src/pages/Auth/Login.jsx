@@ -114,7 +114,7 @@ const Login = () => {
             vertical: "bottom",
             horizontal: "left",
           },
-          autoHideDuration: 60000,
+          autoHideDuration: 10000,
         });
       }
     } catch (error) {
