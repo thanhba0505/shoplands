@@ -57,6 +57,7 @@ class SellerModel {
                 s.description,
                 s.logo,
                 s.background,
+
                 a.id AS account_id,
                 a.phone,
                 a.role,
@@ -64,10 +65,17 @@ class SellerModel {
                 a.bank_number,
                 a.bank_name,
                 a.status,
-                a.created_at
+                a.created_at,
+
+                COUNT(DISTINCT p.id) AS product_count,
+                COUNT(DISTINCT r.id) AS review_count,
+                ROUND(AVG(r.rating), 1) AS average_rating
             FROM
                 accounts a
                 JOIN sellers s ON s.account_id = a.id
+                JOIN products p ON p.seller_id = s.id
+                JOIN product_variants pv ON pv.product_id = p.id
+                JOIN reviews r ON r.product_variant_id = pv.id
             WHERE
                 s.id = :seller_id
         ";

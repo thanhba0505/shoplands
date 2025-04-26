@@ -126,7 +126,7 @@ const CartBox = ({ cart }) => {
           variant="body1"
           fontWeight={"bold"}
           sx={{ marginBottom: 2, mt: 1, cursor: "pointer" }}
-          // onClick={() => navigate(Path.storeDetail(cart.store_id))}
+          onClick={() => navigate(Path.shop(cart.seller_id))}
         >
           {cart.store_name}
         </Typography>

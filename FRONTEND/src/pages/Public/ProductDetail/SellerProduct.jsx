@@ -1,5 +1,6 @@
 import { Avatar, Grid2, Skeleton, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
@@ -7,6 +8,8 @@ import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
 const SellerProduct = ({ sellerId }) => {
+  const navigate = useNavigate();
+
   const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,9 +44,10 @@ const SellerProduct = ({ sellerId }) => {
             />
           ) : (
             <Avatar
-              sx={{ width: "100px", height: "100px" }}
+              sx={{ width: "100px", height: "100px", cursor: "pointer" }}
               src={Path.publicAvatar(seller?.logo)}
               alt="logo"
+              onClick={() => navigate(Path.shop(seller?.seller_id))}
             />
           )}
         </Grid2>
@@ -71,7 +75,7 @@ const SellerProduct = ({ sellerId }) => {
             </>
           ) : (
             <>
-              <Typography variant="h6" fontWeight={"bold"}>
+              <Typography variant="h6" fontWeight={"bold"} sx={{ cursor: "pointer"}} onClick={() => navigate(Path.shop(seller?.seller_id))}>
                 {seller?.store_name}
               </Typography>
               <Typography variant="body1">

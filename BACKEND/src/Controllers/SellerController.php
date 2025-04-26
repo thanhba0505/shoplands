@@ -20,7 +20,7 @@ class SellerController {
         try {
             $seller = SellerModel::findBySellerId($seller_id);
 
-            if (!$seller) {
+            if (!$seller || !$seller['seller_id']) {
                 Response::json(['message' => 'Không tìm thấy thông tin'], 400);
             }
 

@@ -15,6 +15,7 @@ import Products from "~/pages/Public/Products";
 import Introduce from "~/pages/Public/Introduce";
 import Contact from "~/pages/Public/Contact";
 import ProductDetail from "~/pages/Public/ProductDetail";
+import Seller from "~/pages/Public/Seller";
 
 // User
 import Cart from "~/pages/User/Cart";
@@ -52,6 +53,7 @@ const publicRoutes = [
   { path: "/product-detail/:id", component: ProductDetail },
   { path: "/introduce", component: Introduce },
   { path: "/contact", component: Contact },
+  { path: "/shop/:sellerId", component: Seller },
 ];
 
 // USER ROUTES

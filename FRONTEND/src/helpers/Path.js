@@ -105,6 +105,10 @@ class Path {
     return this.buildPath("/contact", subPath);
   }
 
+  static shop(subPath = "") {
+    return this.buildPath("/shop", subPath);
+  }
+
   // USER PATHS
   static userProfile(subPath = "") {
     return this.buildPath("/user/profile", subPath);
