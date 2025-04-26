@@ -18,7 +18,7 @@ import Log from "~/helpers/Log";
 import axiosDefault from "~/utils/axiosDefault";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
-const AddAddress = ({ fetchApi }) => {
+const AddAddress = ({ addAddress }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [loadingForm, setLoadingForm] = useState(false);
@@ -122,7 +122,7 @@ const AddAddress = ({ fetchApi }) => {
 
       enqueueSnackbar(response.data.message, { variant: "success" });
       resetForm();
-      fetchApi();
+      addAddress(response.data.data);
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
@@ -258,6 +258,16 @@ const AddressBook = () => {
     fetchApi();
   }, [fetchApi]);
 
+  const addAddress = (address) => {
+    setAddress((prev) => {
+      // Kiểm tra nếu địa chỉ đã có trong danh sách rồi thì không thêm nữa
+      if (!prev.some((item) => item.address_id === address.address_id)) {
+        return [...prev, address];
+      }
+      return prev; // Trả về danh sách cũ nếu địa chỉ đã tồn tại
+    });
+  };
+
   return (
     <Grid2 height={"100%"} container spacing={3}>
       <Grid2 height={"100%"} size={7}>
@@ -326,7 +336,10 @@ const AddressBook = () => {
                 address.map((item) => (
                   <div key={item.address_id}>
                     <Box sx={{ px: 2, py: 1 }}>
-                      <Typography variant="body1" sx={{ fontWeight: "semiBold" }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: "semiBold" }}
+                      >
                         {item.ward_name}, {item.district_name},{" "}
                         {item.province_name}
                       </Typography>
@@ -347,7 +360,7 @@ const AddressBook = () => {
       </Grid2>
 
       <Grid2 size={5}>
-        <AddAddress fetchApi={fetchApi} />
+        <AddAddress addAddress={addAddress} />
       </Grid2>
     </Grid2>
   );

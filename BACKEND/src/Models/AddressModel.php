@@ -216,7 +216,7 @@ class AddressModel {
         $ward_name,
         $account_id
     ) {
-        $query = new ConnectDatabase();
+        $conn = new ConnectDatabase();
 
         $sql = "
             INSERT INTO
@@ -225,7 +225,7 @@ class AddressModel {
                 (:address_line, :default, :province_id, :province_name, :district_id, :district_name, :ward_id, :ward_name, :account_id)
         ";
 
-        $result = $query->query($sql, [
+        $conn->query($sql, [
             'address_line' => $address_line,
             'default' => $default,
             'province_id' => $province_id,
@@ -237,7 +237,7 @@ class AddressModel {
             'account_id' => $account_id
         ]);
 
-        return $result->rowCount() ? true : false;
+        return $conn->getConnection()->lastInsertId();
     }
 
     // Xóa địa chỉ theo account_id

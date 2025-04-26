@@ -50,7 +50,7 @@ class AddressController {
                 $default = 0;
             }
 
-            AddressModel::create(
+            $address_id = AddressModel::create(
                 $address_line,
                 $default,
                 $province_id,
@@ -62,7 +62,20 @@ class AddressController {
                 $user['account_id']
             );
 
-            Response::json(['message' => 'Thêm địa chỉ thành công'], 200);
+            $data = [
+                'address_id' => $address_id,
+                'address_line' => $address_line,
+                'default' => $default,
+                'province_id' => $province_id,
+                'province_name' => $province_name,
+                'district_id' => $district_id,
+                'district_name' => $district_name,
+                'ward_id' => $ward_id,
+                'ward_name' => $ward_name,
+                'account_id' => $user['account_id']
+            ];
+
+            Response::json(['message' => 'Thêm địa chỉ thành công', 'data' => $data], 200);
         } catch (\Throwable $th) {
             Log::throwable("AddressController -> userAdd: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -90,9 +103,9 @@ class AddressController {
         try {
             $res = GHN::getProvinces();
 
-            // Loại bỏ các tỉnh có ProvinceID 290 và 286 (test)
+            // Lọc provinceID từ 201 đến 269
             $res['data'] = array_filter($res['data'], function ($province) {
-                return !in_array($province['ProvinceID'], [290, 286]);
+                return $province['ProvinceID'] >= 201 && $province['ProvinceID'] <= 269;
             });
 
             // Re-index lại mảng để tránh có chỉ mục bị bỏ trống
