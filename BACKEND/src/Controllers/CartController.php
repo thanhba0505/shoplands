@@ -17,28 +17,8 @@ class CartController {
     // Lấy danh sách sản phẩm trong giỏ hàng
     public function userGet() {
         try {
-            $user = Auth::user();
-
-            $carts["user_id"] = $user["user_id"];
-
-            $carts["groups"] = CartModel::getSellersByUserId($user["user_id"]);
-
-            foreach ($carts["groups"] as $key => $cart) {
-                $cartDetails = CartModel::getCartsByUserIdAndSellerId($user["user_id"], $cart["seller_id"]);
-
-                foreach ($cartDetails as $key2 => $cartDetail) {
-                    $product = ProductModel::getByCartId($cartDetail["cart_id"]);
-                    $cartDetails[$key2]["product"] = $product;
-
-                    $productVariant = ProductVariantModel::getByCartId($cartDetail["cart_id"]);
-                    $cartDetails[$key2]["product_variant"] = $productVariant;
-                    $cartDetails[$key2]['image'] = ProductImageModel::getDefault($product["product_id"]);
-                    $cartDetails[$key2]['variant_value'] = ProductVariantValueModel::getByProductVariantId($productVariant['product_variant_id']);
-                }
-
-                $carts["groups"][$key]['cart_details'] = $cartDetails;
-            }
-            Response::json($carts);
+            $result = CartModel::getAll();
+            Response::json($result);
         } catch (\Throwable $th) {
             Log::throwable("CartController -> userGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

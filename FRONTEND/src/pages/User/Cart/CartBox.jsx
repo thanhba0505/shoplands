@@ -30,16 +30,25 @@ const CartBox = ({ cart }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [cartDetails, setCartDetails] = useState(cart.cart_details);
+  const [cartDetails, setCartDetails] = useState([]);
+
+  // Khởi tạo dữ liệu với mặc định quantity = 1 nếu null
+  useEffect(() => {
+    if (cart?.cart_details) {
+      const initializedCartDetails = cart.cart_details.map((detail) => ({
+        ...detail,
+        quantity: detail.quantity === null ? 1 : detail.quantity,
+      }));
+      setCartDetails(initializedCartDetails);
+    }
+  }, [cart]);
 
   // Tính tổng tiền
   const calculateTotal = useCallback(() => {
     let total = 0;
     cartDetails.forEach((cartDetail) => {
       if (selectedItems.includes(cartDetail.cart_id)) {
-        const price =
-          cartDetail.product_variant.promotion_price ||
-          cartDetail.product_variant.price;
+        const price = cartDetail.promotion_price || cartDetail.price;
         total += (parseFloat(price) || 0) * cartDetail.quantity;
       }
     });
@@ -63,43 +72,31 @@ const CartBox = ({ cart }) => {
 
   // Xử lý thay đổi số lượng
   const handleChangeQuantity = async (cartId, newQuantity) => {
-    // Cập nhật giỏ hàng ngay lập tức trước khi gọi API
-    const updatedCartDetails = cartDetails.map((cartDetail) => {
-      if (cartDetail.cart_id === cartId) {
-        return { ...cartDetail, quantity: newQuantity };
-      }
-      return cartDetail;
-    });
-    setCartDetails(updatedCartDetails);
-
     try {
-      // Gọi API để thay đổi số lượng trên server
-      const cartDetailToUpdate = updatedCartDetails.find(
-        (cartDetail) => cartDetail.cart_id === cartId
+      // Cập nhật giao diện người dùng trước
+      setCartDetails((prevCartDetails) =>
+        prevCartDetails.map((item) =>
+          item.cart_id === cartId ? { ...item, quantity: newQuantity } : item
+        )
       );
 
-      const response = await axiosWithAuth.put(
+      // Tìm chi tiết giỏ hàng được cập nhật
+      const cartDetail = cartDetails.find((item) => item.cart_id === cartId);
+
+      // Gọi API để cập nhật số lượng
+      await axiosWithAuth.put(
         Api.cart(),
         {
-          product_variant_id:
-            cartDetailToUpdate.product_variant.product_variant_id,
+          product_variant_id: cartDetail.product_variant_id,
           quantity: newQuantity,
         },
         { navigate }
       );
-
-      // Kiểm tra thành công và cập nhật lại giỏ hàng
-      if (response.status === 200 || response.status === 201) {
-        setCartDetails((prevCartDetails) =>
-          prevCartDetails.map((cartDetail) =>
-            cartDetail.cart_id === cartId
-              ? { ...cartDetail, quantity: newQuantity }
-              : cartDetail
-          )
-        );
-      }
     } catch (error) {
-      window.location.reload();
+      console.error("Lỗi khi cập nhật số lượng:", error);
+      // Khôi phục lại UI nếu có lỗi thay vì reload toàn trang
+      setCartDetails((prevState) => [...prevState]);
+      enqueueSnackbar("Không thể cập nhật số lượng", { variant: "error" });
     }
   };
 
@@ -128,7 +125,8 @@ const CartBox = ({ cart }) => {
         <Typography
           variant="body1"
           fontWeight={"bold"}
-          sx={{ marginBottom: 2, mt: 1 }}
+          sx={{ marginBottom: 2, mt: 1, cursor: "pointer" }}
+          // onClick={() => navigate(Path.storeDetail(cart.store_id))}
         >
           {cart.store_name}
         </Typography>
@@ -165,15 +163,19 @@ const CartBox = ({ cart }) => {
                         display: "flex",
                         alignItems: "center",
                         gap: 2,
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: theme.palette.primary.dark,
+                        },
                       }}
-                    >
+                      onClick={() => navigate(Path.productDetail(cartDetail.product_id))}>
                       <img
                         src={Path.publicProduct(cartDetail.image)}
-                        alt={cartDetail.product.name}
+                        alt={cartDetail.product_name}
                         style={{ width: "50px", height: "50px" }}
                       />
                       <Typography variant="body2" className="line-clamp-2">
-                        {cartDetail.product.name}
+                        {cartDetail.product_name}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -183,14 +185,15 @@ const CartBox = ({ cart }) => {
                     {cartDetail.variant_value &&
                       cartDetail.variant_value.map((variantValue, index) => (
                         <Typography key={index}>
-                          {variantValue.name}: {variantValue.value}
+                          {variantValue.attribute_name}:{" "}
+                          {variantValue.attribute_value}
                         </Typography>
                       ))}
                   </TableCell>
 
                   {/* Đơn giá */}
                   <TableCell align="center">
-                    {cartDetail.product_variant.promotion_price ? (
+                    {cartDetail.promotion_price ? (
                       <>
                         <Typography
                           variant="subtitle2"
@@ -199,9 +202,7 @@ const CartBox = ({ cart }) => {
                             textDecoration: "line-through",
                           }}
                         >
-                          {Format.formatCurrency(
-                            cartDetail.product_variant.price
-                          )}
+                          {Format.formatCurrency(cartDetail.price)}
                         </Typography>
                         <br />
                         <Typography
@@ -210,9 +211,7 @@ const CartBox = ({ cart }) => {
                           fontWeight="bold"
                           sx={{ display: "inline" }}
                         >
-                          {Format.formatCurrency(
-                            cartDetail.product_variant.promotion_price
-                          )}
+                          {Format.formatCurrency(cartDetail.promotion_price)}
                         </Typography>
                       </>
                     ) : (
@@ -222,9 +221,7 @@ const CartBox = ({ cart }) => {
                         fontWeight="bold"
                         sx={{ display: "inline" }}
                       >
-                        {Format.formatCurrency(
-                          cartDetail.product_variant.price
-                        )}
+                        {Format.formatCurrency(cartDetail.price)}
                       </Typography>
                     )}
                   </TableCell>
@@ -233,7 +230,7 @@ const CartBox = ({ cart }) => {
                   <TableCell align="center">
                     <QuantityInput
                       min={1}
-                      max={cartDetail.product_variant.quantity}
+                      max={cartDetail.product_quantity}
                       value={cartDetail.quantity}
                       onChange={(newQuantity) =>
                         handleChangeQuantity(cartDetail.cart_id, newQuantity)
@@ -246,9 +243,8 @@ const CartBox = ({ cart }) => {
                     {selectedItems.includes(cartDetail.cart_id)
                       ? Format.formatCurrency(
                           (parseFloat(
-                            cartDetail.product_variant.promotion_price ||
-                              cartDetail.product_variant.price
-                          ) || 1) * cartDetail.quantity
+                            cartDetail.promotion_price || cartDetail.price
+                          ) || 0) * cartDetail.quantity
                         )
                       : "0"}
                   </TableCell>

@@ -339,6 +339,8 @@ class ProductModel {
                 }
             }
             $result[0]['attributes'] = $attributes ?? [];
+        } else {
+            unset($variants[0]['values']);
         }
 
         $result[0]['variants'] = $variants ?? [];

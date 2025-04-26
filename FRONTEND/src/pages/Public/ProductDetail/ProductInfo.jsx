@@ -527,6 +527,7 @@ const InfoProduct = ({ product, loading }) => {
               selectedVariant={selectedVariant}
               quantity={quantity}
               attributes={product?.attributes}
+              product={product}
             />
           ) : (
             <ButtonLoading
@@ -545,20 +546,35 @@ const InfoProduct = ({ product, loading }) => {
 };
 
 // Xử lý thêm vào giỏ hàng
-const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
+const BtnHandle = ({ selectedVariant, quantity, attributes, product }) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleAddToCart = async () => {
-    if (!selectedVariant && attributes && Object.keys(attributes).length > 0) {
-      enqueueSnackbar("Hãy chọn thuộc tính sản phẩm", { variant: "warning" });
-      return;
+    let variantToAdd = selectedVariant;
+
+    // If no attributes to select OR no variant selected but product has variants
+    if (!variantToAdd) {
+      if (attributes && Object.keys(attributes).length > 0) {
+        // Product has attributes but none selected
+        enqueueSnackbar("Hãy chọn thuộc tính sản phẩm", { variant: "warning" });
+        return;
+      } else if (product?.variants && product.variants.length > 0) {
+        // Product has no attributes, use the first variant
+        variantToAdd = product.variants[0];
+      } else {
+        enqueueSnackbar("Không thể thêm sản phẩm vào giỏ hàng", {
+          variant: "error",
+        });
+        return;
+      }
     }
+
     try {
       const response = await axiosWithAuth.post(
         Api.cart(),
         {
-          product_variant_id: selectedVariant.product_variant_id,
+          product_variant_id: variantToAdd.product_variant_id,
           quantity,
         },
         { navigate }
@@ -568,7 +584,7 @@ const BtnHandle = ({ selectedVariant, quantity, attributes }) => {
       }
     } catch (error) {
       console.log(error.response?.data?.message);
-      if (error.response?.data?.quantity !== selectedVariant.quantity) {
+      if (error.response?.data?.quantity !== variantToAdd.quantity) {
         window.location.reload();
       }
     }

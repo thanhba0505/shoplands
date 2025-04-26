@@ -2,9 +2,116 @@
 
 namespace App\Models;
 
+use App\Helpers\DataHelper;
+use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
 class CartModel {
+    // Lấy danh sách giỏ hàng
+    public static function getAll() {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                c.id AS cart_id,
+                c.quantity AS cart_quantity,
+                c.user_id,
+
+                p.id AS product_id,
+                p.name AS product_name,
+
+                pv.id AS product_variant_id,
+                pv.price,
+                pv.promotion_price,
+                pv.quantity AS product_quantity,
+
+                s.id AS seller_id,
+                s.store_name,
+
+                pi.image_path AS image,
+
+                pa.name AS attribute_name,
+                pav.value AS attribute_value
+
+            FROM
+                carts c
+                JOIN product_variants pv ON pv.id = c.product_variant_id
+                JOIN products p ON p.id = pv.product_id
+                JOIN sellers s ON s.id = p.seller_id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
+                LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
+                LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
+                LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+                
+            WHERE
+                pi.default = 1
+        ";
+
+        $result = $conn->query($sql)->fetchAll();
+
+        $config = [
+            'keep_columns' => [
+                'user_id',
+                'seller_id',
+                'store_name',
+            ],
+            'group_columns' => [
+                'cart_details' => [
+                    'cart_id',
+                    'cart_quantity',
+                    'user_id',
+                    'product_id',
+                    'product_name',
+                    'product_variant_id',
+                    'price',
+                    'promotion_price',
+                    'product_quantity',
+                    'image',
+                    'attribute_name',
+                    'attribute_value',
+                ],
+            ]
+        ];
+
+        $result = DataHelper::groupData($result, $config);
+
+        foreach ($result as $key => $value) {
+            $config = [
+                'keep_columns' => [
+                    'cart_id',
+                    'quantity',
+                    'user_id',
+                    'product_variant_id',
+                    'product_id',
+                    'product_name',
+                    'product_quantity',
+                    'price',
+                    'promotion_price',
+                    'image',
+                ],
+                'group_columns' => [
+                    'variant_value' => [
+                        'attribute_name',
+                        'attribute_value',
+                    ],
+                ]
+            ];
+
+            $cart_details = DataHelper::groupData($value['cart_details'], $config);
+
+            $result[$key]['cart_details'] = $cart_details;
+
+            foreach ($cart_details as $key2 => $value2) {
+                if (count($value2['variant_value']) === 1 && $value2['variant_value'][0]['attribute_name'] == null) {
+                    unset($result[$key]['cart_details'][$key2]['variant_value']);
+                }
+            }
+        }
+
+        return $result ?? [];
+    }
+
+
     // Lấy seller có trong cart theo user id
     public static function getSellersByUserId($userId) {
         $query = new ConnectDatabase();

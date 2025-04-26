@@ -124,9 +124,6 @@ const Cart = () => {
               <Grid2 container size={2}>
                 <Skeleton height={36} width={"100%"} />
               </Grid2>
-              <Grid2 container size={2}>
-                <Skeleton height={36} width={"100%"} />
-              </Grid2>
               <Grid2 container size={3}>
                 <Skeleton height={50} width={600} />
               </Grid2>
@@ -148,16 +145,21 @@ const Cart = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "column",
-                py: 30
+                py: 30,
               }}
             >
-              <Typography variant="body1">Giỏ hàng trống</Typography>
-              <Button sx={{ px: 2, mt: 1 }} onClick={() => navigate(Path.products())}>Mua ngay</Button>
+              <Typography variant="body1">Giỏ hàng trống</Typography>
+              <Button
+                sx={{ px: 2, mt: 1 }}
+                onClick={() => navigate(Path.products())}
+              >
+                Mua ngay
+              </Button>
             </PaperCustom>
           </Container>
         </>
       ) : (
-        carts?.groups?.map((cart, index) => (
+        carts?.map((cart, index) => (
           <Container key={index}>
             <CartBox cart={cart} />
           </Container>
