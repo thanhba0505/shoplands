@@ -82,6 +82,48 @@ class AddressController {
         }
     }
 
+    // Người mua cài đặt mặt định địa chi
+    public function userUpdateDefault() {
+        try {
+            $address_id = Request::json('address_id');
+
+            if (!$address_id) {
+                Response::json(['message' => 'Không đủ thông tin địa chi'], 400);
+            }
+
+            $user = Auth::user();
+
+            $result = AddressModel::setDefault($user['account_id'], $address_id);
+
+            if (!$result) {
+                Response::json(['message' => 'Cập nhật địa chỉ mặc định thất bại'], 400);
+            }
+
+            Response::json(['message' => 'Cập nhật địa chỉ mặc định thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("AddressController -> userUpdateDefault: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Người mua xóa địa chỉ
+    public function userDelete($address_id) {
+        try {
+            $user = Auth::user();
+
+            $result = AddressModel::delete($user['account_id'], $address_id);
+
+            if (!$result) {
+                Response::json(['message' => 'Xóa địa chỉ thất bại'], 400);
+            }
+
+            Response::json(['message' => 'Xóa địa chỉ thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("AddressController -> userDelete: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
     // Lấy địac chỉ người bán
     public function find($seller_id) {
         try {

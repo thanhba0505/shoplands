@@ -42,6 +42,8 @@ $router->get('api/address/wards', 'AddressController@getWards');
 
 $router->get('api/user/address', 'AddressController@userGet', ['App\Middlewares\UserMiddleware']);
 $router->post('api/user/address', 'AddressController@userAdd', ['App\Middlewares\UserMiddleware']);
+$router->put('api/user/address', 'AddressController@userUpdateDefault', ['App\Middlewares\UserMiddleware']);
+$router->delete('api/user/address/{address_id}', 'AddressController@userDelete', ['App\Middlewares\UserMiddleware']);
 
 $router->get('api/address/{seller_id}', 'AddressController@find');
 

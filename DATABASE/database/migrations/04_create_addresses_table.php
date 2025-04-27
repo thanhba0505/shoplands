@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('district_name');
             $table->string('ward_id');
             $table->string('ward_name');
+            $table->dateTime('deleted_at')->nullable();
             $table->unsignedBigInteger('account_id')->nullable(); // Foreign key
 
             $table->foreign('account_id')->references('id')->on('accounts');

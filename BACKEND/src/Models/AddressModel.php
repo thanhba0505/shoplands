@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Log;
 use App\Models\ConnectDatabase;
 
 class AddressModel {
@@ -25,6 +26,7 @@ class AddressModel {
                 addresses a
             WHERE
                 a.account_id = :account_id
+                AND a.deleted_at IS NULL
         ";
 
         $result = $query->query($sql, ['account_id' => $account_id])->fetchAll();
@@ -53,6 +55,7 @@ class AddressModel {
                 JOIN sellers s ON s.id = a.account_id
             WHERE
                 s.id = :seller_id
+                AND a.deleted_at IS NULL
         ";
 
         $result = $query->query($sql, ['seller_id' => $seller_id])->fetchAll();
@@ -109,7 +112,6 @@ class AddressModel {
                 JOIN sellers s ON s.id = a.account_id
             WHERE
                 s.id = :seller_id
-                AND a.default = :default
         ";
 
         $result = $query->query($sql, ['seller_id' => $seller_id, "default" => '1'])->fetch();
@@ -240,19 +242,75 @@ class AddressModel {
         return $conn->getConnection()->lastInsertId();
     }
 
+    // Đặt địa chỉ mặc định theo account_id và address_id
+    public static function setDefault($account_id, $address_id) {
+        $conn = new ConnectDatabase();
+        // Bắt đầu transaction
+        $conn->beginTransaction();
+
+        try {
+            // Câu lệnh đầu tiên: Đặt tất cả các địa chỉ khác thành không phải mặc định
+            $sql = "
+                UPDATE 
+                    addresses
+                SET 
+                    `default` = 0
+                WHERE 
+                    account_id = :account_id
+                AND 
+                    id != :address_id
+            ";
+            $conn->query($sql, ['account_id' => $account_id, 'address_id' => $address_id]);
+
+            // Câu lệnh thứ hai: Đặt địa chỉ cụ thể làm mặc định
+            $sql = "
+                UPDATE 
+                    addresses
+                SET 
+                    `default` = 1
+                WHERE 
+                    account_id = :account_id
+                AND 
+                    id = :address_id
+            ";
+            $result = $conn->query($sql, ['account_id' => $account_id, 'address_id' => $address_id]);
+
+            // Kiểm tra nếu có bản ghi nào bị thay đổi
+            if ($result->rowCount() > 0) {
+                // Commit transaction nếu thành công
+                $conn->commit();
+                return true;  // Cập nhật thành công
+            } else {
+                // Nếu không có bản ghi nào bị thay đổi, rollback transaction
+                $conn->rollBack();
+                return false;  // Không có thay đổi
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("AddressModel -> setDefault: " . $th->getMessage());
+            $conn->rollBack();
+            return false;
+        }
+    }
+
+
     // Xóa địa chỉ theo account_id
-    public static function delete($account_id) {
+    public static function delete($account_id, $address_id) {
         $query = new ConnectDatabase();
 
         $sql = "
-            DELETE FROM 
-                addresses 
+            UPDATE 
+                addresses
+            SET 
+                deleted_at = NOW()
             WHERE 
                 account_id = :account_id
+                AND id = :address_id
+                AND `default` = 0
+                AND deleted_at IS NULL
         ";
 
-        $result = $query->query($sql, ['account_id' => $account_id]);
+        $result = $query->query($sql, ['account_id' => $account_id, 'address_id' => $address_id]);
 
-        return $result;
+        return $result->rowCount() > 0 ? true : false;
     }
 }
