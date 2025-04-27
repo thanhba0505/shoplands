@@ -407,7 +407,7 @@ const AddressBook = () => {
             </Box>
           ) : (
             <>
-              <Typography variant="h6" sx={{ mb: 1 }}>
+              <Typography variant="h6" sx={{ mb: 1, px: 2 }}>
                 Sổ địa chỉ
               </Typography>
               {address.length > 0 ? (
@@ -435,7 +435,7 @@ const AddressBook = () => {
                                 />
                                 <Typography
                                   sx={{ cursor: "pointer", userSelect: "none" }}
-                                  color="success"
+                                  color="primary"
                                   variant="body2"
                                   onClick={() => fetchUpdate(item.address_id)}
                                 >
@@ -444,7 +444,7 @@ const AddressBook = () => {
                               </>
                             ) : (
                               <Typography variant="body2">
-                                Địa chỉ mặc định
+                                Mặc định
                               </Typography>
                             )}
                           </TableCell>

@@ -81,7 +81,7 @@ class CartModel {
             $config = [
                 'keep_columns' => [
                     'cart_id',
-                    'quantity',
+                    'cart_quantity',
                     'user_id',
                     'status',
                     'product_variant_id',

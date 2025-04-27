@@ -102,27 +102,6 @@ class OrderController {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Xóa đơn hàng chưa thanh toán
     public function userDelete($order_id) {
         try {
@@ -224,7 +203,7 @@ class OrderController {
                     }
 
                     if ($cart["quantity"] > $product_variant["quantity"]) {
-                        Response::json(['message' => 'Số lượng sản phẩm không đủ'], 400);
+                        Response::json(['message' => "Số lượng sản phẩm '" . $product_variant["name"] . "' không đủ"], 400);
                     }
 
                     $subtotalPrice += ($cart["promotion_price"] ? $cart["promotion_price"] : $cart["price"]) * $cart["quantity"];
@@ -485,6 +464,10 @@ class OrderController {
             $toAddress["phone"] = $user["phone"];
 
             $ghnPreview = GHN::previewOrder($fromAddress, $toAddress);
+
+            if ($ghnPreview && $ghnPreview["code_message"] === "SERVER_ERR_COMMON") {
+                Response::json(['message' => "Lỗi hệ thống GiaoHangNhanh. Vui lòng thử lại sau"], 400);
+            }
 
             if (!$ghnPreview || $ghnPreview["code"] != "200") {
                 Response::json(['message' => $ghnPreview["message"]], 400);

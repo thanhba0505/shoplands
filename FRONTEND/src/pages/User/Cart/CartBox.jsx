@@ -25,6 +25,28 @@ import { useSnackbar } from "notistack";
 import PaperCustom from "~/components/PaperCustom";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import Log from "~/helpers/Log";
+import ConfirmModal from "~/components/ConfirmModal";
+
+const DeleteCart = ({ handleDelete, loading }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <IconButton onClick={() => setOpen(true)} color="error">
+        <DeleteForeverRoundedIcon />
+      </IconButton>
+
+      <ConfirmModal
+        modelTitle="Xác nhận xóa"
+        acceptTitle="Xóa"
+        open={open}
+        setOpen={setOpen}
+        loading={loading}
+        handleAccept={() => handleDelete()}
+      />
+    </>
+  );
+};
 
 const CartBox = ({ cart, handleUpdateCartSeller }) => {
   const navigate = useNavigate();
@@ -35,12 +57,15 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [cartDetails, setCartDetails] = useState([]);
 
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   // Khởi tạo dữ liệu với mặc định quantity = 1 nếu null
   useEffect(() => {
     if (cart?.cart_details) {
       const initializedCartDetails = cart.cart_details.map((detail) => ({
         ...detail,
-        quantity: detail.quantity === null ? 1 : detail.quantity,
+        // API trả về cart_quantity thay vì quantity
+        quantity: detail.cart_quantity === null ? 1 : detail.cart_quantity,
       }));
       setCartDetails(initializedCartDetails);
     }
@@ -96,10 +121,8 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
         { navigate }
       );
     } catch (error) {
-      console.error("Lỗi khi cập nhật số lượng:", error);
-      // Khôi phục lại UI nếu có lỗi thay vì reload toàn trang
+      Log.error(error.response?.data?.message);
       setCartDetails((prevState) => [...prevState]);
-      enqueueSnackbar("Không thể cập nhật số lượng", { variant: "error" });
     }
   };
 
@@ -123,6 +146,7 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
   };
 
   const handleDelete = async (cart_id) => {
+    setLoadingDelete(true);
     try {
       await axiosWithAuth.delete(
         Api.cart(),
@@ -141,6 +165,8 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
       }
     } catch (error) {
       Log.error(error.response?.data?.message);
+    } finally {
+      setLoadingDelete(false);
     }
   };
 
@@ -298,12 +324,10 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
 
                     {/* Xóa */}
                     <TableCell align="center">
-                      <IconButton
-                        onClick={() => handleDelete(cartDetail.cart_id)}
-                        color="error"
-                      >
-                        <DeleteForeverRoundedIcon />
-                      </IconButton>
+                      <DeleteCart
+                        handleDelete={() => handleDelete(cartDetail.cart_id)}
+                        loading={loadingDelete}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
