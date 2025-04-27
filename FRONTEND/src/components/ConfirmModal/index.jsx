@@ -8,6 +8,7 @@ const ConfirmModal = ({
   loading,
   handleAccept,
   modelTitle,
+  subtitle,
   cencelTitle = "Hủy",
   acceptTitle = "Xác nhận",
   ...props
@@ -17,6 +18,7 @@ const ConfirmModal = ({
       open={open}
       handleClose={() => setOpen(false)}
       title={modelTitle}
+      subtitle={subtitle}
       {...props}
     >
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 1 }}>
@@ -34,8 +36,7 @@ const ConfirmModal = ({
           variant="contained"
           sx={{ width: "50%" }}
           onClick={() => {
-            handleAccept(); // Thực hiện hành động khi nhấn duyệt
-            setOpen(false); // Đóng modal
+            handleAccept(); 
           }}
           loading={loading}
         >

@@ -4,6 +4,11 @@ import {
   Divider,
   Grid2,
   Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -11,6 +16,7 @@ import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonLoading from "~/components/ButtonLoading";
+import ConfirmModal from "~/components/ConfirmModal";
 import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
@@ -235,6 +241,55 @@ const AddAddress = ({ addAddress }) => {
   );
 };
 
+const DeleteAdress = ({ address_id, setAddress }) => {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchDelete = async (address_id) => {
+    setLoading(true);
+    try {
+      await axiosWithAuth.delete(Api.userAddress(address_id), {
+        navigate,
+      });
+
+      setAddress((prev) =>
+        prev.filter((item) => item.address_id !== address_id)
+      );
+
+      enqueueSnackbar("Xóa địa chỉ thành công", { variant: "success" });
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  };
+
+  return (
+    <>
+      <Typography
+        sx={{ cursor: "pointer", userSelect: "none" }}
+        color="error"
+        variant="body2"
+        onClick={() => setOpen(true)}
+      >
+        Xóa
+      </Typography>
+
+      <ConfirmModal
+        modelTitle="Bạn muốn xóa địa chỉ này"
+        open={open}
+        setOpen={setOpen}
+        loading={loading}
+        handleAccept={() => fetchDelete(address_id)}
+      />
+    </>
+  );
+};
+
 const AddressBook = () => {
   const navigate = useNavigate();
   const [address, setAddress] = useState([]);
@@ -266,6 +321,29 @@ const AddressBook = () => {
       }
       return prev; // Trả về danh sách cũ nếu địa chỉ đã tồn tại
     });
+  };
+
+  const fetchUpdate = async (address_id) => {
+    try {
+      await axiosWithAuth.put(
+        Api.userAddress(),
+        {
+          address_id: address_id,
+        },
+        {
+          navigate,
+        }
+      );
+      setAddress((prev) =>
+        prev.map((item) =>
+          item.address_id === address_id
+            ? { ...item, default: 1 }
+            : { ...item, default: 0 }
+        )
+      );
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
   };
 
   return (
@@ -333,24 +411,48 @@ const AddressBook = () => {
                 Sổ địa chỉ
               </Typography>
               {address.length > 0 ? (
-                address.map((item) => (
-                  <div key={item.address_id}>
-                    <Box sx={{ px: 2, py: 1 }}>
-                      <Typography
-                        variant="body1"
-                        sx={{ fontWeight: "semiBold" }}
-                      >
-                        {item.ward_name}, {item.district_name},{" "}
-                        {item.province_name}
-                      </Typography>
-                      {item.address_line}
-                      <Typography variant="body2" color="success">
-                        {item.default == 1 ? " (Mặc định)" : ""}
-                      </Typography>
-                    </Box>
-                    <Divider sx={{ my: 1 }} />
-                  </div>
-                ))
+                <TableContainer>
+                  <Table>
+                    <TableBody>
+                      {address.map((item) => (
+                        <TableRow hover key={item.address_id}>
+                          <TableCell>
+                            <Typography
+                              variant="body1"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              {item.ward_name}, {item.district_name},{" "}
+                              {item.province_name}
+                            </Typography>
+                            {item.address_line}
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.default == 0 ? (
+                              <>
+                                <DeleteAdress
+                                  address_id={item.address_id}
+                                  setAddress={setAddress}
+                                />
+                                <Typography
+                                  sx={{ cursor: "pointer", userSelect: "none" }}
+                                  color="success"
+                                  variant="body2"
+                                  onClick={() => fetchUpdate(item.address_id)}
+                                >
+                                  Đặt làm mặc định
+                                </Typography>
+                              </>
+                            ) : (
+                              <Typography variant="body2">
+                                Địa chỉ mặc định
+                              </Typography>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               ) : (
                 <NoContent text="Không có địa chỉ nào" height={"300px"} />
               )}
