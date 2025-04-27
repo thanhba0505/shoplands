@@ -73,9 +73,9 @@ class SellerModel {
             FROM
                 accounts a
                 JOIN sellers s ON s.account_id = a.id
-                JOIN products p ON p.seller_id = s.id
-                JOIN product_variants pv ON pv.product_id = p.id
-                JOIN reviews r ON r.product_variant_id = pv.id
+                LEFT JOIN products p ON p.seller_id = s.id
+                LEFT JOIN product_variants pv ON pv.product_id = p.id
+                LEFT JOIN reviews r ON r.product_variant_id = pv.id
             WHERE
                 s.id = :seller_id
         ";

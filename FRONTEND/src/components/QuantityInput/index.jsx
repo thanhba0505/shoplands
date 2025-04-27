@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Box, IconButton, InputBase, TextField } from "@mui/material";
+import { Box, IconButton, InputBase } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 
-const QuantityInput = ({ min = 1, max = 100, value = 1, onChange }) => {
+const QuantityInput = ({ min = 1, max = 100, value = 1, onChange, sx }) => {
   const [quantity, setQuantity] = useState(Number(value));
 
   // Cập nhật lại quantity nếu min/max thay đổi
@@ -61,9 +61,15 @@ const QuantityInput = ({ min = 1, max = 100, value = 1, onChange }) => {
         borderRadius: "4px",
         width: "fit-content",
         px: 1,
+        mx: "auto",
+        ...sx,
       }}
     >
-      <IconButton size="small" onClick={handleDecrease} disabled={quantity <= min}>
+      <IconButton
+        size="small"
+        onClick={handleDecrease}
+        disabled={quantity <= min}
+      >
         <Remove />
       </IconButton>
       <InputBase
@@ -76,7 +82,11 @@ const QuantityInput = ({ min = 1, max = 100, value = 1, onChange }) => {
           border: "none",
         }}
       />
-      <IconButton size="small" onClick={handleIncrease} disabled={quantity >= max}>
+      <IconButton
+        size="small"
+        onClick={handleIncrease}
+        disabled={quantity >= max}
+      >
         <Add />
       </IconButton>
     </Box>

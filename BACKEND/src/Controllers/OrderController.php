@@ -8,7 +8,6 @@ use App\Helpers\Format;
 use App\Helpers\GHN;
 use App\Helpers\Log;
 use App\Helpers\Other;
-use App\Helpers\QRCode;
 use App\Helpers\Redirect;
 use App\Helpers\Request;
 use App\Helpers\Response;
@@ -20,13 +19,8 @@ use App\Models\CouponModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
 use App\Models\OrderPaymentModel;
-use App\Models\OrderStatusModel;
-use App\Models\ProductImageModel;
-use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
-use App\Models\ProductVariantValueModel;
 use App\Models\SellerModel;
-use App\Models\ShippingFeeModel;
 use App\Models\UserModel;
 
 class OrderController {
@@ -220,8 +214,13 @@ class OrderController {
             foreach ($carts as $cart) {
                 if (in_array($cart["cart_id"], $cartIds)) {
                     $product_variant = ProductVariantModel::find($cart["product_variant_id"]);
+
                     if (!$product_variant) {
                         Response::json(['message' => 'Không tìm thấy sản phẩm trong giỏ hàng'], 400);
+                    }
+
+                    if ($product_variant['status'] != "active") {
+                        Response::json(['message' => "Sản phẩm '" . $product_variant["name"] . "' không hoạt động"], 400);
                     }
 
                     if ($cart["quantity"] > $product_variant["quantity"]) {

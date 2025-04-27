@@ -135,7 +135,7 @@ class SellerController {
                 Response::json(['message' => $logoUpload['message']], 400);
             }
 
-            $backgroundUpload = FileSave::avatarImage($backgroundFile);
+            $backgroundUpload = FileSave::backgroundImage($backgroundFile);
             if ($backgroundUpload['success'] == false) {
                 Response::json(['message' => $backgroundUpload['message']], 400);
             }

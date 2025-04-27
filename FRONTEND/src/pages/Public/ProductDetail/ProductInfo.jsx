@@ -65,7 +65,13 @@ const ImageProduct = ({ images, loading }) => {
             />
           )}
         </Box>
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <Box
+          sx={{
+            width: "100%",
+            overflowX: "auto",
+            "::-webkit-scrollbar": { height: 8 },
+          }}
+        >
           <Box
             sx={{
               paddingBottom: 2,
@@ -403,6 +409,27 @@ const InfoProduct = ({ product, loading }) => {
                         border: "none",
                       }}
                     >
+                      Trạng thái
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
+                      {Format.formatStatus(product.status)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        width: "20%",
+                        px: 0,
+                        py: 1,
+                        border: "none",
+                      }}
+                    >
                       Tồn kho
                     </TableCell>
                     <TableCell
@@ -487,57 +514,79 @@ const InfoProduct = ({ product, loading }) => {
                         </TableCell>
                       </TableRow>
                     ))}
+
                   {/* Số lượng */}
-                  <TableRow>
-                    <TableCell
-                      sx={{
-                        width: "20%",
-                        px: 0,
-                        py: 1,
-                        border: "none",
-                      }}
-                    >
-                      Số lượng
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        px: 0,
-                        py: 1,
-                        border: "none",
-                      }}
-                    >
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <QuantityInput
-                          min={1}
-                          max={productQuantity}
-                          value={quantity}
-                          onChange={handleQuantityChange}
-                        />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
+                  {product.status === "active" && (
+                    <>
+                      <TableRow>
+                        <TableCell
+                          sx={{
+                            width: "20%",
+                            px: 0,
+                            py: 1,
+                            border: "none",
+                          }}
+                        >
+                          Số lượng
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            px: 0,
+                            py: 1,
+                            border: "none",
+                          }}
+                        >
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <QuantityInput
+                              min={1}
+                              max={productQuantity}
+                              value={quantity}
+                              onChange={handleQuantityChange}
+                            />
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
           </Box>
 
           {/* Nút xử lý */}
-          {Auth.checkUser() ? (
-            <BtnHandle
-              selectedVariant={selectedVariant}
-              quantity={quantity}
-              attributes={product?.attributes}
-              product={product}
-            />
+          {product.status === "active" ? (
+            <>
+              {Auth.checkUser() ? (
+                <BtnHandle
+                  selectedVariant={selectedVariant}
+                  quantity={quantity}
+                  attributes={product?.attributes}
+                  product={product}
+                />
+              ) : (
+                <ButtonLoading
+                  size="large"
+                  variant="contained"
+                  sx={{ width: "100%" }}
+                  onClick={() => navigate(Path.login())}
+                >
+                  Đăng nhập để mua sản phẩm
+                </ButtonLoading>
+              )}
+            </>
           ) : (
-            <ButtonLoading
-              size="large"
-              variant="contained"
-              sx={{ width: "100%" }}
-              onClick={() => navigate(Path.login())}
-            >
-              Đăng nhập để mua sản phẩm
-            </ButtonLoading>
+            <>
+              {product.status === "locked" && (
+                <Button fullWidth size="large" variant="contained" disabled>
+                  Sản phẩm đã bị khóa
+                </Button>
+              )}
+              {product.status === "deleted" && (
+                <Button fullWidth size="large" variant="contained" disabled>
+                  Sản phẩm đã bị xóa
+                </Button>
+              )}
+            </>
           )}
         </Box>
       )}

@@ -20,6 +20,7 @@ const BestSellingProducts = () => {
       const response = await axiosDefault.get(Api.products(), {
         params: {
           limit: 15,
+          status: "active",
         },
       });
       setProducts(response.data.products);

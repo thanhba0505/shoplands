@@ -17,14 +17,14 @@ import Path from "~/helpers/Path";
 import TablePaginationCustom from "~/components/TablePaginationCustom";
 import ShowProducts from "~/components/ShowProducts";
 import SkeletonProducts from "~/components/SkeletonProducts";
+import Format from "~/helpers/Format";
+import NoContent from "~/components/NoContent";
 
-const SellerInfo = () => {
+const SellerInfo = ({ seller, setSeller }) => {
   const navigate = useNavigate();
   const param = useParams();
 
   const sellerId = param.sellerId;
-
-  const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchSeller = useCallback(async () => {
@@ -38,7 +38,7 @@ const SellerInfo = () => {
     } finally {
       setLoading(false);
     }
-  }, [sellerId, navigate]);
+  }, [sellerId, navigate, setSeller]);
 
   // call api
   useEffect(() => {
@@ -97,7 +97,7 @@ const SellerInfo = () => {
           sx={{
             width: "100%",
             height: "400px",
-            borderRadius: "4px",
+            borderRadius: "12px",
             overflow: "hidden",
             backgroundImage: background
               ? `linear-gradient(to right, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.6),rgba(0, 0, 0, 0.4),rgba(0, 0, 0, 0.2)), url(${Path.publicBackground(
@@ -160,7 +160,7 @@ const SellerInfo = () => {
                 fontSize={16}
                 sx={{ mt: 0.5 }}
               >
-                {ownerName}
+                Chủ cửa hàng: {ownerName}
               </Typography>
               <Typography
                 color="white"
@@ -169,6 +169,14 @@ const SellerInfo = () => {
                 sx={{ mt: 0.5 }}
               >
                 Số điện thoại: {phone}
+              </Typography>
+              <Typography
+                color="white"
+                variant="body2"
+                fontSize={16}
+                sx={{ mt: 0.5 }}
+              >
+                Trạng thái: {Format.formatStatus(seller?.status)}
               </Typography>
               <Divider sx={{ my: 2, backgroundColor: "#fff", width: "50%" }} />
               <Typography
@@ -224,6 +232,7 @@ const ProductsSeller = () => {
             limit: limit,
             page: page,
             seller_id: sellerId,
+            status: 'active'
           },
         });
 
@@ -290,7 +299,13 @@ const ProductsSeller = () => {
         {loading ? (
           <SkeletonProducts count={18} columns={12} size={2} />
         ) : (
-          <ShowProducts products={productsSeller} columns={12} />
+          <>
+            {count > 0 ? (
+              <ShowProducts products={productsSeller} columns={12} />
+            ) : (
+              <NoContent text="Không có sản phẩm nào" height={120} />
+            )}
+          </>
         )}
       </Box>
 
@@ -327,6 +342,7 @@ const ProductsOther = () => {
           params: {
             limit: limit,
             page: page,
+            status: 'active'
           },
         });
 
@@ -413,16 +429,40 @@ const ProductsOther = () => {
   );
 };
 
+const Render = ({ status }) => {
+  if (status === "locked") {
+    return <NoContent text="Cửa hàng đẫ bị khóa" height={120}></NoContent>;
+  } else if (status === "unverified") {
+    return <NoContent text="Cửa hàng chưa được xác thực" height={120}></NoContent>;
+  } else if (status === "inactive") {
+    return <NoContent text="Cửa hàng chưa hoạt động" height={120}></NoContent>;
+  }
+};
+
 const Seller = () => {
+  const [seller, setSeller] = useState(null);
+
   return (
     <>
       <Container maxWidth="xl">
-        <SellerInfo />
+        <SellerInfo setSeller={setSeller} seller={seller} />
       </Container>
 
-      <Container maxWidth="xl">
-        <ProductsSeller />
-      </Container>
+      {seller && seller.status !== "active" ? (
+        <>
+          <Container maxWidth="xl">
+            <PaperCustom>
+              <Render status={seller.status} />
+            </PaperCustom>
+          </Container>
+        </>
+      ) : (
+        <>
+          <Container maxWidth="xl">
+            <ProductsSeller />
+          </Container>
+        </>
+      )}
 
       <Container maxWidth="xl">
         <ProductsOther />

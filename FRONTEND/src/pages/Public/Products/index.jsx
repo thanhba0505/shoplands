@@ -208,6 +208,7 @@ const Products = () => {
             min_price: price[0],
             max_price: price[1],
             search: search,
+            status: "active",
           },
         });
 

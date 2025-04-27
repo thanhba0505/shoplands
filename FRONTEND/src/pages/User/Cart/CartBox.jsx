@@ -153,6 +153,7 @@ const CartBox = ({ cart }) => {
                       onChange={(event) =>
                         handleChangeCheckbox(event, cartDetail.cart_id)
                       }
+                      disabled={cartDetail.status === "active" ? false : true}
                     />
                   </TableCell>
 
@@ -168,7 +169,10 @@ const CartBox = ({ cart }) => {
                           color: theme.palette.primary.dark,
                         },
                       }}
-                      onClick={() => navigate(Path.productDetail(cartDetail.product_id))}>
+                      onClick={() =>
+                        navigate(Path.productDetail(cartDetail.product_id))
+                      }
+                    >
                       <img
                         src={Path.publicProduct(cartDetail.image)}
                         alt={cartDetail.product_name}
@@ -226,28 +230,44 @@ const CartBox = ({ cart }) => {
                     )}
                   </TableCell>
 
-                  {/* Số lượng */}
-                  <TableCell align="center">
-                    <QuantityInput
-                      min={1}
-                      max={cartDetail.product_quantity}
-                      value={cartDetail.quantity}
-                      onChange={(newQuantity) =>
-                        handleChangeQuantity(cartDetail.cart_id, newQuantity)
-                      }
-                    />
-                  </TableCell>
+                  {cartDetail.status === "active" ? (
+                    <>
+                      {/* Số lượng */}
+                      <TableCell align="center">
+                        <QuantityInput
+                          min={1}
+                          max={cartDetail.product_quantity}
+                          value={cartDetail.quantity}
+                          onChange={(newQuantity) =>
+                            handleChangeQuantity(
+                              cartDetail.cart_id,
+                              newQuantity
+                            )
+                          }
+                        />
+                      </TableCell>
 
-                  {/* Thành tiền */}
-                  <TableCell align="center">
-                    {selectedItems.includes(cartDetail.cart_id)
-                      ? Format.formatCurrency(
-                          (parseFloat(
-                            cartDetail.promotion_price || cartDetail.price
-                          ) || 0) * cartDetail.quantity
-                        )
-                      : "0"}
-                  </TableCell>
+                      {/* Thành tiền */}
+                      <TableCell align="center">
+                        {selectedItems.includes(cartDetail.cart_id)
+                          ? Format.formatCurrency(
+                              (parseFloat(
+                                cartDetail.promotion_price || cartDetail.price
+                              ) || 0) * cartDetail.quantity
+                            )
+                          : "0"}
+                      </TableCell>
+                    </>
+                  ) : (
+                    <TableCell colSpan={2} align="center">
+                      <Typography variant="body2" color="error">
+                        {cartDetail.status === "locked" &&
+                          "Sản phẩm đã bị khóa"}
+                        {cartDetail.status === "deleted" &&
+                          "Sản phẩm đã bị xóa"}
+                      </Typography>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

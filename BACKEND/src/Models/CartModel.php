@@ -19,6 +19,7 @@ class CartModel {
 
                 p.id AS product_id,
                 p.name AS product_name,
+                p.status,
 
                 pv.id AS product_variant_id,
                 pv.price,
@@ -60,6 +61,7 @@ class CartModel {
                     'cart_id',
                     'cart_quantity',
                     'user_id',
+                    'status',
                     'product_id',
                     'product_name',
                     'product_variant_id',
@@ -81,6 +83,7 @@ class CartModel {
                     'cart_id',
                     'quantity',
                     'user_id',
+                    'status',
                     'product_variant_id',
                     'product_id',
                     'product_name',

@@ -152,9 +152,13 @@ class ProductVariantModel {
                 pv.price,
                 pv.promotion_price,
                 pv.quantity,
-                pv.sold_quantity
+                pv.sold_quantity,
+
+                p.status,
+                p.name
             FROM
                 product_variants pv
+                JOIN products p ON p.id = pv.product_id
             WHERE
                 pv.id = :product_variant_id
         ";

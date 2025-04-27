@@ -136,7 +136,7 @@ const Cart = () => {
             </Grid2>
           </PaperCustom>
         </Container>
-      ) : carts.length == 0 ? (
+      ) : carts.length === 0 ? (
         <>
           <Container>
             <PaperCustom

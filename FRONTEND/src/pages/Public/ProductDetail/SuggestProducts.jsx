@@ -20,6 +20,7 @@ const SuggestProducts = () => {
       const response = await axiosDefault.get(Api.products(), {
         params: {
           limit: 20,
+          status: "active",
         },
       });
       setProducts(response.data.products);
