@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Checkbox,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -22,8 +23,10 @@ import { useDispatch } from "react-redux";
 import { setCartIds } from "~/redux/orderSlice";
 import { useSnackbar } from "notistack";
 import PaperCustom from "~/components/PaperCustom";
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import Log from "~/helpers/Log";
 
-const CartBox = ({ cart }) => {
+const CartBox = ({ cart, handleUpdateCartSeller }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -119,191 +122,224 @@ const CartBox = ({ cart }) => {
     }
   };
 
+  const handleDelete = async (cart_id) => {
+    try {
+      await axiosWithAuth.delete(
+        Api.cart(),
+        { data: { cart_id } },
+        { navigate }
+      );
+      enqueueSnackbar("Xóa thành công", { variant: "success" });
+
+      const updatedCartDetails = cartDetails.filter(
+        (item) => item.cart_id !== cart_id
+      );
+      setCartDetails(updatedCartDetails);
+
+      if (updatedCartDetails.length === 0) {
+        handleUpdateCartSeller(cart.seller_id);
+      }
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
+  };
+
   return (
     <>
-      <PaperCustom sx={{ px: 3 }}>
-        <Typography
-          variant="body1"
-          fontWeight={"bold"}
-          sx={{ marginBottom: 2, mt: 1, cursor: "pointer" }}
-          onClick={() => navigate(Path.shop(cart.seller_id))}
-        >
-          {cart.store_name}
-        </Typography>
-        <TableContainer>
-          <Table sx={{ borderCollapse: "collapse", border: "none" }}>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
-                <TableCell sx={{ textAlign: "center" }}>Chọn</TableCell>
-                <TableCell sx={{ textAlign: "center" }} width={"40%"}>
-                  Sản phẩm
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>Phân loại</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>Giá</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>Số lượng</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>Thành tiền</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {cartDetails.map((cartDetail) => (
-                <TableRow key={cartDetail.cart_id}>
-                  <TableCell align="center">
-                    <Checkbox
-                      checked={selectedItems.includes(cartDetail.cart_id)}
-                      onChange={(event) =>
-                        handleChangeCheckbox(event, cartDetail.cart_id)
-                      }
-                      disabled={cartDetail.status === "active" ? false : true}
-                    />
+      {cartDetails.length > 0 && (
+        <PaperCustom sx={{ px: 3 }}>
+          <Typography
+            variant="body1"
+            fontWeight={"bold"}
+            sx={{ marginBottom: 2, mt: 1, cursor: "pointer" }}
+            onClick={() => navigate(Path.shop(cart.seller_id))}
+          >
+            {cart.store_name}
+          </Typography>
+          <TableContainer>
+            <Table sx={{ borderCollapse: "collapse", border: "none" }}>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: theme.custom?.primary.light }}>
+                  <TableCell sx={{ textAlign: "center" }}>Chọn</TableCell>
+                  <TableCell sx={{ textAlign: "center" }} width={"40%"}>
+                    Sản phẩm
                   </TableCell>
-
-                  {/* Sản phẩm */}
-                  <TableCell>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        cursor: "pointer",
-                        "&:hover": {
-                          color: theme.palette.primary.dark,
-                        },
-                      }}
-                      onClick={() =>
-                        navigate(Path.productDetail(cartDetail.product_id))
-                      }
-                    >
-                      <img
-                        src={Path.publicProduct(cartDetail.image)}
-                        alt={cartDetail.product_name}
-                        style={{ width: "50px", height: "50px" }}
+                  <TableCell sx={{ textAlign: "center" }}>Phân loại</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>Giá</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>Số lượng</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>Thành tiền</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>Xóa</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {cartDetails.map((cartDetail) => (
+                  <TableRow hover key={cartDetail.cart_id}>
+                    <TableCell align="center">
+                      <Checkbox
+                        checked={selectedItems.includes(cartDetail.cart_id)}
+                        onChange={(event) =>
+                          handleChangeCheckbox(event, cartDetail.cart_id)
+                        }
+                        disabled={cartDetail.status === "active" ? false : true}
                       />
-                      <Typography variant="body2" className="line-clamp-2">
-                        {cartDetail.product_name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
+                    </TableCell>
 
-                  {/* Phân loại */}
-                  <TableCell align="center">
-                    {cartDetail.variant_value &&
-                      cartDetail.variant_value.map((variantValue, index) => (
-                        <Typography key={index}>
-                          {variantValue.attribute_name}:{" "}
-                          {variantValue.attribute_value}
+                    {/* Sản phẩm */}
+                    <TableCell>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          cursor: "pointer",
+                          "&:hover": {
+                            color: theme.palette.primary.dark,
+                          },
+                        }}
+                        onClick={() =>
+                          navigate(Path.productDetail(cartDetail.product_id))
+                        }
+                      >
+                        <img
+                          src={Path.publicProduct(cartDetail.image)}
+                          alt={cartDetail.product_name}
+                          style={{ width: "50px", height: "50px" }}
+                        />
+                        <Typography variant="body2" className="line-clamp-2">
+                          {cartDetail.product_name}
                         </Typography>
-                      ))}
-                  </TableCell>
+                      </Box>
+                    </TableCell>
 
-                  {/* Đơn giá */}
-                  <TableCell align="center">
-                    {cartDetail.promotion_price ? (
-                      <>
+                    {/* Phân loại */}
+                    <TableCell align="center">
+                      {cartDetail.variant_value &&
+                        cartDetail.variant_value.map((variantValue, index) => (
+                          <Typography key={index}>
+                            {variantValue.attribute_name}:{" "}
+                            {variantValue.attribute_value}
+                          </Typography>
+                        ))}
+                    </TableCell>
+
+                    {/* Đơn giá */}
+                    <TableCell align="center">
+                      {cartDetail.promotion_price ? (
+                        <>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              display: "inline",
+                              textDecoration: "line-through",
+                            }}
+                          >
+                            {Format.formatCurrency(cartDetail.price)}
+                          </Typography>
+                          <br />
+                          <Typography
+                            variant="body1"
+                            color="error"
+                            fontWeight="bold"
+                            sx={{ display: "inline" }}
+                          >
+                            {Format.formatCurrency(cartDetail.promotion_price)}
+                          </Typography>
+                        </>
+                      ) : (
                         <Typography
-                          variant="subtitle2"
-                          sx={{
-                            display: "inline",
-                            textDecoration: "line-through",
-                          }}
-                        >
-                          {Format.formatCurrency(cartDetail.price)}
-                        </Typography>
-                        <br />
-                        <Typography
-                          variant="body1"
+                          variant="body2"
                           color="error"
                           fontWeight="bold"
                           sx={{ display: "inline" }}
                         >
-                          {Format.formatCurrency(cartDetail.promotion_price)}
+                          {Format.formatCurrency(cartDetail.price)}
                         </Typography>
+                      )}
+                    </TableCell>
+
+                    {cartDetail.status === "active" ? (
+                      <>
+                        {/* Số lượng */}
+                        <TableCell align="center">
+                          <QuantityInput
+                            min={1}
+                            max={cartDetail.product_quantity}
+                            value={cartDetail.quantity}
+                            onChange={(newQuantity) =>
+                              handleChangeQuantity(
+                                cartDetail.cart_id,
+                                newQuantity
+                              )
+                            }
+                          />
+                        </TableCell>
+
+                        {/* Thành tiền */}
+                        <TableCell align="center">
+                          {selectedItems.includes(cartDetail.cart_id)
+                            ? Format.formatCurrency(
+                                (parseFloat(
+                                  cartDetail.promotion_price || cartDetail.price
+                                ) || 0) * cartDetail.quantity
+                              )
+                            : "0"}
+                        </TableCell>
                       </>
                     ) : (
-                      <Typography
-                        variant="body2"
-                        color="error"
-                        fontWeight="bold"
-                        sx={{ display: "inline" }}
-                      >
-                        {Format.formatCurrency(cartDetail.price)}
-                      </Typography>
+                      <TableCell colSpan={2} align="center">
+                        <Typography variant="body2" color="error">
+                          {cartDetail.status === "locked" &&
+                            "Sản phẩm đã bị khóa"}
+                          {cartDetail.status === "deleted" &&
+                            "Sản phẩm đã bị xóa"}
+                        </Typography>
+                      </TableCell>
                     )}
-                  </TableCell>
 
-                  {cartDetail.status === "active" ? (
-                    <>
-                      {/* Số lượng */}
-                      <TableCell align="center">
-                        <QuantityInput
-                          min={1}
-                          max={cartDetail.product_quantity}
-                          value={cartDetail.quantity}
-                          onChange={(newQuantity) =>
-                            handleChangeQuantity(
-                              cartDetail.cart_id,
-                              newQuantity
-                            )
-                          }
-                        />
-                      </TableCell>
-
-                      {/* Thành tiền */}
-                      <TableCell align="center">
-                        {selectedItems.includes(cartDetail.cart_id)
-                          ? Format.formatCurrency(
-                              (parseFloat(
-                                cartDetail.promotion_price || cartDetail.price
-                              ) || 0) * cartDetail.quantity
-                            )
-                          : "0"}
-                      </TableCell>
-                    </>
-                  ) : (
-                    <TableCell colSpan={2} align="center">
-                      <Typography variant="body2" color="error">
-                        {cartDetail.status === "locked" &&
-                          "Sản phẩm đã bị khóa"}
-                        {cartDetail.status === "deleted" &&
-                          "Sản phẩm đã bị xóa"}
-                      </Typography>
+                    {/* Xóa */}
+                    <TableCell align="center">
+                      <IconButton
+                        onClick={() => handleDelete(cartDetail.cart_id)}
+                        color="error"
+                      >
+                        <DeleteForeverRoundedIcon />
+                      </IconButton>
                     </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        {/* Footer */}
-        <Box
-          sx={{
-            position: "sticky",
-            bottom: 0,
-            background: "white",
-            pt: 3,
-            pb: 2,
-            borderTop: "1px solid #e0e0e0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography variant="body1" lineHeight={1}>
-            Đã chọn: {selectedItems.length}
-          </Typography>
-          <Typography
-            variant="h6"
-            color="error"
-            fontWeight="bold"
-            lineHeight={1}
+          {/* Footer */}
+          <Box
+            sx={{
+              background: "white",
+              pt: 3,
+              pb: 2,
+              borderTop: "1px solid #e0e0e0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
-            Tổng tiền: {Format.formatCurrency(totalAmount)}
-          </Typography>
-          <Button variant="contained" sx={{ px: 4 }} onClick={handleCheckout}>
-            Mua hàng
-          </Button>
-        </Box>
-      </PaperCustom>
+            <Typography variant="body1" lineHeight={1}>
+              Đã chọn: {selectedItems.length}
+            </Typography>
+            <Typography
+              variant="h6"
+              color="error"
+              fontWeight="bold"
+              lineHeight={1}
+            >
+              Tổng tiền: {Format.formatCurrency(totalAmount)}
+            </Typography>
+            <Button variant="contained" sx={{ px: 4 }} onClick={handleCheckout}>
+              Mua hàng
+            </Button>
+          </Box>
+        </PaperCustom>
+      )}
     </>
   );
 };

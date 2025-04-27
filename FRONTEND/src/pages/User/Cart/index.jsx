@@ -30,10 +30,16 @@ const Cart = () => {
     fetchCarts();
   }, [fetchCarts]);
 
+  const handleDeleteCartSeller = (seller_id) => {
+    setCarts((prevCarts) =>
+      prevCarts.filter((cart) => cart.seller_id !== seller_id)
+    );
+  };
+
   return (
     <>
       {loading ? (
-        <Container>
+        <Container maxWidth="xl">
           <PaperCustom sx={{ px: 3 }}>
             <Skeleton height={40} width={400} sx={{ mb: 1.5, my: 1, px: 2 }} />
             <Grid2 container spacing={2} sx={{ pb: 1.5 }}>
@@ -138,7 +144,7 @@ const Cart = () => {
         </Container>
       ) : carts.length === 0 ? (
         <>
-          <Container>
+          <Container maxWidth="xl">
             <PaperCustom
               sx={{
                 display: "flex",
@@ -160,8 +166,8 @@ const Cart = () => {
         </>
       ) : (
         carts?.map((cart, index) => (
-          <Container key={index}>
-            <CartBox cart={cart} />
+          <Container maxWidth="xl" key={index}>
+            <CartBox cart={cart} handleDeleteCartSeller={handleDeleteCartSeller} />
           </Container>
         ))
       )}

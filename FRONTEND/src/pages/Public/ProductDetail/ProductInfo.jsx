@@ -538,6 +538,7 @@ const InfoProduct = ({ product, loading }) => {
                         >
                           <Box sx={{ display: "flex", alignItems: "center" }}>
                             <QuantityInput
+                              sx={{ ml: 0 }}
                               min={1}
                               max={productQuantity}
                               value={quantity}
