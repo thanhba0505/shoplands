@@ -44,7 +44,7 @@ const OrderDetail = () => {
       });
     }
 
-    // navigate(Path.userOrders("detail/" + params.orderId), { replace: true });
+    navigate(Path.userOrders("detail/" + params.orderId), { replace: true });
   }, [location.search, enqueueSnackbar, params.orderId, navigate]);
 
   // fetch order
