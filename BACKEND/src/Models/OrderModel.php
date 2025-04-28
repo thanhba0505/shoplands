@@ -27,8 +27,8 @@ class OrderModel {
                 JOIN sellers s ON o.seller_id = s.id
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN product_variants pv ON oi.product_variant_id = pv.id
-                LEFT JOIN product_images pi ON pi.product_id = pv.id
                 JOIN products p ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
             WHERE
                 o.seller_id = :seller_id
                 AND o.deleted_at IS NULL
@@ -74,6 +74,7 @@ class OrderModel {
 
                 pi.image_path AS image,
 
+                p.id AS product_id,
                 p.name AS product_name
             FROM
                 orders o
@@ -83,8 +84,8 @@ class OrderModel {
                 JOIN sellers s ON o.seller_id = s.id
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN product_variants pv ON oi.product_variant_id = pv.id
-                LEFT JOIN product_images pi ON pi.product_id = pv.id
                 JOIN products p ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
 
             WHERE
                 o.seller_id = :seller_id
@@ -176,6 +177,7 @@ class OrderModel {
                         'price',
                         'attributes',
                         'product_name',
+                        'product_id',
                         'image'
                     ]
                 ]
@@ -258,8 +260,8 @@ class OrderModel {
                 JOIN sellers s ON o.seller_id = s.id
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN product_variants pv ON oi.product_variant_id = pv.id
-                LEFT JOIN product_images pi ON pi.product_id = pv.id
                 JOIN products p ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
             WHERE
                 o.user_id = :user_id
                 AND o.deleted_at IS NULL
@@ -305,6 +307,7 @@ class OrderModel {
 
                 pi.image_path AS image,
 
+                p.id AS product_id,
                 p.name AS product_name
             FROM
                 orders o
@@ -314,8 +317,8 @@ class OrderModel {
                 JOIN sellers s ON o.seller_id = s.id
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN product_variants pv ON oi.product_variant_id = pv.id
-                LEFT JOIN product_images pi ON pi.product_id = pv.id
                 JOIN products p ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
 
             WHERE
                 o.user_id = :user_id
@@ -407,6 +410,7 @@ class OrderModel {
                         'price',
                         'attributes',
                         'product_name',
+                        'product_id',
                         'image'
                     ]
                 ]
@@ -514,6 +518,7 @@ class OrderModel {
 
                 pi.image_path AS image,
 
+                p.id AS product_id,
                 p.name AS product_name
             FROM
                 orders o
@@ -523,8 +528,8 @@ class OrderModel {
                 JOIN sellers s ON o.seller_id = s.id
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN product_variants pv ON oi.product_variant_id = pv.id
-                LEFT JOIN product_images pi ON pi.product_id = pv.id
                 JOIN products p ON pv.product_id = p.id
+                LEFT JOIN product_images pi ON pi.product_id = p.id
             WHERE
                 o.user_id = :user_id
                 AND o.id = :order_id
@@ -588,6 +593,7 @@ class OrderModel {
                         'price',
                         'attributes',
                         'product_name',
+                        'product_id',
                         'image'
                     ]
                 ]

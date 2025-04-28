@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Helpers\Hash;
 use App\Helpers\Request;
 use App\Helpers\Response;
-use App\Helpers\JwtHelper;
+use App\Helpers\JWTHelper;
 use App\Helpers\Log;
 use App\Helpers\Validator;
 use App\Helpers\SendMessage;
@@ -218,8 +218,8 @@ class AuthController {
             AccountModel::updateDeviceToken($account['account_id'], $ip_address, $user_agent);
 
             // Tạo Access Token và Refresh Token
-            $accessToken = JwtHelper::generateToken($account['account_id']);
-            $refreshToken = JwtHelper::generateToken($account['account_id'], true);
+            $accessToken = JWTHelper::generateToken($account['account_id']);
+            $refreshToken = JWTHelper::generateToken($account['account_id'], true);
 
             // Cập nhật token vào CSDL
             AccountModel::updateTokens($account['account_id'], $accessToken, $refreshToken);
@@ -267,7 +267,7 @@ class AuthController {
             $refreshToken = Request::json('refresh_token');
 
             // Kiểm tra token hợp lệ
-            $decoded = JwtHelper::verifyToken($refreshToken);
+            $decoded = JWTHelper::verifyToken($refreshToken);
             if (!$decoded) {
                 Response::json(['message' => 'Refresh token không hợp lệ'], 401);
             }
@@ -286,8 +286,8 @@ class AuthController {
             }
 
             // Tạo token mới
-            $newAccessToken = JwtHelper::generateToken($account['account_id']);
-            $newRefreshToken = JwtHelper::generateToken($account['account_id'], true);
+            $newAccessToken = JWTHelper::generateToken($account['account_id']);
+            $newRefreshToken = JWTHelper::generateToken($account['account_id'], true);
 
             // Cập nhật token vào CSDL
             AccountModel::updateTokens($account['account_id'], $newAccessToken, $newRefreshToken);
@@ -324,7 +324,7 @@ class AuthController {
             $accessToken = str_replace('Bearer ', '', $accessToken);
 
             // Xác thực token
-            $decoded = JwtHelper::verifyToken($accessToken);
+            $decoded = JWTHelper::verifyToken($accessToken);
             if (!$decoded) {
                 Response::json(['message' => 'Access token không hợp lệ'], 401);
             }

@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Helpers\JwtHelper;
+use App\Helpers\JWTHelper;
 use App\Helpers\Request;
 use App\Models\AccountModel;
 use App\Models\UserModel;
@@ -53,7 +53,7 @@ class Auth {
         }
 
         // Xác thực token
-        $decoded = JwtHelper::verifyToken($accessToken);
+        $decoded = JWTHelper::verifyToken($accessToken);
         if (!$decoded) {
             return null;
         }

@@ -465,7 +465,7 @@ class OrderController {
 
             $ghnPreview = GHN::previewOrder($fromAddress, $toAddress);
 
-            if ($ghnPreview && $ghnPreview["code_message"] === "SERVER_ERR_COMMON") {
+            if (isset($ghnPreview["code_message"]) && $ghnPreview["code_message"] === "SERVER_ERR_COMMON") {
                 Response::json(['message' => "Lỗi hệ thống GiaoHangNhanh. Vui lòng thử lại sau"], 400);
             }
 

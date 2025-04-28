@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 class Log {
-    protected static $logPath = 'src/logs/';
+    protected static $logPath = 'src/Logs/';
 
     // Kiểm tra và tạo thư mục nếu không tồn tại
     protected static function ensureLogPathExists() {

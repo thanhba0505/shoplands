@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 // Khởi tạo Router
 $router = new Router();
-require './src/routes/web.php';
+require './src/Routes/web.php';
 
 // Xử lý request
 $router->dispatch();
