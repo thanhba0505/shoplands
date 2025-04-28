@@ -4,16 +4,23 @@ namespace App\Helpers;
 
 class VNPAY {
   // Thông tin cấu hình VNPAY
-  private static $vnp_TmnCode = "3XQUVP74"; // Mã định danh merchant kết nối
-  private static $vnp_HashSecret = "6ID5B34P80EVUO80X1DT0NAVIK253B29"; // Secret key
-  private static $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; // URL thanh toán
+  private static $vnp_TmnCode; // Mã định danh merchant kết nối
+  private static $vnp_HashSecret; // Secret key
+  private static $vnp_Url; // URL thanh toán
   private static $vnp_ReturnUrl = BASE_URL . "/api/user/orders/check-payment"; // URL trả kết quả
   private static $vnp_Expire = 15; // Thời gian hết hạn thanh toán (minutes)
+
+  public static function init() {
+    self::$vnp_Url = $_ENV['VNPAY_URL'];
+    self::$vnp_TmnCode = $_ENV['VNPAY_TMN_CODE'];
+    self::$vnp_HashSecret = $_ENV['VNPAY_HASH_SECRET'];
+  }
 
   /**
    * Tạo URL thanh toán
    */
   public static function createPaymentUrl($amount, $language = "vn", $bankCode = null) {
+    self::init();
     $vnp_TxnRef = time() . rand(10000, 99999); // Mã giao dịch thanh toán tham chiếu của merchant
     $startTime = date("YmdHis"); // Thời gian tạo giao dịch
     $expire = date('YmdHis', strtotime('+' . self::$vnp_Expire . ' minutes', strtotime($startTime))); // Thời gian hết hạn
@@ -69,6 +76,7 @@ class VNPAY {
    * Xử lý kết quả trả về từ VNPAY
    */
   public static function handleReturn() {
+    self::init();
     $inputData = array();
     $returnData = array();
 
@@ -127,6 +135,7 @@ class VNPAY {
   }
 
   public static function getErrorMessage($errorCode) {
+    self::init();
     switch ($errorCode) {
       case '00':
         return "Giao dịch thành công.";
