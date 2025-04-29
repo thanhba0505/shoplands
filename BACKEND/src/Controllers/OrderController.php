@@ -310,7 +310,7 @@ class OrderController {
                     );
 
                     // Xóa giỏ hàng
-                    // CartModel::delete($userId, $cart["cart_id"]);
+                    CartModel::delete($userId, $cart["cart_id"]);
                 }
             }
 
@@ -386,13 +386,13 @@ class OrderController {
             if ($order["paid"]) {
                 $success = "0";
                 $message = "Đơn hàng đã thanh toán";
-                // Redirect::to($url . "?success=" . $success . "&message=" . $message);
-                Response::json([
-                    'success' => $success,
-                    'message' => $message,
-                    'url' => $url . "?success=" . $success . "&message=" . $message,
-                    'get' => $_GET
-                ], 400);
+                Redirect::to($url . "?success=" . $success . "&message=" . $message);
+                // Response::json([
+                    // 'success' => $success,
+                    // 'message' => $message,
+                    // 'url' => $url . "?success=" . $success . "&message=" . $message,
+                    // 'get' => $_GET
+                // ], 400);
             }
 
             // Kiểm tra
@@ -403,13 +403,13 @@ class OrderController {
             } else {
                 $success = "0";
                 $message = "Thanh toán không thành công";
-                // Redirect::to($url . "?success=" . $success . "&message=" . $message);
-                Response::json([
-                    'success' => $success,
-                    'message' => $message,
-                    'url' => $url . "?success=" . $success . "&message=" . $message,
-                    'get' => $_GET
-                ], 400);
+                Redirect::to($url . "?success=" . $success . "&message=" . $message);
+                // Response::json([
+                    // 'success' => $success,
+                    // 'message' => $message,
+                    // 'url' => $url . "?success=" . $success . "&message=" . $message,
+                    // 'get' => $_GET
+                // ], 400);
             }
 
             OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
@@ -439,13 +439,13 @@ class OrderController {
             $success = $ghnOrder['code'] == '200' ? "1" : "0";
             $message = $ghnOrder['code'] == '200' ? "Thanh toán đơn hàng thành công" : $ghnOrder['message'];
 
-            // Redirect::to($url . "?success=" . $success . "&message=" . $message);
-            Response::json([
-                'success' => $success,
-                'message' => $message,
-                'url' => $url . "?success=" . $success . "&message=" . $message,
-                'get' => $_GET
-            ], 400);
+            Redirect::to($url . "?success=" . $success . "&message=" . $message);
+            // Response::json([
+                // 'success' => $success,
+                // 'message' => $message,
+                // 'url' => $url . "?success=" . $success . "&message=" . $message,
+                // 'get' => $_GET
+            // ], 400);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userCheckPayment: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
