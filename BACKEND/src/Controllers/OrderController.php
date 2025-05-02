@@ -516,7 +516,7 @@ class OrderController {
 
                 if ($ghnOrder['current_status'] !== $result["data"]["status"]) {
                     OrderModel::updateStatus($ghnOrder['order_id'], $result["data"]["status"]);
-                    Log::autoRunUpdateOrder(
+                    Log::updateStatus(
                         "Đơn hàng #" . $ghnOrder['order_id'] . ": " .
                             $ghnOrder['current_status'] . " -> " . $result["data"]["status"]
                     );
@@ -547,6 +547,11 @@ class OrderController {
             }
 
             OrderModel::updateStatus($order["order_id"], $status);
+
+            Log::updateStatus(
+                "Đơn hàng #" . $order['order_id'] . ": " .
+                    $order['current_status'] . " -> " . $status
+            );
 
             Response::json(['message' => 'Cập nhật trạng thái thành công'], 200);
         } catch (\Throwable $th) {

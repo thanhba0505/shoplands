@@ -60,14 +60,19 @@ class Log {
         self::json($logData, $title, 'sms.log');
     }
 
+    // Log ghn
+    public static function ghn($logData, $title = 'GHN:') {
+        self::json($logData, $title, 'giaohangnhanh.log');
+    }
+
     // Log login
     public static function login($logData, $title = 'Login:') {
         self::json($logData, $title, 'login.log');
     }
 
-    // Log auto run delete order unpaid
-    public static function autoRunUpdateOrder($logData, $title = 'Update Order:') {
-        self::json($logData, $title, 'auto-run-update-order.log');
+    // Log update order
+    public static function updateStatus($logData, $title = 'Update Order:') {
+        self::json($logData, $title, 'update-order.log');
     }
 
     // Log count sql

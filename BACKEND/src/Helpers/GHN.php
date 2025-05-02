@@ -14,7 +14,11 @@ class GHN {
       $headers[] = 'shop_id: ' . $_ENV['GHN_SHOP_ID'];
     }
 
-    return CallApi::get($_ENV['GHN_URL'] . $url, $headers);
+    $result = CallApi::get($_ENV['GHN_URL'] . $url, $headers);
+
+    // Log::ghn($result, 'GET - ' . $url);
+
+    return $result;
   }
 
   // Hàm gửi yêu cầu POST cho GHN
@@ -29,7 +33,13 @@ class GHN {
     }
     // Response::json($headers);
 
-    return CallApi::post($_ENV['GHN_URL'] . $url, $data, $headers);
+    $result = CallApi::post($_ENV['GHN_URL'] . $url, $data, $headers);
+
+    if ($url == '/v2/shipping-order/preview') {
+      Log::ghn($result, 'POST - ' . $url);
+    }
+
+    return $result;
   }
 
   // Lấy danh sách tỉnh thành
