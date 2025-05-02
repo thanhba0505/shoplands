@@ -388,10 +388,10 @@ class OrderController {
                 $message = "Đơn hàng đã thanh toán";
                 Redirect::to($url . "?success=" . $success . "&message=" . $message);
                 // Response::json([
-                    // 'success' => $success,
-                    // 'message' => $message,
-                    // 'url' => $url . "?success=" . $success . "&message=" . $message,
-                    // 'get' => $_GET
+                // 'success' => $success,
+                // 'message' => $message,
+                // 'url' => $url . "?success=" . $success . "&message=" . $message,
+                // 'get' => $_GET
                 // ], 400);
             }
 
@@ -405,10 +405,10 @@ class OrderController {
                 $message = "Thanh toán không thành công";
                 Redirect::to($url . "?success=" . $success . "&message=" . $message);
                 // Response::json([
-                    // 'success' => $success,
-                    // 'message' => $message,
-                    // 'url' => $url . "?success=" . $success . "&message=" . $message,
-                    // 'get' => $_GET
+                // 'success' => $success,
+                // 'message' => $message,
+                // 'url' => $url . "?success=" . $success . "&message=" . $message,
+                // 'get' => $_GET
                 // ], 400);
             }
 
@@ -441,10 +441,10 @@ class OrderController {
 
             Redirect::to($url . "?success=" . $success . "&message=" . $message);
             // Response::json([
-                // 'success' => $success,
-                // 'message' => $message,
-                // 'url' => $url . "?success=" . $success . "&message=" . $message,
-                // 'get' => $_GET
+            // 'success' => $success,
+            // 'message' => $message,
+            // 'url' => $url . "?success=" . $success . "&message=" . $message,
+            // 'get' => $_GET
             // ], 400);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userCheckPayment: " . $th->getMessage());
@@ -506,6 +506,55 @@ class OrderController {
             ], 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userGetShippingFee: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Cập nhật trạng thái cho tất cả đơn hàng từ ghn
+    public function updateStatusOrders() {
+        try {
+            $ghnOrders = OrderModel::getDeliveredOrders();
+
+            foreach ($ghnOrders as $ghnOrder) {
+                $result = GHN::getOrder($ghnOrder['ghn_order_code']);
+
+                if ($ghnOrder['current_status'] !== $result["data"]["status"]) {
+                    OrderModel::updateStatus($ghnOrder['order_id'], $result["data"]["status"]);
+                    Log::autoRunUpdateOrder(
+                        "Đơn hàng #" . $ghnOrder['order_id'] . ": " .
+                            $ghnOrder['current_status'] . " -> " . $result["data"]["status"]
+                    );
+                }
+            }
+
+            Response::json(['message' => 'Cập nhật trạng thái đơn hàng thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("OrderController -> updateStatusOrder: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Cập nhật trạng thái cho 1 đơn hàng (dùng cho webhook của ghn)
+    public function updateStatus() {
+        try {
+            $status = Request::json('Status');
+            $order_code = Request::json('OrderCode');
+
+            if (!$status || !$order_code) {
+                Response::json(['message' => 'Không đủ thông tin'], 400);
+            }
+
+            $order = OrderModel::findByGhnOrderCode($order_code);
+
+            if (!$order) {
+                Response::json(['message' => 'Không tìm thấy đơn hàng'], 200);
+            }
+
+            OrderModel::updateStatus($order["order_id"], $status);
+
+            Response::json(['message' => 'Cập nhật trạng thái thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("WebhookController -> updateStatus: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
