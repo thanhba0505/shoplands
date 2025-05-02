@@ -273,6 +273,19 @@ class AuthController {
             }
 
             $account = AccountModel::findById($decoded->account_id);
+
+            if ($account["status"] === "inactive") {
+                Response::json(['message' => 'Tài khoản chưa hoạt động'], 401);
+            }
+    
+            if ($account["status"] === "unverified") {
+                Response::json(['message' => 'Tài khoản chưa được xác thực'], 401);
+            }
+    
+            if ($account["status"] === "locked") {
+                Response::json(['message' => 'Tài khoản đã bị khóa'], 401);
+            }
+
             if (!$account || $account['refresh_token'] !== $refreshToken) {
                 Response::json(['message' => 'Refresh token không hợp lệ'], 401);
             }
