@@ -1,6 +1,4 @@
 <?php
-$router->get('api/sql', 'Controller@sql');
-
 // API AUTH
 $router->post('api/auth/login', 'AuthController@login');
 $router->post('api/auth/code-login', 'AuthController@getCodeLogin');
