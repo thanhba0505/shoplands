@@ -1,9 +1,6 @@
 <?php
 $router->get('api/sql', 'Controller@sql');
 
-// PUBLIC
-// $router->get('api/public/logo', 'Public\ImageController@logoSvg');
-
 // API AUTH
 $router->post('api/auth/login', 'AuthController@login');
 $router->post('api/auth/code-login', 'AuthController@getCodeLogin');
@@ -13,7 +10,6 @@ $router->post('api/auth/register', 'AuthController@register');
 $router->post('api/auth/code-register', 'AuthController@getCodeRegister');
 $router->post('api/auth/forgot-password', 'AuthController@forgotPassword');
 $router->post('api/auth/code-forgot-password', 'AuthController@getCodeForgotPassword');
-// $router->post('api/auth/register-seller', 'AuthController@registerSeller');
 
 // API COUPON
 $router->get('api/coupons/{seller_id}', 'CouponController@get');
