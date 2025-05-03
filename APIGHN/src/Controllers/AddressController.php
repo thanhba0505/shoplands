@@ -16,18 +16,22 @@ class AddressController {
         try {
             $res = CallApi::get("https://open.oapi.vn/location/provinces?page=0&size=1000");
 
-            $result  = [];
-            $result['code'] = 200;
-            $result['message'] = 'success';
+            if ($res['data']) {
+                $result  = [];
+                $result['code'] = 200;
+                $result['message'] = 'success';
 
-            foreach ($res['data'] as $province) {
-                $result['data'][] = [
-                    'ProvinceID' => $province['id'],
-                    'ProvinceName' => $province['name']
-                ];
+                foreach ($res['data'] as $province) {
+                    $result['data'][] = [
+                        'ProvinceID' => $province['id'],
+                        'ProvinceName' => $province['name']
+                    ];
+                }
+
+                Response::json($result);
+            } else {
+                Response::json(['code' => 400, 'message' => 'Không tìm thấy tỉnh/thành'], 400);
             }
-
-            Response::json($result);
         } catch (\Throwable $th) {
             Log::throwable("AddressController -> getProvinces: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -45,18 +49,22 @@ class AddressController {
                 $res = CallApi::get("https://open.oapi.vn/location/districts?page=0&size=1000");
             }
 
-            $result  = [];
-            $result['code'] = 200;
-            $result['message'] = 'success';
+            if ($res['data']) {
+                $result  = [];
+                $result['code'] = 200;
+                $result['message'] = 'success';
 
-            foreach ($res['data'] as $province) {
-                $result['data'][] = [
-                    'ProvinceID' => $province['id'],
-                    'ProvinceName' => $province['name']
-                ];
+                foreach ($res['data'] as $district) {
+                    $result['data'][] = [
+                        'DistrictID' => $district['id'],
+                        'DistrictName' => $district['name']
+                    ];
+                }
+
+                Response::json($result);
+            } else {
+                Response::json(['code' => 400, 'message' => 'Không tìm thấy quận/huyện'], 400);
             }
-
-            Response::json($result);
         } catch (\Throwable $th) {
             Log::throwable("AddressController -> getDistricts: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -74,18 +82,22 @@ class AddressController {
                 $res = CallApi::get("https://open.oapi.vn/location/wards?page=0&size=1000");
             }
 
-            $result  = [];
-            $result['code'] = 200;
-            $result['message'] = 'success';
+            if ($res['data']) {
+                $result  = [];
+                $result['code'] = 200;
+                $result['message'] = 'success';
 
-            foreach ($res['data'] as $province) {
-                $result['data'][] = [
-                    'ProvinceID' => $province['id'],
-                    'ProvinceName' => $province['name']
-                ];
+                foreach ($res['data'] as $ward) {
+                    $result['data'][] = [
+                        'WardCode' => $ward['id'],
+                        'WardName' => $ward['name']
+                    ];
+                }
+
+                Response::json($result);
+            } else {
+                Response::json(['code' => 400, 'message' => 'Không tìm thấy phường xã'], 400);
             }
-
-            Response::json($result);
         } catch (\Throwable $th) {
             Log::throwable("AddressController -> getWards: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);

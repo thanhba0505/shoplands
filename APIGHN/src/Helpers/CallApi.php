@@ -6,6 +6,11 @@ class CallApi {
 
   // Hàm gửi yêu cầu GET
   public static function get($url, $headers = []) {
+    // Thay đổi khoảng cách và mã hóa ký tự đặc biệt trong query string
+    $url = preg_replace_callback('/([?&])([^=]+)=([^&]*)/', function ($matches) {
+      return $matches[1] . $matches[2] . '=' . urlencode($matches[3]);
+    }, $url);
+
     // Khởi tạo cURL
     $ch = curl_init();
 
@@ -35,6 +40,11 @@ class CallApi {
 
   // Hàm gửi yêu cầu POST
   public static function post($url, $data, $headers = []) {
+    // Thay đổi khoảng cách và mã hóa ký tự đặc biệt trong query string
+    $url = preg_replace_callback('/([?&])([^=]+)=([^&]*)/', function ($matches) {
+      return $matches[1] . $matches[2] . '=' . urlencode($matches[3]);
+    }, $url);
+
     // Khởi tạo cURL
     $ch = curl_init();
 
