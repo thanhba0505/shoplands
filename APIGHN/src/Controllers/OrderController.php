@@ -184,24 +184,41 @@ class OrderController {
     // Tạo đơn hàng
     public function create() {
         try {
-            $from_name = Request::json('from_name');
-            $from_phone = Request::json('from_phone');
-            $from_address = Request::json('from_address');
-            $from_ward_name = Request::json('from_ward_name');
-            $from_district_name = Request::json('from_district_name');
-            $from_province_name = Request::json('from_province_name');
+            $from_name = Request::json('from_name') ?? Request::post('from_name');
+            $from_phone = Request::json('from_phone') ?? Request::post('from_phone');
+            $from_address = Request::json('from_address') ?? Request::post('from_address');
+            $from_ward_name = Request::json('from_ward_name') ?? Request::post('from_ward_name');
+            $from_district_name = Request::json('from_district_name') ?? Request::post('from_district_name');
+            $from_province_name = Request::json('from_province_name') ?? Request::post('from_province_name');
 
-            $to_name = Request::json('to_name');
-            $to_phone = Request::json('to_phone');
-            $to_address = Request::json('to_address');
-            $to_ward_name = Request::json('to_ward_name');
-            $to_district_name = Request::json('to_district_name');
-            $to_province_name = Request::json('to_province_name');
+            $to_name = Request::json('to_name') ?? Request::post('to_name');
+            $to_phone = Request::json('to_phone') ?? Request::post('to_phone');
+            $to_address = Request::json('to_address') ?? Request::post('to_address');
+            $to_ward_name = Request::json('to_ward_name') ?? Request::post('to_ward_name');
+            $to_district_name = Request::json('to_district_name') ?? Request::post('to_district_name');
+            $to_province_name = Request::json('to_province_name') ?? Request::post('to_province_name');
+
+            if (
+                !$from_name ||
+                !$from_phone ||
+                !$from_address ||
+                !$from_ward_name ||
+                !$from_district_name ||
+                !$from_province_name ||
+                !$to_name ||
+                !$to_phone ||
+                !$to_address ||
+                !$to_ward_name ||
+                !$to_district_name ||
+                !$to_province_name
+            ) {
+                Response::json(['message' => 'Thông tin dữ liệu không hợp lệ'], 400);
+            }
 
             // Lấy id tinh, quan, xa bên người gửi
             $from_province = CallApi::get(
                 "https://open.oapi.vn/location/provinces?page=0&size=1000&query=" . $from_province_name
-            );
+            )['response'];
 
             if (!$from_province || $from_province['total'] == 0) {
                 Response::json(['message' => 'Không tìm thấy tỉnh/thành phố nơi gửi'], 400);
@@ -209,7 +226,7 @@ class OrderController {
 
             $from_district = CallApi::get(
                 "https://open.oapi.vn/location/districts/" . $from_province['data'][0]['id'] . "?page=0&size=1000&query=" . $from_district_name
-            );
+            )['response'];
 
             if (!$from_district || $from_district['total'] == 0) {
                 Response::json(['message' => 'Không tìm thấy quận/huyện nơi gửi'], 400);
@@ -217,7 +234,7 @@ class OrderController {
 
             $from_ward = CallApi::get(
                 "https://open.oapi.vn/location/wards/" . $from_district['data'][0]['id'] . "?page=0&size=1000&query=" . $from_ward_name
-            );
+            )['response'];
 
             if (!$from_ward || $from_ward['total'] == 0) {
                 Response::json(['message' => 'Không tìm thấy phường/xã nơi gửi'], 400);
@@ -226,7 +243,7 @@ class OrderController {
             // Lấy id tinh, quan, xa bên người nận
             $to_province = CallApi::get(
                 "https://open.oapi.vn/location/provinces?page=0&size=1000&query=" . $to_province_name
-            );
+            )['response'];
 
             if (!$to_province || $to_province['total'] == 0) {
                 Response::json(['message' => 'Không tìm thấy tỉnh/thành phố nơi gửi'], 400);
@@ -234,7 +251,7 @@ class OrderController {
 
             $to_district = CallApi::get(
                 "https://open.oapi.vn/location/districts/" . $to_province['data'][0]['id'] . "?page=0&size=1000&query=" . $to_district_name
-            );
+            )['response'];
 
             if (!$to_district || $to_district['total'] == 0) {
                 Response::json(['message' => 'Không tìm thấy quận/huyện nơi gửi'], 400);
@@ -242,7 +259,7 @@ class OrderController {
 
             $to_ward = CallApi::get(
                 "https://open.oapi.vn/location/wards/" . $to_district['data'][0]['id'] . "?page=0&size=1000&query=" . $to_ward_name
-            );
+            )['response'];
 
             if (!$to_ward || $to_ward['total'] == 0) {
                 Response::json(['message' => 'Không tìm thấy phường/xã nơi gửi'], 400);
@@ -296,12 +313,12 @@ class OrderController {
                 ]
             ]);
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> createOrder: " . $th->getMessage());
+            Log::throwable("OrderController -> create: " . $th->getMessage());
             return Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 
-    // Thêm trạng thái cho 1 đơn hàng
+    // Cập nhật trạng thái cho 1 đơn hàng
     public function status() {
         try {
             $order_code = Request::post('order_code');
@@ -334,7 +351,18 @@ class OrderController {
                     Format::getOrderStatusInVie($status)
                 );
 
-                $this->viewAddStatus("Chỉnh sửa trạng thái thành công");
+                // Gọi webhook
+                $result = CallApi::post(
+                    $_ENV['FRONTEND_URL'] . '/api/update-status',
+                    [
+                        'order_code' => $order_code,
+                        'status' => $status
+                    ]
+                );
+
+                Log::global($result);
+
+                $this->viewAddStatus("Cập nhật trạng thái thành công");
             }
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> addStatus: " . $th->getMessage());
@@ -436,7 +464,7 @@ class OrderController {
                 </div>
             </form>';
 
-            echo '<div style="text-align: center; margin-top: 30px;">
+        echo '<div style="text-align: center; margin-top: 30px;">
                 <img src="' . BASE_URL . '/src/Storage/status-ghn.jpeg" alt="status">
             </div>';
 

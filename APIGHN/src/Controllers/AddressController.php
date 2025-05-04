@@ -14,7 +14,7 @@ class AddressController {
     // Lấy danh sách tinh thanh
     public function getProvinces() {
         try {
-            $res = CallApi::get("https://open.oapi.vn/location/provinces?page=0&size=1000");
+            $res = CallApi::get("https://open.oapi.vn/location/provinces?page=0&size=1000")['response'];
 
             if ($res['data']) {
                 $result  = [];
@@ -44,9 +44,9 @@ class AddressController {
             $province_id = Request::get('province_id');
 
             if ($province_id) {
-                $res = CallApi::get("https://open.oapi.vn/location/districts/" . $province_id . "?page=0&size=1000");
+                $res = CallApi::get("https://open.oapi.vn/location/districts/" . $province_id . "?page=0&size=1000")['response'];
             } else {
-                $res = CallApi::get("https://open.oapi.vn/location/districts?page=0&size=1000");
+                $res = CallApi::get("https://open.oapi.vn/location/districts?page=0&size=1000")['response'];
             }
 
             if ($res['data']) {
@@ -77,9 +77,9 @@ class AddressController {
             $district_id = Request::get('district_id');
 
             if ($district_id) {
-                $res = CallApi::get("https://open.oapi.vn/location/wards/" . $district_id . "?page=0&size=1000");
+                $res = CallApi::get("https://open.oapi.vn/location/wards/" . $district_id . "?page=0&size=1000")['response'];
             } else {
-                $res = CallApi::get("https://open.oapi.vn/location/wards?page=0&size=1000");
+                $res = CallApi::get("https://open.oapi.vn/location/wards?page=0&size=1000")['response'];
             }
 
             if ($res['data']) {

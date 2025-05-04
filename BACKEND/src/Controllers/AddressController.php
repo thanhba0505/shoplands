@@ -146,12 +146,12 @@ class AddressController {
             $res = GHN::getProvinces();
 
             // Lọc provinceID từ 201 đến 269
-            $res['data'] = array_filter($res['data'], function ($province) {
-                return $province['ProvinceID'] >= 201 && $province['ProvinceID'] <= 269;
-            });
+            // $res['data'] = array_filter($res['data'], function ($province) {
+            //     return $province['ProvinceID'] >= 201 && $province['ProvinceID'] <= 269;
+            // });
 
-            // Re-index lại mảng để tránh có chỉ mục bị bỏ trống
-            $res['data'] = array_values($res['data']);
+            // // Re-index lại mảng để tránh có chỉ mục bị bỏ trống
+            // $res['data'] = array_values($res['data']);
 
             // Trả lại kết quả sau khi đã lọc
             Response::json($res);
@@ -168,11 +168,11 @@ class AddressController {
 
             $res = GHN::getDistricts($province_id);
 
-            $res['data'] = array_filter($res['data'], function ($district) {
-                return !in_array($district['DistrictID'], [3451]);
-            });
+            // $res['data'] = array_filter($res['data'], function ($district) {
+            //     return !in_array($district['DistrictID'], [3451]);
+            // });
 
-            $res['data'] = array_values($res['data']);
+            // $res['data'] = array_values($res['data']);
 
             Response::json($res);
         } catch (\Throwable $th) {

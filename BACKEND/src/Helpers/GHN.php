@@ -16,7 +16,7 @@ class GHN {
 
     $result = CallApi::get($_ENV['GHN_URL'] . $url, $headers);
 
-    // Log::ghn($result, 'GET - ' . $url);
+    // Log::ghn($result, 'GET - ' . $_ENV['GHN_URL'] . $url);
 
     return $result;
   }
@@ -33,11 +33,9 @@ class GHN {
     }
     // Response::json($headers);
 
-    $result = CallApi::post($_ENV['GHN_URL'] . $url, $data, $headers);
+    $result = CallApi::postForm($_ENV['GHN_URL'] . $url, $data);
 
-    if ($url == '/v2/shipping-order/preview') {
-      Log::ghn($result, 'POST - ' . $url);
-    }
+    // Log::ghn($result, 'POST - ' . $_ENV['GHN_URL'] . $url);
 
     return $result;
   }

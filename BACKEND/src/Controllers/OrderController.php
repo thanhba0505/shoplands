@@ -310,7 +310,7 @@ class OrderController {
                     );
 
                     // Xóa giỏ hàng
-                    CartModel::delete($userId, $cart["cart_id"]);
+                    // CartModel::delete($userId, $cart["cart_id"]);
                 }
             }
 
@@ -413,7 +413,7 @@ class OrderController {
             }
 
             OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
-
+            
             $fromAddress = AddressModel::findFromAddress($order["from_address_id"]);
             $toAddress = AddressModel::findToAddress($order["to_address_id"], $order["user_id"]);
 
@@ -425,8 +425,7 @@ class OrderController {
 
             $toAddress["name"] = $user["name"];
             $toAddress["phone"] = $user["phone"];
-
-
+            
             $ghnOrder = GHN::createOrder(
                 $fromAddress,
                 $toAddress

@@ -17,11 +17,11 @@ class AddressSeeder extends Seeder {
             Address::create([
                 'address_line' => "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam",
                 'default' => 1,
-                'province_id' => 202,
+                'province_id' => 79,
                 'province_name' => "Hồ Chí Minh",
-                'district_id' => 1452,
-                'district_name' => "Quán 10",
-                'ward_id' => 21014,
+                'district_id' => 771,
+                'district_name' => "Quận 10",
+                'ward_id' => 27169,
                 'ward_name' => "Phường 14",
                 'account_id' => $seller->account_id,
             ]);
