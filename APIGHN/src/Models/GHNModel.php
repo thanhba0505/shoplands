@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Helpers\Carbon;
 
 class GHNModel {
+  // Thêm đơn hàng vận chuyển
   public static function insertOrder(
     $from_name,
     $from_phone,
@@ -84,5 +85,57 @@ class GHNModel {
     ]);
 
     return true;
+  }
+
+  // Thêm status đơn hàng vận chuyển
+  public static function insertStatus($order_code, $status, $message) {
+    $conn = new ConnectDatabase();
+
+    $created_at = Carbon::now();
+
+    $sql = "
+      INSERT INTO giaohangnhanh_status (
+        order_code,
+        status,
+        message,
+        created_at
+      ) VALUES (
+        :order_code,
+        :status,
+        :message,
+        :created_at
+      )
+    ";
+
+    $conn->query($sql, [
+      ':order_code' => $order_code,
+      ':status' => $status,
+      ':message' => $message,
+      ':created_at' => $created_at
+    ]);
+
+    return true;
+  }
+
+  // Lấy 1 đơn hàng vận chuyển
+  public static function find($order_code) {
+    $conn = new ConnectDatabase();
+
+    $sql = "
+      SELECT * FROM giaohangnhanh WHERE order_code = :order_code
+    ";
+
+    return $conn->query($sql, [':order_code' => $order_code])->fetch();
+  }
+
+  // Lấy status cuối cùng
+  public static function getLastStatus($order_code) {
+    $conn = new ConnectDatabase();
+
+    $sql = "
+      SELECT * FROM giaohangnhanh_status WHERE order_code = :order_code ORDER BY created_at DESC LIMIT 1
+    ";
+
+    return $conn->query($sql, [':order_code' => $order_code])->fetch();
   }
 }

@@ -13,10 +13,8 @@ class Format {
 
   public static function getOrderStatusInVie($status) {
     $statusMapping = [
-      "unpaid" => "Chưa thanh toán",
-      "ready_to_pick" => "Đã thanh toán",
+      "ready_to_pick" => "Mới tạo đơn hàng",
       "picking" => "Nhân viên đang lấy hàng",
-      "deleted" => "Đã xóa khi không thanh toán",
       "cancel" => "Hủy đơn hàng",
       "money_collect_picking" => "Đang thu tiền người gửi",
       "picked" => "Nhân viên đã lấy hàng",
@@ -37,7 +35,6 @@ class Format {
       "exception" => "Đơn hàng ngoại lệ không nằm trong quy trình",
       "damage" => "Hàng bị hư hỏng",
       "lost" => "Hàng bị mất",
-      "completed" => "Đã hoàn thành"
     ];
 
     return isset($statusMapping[$status]) ? $statusMapping[$status] : "Không xác định";
