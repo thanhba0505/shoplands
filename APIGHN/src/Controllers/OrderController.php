@@ -352,15 +352,13 @@ class OrderController {
                 );
 
                 // Gọi webhook
-                $result = CallApi::post(
+                $result = CallApi::postForm(
                     $_ENV['FRONTEND_URL'] . '/api/update-status',
                     [
-                        'order_code' => $order_code,
-                        'status' => $status
+                        'OrderCode' => $order_code,
+                        'Status' => $status
                     ]
                 );
-
-                Log::global($result);
 
                 $this->viewAddStatus("Cập nhật trạng thái thành công");
             }

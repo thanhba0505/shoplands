@@ -100,4 +100,38 @@ class CallApi {
       'response' => json_decode($body, true) // Chỉ parse body, không phải header
     ];
   }
+
+
+  public static function postForm($url, $data, $headers = []) {
+    // Khởi tạo cURL
+    $ch = curl_init();
+
+    // Cấu hình cURL
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+
+    // Cấu hình body của POST request, chuyển dữ liệu sang dạng query string
+    $postData = http_build_query($data);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+
+    // Cấu hình header nếu có
+    if (!empty($headers)) {
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }
+
+    // Thực thi và lấy kết quả
+    $response = curl_exec($ch);
+
+    // Kiểm tra lỗi cURL
+    if (curl_errno($ch)) {
+      $response = json_encode(['error' => curl_error($ch)]);
+    }
+
+    // Đóng cURL
+    curl_close($ch);
+
+    // Trả về dữ liệu nhận được từ API
+    return json_decode($response, true);
+  }
 }

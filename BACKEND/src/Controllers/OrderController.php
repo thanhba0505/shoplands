@@ -310,7 +310,7 @@ class OrderController {
                     );
 
                     // Xóa giỏ hàng
-                    // CartModel::delete($userId, $cart["cart_id"]);
+                    CartModel::delete($userId, $cart["cart_id"]);
                 }
             }
 
@@ -433,6 +433,7 @@ class OrderController {
 
             if ($ghnOrder['code'] == '200') {
                 OrderModel::updateGhnOrderCode($order["order_id"], $ghnOrder['data']['order_code']);
+                OrderModel::updateStatus($order["order_id"], "ready_to_pick");
             }
 
             $success = $ghnOrder['code'] == '200' ? "1" : "0";
@@ -532,8 +533,8 @@ class OrderController {
     // Cập nhật trạng thái cho 1 đơn hàng (dùng cho webhook của ghn)
     public function updateStatus() {
         try {
-            $status = Request::json('Status');
-            $order_code = Request::json('OrderCode');
+            $status = Request::json('Status') ?? Request::post('Status');
+            $order_code = Request::json('OrderCode') ?? Request::post('OrderCode');
 
             if (!$status || !$order_code) {
                 Response::json(['message' => 'Không đủ thông tin'], 400);

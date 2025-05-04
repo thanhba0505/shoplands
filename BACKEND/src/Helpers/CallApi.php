@@ -33,7 +33,7 @@ class CallApi {
     }
 
     // Lấy mã trạng thái HTTP
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    // $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
     // Tách phần header và body
     $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -43,10 +43,7 @@ class CallApi {
     curl_close($ch);
 
     // Trả về dữ liệu nhận được từ API cùng với mã trạng thái HTTP và body
-    return [
-      'status_code' => $statusCode,
-      'response' => json_decode($body, true) // Chỉ parse body, không phải header
-    ];
+    return json_decode($body, true);
   }
 
   // Hàm gửi yêu cầu POST
@@ -85,7 +82,7 @@ class CallApi {
     }
 
     // Lấy mã trạng thái HTTP
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    // $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
     // Tách phần header và body
     $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -95,10 +92,7 @@ class CallApi {
     curl_close($ch);
 
     // Trả về dữ liệu nhận được từ API cùng với mã trạng thái HTTP và body
-    return [
-      'status_code' => $statusCode,
-      'response' => json_decode($body, true) // Chỉ parse body, không phải header
-    ];
+    return json_decode($body, true);
   }
 
   public static function postForm($url, $data, $headers = []) {
