@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers\CallApi;
+use App\Helpers\DataHelper;
 use App\Helpers\Format;
 use App\Helpers\Response;
 use App\Helpers\Log;
@@ -363,7 +364,7 @@ class OrderController {
                 $this->viewAddStatus("Cập nhật trạng thái thành công");
             }
         } catch (\Throwable $th) {
-            Log::throwable("OrderController -> addStatus: " . $th->getMessage());
+            Log::throwable("OrderController -> status: " . $th->getMessage());
             return Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
@@ -516,5 +517,444 @@ class OrderController {
         ];
 
         return $transitions[$currentStatus] ?? [];
+    }
+
+    // view chi tiết đơn hàng
+    public function detail() {
+        try {
+            $order_code = Request::get('q');  // Nhận mã đơn hàng từ URL
+
+            if (!$order_code) {
+                // Nếu không có mã đơn hàng, gọi view mặc định
+                $this->viewDetail();
+            } else {
+                // Lấy thông tin đơn hàng từ cơ sở dữ liệu
+                $order = GHNModel::get($order_code);
+
+                if (!$order) {
+                    // Nếu không tìm thấy đơn hàng, gọi view với thông báo lỗi
+                    $this->viewDetail($order_code, "Không tìm thấy đơn hàng", null);
+                }
+
+                // Cấu hình dữ liệu cần lấy từ đơn hàng
+                $config = [
+                    'keep_columns' => [
+                        "id",
+                        "from_name",
+                        "from_phone",
+                        "from_address",
+                        "from_ward_name",
+                        "from_district_name",
+                        "from_province_name",
+                        "to_name",
+                        "to_phone",
+                        "to_address",
+                        "to_ward_name",
+                        "to_district_name",
+                        "to_province_name",
+                        "order_code",
+                        "from_estimate_date",
+                        "to_estimate_date",
+                        "created_at",
+                    ],
+                    'group_columns' => [
+                        'group_status' => [
+                            "status_id",
+                            "status",
+                            "message",
+                        ]
+                    ]
+                ];
+
+                // Lọc dữ liệu theo cấu hình
+                $order = DataHelper::groupData($order, $config)[0];
+
+                // Gọi view chi tiết đơn hàng và truyền dữ liệu
+                $this->viewDetail($order_code, null, $order);
+            }
+        } catch (\Throwable $th) {
+            // Xử lý lỗi và ghi log
+            Log::throwable("OrderController -> detail: " . $th->getMessage());
+            return Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    public function viewDetail($order_code = null, $message = null, $order = null) {
+        if ($message) {
+            echo "<div class='alert alert-danger'>$message</div>";
+            return;
+        }
+    
+        if (!$order) {
+            // Hiển thị form tìm kiếm nếu không có order_code
+            echo '
+            <!DOCTYPE html>
+            <html lang="vi">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Tra cứu đơn hàng - GiaoHangNhanh</title>
+                <style>
+                    body {
+                        font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        background-color: #f5f5f5;
+                        color: #333;
+                    }
+                    .container {
+                        max-width: 1200px;
+                        margin: 50px auto;
+                        padding: 20px;
+                    }
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 40px;
+                        background-color: #fff;
+                        padding: 15px;
+                        border-bottom: 1px solid #e0e0e0;
+                    }
+                    .logo {
+                        display: flex;
+                        align-items: center;
+                    }
+                    .logo img {
+                        height: 40px;
+                        margin-right: 10px;
+                    }
+                    .logo-text {
+                        font-size: 12px;
+                        color: #777;
+                    }
+                    .search-container {
+                        background-color: #fff;
+                        border-radius: 4px;
+                        padding: 40px;
+                        text-align: center;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    }
+                    .search-title {
+                        font-size: 24px;
+                        margin-bottom: 20px;
+                        color: #333;
+                    }
+                    .search-bar {
+                        display: flex;
+                        justify-content: center;
+                        margin-top: 20px;
+                    }
+                    .search-input {
+                        width: 400px;
+                        padding: 12px 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px 0 0 4px;
+                        font-size: 16px;
+                    }
+                    .search-button {
+                        background-color: #f26522;
+                        color: white;
+                        border: none;
+                        padding: 12px 25px;
+                        border-radius: 0 4px 4px 0;
+                        cursor: pointer;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <div class="logo">
+                            <img src="https://www.giaohangnhanh.vn/wp-content/uploads/2019/04/cropped-favicon-180x180.png" alt="GiaoHangNhanh Logo">
+                            <div>
+                                <h1 style="margin: 0; color: #f26522; font-size: 24px;">GiaoHangNhanh</h1>
+                                <span class="logo-text">Giao Siêu Nhanh, Giá Siêu Tốt</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="search-container">
+                        <h2 class="search-title">Tra cứu đơn hàng</h2>
+                        <form method="get" action="">
+                            <div class="search-bar">
+                                <input type="text" name="q" class="search-input" placeholder="Nhập mã đơn hàng" required>
+                                <button type="submit" class="search-button">TÌM KIẾM</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </body>
+            </html>';
+            return;
+        }
+    
+        // Format ngày tháng
+        $pickup_date = date('d/m/Y', strtotime($order['from_estimate_date']));
+        $delivery_date = date('d/m/Y', strtotime($order['to_estimate_date']));
+        $delivery_date_range = $delivery_date . ' - ' . date('d/m/Y', strtotime($order['to_estimate_date'] . ' +1 day'));
+        $created_date = date('l, d/m/Y', strtotime($order['created_at']));
+        $created_time = date('H:i', strtotime($order['created_at']));
+        $status = $order['group_status']['status'] ?? 'Chờ lấy hàng';
+    
+        echo '
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Chi tiết đơn hàng - GiaoHangNhanh</title>
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f5f5f5;
+                    color: #333;
+                }
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    background-color: #fff;
+                    padding: 15px;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+                .logo {
+                    display: flex;
+                    align-items: center;
+                }
+                .logo img {
+                    height: 40px;
+                    margin-right: 10px;
+                }
+                .logo-text {
+                    font-size: 12px;
+                    color: #777;
+                }
+                .search-bar {
+                    display: flex;
+                    align-items: center;
+                    width: 50%;
+                }
+                .search-input {
+                    flex-grow: 1;
+                    padding: 10px 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px 0 0 4px;
+                    font-size: 16px;
+                }
+                .search-button {
+                    background-color: #f26522;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 0 4px 4px 0;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                .order-section {
+                    background-color: #fff;
+                    border-radius: 4px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                }
+                .section-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 15px;
+                    color: #333;
+                    text-transform: uppercase;
+                }
+                .order-info {
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+                .order-info-section {
+                    flex: 1;
+                    min-width: 300px;
+                    margin-bottom: 10px;
+                }
+                .info-row {
+                    display: flex;
+                    margin-bottom: 10px;
+                }
+                .info-label {
+                    width: 150px;
+                    font-weight: bold;
+                    color: #555;
+                }
+                .info-value {
+                    flex: 1;
+                }
+                .status-label {
+                    display: inline-block;
+                    padding: 5px 10px;
+                    background-color: #004b87;
+                    color: white;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+                .history-section {
+                    background-color: #fff;
+                    border-radius: 4px;
+                    padding: 20px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                }
+                .history-header {
+                    display: flex;
+                    background-color: #f9f9f9;
+                    padding: 10px 15px;
+                    font-weight: bold;
+                    border-radius: 4px 4px 0 0;
+                }
+                .history-header-item {
+                    flex: 1;
+                }
+                .history-header-item:last-child {
+                    text-align: right;
+                }
+                .history-row {
+                    display: flex;
+                    padding: 15px;
+                    border-bottom: 1px solid #eee;
+                }
+                .history-item {
+                    flex: 1;
+                    color: #004b87;
+                }
+                .history-item:last-child {
+                    text-align: right;
+                }
+                .history-title {
+                    font-size: 18px;
+                    margin: 20px 0;
+                    color: #333;
+                }
+                .alert {
+                    padding: 15px;
+                    background-color: #f44336;
+                    color: white;
+                    margin-bottom: 20px;
+                    border-radius: 4px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="logo">
+                         <div>
+                            <h1 style="margin: 0; color: #f26522; font-size: 24px;">GiaoHangNhanh</h1>
+                            <span class="logo-text">Giao Siêu Nhanh, Giá Siêu Tốt</span>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Nhập mã đơn hàng" value="'.htmlspecialchars($order_code).'">
+                        <button class="search-button" onclick="window.location.href=\'?q=\'+document.querySelector(\'.search-input\').value">TÌM KIẾM</button>
+                    </div>
+                </div>
+    
+                <div class="order-section">
+                    <div class="section-title">THÔNG TIN ĐƠN HÀNG</div>
+                    <div class="order-info">
+                        <div class="order-info-section">
+                            <div class="info-row">
+                                <div class="info-label">Mã đơn hàng:</div>
+                                <div class="info-value">'.htmlspecialchars($order['order_code']).'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Ngày lấy dự kiến:</div>
+                                <div class="info-value">'.$pickup_date.'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Ngày giao dự kiến:</div>
+                                <div class="info-value">'.$delivery_date_range.'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Trạng thái hiện tại:</div>
+                                <div class="info-value">
+                                    <span class="status-label">'.htmlspecialchars($status).'</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="order-section">
+                    <div class="order-info">
+                        <div class="order-info-section">
+                            <div class="section-title">NGƯỜI GỬI</div>
+                            <div class="info-row">
+                                <div class="info-label">Họ và tên:</div>
+                                <div class="info-value">'.htmlspecialchars($order['from_name']).'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Điện thoại:</div>
+                                <div class="info-value">'.htmlspecialchars($order['from_phone']).'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Địa chỉ:</div>
+                                <div class="info-value">'.htmlspecialchars($order['from_address']).', '.htmlspecialchars($order['from_ward_name']).', '.htmlspecialchars($order['from_district_name']).', '.htmlspecialchars($order['from_province_name']).'</div>
+                            </div>
+                        </div>
+                        <div class="order-info-section">
+                            <div class="section-title">NGƯỜI NHẬN</div>
+                            <div class="info-row">
+                                <div class="info-label">Họ và tên:</div>
+                                <div class="info-value">'.htmlspecialchars($order['to_name']).'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Điện thoại:</div>
+                                <div class="info-value">'.htmlspecialchars($order['to_phone']).'</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Địa chỉ:</div>
+                                <div class="info-value">'.htmlspecialchars($order['to_address']).', '.htmlspecialchars($order['to_ward_name']).', '.htmlspecialchars($order['to_district_name']).', '.htmlspecialchars($order['to_province_name']).'</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="history-section">
+                    <div class="history-title">Lịch sử đơn hàng</div>
+                    <div class="history-header">
+                        <div class="history-header-item">Ngày</div>
+                        <div class="history-header-item">Chi tiết</div>
+                        <div class="history-header-item">Thời gian</div>
+                    </div>
+                    <div class="history-row">
+                        <div class="history-item">'.$created_date.'</div>
+                        <div class="history-item">'.htmlspecialchars($status).'</div>
+                        <div class="history-item">'.$created_time.'</div>
+                    </div>
+                </div>
+            </div>
+    
+            <script>
+                document.addEventListener(\'DOMContentLoaded\', function() {
+                    const searchButton = document.querySelector(\'.search-button\');
+                    const searchInput = document.querySelector(\'.search-input\');
+                    
+                    searchInput.addEventListener(\'keypress\', function(e) {
+                        if (e.key === \'Enter\') {
+                            searchButton.click();
+                        }
+                    });
+                });
+            </script>
+        </body>
+        </html>';
+        exit();
     }
 }

@@ -12,7 +12,8 @@ $router->post('v2/shipping-order/preview', 'OrderController@preview');
 $router->post('v2/shipping-order/fee', 'OrderController@fee');
 $router->post('v2/shipping-order/leadtime', 'OrderController@leadtime');
 
-
+// Chi tiết đơn hàng
+$router->get('order-detail', 'OrderController@detail');
 
 // Admin ghn
 $router->get('update-status', 'OrderController@status');
