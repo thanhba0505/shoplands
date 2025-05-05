@@ -9,7 +9,7 @@
     <img src="https://backend.shoplands.store/src/Storage/public/app/logo-1.png" alt="Logo" width="200" height="80" style="object-fit: cover;">
   </a>
 
-<h3 align="center">Sàn thương mại điện tử Shoplands</h3>
+<h3 align="center" id="san-thuong-mai-dien-tu-shoplands">Sàn thương mại điện tử Shoplands</h3>
 
   <p align="center">
     Đồ án tốt nghiệp
@@ -151,37 +151,85 @@ Tài khoản quản trị viên:
 
 <h3 id="phuong-phap-bao-mat">2. Phương pháp bảo mật</h3>
 
+<h4 id="ma-hoa-du-lieu-nhay-cam">a. Mã hóa dữ liệu nhạy cảm</h4>
+
+- Mã hóa 1 chiều: Dùng cho các dữ liệu không thể khôi phục lại như mật khẩu người dùng, mã xác nhận. Trang web sử dụng thuật toán ARGON2I kết hợp khóa bí giúp bảo vệ mật khẩu ngay cả khi cơ sở dữ liệu bị xâm nhập.
+
+- Mã hóa 2 chiều: Dùng cho các dữ liệu có thể cần phải giải mã để sử dụng sau này như số điện thoại, thông tin thẻ ngân hàng. Dự án sử dụng thật toán AES-256-CBC kết hợp khóa bí mật để bảo vệ các dữ liệu này.
+
+<h4 id="xac-thuc-nguoi-dung">b. Xác thực người dùng</h4>
+
+- Khi đăng nhập, backend sẽ dùng JWT trả về access-token và refresh-token, sau đó frontend lưu vào redux. Với mỗi yêu cầu gửi lên backend sẽ phải kèm theo access-token trong header để xác thực người dùng và vai trò của họ qua middleware. 
+
+- Access-token có thời gian ngắn nên khi hết thời gian, frontend sẽ phải gửi refresh-token để lấy lại access-token và refresh token mới và lưu lại vào redux.
+
+<h4 id="xac-thuc-sms">c. Xác thực SMS</h4>
+
+- Để chống tấn công brute-force khi đăng nhập, đăng ký, người dùng phải xác thực thông qua mã OTP gửi về điện thoại. Hệ thống cũng lưu REMOTE_ADDR và HTTP_USER_AGENT của trình duyệt vừa mới đăng nhập và khi đăng nhập lại 1 trình duyệt khác cũng sẽ yêu cầu nhập mã OTP.
+
+<h4 id="chong-tan-cong-csrf">d. Chống tấn công CSRF</h4>
+
+<!-- - Hệ thống chống tấn công CSRF bằng cách sử dụng CSRF Tokens trong tất cả các yêu cầu gửi từ phía -->
+
+<h4 id="ghi-du-lieu">e. Ghi dữ liệu</h4>
+
+- Hệ thống ghi lại một số dữ liệu như các lần đăng nhập của người dùng gồm địa chỉ IP, thời gian để nhanh chóng phát hiện các hành vi đáng ngờ.
+
+<h4 id="cau-hinh-cors">f. Cấu hình CORS</h4>
+
+- Hệ thống backend được cấu hình CORS chỉ cho phép duy nhất địa chỉ của frontend được phép truy cập api. Việc này hạn chế các mối đe dọa từ các tấn công cross-origin.
+
+<h4 id="cau-hinh-cors">g. Chống SQL Injection</h4>
+
+- Để bảo vệ hệ thống khỏi SQL Injection, hệ thống sử dụng PDO (PHP Data Objects). PDO cung cấp một cách an toàn và chuẩn mực để tương tác với cơ sở dữ liệu, thông qua các câu truy vấn chuẩn bị (prepared statements). Điều này giúp ngăn chặn SQL Injection vì tất cả các tham số truyền vào câu truy vấn được xử lý như dữ liệu, chứ không phải là một phần của câu truy vấn SQL.
+
+
+
+
+.
+.
+.
+.
+.
+.
+.
+..
+.
+.
+.
+.
+.
+.
+..
+.
+.
+.
+.
+.
+.
+..
+.
+.
+.
+.
+.
+.
+.
+
+
+
+
+
+
+
+
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-23272f?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com
 [MUI.com]: https://img.shields.io/badge/MaterialUI-007FFF?style=for-the-badge&logo=mui&logoColor=white
 [MUI-url]: https://mui.com/

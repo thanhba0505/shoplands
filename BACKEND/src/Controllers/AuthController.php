@@ -250,6 +250,12 @@ class AuthController {
                 Response::json(['message' => 'Vai trò không hợp lệ'], 400);
             }
 
+            Log::login([
+                'account_id' => $account['account_id'],
+                'ip_address' => $ip_address,
+                'user_agent' => $user_agent
+            ]);
+
             Response::json([
                 'access_token' => $accessToken,
                 'refresh_token' => $refreshToken,
@@ -277,11 +283,11 @@ class AuthController {
             if ($account["status"] === "inactive") {
                 Response::json(['message' => 'Tài khoản chưa hoạt động'], 401);
             }
-    
+
             if ($account["status"] === "unverified") {
                 Response::json(['message' => 'Tài khoản chưa được xác thực'], 401);
             }
-    
+
             if ($account["status"] === "locked") {
                 Response::json(['message' => 'Tài khoản đã bị khóa'], 401);
             }
