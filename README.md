@@ -85,9 +85,13 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 > ℹ️ **Ghi chú 1:** Mỗi tài khoản chỉ có thể đăng nhập trên 1 thiết bị, nên khi đăng nhập trên thiết bị khác thì bên đây sẽ đăng xuất.
 
-> ℹ️ **Ghi chú 2:** Do trang web sử dụng nền tảng Twilio miễn phí nên không thể gửi tin nhắn cho nhiều số điện thoại nên người dùng cần truy cập vào <a href="https://shoplands.store/view/message">đây</a> để xem tin nhắn.
+> ℹ️ **Ghi chú 2:** Do trang web sử dụng nền tảng Twilio miễn phí nên không thể gửi tin nhắn cho nhiều số điện thoại nên người dùng cần truy cập vào <a href="https://backend.shoplands.store/view/message">đây</a> để xem tin nhắn.
 
-> ℹ️ **Ghi chú 3:** Sau khi đặt hàng, vào <a href="https://giaohangnhanh.shoplands.store/update-status">đây</a> để điều chỉnh trạng thái đơn hàng.
+> ℹ️ **Ghi chú 3:** Khi đặt hàng, vào <a href="https://sandbox.vnpayment.vn/apis/vnpay-demo">đây</a> để lấy thông tin thẻ test của VNPAY.
+
+> ℹ️ **Ghi chú 4:** Sau khi đặt hàng, vào <a href="https://giaohangnhanh.shoplands.store/update-status">đây</a> để điều chỉnh trạng thái đơn hàng.
+
+> ℹ️ **Ghi chú 5:** Để tra cứu thông tin vận chuyển của đơn hàng, vào <a href="https://giaohangnhanh.shoplands.store/order-detail">đây</a> và nhập mã vận chuyển.
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
