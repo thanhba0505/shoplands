@@ -1,63 +1,32 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<!-- Improved compatibility of Về đầu trang link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+
 <a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://shoplands.store/">
+    <img src="https://backend.shoplands.store/src/Storage/public/app/logo-1.png" alt="Logo" width="200" height="80" style="object-fit: cover;">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">Sàn thương mại điện tử Shoplands</h3>
 
   <p align="center">
-    project_description
+    Đồ án tốt nghiệp
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <!-- <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <br /> -->
     <br />
-    <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
-    &middot;
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    &middot;
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://shoplands.store/">Truy cập website</a>
   </p>
 </div>
 
-
-
 <!-- TABLE OF CONTENTS -->
 <details>
-  <summary>Table of Contents</summary>
+  <summary>Mục lục</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#ve-du-an">Về dự án</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
       </ul>
@@ -78,155 +47,110 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
-## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+## I. Về dự án
 
-Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`, `project_license`
+`Shoplands` là đồ án tốt nghiệp xây dựng hệ thống sàn thương mại điện tử đa người dùng, cho phép người bán đăng sản phẩm, quản lý đơn hàng và tương tác với khách hàng trên một giao diện hiện đại, thân thiện.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Dự án được phát triển với mục tiêu mô phỏng quy trình kinh doanh trực tuyến thực tế, hỗ trợ các chức năng như tìm kiếm sản phẩm, giỏ hàng, thanh toán, đánh giá và quản lý tài khoản. `Shoplands` hướng đến việc tạo ra một môi trường mua sắm số tiện lợi, an toàn và dễ mở rộng trong tương lai.
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
+### 1. Thành viên
 
-### Built With
+- `Lê Thanh Bá` - Sinh viên ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
+- `Phạm Ngọc Tuấn` - Sinh viên ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### 2. Công nghệ sử dụng
 
+- [![React][React.js]][React-url]
+- [![Laravel][Laravel.com]][Laravel-url]
+- [![MUI][MUI.com]][MUI-url]
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
 <!-- GETTING STARTED -->
-## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+## II. Hướng dẫn sử dụng
 
-### Prerequisites
+> ⚠️ **Quan trọng:** Nên đọc trước khi sử dụng trang web.
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+> ℹ️ **Ghi chú 1:** Mỗi tài khoản chỉ có thể đăng nhập trên 1 thiết bị, nên khi đăng nhập trên thiết bị khác thì bên đây sẽ đăng xuất.
 
-### Installation
+> ℹ️ **Ghi chú 2:** Do trang web sử dụng nền tảng Twilio miễn phí nên không thể gửi tin nhắn cho nhiều số điện thoại nên người dùng cần truy cập Link để xem tin nhắn.
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
-   ```
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<!-- Đối với người mua -->
 
+### 1. Đối với người mua
 
+Đăng ký tài khoản tại: <a href="https://shoplands.store/register">https://shoplands.store/register</a>
 
-<!-- USAGE EXAMPLES -->
-## Usage
+Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shoplands.store/login</a>
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Một số tài khoản người mua:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+| Tên người mua | Số điện thoại | Mật khẩu  |
+| ------------- | ------------- | --------- |
+| Dữ liệu 1     | Dữ liệu 2     | Dữ liệu 3 |
+| Dữ liệu 4     | Dữ liệu 5     | Dữ liệu 6 |
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
+<!-- Đối với người bán -->
 
+### 2. Đối với người bán
 
-<!-- ROADMAP -->
-## Roadmap
+Đăng ký tài khoản tại: <a href="https://shoplands.store/register-seller">https://shoplands.store/register-seller</a>
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shoplands.store/login</a>
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+Một số tài khoản người bán:
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+| Tên người bán | Số điện thoại | Mật khẩu  |
+| ------------- | ------------- | --------- |
+| Dữ liệu 1     | Dữ liệu 2     | Dữ liệu 3 |
+| Dữ liệu 4     | Dữ liệu 5     | Dữ liệu 6 |
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
+<!-- Đối với quản trị viên -->
 
-<!-- CONTRIBUTING -->
-## Contributing
+### 3. Đối với quản trị viên
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+> ℹ️ **Ghi chú:** Tài khoản quản trị viên chỉ có 1 nên không thể đăng ký.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+Hoặc đăng nhập tại: <a href="https://shoplands.store/login">Shoplands đăng nhập</a>
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Tài khoản quản trị viên:
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+| Tên quản trị viên | Số điện thoại | Mật khẩu  |
+| ----------------- | ------------- | --------- |
+| Dữ liệu 1         | Dữ liệu 2     | Dữ liệu 3 |
 
-### Top contributors:
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
-<a href="https://github.com/github_username/repo_name/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=github_username/repo_name" alt="contrib.rocks image" />
-</a>
+## III. Mô tả code dự án
 
+### 1. Cấu trúc thư mục
 
+* `$document`: chứa tài liệu của dự án
+* `BACKEND`: sử dụng PHP thuần xây dựng api cho trang web
+* `FRONTEND`: sử dụng React kết hợp Material UI xây dựng giao diện
+* `DATABASE`: sử dụng Laravel lưu cấu trúc và tạo dữ liệu cho database
+* `APIGHN`: ban đầu sử dụng api của GiaoHangNhanh cho việc giao hàng nhưng api đó thường xuyên lỗi nên phải tạo thư mục này mô phỏng lại api của GiaoHangNhanh
 
-<!-- LICENSE -->
-## License
-
-Distributed under the project_license. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### 2. Phương pháp bảo mật
 
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
 [contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
@@ -242,7 +166,7 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [product-screenshot]: images/screenshot.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React.js]: https://img.shields.io/badge/React-23272f?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
@@ -255,4 +179,6 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[JQuery-url]: https://jquery.com
+[MUI.com]: https://img.shields.io/badge/MaterialUI-007FFF?style=for-the-badge&logo=mui&logoColor=white
+[MUI-url]: https://mui.com/
