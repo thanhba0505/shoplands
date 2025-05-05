@@ -10,13 +10,13 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Lê Thanh Bá',
+            'name' => 'Nguyễn Văn A',
             'avatar' => 'user-1.jpg',
             'account_id' => 1 + 6
         ]);
 
         User::create([
-            'name' => 'Phạm Ngọc Tuấn',
+            'name' => 'Ngô Thị Hai',
             'avatar' => 'user-2.jpg',
             'account_id' => 2 + 6
         ]);

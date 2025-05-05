@@ -72,3 +72,4 @@ $router->get('api/admin/users', 'UserController@adminGet', ['App\Middlewares\Adm
 
 // API OTHER
 $router->get('api/banks', 'Controller@getBanks');
+$router->get('view/message', 'Controller@getMessage');

@@ -6,7 +6,7 @@
 <br />
 <div align="center">
   <a href="https://shoplands.store/">
-    <img src="https://backend.shoplands.store/src/Storage/public/app/logo-1.png" alt="Logo" width="200" height="80" style="object-fit: cover;">
+    <img src="https://backend.shoplands.store/src/Storage/public/app/logo-1.png" alt="Logo" width="200" style="object-fit: cover;">
   </a>
 
 <h3 align="center" id="san-thuong-mai-dien-tu-shoplands">Sàn thương mại điện tử Shoplands</h3>
@@ -54,7 +54,7 @@
 
 <h2 id="ve-du-an">I. Về dự án</h2>
 
-`Shoplands` là đồ án tốt nghiệp xây dựng hệ thống sàn thương mại điện tử đa người dùng, cho phép người bán đăng sản phẩm, quản lý đơn hàng và tương tác với khách hàng trên một giao diện hiện đại, thân thiện.
+`Shoplands` là dự án xây dựng hệ thống sàn thương mại điện tử đa người dùng, cho phép người bán đăng sản phẩm, quản lý đơn hàng và tương tác với khách hàng trên một giao diện hiện đại, thân thiện.
 
 Dự án được phát triển với mục tiêu mô phỏng quy trình kinh doanh trực tuyến thực tế, hỗ trợ các chức năng như tìm kiếm sản phẩm, giỏ hàng, thanh toán, đánh giá và quản lý tài khoản. `Shoplands` hướng đến việc tạo ra một môi trường mua sắm số tiện lợi, an toàn và dễ mở rộng trong tương lai.
 
@@ -64,8 +64,8 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 <h3 id="thanh-vien">1. Thành viên</h3>
 
-- `Lê Thanh Bá` - Sinh viên ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
-- `Phạm Ngọc Tuấn` - Sinh viên ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
+- `Lê Thanh Bá` - Sinh năm 4 (2021-2025) ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
+- `Phạm Ngọc Tuấn` - Sinh năm 4 (2021-2025) ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
@@ -85,7 +85,9 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 > ℹ️ **Ghi chú 1:** Mỗi tài khoản chỉ có thể đăng nhập trên 1 thiết bị, nên khi đăng nhập trên thiết bị khác thì bên đây sẽ đăng xuất.
 
-> ℹ️ **Ghi chú 2:** Do trang web sử dụng nền tảng Twilio miễn phí nên không thể gửi tin nhắn cho nhiều số điện thoại nên người dùng cần truy cập Link để xem tin nhắn.
+> ℹ️ **Ghi chú 2:** Do trang web sử dụng nền tảng Twilio miễn phí nên không thể gửi tin nhắn cho nhiều số điện thoại nên người dùng cần truy cập vào <a href="https://shoplands.store/view/message">đây</a> để xem tin nhắn.
+
+> ℹ️ **Ghi chú 3:** Sau khi đặt hàng, vào <a href="https://giaohangnhanh.shoplands.store/update-status">đây</a> để điều chỉnh trạng thái đơn hàng.
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
@@ -99,10 +101,12 @@ Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shop
 
 Một số tài khoản người mua:
 
-| Tên người mua | Số điện thoại | Mật khẩu  |
-| ------------- | ------------- | --------- |
-| Dữ liệu 1     | Dữ liệu 2     | Dữ liệu 3 |
-| Dữ liệu 4     | Dữ liệu 5     | Dữ liệu 6 |
+| ------ Tên người mua ------ | ------ Số điện thoại ------ | ------ Mật khẩu ------ |
+| :-------------------------: | :-------------------------: | :--------------------: |
+|         Ngô Thị Hai         |         0811138364          |       763gdu3ew5       |
+|         Lê Văn Tâm          |         0887373235          |       koiwer9823       |
+|        Phạm Thị Ngọc        |         0866445533          |      12sf234sdf3       |
+|       Hoàng Văn Bình        |         0839444478          |       09jif8jr43       |
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
@@ -116,10 +120,12 @@ Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shop
 
 Một số tài khoản người bán:
 
-| Tên người bán | Số điện thoại | Mật khẩu  |
-| ------------- | ------------- | --------- |
-| Dữ liệu 1     | Dữ liệu 2     | Dữ liệu 3 |
-| Dữ liệu 4     | Dữ liệu 5     | Dữ liệu 6 |
+| ------ Tên người bán ------ | ------ Số điện thoại ------ | ------ Mật khẩu ------ |
+| :-------------------------: | :-------------------------: | :--------------------: |
+|     Phụ Kiện Sành Điệu      |         0883468773          |       fet3sd45w        |
+|        Công Nghệ Số         |         0824666345          |      sdfh356edrt       |
+|       Nhà Cửa Online        |         0822646477          |      s723fkrsdfa       |
+|      Thể Thao và Sách       |         0829088908          |       24dfuyu63u       |
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
@@ -129,13 +135,13 @@ Một số tài khoản người bán:
 
 > ℹ️ **Ghi chú:** Tài khoản quản trị viên chỉ có 1 nên không thể đăng ký.
 
-Hoặc đăng nhập tại: <a href="https://shoplands.store/login">Shoplands đăng nhập</a>
+Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shoplands.store/login</a>
 
 Tài khoản quản trị viên:
 
-| Tên quản trị viên | Số điện thoại | Mật khẩu  |
-| ----------------- | ------------- | --------- |
-| Dữ liệu 1         | Dữ liệu 2     | Dữ liệu 3 |
+| ------ Số điện thoại ------ | ------ Mật khẩu ------ |
+| :-------------------------: | :--------------------: |
+|         0833333333          |          123           |
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
@@ -149,6 +155,8 @@ Tài khoản quản trị viên:
 - `DATABASE`: sử dụng Laravel lưu cấu trúc và tạo dữ liệu cho database
 - `APIGHN`: ban đầu sử dụng api của GiaoHangNhanh cho việc giao hàng nhưng api đó thường xuyên lỗi nên phải tạo thư mục này mô phỏng lại api của GiaoHangNhanh
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
+
 <h3 id="phuong-phap-bao-mat">2. Phương pháp bảo mật</h3>
 
 <h4 id="ma-hoa-du-lieu-nhay-cam">a. Mã hóa dữ liệu nhạy cảm</h4>
@@ -157,72 +165,45 @@ Tài khoản quản trị viên:
 
 - Mã hóa 2 chiều: Dùng cho các dữ liệu có thể cần phải giải mã để sử dụng sau này như số điện thoại, thông tin thẻ ngân hàng. Dự án sử dụng thật toán AES-256-CBC kết hợp khóa bí mật để bảo vệ các dữ liệu này.
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
+
 <h4 id="xac-thuc-nguoi-dung">b. Xác thực người dùng</h4>
 
-- Khi đăng nhập, backend sẽ dùng JWT trả về access-token và refresh-token, sau đó frontend lưu vào redux. Với mỗi yêu cầu gửi lên backend sẽ phải kèm theo access-token trong header để xác thực người dùng và vai trò của họ qua middleware. 
+- Khi đăng nhập, backend sẽ dùng JWT trả về access-token và refresh-token, sau đó frontend lưu vào redux. Với mỗi yêu cầu gửi lên backend sẽ phải kèm theo access-token trong header để xác thực người dùng và vai trò của họ qua middleware.
 
 - Access-token có thời gian ngắn nên khi hết thời gian, frontend sẽ phải gửi refresh-token để lấy lại access-token và refresh token mới và lưu lại vào redux.
+
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
 <h4 id="xac-thuc-sms">c. Xác thực SMS</h4>
 
 - Để chống tấn công brute-force khi đăng nhập, đăng ký, người dùng phải xác thực thông qua mã OTP gửi về điện thoại. Hệ thống cũng lưu REMOTE_ADDR và HTTP_USER_AGENT của trình duyệt vừa mới đăng nhập và khi đăng nhập lại 1 trình duyệt khác cũng sẽ yêu cầu nhập mã OTP.
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
+
 <h4 id="chong-tan-cong-csrf">d. Chống tấn công CSRF</h4>
 
 <!-- - Hệ thống chống tấn công CSRF bằng cách sử dụng CSRF Tokens trong tất cả các yêu cầu gửi từ phía -->
+
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
 <h4 id="ghi-du-lieu">e. Ghi dữ liệu</h4>
 
 - Hệ thống ghi lại một số dữ liệu như các lần đăng nhập của người dùng gồm địa chỉ IP, thời gian để nhanh chóng phát hiện các hành vi đáng ngờ.
 
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
+
 <h4 id="cau-hinh-cors">f. Cấu hình CORS</h4>
 
 - Hệ thống backend được cấu hình CORS chỉ cho phép duy nhất địa chỉ của frontend được phép truy cập api. Việc này hạn chế các mối đe dọa từ các tấn công cross-origin.
+
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
 <h4 id="cau-hinh-cors">g. Chống SQL Injection</h4>
 
 - Để bảo vệ hệ thống khỏi SQL Injection, hệ thống sử dụng PDO (PHP Data Objects). PDO cung cấp một cách an toàn và chuẩn mực để tương tác với cơ sở dữ liệu, thông qua các câu truy vấn chuẩn bị (prepared statements). Điều này giúp ngăn chặn SQL Injection vì tất cả các tham số truyền vào câu truy vấn được xử lý như dữ liệu, chứ không phải là một phần của câu truy vấn SQL.
 
-
-
-
-.
-.
-.
-.
-.
-.
-.
-..
-.
-.
-.
-.
-.
-.
-..
-.
-.
-.
-.
-.
-.
-..
-.
-.
-.
-.
-.
-.
-.
-
-
-
-
-
-
-
-
+<p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

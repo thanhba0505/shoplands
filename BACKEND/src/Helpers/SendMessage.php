@@ -58,9 +58,7 @@ class SendMessage {
           'message' => $messageBody
         ], "Số điện thoại: " . $phoneNumber);
 
-        return [
-          'message' => $messageBody
-        ];
+        return true;
       }
     } catch (Exception $e) {
       // Nếu có lỗi, trả về false
