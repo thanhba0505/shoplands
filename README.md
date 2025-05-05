@@ -28,28 +28,31 @@
     <li>
       <a href="#ve-du-an">Về dự án</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#thanh-vien">Thành viên</a></li>
+        <li><a href="#cong-nghe-su-dung">Công nghệ sử dụng</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#huong-dan-su-dung">Hướng dẫn sử dụng</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#doi-voi-nguoi-mua">1. Đối với người mua</a></li>
+        <li><a href="#doi-voi-nguoi-ban">2. Đối với người bán</a></li>
+        <li><a href="#doi-voi-quan-tri-vien">3. Đối với quản trị viên</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li>
+      <a href="#mo-ta-code-du-an">Mô tả code dự án</a>
+      <ul>
+        <li><a href="#cau-truc-thu-muc">Cấu trúc thư mục</a></li>
+        <li><a href="#phuong-phap-bao-mat">Phương pháp bảo mật</a></li>
+      </ul>
+    </li>
   </ol>
 </details>
 
-<!-- ABOUT THE PROJECT -->
+<!-- VỀ DỰ ÁN -->
 
-## I. Về dự án
+<h2 id="ve-du-an">I. Về dự án</h2>
 
 `Shoplands` là đồ án tốt nghiệp xây dựng hệ thống sàn thương mại điện tử đa người dùng, cho phép người bán đăng sản phẩm, quản lý đơn hàng và tương tác với khách hàng trên một giao diện hiện đại, thân thiện.
 
@@ -57,14 +60,16 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
-### 1. Thành viên
+<a id="thanh-vien"></a>
+
+<h3 id="thanh-vien">1. Thành viên</h3>
 
 - `Lê Thanh Bá` - Sinh viên ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
 - `Phạm Ngọc Tuấn` - Sinh viên ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
-### 2. Công nghệ sử dụng
+<h3 id="cong-nghe-su-dung">2. Công nghệ sử dụng</h3>
 
 - [![React][React.js]][React-url]
 - [![Laravel][Laravel.com]][Laravel-url]
@@ -74,7 +79,7 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 <!-- GETTING STARTED -->
 
-## II. Hướng dẫn sử dụng
+<h2 id="huong-dan-su-dung">II. Hướng dẫn sử dụng</h2>
 
 > ⚠️ **Quan trọng:** Nên đọc trước khi sử dụng trang web.
 
@@ -86,7 +91,7 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 <!-- Đối với người mua -->
 
-### 1. Đối với người mua
+<h3 id="doi-voi-nguoi-mua">1. Đối với người mua</h3>
 
 Đăng ký tài khoản tại: <a href="https://shoplands.store/register">https://shoplands.store/register</a>
 
@@ -103,7 +108,7 @@ Một số tài khoản người mua:
 
 <!-- Đối với người bán -->
 
-### 2. Đối với người bán
+<h3 id="doi-voi-nguoi-ban">2. Đối với người bán</h3>
 
 Đăng ký tài khoản tại: <a href="https://shoplands.store/register-seller">https://shoplands.store/register-seller</a>
 
@@ -120,7 +125,7 @@ Một số tài khoản người bán:
 
 <!-- Đối với quản trị viên -->
 
-### 3. Đối với quản trị viên
+<h3 id="doi-voi-quan-tri-vien">3. Đối với quản trị viên</h3>
 
 > ℹ️ **Ghi chú:** Tài khoản quản trị viên chỉ có 1 nên không thể đăng ký.
 
@@ -134,19 +139,17 @@ Tài khoản quản trị viên:
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
-## III. Mô tả code dự án
+<h2 id="mo-ta-code-du-an">III. Mô tả code dự án</h2>
 
-### 1. Cấu trúc thư mục
+<h3 id="cau-truc-thu-muc">1. Cấu trúc thư mục</h3>
 
-* `$document`: chứa tài liệu của dự án
-* `BACKEND`: sử dụng PHP thuần xây dựng api cho trang web
-* `FRONTEND`: sử dụng React kết hợp Material UI xây dựng giao diện
-* `DATABASE`: sử dụng Laravel lưu cấu trúc và tạo dữ liệu cho database
-* `APIGHN`: ban đầu sử dụng api của GiaoHangNhanh cho việc giao hàng nhưng api đó thường xuyên lỗi nên phải tạo thư mục này mô phỏng lại api của GiaoHangNhanh
+- `$document`: chứa tài liệu của dự án
+- `BACKEND`: sử dụng PHP thuần xây dựng api cho trang web
+- `FRONTEND`: sử dụng React kết hợp Material UI xây dựng giao diện
+- `DATABASE`: sử dụng Laravel lưu cấu trúc và tạo dữ liệu cho database
+- `APIGHN`: ban đầu sử dụng api của GiaoHangNhanh cho việc giao hàng nhưng api đó thường xuyên lỗi nên phải tạo thư mục này mô phỏng lại api của GiaoHangNhanh
 
-### 2. Phương pháp bảo mật
-
-
+<h3 id="phuong-phap-bao-mat">2. Phương pháp bảo mật</h3>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
