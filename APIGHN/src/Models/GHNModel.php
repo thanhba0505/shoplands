@@ -145,7 +145,7 @@ class GHNModel {
 
     $sql = "
       SELECT 
-         g.id AS id,
+         g.id AS order_id,
          g.from_name AS from_name,
          g.from_phone AS from_phone,
          g.from_address AS from_address,
@@ -161,10 +161,11 @@ class GHNModel {
          g.order_code AS order_code,
          g.from_estimate_date AS from_estimate_date,
          g.to_estimate_date AS to_estimate_date,
-         g.created_at AS created_at,
+         g.created_at AS order_created_at,
          s.id AS status_id,
          s.status AS status,
-         s.message AS message 
+         s.message AS message,
+         s.created_at AS status_created_at
       FROM 
         giaohangnhanh g
         JOIN giaohangnhanh_status s ON g.order_code = s.order_code

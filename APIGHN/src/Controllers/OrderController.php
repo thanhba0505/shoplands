@@ -464,7 +464,7 @@ class OrderController {
             </form>';
 
         echo '<div style="text-align: center; margin-top: 30px;">
-                <img src="' . BASE_URL . '/src/Storage/status-ghn.jpeg" alt="status">
+        ready to pick ----> picking ----> picked ----> storing ----> delivering ----> delivered
             </div>';
 
         exit();
@@ -476,44 +476,50 @@ class OrderController {
         return [
             "ready_to_pick" => "Mới tạo đơn hàng",
             "picking" => "Nhân viên đang lấy hàng",
-            "cancel" => "Hủy đơn hàng",
+            // "cancel" => "Hủy đơn hàng",
             "picked" => "Nhân viên đã lấy hàng",
             "storing" => " Hàng đang nằm ở kho",
-            "transporting" => "Đang luân chuyển hàng",
+            // "transporting" => "Đang luân chuyển hàng",
             "delivering" => "Nhân viên đang giao cho người nhận",
             "delivered" => "Nhân viên đã giao hàng thành công",
-            "delivery_fail" => " Nhân viên giao hàng thất bại",
-            "waiting_to_return" => "Đang đợi trả hàng về cho người gửi",
-            "return" => "Trả hàng",
-            "return_transporting" => "Đang luân chuyển hàng trả",
-            "returning" => "Nhân viên đang đi trả hàng",
-            "return_fail" => "Nhân viên trả hàng thất bại",
-            "returned" => "Nhân viên trả hàng thành công",
-            "damage" => "Hàng bị hư hỏng",
-            "lost" => "Hàng bị mất",
+            // "delivery_fail" => " Nhân viên giao hàng thất bại",
+            // "waiting_to_return" => "Đang đợi trả hàng về cho người gửi",
+            // "return" => "Trả hàng",
+            // "return_transporting" => "Đang luân chuyển hàng trả",
+            // "returning" => "Nhân viên đang đi trả hàng",
+            // "return_fail" => "Nhân viên trả hàng thất bại",
+            // "returned" => "Nhân viên trả hàng thành công",
+            // "damage" => "Hàng bị hư hỏng",
+            // "lost" => "Hàng bị mất",
         ];
     }
 
     // Lấy trạng thái hợp lý
     private function getValidTransitions($currentStatus) {
         $transitions = [
-            "ready_to_pick" => ["picking", "cancel", "storing"],
-            "picking" => ["picked", "cancel", "ready_to_pick"],
-            "cancel" => [],
-            "picked" => ["delivering", "return", "storing", "damage", "lost"],
-            "storing" => ["delivering", "delivered", "return", "transporting", "damage", "lost"],
-            "transporting" => ["storing", "delivered", "delivering", "damage", "lost"],
-            "delivering" => ["delivered", "delivery_fail"],
+            // "ready_to_pick" => ["picking", "cancel", "storing"],
+            // "picking" => ["picked", "cancel", "ready_to_pick"],
+            // "cancel" => [],
+            // "picked" => ["delivering", "return", "storing", "damage", "lost"],
+            // "storing" => ["delivering", "delivered", "return", "transporting", "damage", "lost"],
+            // "transporting" => ["storing", "delivered", "delivering", "damage", "lost"],
+            // "delivering" => ["delivered", "delivery_fail"],
+            // "delivered" => [],
+            // "delivery_fail" => ["delivering", "storing", "waiting_to_return", "damage", "lost"],
+            // "waiting_to_return" => ["storing", "return"],
+            // "return" => ["return_transporting", "returning", "returned", "damage", "lost"],
+            // "return_transporting" => ["returning", "return", "damage", "lost"],
+            // "returning" => ["returned", "return_fail"],
+            // "return_fail" => ["returning", "return", "damage", "lost"],
+            // "returned" => [],
+            // "damage" => [],
+            // "lost" => [],
+            "ready_to_pick" => ["picking"],
+            "picking" => ["picked"],
+            "picked" => ["delivering"],
+            "storing" => ["delivering"],
+            "delivering" => ["delivered"],
             "delivered" => [],
-            "delivery_fail" => ["delivering", "storing", "waiting_to_return", "damage", "lost"],
-            "waiting_to_return" => ["storing", "return"],
-            "return" => ["return_transporting", "returning", "returned", "damage", "lost"],
-            "return_transporting" => ["returning", "return", "damage", "lost"],
-            "returning" => ["returned", "return_fail"],
-            "return_fail" => ["returning", "return", "damage", "lost"],
-            "returned" => [],
-            "damage" => [],
-            "lost" => [],
         ];
 
         return $transitions[$currentStatus] ?? [];
@@ -539,7 +545,7 @@ class OrderController {
                 // Cấu hình dữ liệu cần lấy từ đơn hàng
                 $config = [
                     'keep_columns' => [
-                        "id",
+                        "order_id",
                         "from_name",
                         "from_phone",
                         "from_address",
@@ -555,13 +561,14 @@ class OrderController {
                         "order_code",
                         "from_estimate_date",
                         "to_estimate_date",
-                        "created_at",
+                        "order_created_at",
                     ],
                     'group_columns' => [
                         'group_status' => [
                             "status_id",
                             "status",
                             "message",
+                            "status_created_at",
                         ]
                     ]
                 ];
@@ -580,11 +587,6 @@ class OrderController {
     }
 
     public function viewDetail($order_code = null, $message = null, $order = null) {
-        if ($message) {
-            echo "<div class='alert alert-danger'>$message</div>";
-            return;
-        }
-    
         if (!$order) {
             // Hiển thị form tìm kiếm nếu không có order_code
             echo '
@@ -668,7 +670,6 @@ class OrderController {
                 <div class="container">
                     <div class="header">
                         <div class="logo">
-                            <img src="https://www.giaohangnhanh.vn/wp-content/uploads/2019/04/cropped-favicon-180x180.png" alt="GiaoHangNhanh Logo">
                             <div>
                                 <h1 style="margin: 0; color: #f26522; font-size: 24px;">GiaoHangNhanh</h1>
                                 <span class="logo-text">Giao Siêu Nhanh, Giá Siêu Tốt</span>
@@ -680,25 +681,32 @@ class OrderController {
                         <h2 class="search-title">Tra cứu đơn hàng</h2>
                         <form method="get" action="">
                             <div class="search-bar">
-                                <input type="text" name="q" class="search-input" placeholder="Nhập mã đơn hàng" required>
+                                <input type="text" name="q" class="search-input" value="' . $order_code . '"     placeholder="Nhập mã đơn hàng" required>
                                 <button type="submit" class="search-button">TÌM KIẾM</button>
                             </div>
                         </form>
+                        <p style="color: red; font-weight: bold; margin-top: 20px;">' . $message . '</p>
                     </div>
                 </div>
             </body>
             </html>';
-            return;
+            exit();
         }
-    
+
         // Format ngày tháng
-        $pickup_date = date('d/m/Y', strtotime($order['from_estimate_date']));
-        $delivery_date = date('d/m/Y', strtotime($order['to_estimate_date']));
-        $delivery_date_range = $delivery_date . ' - ' . date('d/m/Y', strtotime($order['to_estimate_date'] . ' +1 day'));
-        $created_date = date('l, d/m/Y', strtotime($order['created_at']));
-        $created_time = date('H:i', strtotime($order['created_at']));
-        $status = $order['group_status']['status'] ?? 'Chờ lấy hàng';
-    
+        $delivery_date_range = date('d/m/Y', strtotime($order['from_estimate_date'])) . ' - ' . date('d/m/Y', strtotime($order['to_estimate_date']));
+        // $created_date = date('l, d/m/Y', strtotime($order['created_at']));
+        // $created_time = date('H:i', strtotime($order['created_at']));
+        // $status = $order['group_status']['status'] ?? 'Chờ lấy hàng';
+
+        $group_status = $order['group_status'];
+
+        usort($group_status, function ($a, $b) {
+            return strtotime($a['status_created_at']) <=> strtotime($b['status_created_at']);
+        });
+
+        $last_status = end($group_status);
+
         echo '
         <!DOCTYPE html>
         <html lang="vi">
@@ -852,15 +860,14 @@ class OrderController {
         </head>
         <body>
             <div class="container">
-                <div class="header">
-                    <div class="logo">
-                         <div>
-                            <h1 style="margin: 0; color: #f26522; font-size: 24px;">GiaoHangNhanh</h1>
-                            <span class="logo-text">Giao Siêu Nhanh, Giá Siêu Tốt</span>
+                <div class="header"><div class="logo">
+                            <div>
+                                <h1 style="margin: 0; color: #f26522; font-size: 24px;">GiaoHangNhanh</h1>
+                                <span class="logo-text">Giao Siêu Nhanh, Giá Siêu Tốt</span>
+                            </div>
                         </div>
-                    </div>
                     <div class="search-bar">
-                        <input type="text" class="search-input" placeholder="Nhập mã đơn hàng" value="'.htmlspecialchars($order_code).'">
+                        <input type="text" class="search-input" placeholder="Nhập mã đơn hàng" value="' . htmlspecialchars($order_code) . '">
                         <button class="search-button" onclick="window.location.href=\'?q=\'+document.querySelector(\'.search-input\').value">TÌM KIẾM</button>
                     </div>
                 </div>
@@ -871,20 +878,17 @@ class OrderController {
                         <div class="order-info-section">
                             <div class="info-row">
                                 <div class="info-label">Mã đơn hàng:</div>
-                                <div class="info-value">'.htmlspecialchars($order['order_code']).'</div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">Ngày lấy dự kiến:</div>
-                                <div class="info-value">'.$pickup_date.'</div>
+                                <div class="info-value">' . htmlspecialchars($order['order_code']) . '</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Ngày giao dự kiến:</div>
-                                <div class="info-value">'.$delivery_date_range.'</div>
+                                <div class="info-value">' . $delivery_date_range . '</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Trạng thái hiện tại:</div>
                                 <div class="info-value">
-                                    <span class="status-label">'.htmlspecialchars($status).'</span>
+                                    <span class="status-label">' .
+            htmlspecialchars(Format::getOrderStatusInVie($last_status['status'])) . '</span>
                                 </div>
                             </div>
                         </div>
@@ -897,30 +901,30 @@ class OrderController {
                             <div class="section-title">NGƯỜI GỬI</div>
                             <div class="info-row">
                                 <div class="info-label">Họ và tên:</div>
-                                <div class="info-value">'.htmlspecialchars($order['from_name']).'</div>
+                                <div class="info-value">' . htmlspecialchars($order['from_name']) . '</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Điện thoại:</div>
-                                <div class="info-value">'.htmlspecialchars($order['from_phone']).'</div>
+                                <div class="info-value">' . htmlspecialchars($order['from_phone']) . '</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Địa chỉ:</div>
-                                <div class="info-value">'.htmlspecialchars($order['from_address']).', '.htmlspecialchars($order['from_ward_name']).', '.htmlspecialchars($order['from_district_name']).', '.htmlspecialchars($order['from_province_name']).'</div>
+                                <div class="info-value">' . htmlspecialchars($order['from_address']) . ', ' . htmlspecialchars($order['from_ward_name']) . ', ' . htmlspecialchars($order['from_district_name']) . ', ' . htmlspecialchars($order['from_province_name']) . '</div>
                             </div>
                         </div>
                         <div class="order-info-section">
                             <div class="section-title">NGƯỜI NHẬN</div>
                             <div class="info-row">
                                 <div class="info-label">Họ và tên:</div>
-                                <div class="info-value">'.htmlspecialchars($order['to_name']).'</div>
+                                <div class="info-value">' . htmlspecialchars($order['to_name']) . '</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Điện thoại:</div>
-                                <div class="info-value">'.htmlspecialchars($order['to_phone']).'</div>
+                                <div class="info-value">' . htmlspecialchars($order['to_phone']) . '</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Địa chỉ:</div>
-                                <div class="info-value">'.htmlspecialchars($order['to_address']).', '.htmlspecialchars($order['to_ward_name']).', '.htmlspecialchars($order['to_district_name']).', '.htmlspecialchars($order['to_province_name']).'</div>
+                                <div class="info-value">' . htmlspecialchars($order['to_address']) . ', ' . htmlspecialchars($order['to_ward_name']) . ', ' . htmlspecialchars($order['to_district_name']) . ', ' . htmlspecialchars($order['to_province_name']) . '</div>
                             </div>
                         </div>
                     </div>
@@ -929,15 +933,24 @@ class OrderController {
                 <div class="history-section">
                     <div class="history-title">Lịch sử đơn hàng</div>
                     <div class="history-header">
+                    <div class="history-header-item">Chi tiết</div>
                         <div class="history-header-item">Ngày</div>
-                        <div class="history-header-item">Chi tiết</div>
                         <div class="history-header-item">Thời gian</div>
                     </div>
+                        ';
+
+        foreach ($order['group_status'] as $status) {
+            $history_row = '
                     <div class="history-row">
-                        <div class="history-item">'.$created_date.'</div>
-                        <div class="history-item">'.htmlspecialchars($status).'</div>
-                        <div class="history-item">'.$created_time.'</div>
-                    </div>
+                                <div class="history-item">' . htmlspecialchars($status['message']) . '</div>
+                                <div class="history-item">' . htmlspecialchars(date('d/m/Y', strtotime($status['status_created_at']))) . '</div>
+                                <div class="history-item">' . htmlspecialchars(date('H:i', strtotime($status['status_created_at']))) . '</div>
+                          
+                    </div>  ';
+            echo $history_row;
+        }
+
+        echo '
                 </div>
             </div>
     

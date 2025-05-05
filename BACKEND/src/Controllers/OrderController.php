@@ -95,6 +95,9 @@ class OrderController {
                 Response::json(['message' => 'Không tìm thấy đơn hàng'], 400);
             }
 
+
+            $order['tracking_url'] = $_ENV['GHN_TRACKING_URL'] . '/order-detail?q=' . $order['ghn_order_code'];
+
             Response::json($order, 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userFind: " . $th->getMessage());
