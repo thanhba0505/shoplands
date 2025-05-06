@@ -516,7 +516,7 @@ class OrderController {
             // "lost" => [],
             "ready_to_pick" => ["picking"],
             "picking" => ["picked"],
-            "picked" => ["delivering"],
+            "picked" => ["storing"],
             "storing" => ["delivering"],
             "delivering" => ["delivered"],
             "delivered" => [],

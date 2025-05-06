@@ -1,3 +1,4 @@
 BACKEND-old/
 .env.backend
 .env.frontend
+.env.ghn

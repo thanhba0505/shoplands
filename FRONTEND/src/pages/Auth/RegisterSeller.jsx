@@ -199,6 +199,8 @@ const RegisterSeller = () => {
   const [open, setOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
 
+  const [banks, setBanks] = useState([]);
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -314,6 +316,27 @@ const RegisterSeller = () => {
     }
   };
 
+  const fetchBanks = async () => {
+    try {
+      const response = await axiosDefault.get(Api.banks());
+
+      const options = response.data.map((bank) => ({
+        value: bank.id,
+        label: bank.shortName,
+      }));
+
+      setBanks(options);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchBanks();
+  }, []);
+
+  console.log(bankName);
+
   return (
     <Container
       maxWidth="xl"
@@ -427,7 +450,7 @@ const RegisterSeller = () => {
           </Grid2>
 
           <Grid2 size={1}>
-            <TextField
+            {/* <TextField
               autoComplete="off"
               fullWidth
               label="Tên ngân hàng"
@@ -439,7 +462,23 @@ const RegisterSeller = () => {
               value={bankName}
               onChange={(e) => setBankName(e.target.value)}
               disabled={loading || open}
-            />
+            /> */}
+
+            <Box sx={{ mt: 1, width: "100%", height: "40px", mb: 1 }}>
+              <Autocomplete
+                disablePortal
+                options={banks}
+                fullWidth
+                renderInput={(params) => (
+                  <TextField {...params} size="small" label="Ngân hàng" />
+                )}
+                onChange={(e, value) => {
+                  setBankName(value?.label || "");
+                }}
+                disabled={loading || open}
+              />
+            </Box>
+
             <TextField
               autoComplete="off"
               fullWidth
