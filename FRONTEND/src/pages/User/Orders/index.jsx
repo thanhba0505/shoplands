@@ -28,11 +28,12 @@ import { TabContext, TabList } from "@mui/lab";
 import NoContent from "~/components/NoContent";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import ConfirmModal from "~/components/ConfirmModal";
 
 const AcctionButton = ({ handleOnClick, title, ...props }) => {
   return (
     <ButtonLoading
-      variant="outlined"
+      variant="contained"
       sx={{
         px: 6,
         marginLeft: "auto",
@@ -48,6 +49,8 @@ const AcctionButton = ({ handleOnClick, title, ...props }) => {
 const HandleRender = ({ status, orderId, url, createdAt }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
+
+  const [open, setOpen] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -108,19 +111,34 @@ const HandleRender = ({ status, orderId, url, createdAt }) => {
   switch (status) {
     case "unpaid":
       return (
-        <AcctionButton
-          loading={paymentLoading}
-          onClick={handlePaid}
-          title="Thanh toán"
-        />
+        <>
+          <AcctionButton
+            loading={paymentLoading}
+            onClick={handlePaid}
+            title="Thanh toán"
+          />
+        </>
       );
     case "delivered":
       return (
         <>
           <AcctionButton
             loading={loadingComplete}
-            onClick={handleComplete}
+            onClick={() => setOpen(true)}
             title="Đã nhận hàng"
+          />
+
+          <ConfirmModal
+            modelTitle="Đã nhận hàng"
+            subtitle="Bạn xác nhận đã nhận hàng và không thể quay lại!"
+            acceptTitle="Xác nhận"
+            open={open}
+            setOpen={setOpen}
+            loading={loadingComplete}
+            handleAccept={async () => {
+              await handleComplete();
+              setOpen(false);
+            }}
           />
         </>
       );
@@ -139,7 +157,7 @@ const OrdersTable = ({ orders, setOrders }) => {
         orders.map((order) => (
           <TableContainer
             key={order.order_id}
-            component={Paper}
+            // component={Paper}
             sx={{ marginBottom: "20px" }}
           >
             <Table>
@@ -150,8 +168,8 @@ const OrdersTable = ({ orders, setOrders }) => {
                     {Format.formatDateTime(order.created_at)}
                   </TableCell>
                   <TableCell align="center">
-                    Khách hàng <br />
-                    {order.user.name}
+                    Cửa hàng: <br />
+                    {order.seller.store_name}
                   </TableCell>
                   <TableCell align="center">
                     Gửi từ: <br />
@@ -162,8 +180,8 @@ const OrdersTable = ({ orders, setOrders }) => {
                     {order.to_address.to_province_name}
                   </TableCell>
                   <TableCell align="center">
-                    Phương thức giao hàng: <br />
-                    Giao hàng nhanh
+                    Mã giao hàng: <br />
+                    {order.ghn_order_code}
                   </TableCell>
                   <TableCell align="center">
                     {order.current_status_name}
@@ -182,7 +200,12 @@ const OrdersTable = ({ orders, setOrders }) => {
                           display: "flex",
                           alignItems: "center",
                           gap: "20px",
+                          paddingLeft: "20px",
+                          cursor: "pointer",
                         }}
+                        onClick={() =>
+                          navigate(Path.productDetail(item.product_id))
+                        }
                       >
                         <img
                           src={Path.publicProduct(item.image)}
@@ -220,15 +243,14 @@ const OrdersTable = ({ orders, setOrders }) => {
                   <TableCell align="center" sx={{ fontWeight: "bold" }}>
                     Phí vận chuyển
                   </TableCell>
-                  <TableCell
-                    colSpan={2}
-                    align="center"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    Thành tiền đơn hàng
-                  </TableCell>
                   <TableCell align="center" sx={{ fontWeight: "bold" }}>
                     Trạng thái thanh toán
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Trạng thái đơn hàng
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    Thành tiền đơn hàng
                   </TableCell>
                 </TableRow>
 
@@ -242,7 +264,15 @@ const OrdersTable = ({ orders, setOrders }) => {
                   <TableCell align="center">
                     {Format.formatCurrency(order.shipping_fee)}
                   </TableCell>
-                  <TableCell colSpan={2} align="center">
+                  <TableCell align="center">
+                    {order.paid ? "Đã thanh toán" : "Chưa thanh toán"}
+                  </TableCell>
+                  <TableCell align="center">
+                    {order.current_status === "completed"
+                      ? "Đã hoàn thành"
+                      : "Chưa hoàn thành"}
+                  </TableCell>
+                  <TableCell align="center">
                     <Typography
                       variant="h6"
                       sx={{ fontWeight: "bold" }}
@@ -251,9 +281,6 @@ const OrdersTable = ({ orders, setOrders }) => {
                     >
                       {Format.formatCurrency(order.final_price)}
                     </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    {order.paid ? "Đã thanh toán" : "Chưa thanh toán"}
                   </TableCell>
                 </TableRow>
               </TableBody>
