@@ -30,10 +30,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import ConfirmModal from "~/components/ConfirmModal";
 
-const AcctionButton = ({ handleOnClick, title, ...props }) => {
+const AcctionButton = ({
+  handleOnClick,
+  title,
+  variant = "contained",
+  color = "primary",
+
+  ...props
+}) => {
   return (
     <ButtonLoading
-      variant="contained"
+      variant={variant}
+      color={color}
       sx={{
         px: 6,
         marginLeft: "auto",
@@ -46,11 +54,14 @@ const AcctionButton = ({ handleOnClick, title, ...props }) => {
   );
 };
 
-const HandleRender = ({ status, orderId, url, createdAt }) => {
+const HandleRender = ({ status, orderId, url, createdAt, setOrders }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   const [open, setOpen] = useState(false);
+
+  const [openDelete, setOpenDelete] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -108,16 +119,59 @@ const HandleRender = ({ status, orderId, url, createdAt }) => {
     }
   };
 
+  const handleDelete = async () => {
+    setLoadingDelete(true);
+    try {
+      const response = await axiosWithAuth.put(
+        Api.orders("delete/" + orderId),
+        {
+          navigate,
+        }
+      );
+
+      setOrders((prevOrders) =>
+        prevOrders.filter((order) => order.order_id !== orderId)
+      );
+
+      enqueueSnackbar(response.data.message, { variant: "success" });
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoadingDelete(false);
+    }
+  };
+
   switch (status) {
     case "unpaid":
       return (
-        <>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <AcctionButton
+            variant="outlined"
+            color="error"
+            loading={loadingDelete}
+            onClick={() => setOpenDelete(true)}
+            title="Hủy"
+          />
+
           <AcctionButton
             loading={paymentLoading}
             onClick={handlePaid}
             title="Thanh toán"
           />
-        </>
+
+          <ConfirmModal
+            modelTitle="Hủy đơn hàng"
+            subtitle="Xác nhận hủy đơn hàng này!"
+            acceptTitle="Xác nhận"
+            open={openDelete}
+            setOpen={setOpenDelete}
+            loading={loadingDelete}
+            handleAccept={async () => {
+              await handleDelete();
+              setOpenDelete(false);
+            }}
+          />
+        </Box>
       );
     case "delivered":
       return (
@@ -288,7 +342,13 @@ const OrdersTable = ({ orders, setOrders }) => {
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={6}>
-                    <Box sx={{ display: "flex", gap: 2 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <ButtonLoading
                         variant="outlined"
                         sx={{
