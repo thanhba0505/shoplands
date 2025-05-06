@@ -1,5 +1,6 @@
 import { useTheme } from "@emotion/react";
 import {
+  Box,
   Container,
   Divider,
   Grid2,
@@ -130,16 +131,21 @@ const OrderDetail = () => {
                 Chi tiết đơn hàng #{order.order_id} -{" "}
                 {order.current_status_name}
               </Typography>
-              {order.tracking_url && (
-                <Typography
-                  variant="body2"
-                  textAlign={"end"}
-                  color="primary"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => window.open(order.tracking_url, "_blank")}
-                >
-                  Xem chi tiết vận chuyển
-                </Typography>
+              {order.ghn_order_code && (
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Typography variant="body2" sx={{ borderRight: "2px solid #ccc", pr: 1 }}>
+                    Mã vận chuyển: {order.ghn_order_code}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    textAlign={"end"}
+                    color="primary"
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => window.open(order.tracking_url, "_blank")}
+                  >
+                    Xem chi tiết vận chuyển
+                  </Typography>
+                </Box>
               )}
             </PaperCustom>
           </Grid2>
