@@ -64,8 +64,8 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 <h3 id="thanh-vien">1. Thành viên</h3>
 
-- `Lê Thanh Bá` - Sinh năm 4 (2021-2025) ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
-- `Phạm Ngọc Tuấn` - Sinh năm 4 (2021-2025) ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
+- `Lê Thanh Bá` - Sinh viên năm 4 (2021-2025) ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
+- `Phạm Ngọc Tuấn` - Sinh viên năm 4 (2021-2025) ngành Hệ thống thông tin Trường Đại học Công nghiệp Thành phố Hồ Chí Minh
 
 <p align="right">(<a href="#readme-top">Về đầu trang</a>)</p>
 
