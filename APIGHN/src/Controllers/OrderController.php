@@ -24,15 +24,15 @@ class OrderController {
     // Tính phí dịch vụ
     public function fee() {
         try {
-            $service_type_id = Request::json('service_type_id');
-            $from_district_id = Request::json('from_district_id');
-            $from_ward_code = Request::json('from_ward_code');
-            $to_district_id = Request::json('to_district_id');
-            $to_ward_code = Request::json('to_ward_code');
-            $length = Request::json('length');
-            $width = Request::json('width');
-            $height = Request::json('height');
-            $weight = Request::json('weight');
+            $service_type_id = Request::json('service_type_id') ?? Request::post('service_type_id');
+            $from_district_id = Request::json('from_district_id') ?? Request::post('from_district_id');
+            $from_ward_code = Request::json('from_ward_code') ?? Request::post('from_ward_code');
+            $to_district_id = Request::json('to_district_id') ?? Request::post('to_district_id');
+            $to_ward_code = Request::json('to_ward_code') ?? Request::post('to_ward_code');
+            $length = Request::json('length') ?? Request::post('length');
+            $width = Request::json('width') ?? Request::post('width');
+            $height = Request::json('height') ?? Request::post('height');
+            $weight = Request::json('weight') ?? Request::post('weight');
 
             $fee = $this->calculateFee(
                 $service_type_id,
@@ -84,7 +84,12 @@ class OrderController {
 
         // Map seed thành số từ 15000 đến 50000 (làm tròn đến hàng nghìn)
         $total = round((15000 + ($seed % 35001)) / 1000) * 1000;
-
+        Log::global([
+            $inputString,
+            $hash,
+            $seed,
+            $total
+        ]);
         return [
             "code" => 200,
             "message" => "Success",
@@ -109,11 +114,11 @@ class OrderController {
     // Tính thời gian dự kiến
     public function leadtime() {
         try {
-            $from_district_id = Request::json('from_district_id');
-            $from_ward_code = Request::json('from_ward_code');
-            $to_district_id = Request::json('to_district_id');
-            $to_ward_code = Request::json('to_ward_code');
-            $service_id = Request::json('service_id');
+            $from_district_id = Request::json('from_district_id') ?? Request::post('from_district_id');
+            $from_ward_code = Request::json('from_ward_code') ?? Request::post('from_ward_code');
+            $to_district_id = Request::json('to_district_id') ?? Request::post('to_district_id');
+            $to_ward_code = Request::json('to_ward_code') ?? Request::post('to_ward_code');
+            $service_id = Request::json('service_id') ?? Request::post('service_id');
 
             $leadtime = $this->calculateLeadtime(
                 $from_district_id,
