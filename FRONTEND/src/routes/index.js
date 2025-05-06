@@ -2,6 +2,7 @@
 import SellerLayout from "~/components/layout/SellerLayout";
 import UserLayout from "~/components/layout/UserLayout";
 import AdminLayout from "~/components/layout/AdminLayout";
+import IntroduceLayout from "~/components/layout/IntroduceLayout";
 
 // Auth
 import Login from "~/pages/Auth/Login";
@@ -51,7 +52,7 @@ const publicRoutes = [
   { path: "/", component: Home },
   { path: "/products", component: Products },
   { path: "/product-detail/:id", component: ProductDetail },
-  { path: "/introduce", component: Introduce },
+  { path: "/introduce/:page", component: Introduce, layout: IntroduceLayout },
   { path: "/contact", component: Contact },
   { path: "/shop/:sellerId", component: Seller },
 ];

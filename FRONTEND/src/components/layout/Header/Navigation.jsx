@@ -18,7 +18,7 @@ const Navigation = () => {
         Sản phẩm
       </ButtonNavigate>
       <ButtonNavigate
-        to={Path.introduce()}
+        to={Path.introduce("about")}
         sx={{ width: "120px", color: "#fff", borderColor: "#fff" }}
       >
         Giới thiệu

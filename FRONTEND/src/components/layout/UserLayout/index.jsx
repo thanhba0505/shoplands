@@ -87,7 +87,7 @@ const UserLayout = ({ children }) => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            gap: 3,
+            gap: 2,
           }}
         >
           <SidebarTab
