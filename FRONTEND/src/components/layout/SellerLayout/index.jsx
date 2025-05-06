@@ -12,6 +12,9 @@ import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import FiberSmartRecordRoundedIcon from "@mui/icons-material/FiberSmartRecordRounded";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import ViewStreamRoundedIcon from "@mui/icons-material/ViewStreamRounded";
 import SidebarTab from "../SidebarTab";
 import Path from "~/helpers/Path";
 import MenuIcon from "~/components/MenuIcon";
@@ -60,7 +63,7 @@ const NAVIGATION = [
     name: "Đã hoàn thành",
     tooltip: "Đã hoàn thành",
     path: "/seller/orders/completed",
-    icon: <LocalShippingOutlinedIcon />,
+    icon: <FactCheckOutlinedIcon />,
   },
   {
     name: "Đơn hoàn trả",
@@ -72,7 +75,7 @@ const NAVIGATION = [
     name: "Đơn hàng khác",
     tooltip: "Đơn hàng khác",
     path: "/seller/orders/other",
-    icon: <FactCheckOutlinedIcon />,
+    icon: <FiberSmartRecordRoundedIcon />,
     divider: true,
   },
   {
@@ -88,13 +91,13 @@ const NAVIGATION = [
     name: "Còn hoạt động",
     tooltip: "Còn hoạt động",
     path: "/seller/products/active",
-    icon: <BallotOutlinedIcon />,
+    icon: <ViewStreamRoundedIcon />,
   },
   {
     name: "Đã bị khóa",
     tooltip: "Đã bị khóa",
     path: "/seller/products/locked",
-    icon: <BallotOutlinedIcon />,
+    icon: <LockOutlinedIcon />,
   },
   {
     name: "Thêm sản phẩm",

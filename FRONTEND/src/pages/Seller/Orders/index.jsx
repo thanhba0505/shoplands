@@ -37,7 +37,7 @@ const OrdersTable = ({ orders }) => {
         orders.map((order) => (
           <TableContainer
             key={order.order_id}
-            component={Paper}
+            // component={Paper}
             sx={{ marginBottom: "20px" }}
           >
             <Table>
