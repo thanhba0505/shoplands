@@ -21,7 +21,7 @@ const About = () => {
     <Container maxWidth="md" sx={{ py: 4 }}>
       {/* Project Logo */}
       <Box sx={{ textAlign: "center", mb: 4 }}>
-        <Link href="https://shoplands.store/" underline="none">
+        <Link target="_blank" href="https://shoplands.store/" underline="none">
           <Box
             sx={{
               display: "inline-block",
@@ -55,7 +55,12 @@ const About = () => {
           Đồ án tốt nghiệp
         </Typography>
 
-        <Link href="https://shoplands.store/" variant="body1" color="primary">
+        <Link
+          target="_blank"
+          href="https://shoplands.store/"
+          variant="body1"
+          color="primary"
+        >
           Truy cập website
         </Link>
       </Box>
@@ -185,7 +190,12 @@ const About = () => {
             </Typography>{" "}
             Do trang web sử dụng nền tảng Twilio miễn phí nên không thể gửi tin
             nhắn cho nhiều số điện thoại nên người dùng cần truy cập vào{" "}
-            <Link href="https://backend.shoplands.store/view/message">đây</Link>{" "}
+            <Link
+              target="_blank"
+              href="https://backend.shoplands.store/view/message"
+            >
+              đây
+            </Link>{" "}
             để xem tin nhắn.
           </Typography>
           <Typography>
@@ -193,7 +203,12 @@ const About = () => {
               ℹ️ Ghi chú 3:
             </Typography>{" "}
             Khi đặt hàng, vào{" "}
-            <Link href="https://sandbox.vnpayment.vn/apis/vnpay-demo">đây</Link>{" "}
+            <Link
+              target="_blank"
+              href="https://sandbox.vnpayment.vn/apis/vnpay-demo"
+            >
+              đây
+            </Link>{" "}
             để lấy thông tin thẻ test của VNPAY.
           </Typography>
           <Typography>
@@ -201,7 +216,10 @@ const About = () => {
               ℹ️ Ghi chú 4:
             </Typography>{" "}
             Sau khi đặt hàng, vào{" "}
-            <Link href="https://giaohangnhanh.shoplands.store/update-status">
+            <Link
+              target="_blank"
+              href="https://giaohangnhanh.shoplands.store/update-status"
+            >
               đây
             </Link>{" "}
             để điều chỉnh trạng thái đơn hàng.
@@ -211,7 +229,10 @@ const About = () => {
               ℹ️ Ghi chú 5:
             </Typography>{" "}
             Để tra cứu thông tin vận chuyển của đơn hàng, vào{" "}
-            <Link href="https://giaohangnhanh.shoplands.store/order-detail">
+            <Link
+              target="_blank"
+              href="https://giaohangnhanh.shoplands.store/order-detail"
+            >
               đây
             </Link>{" "}
             và nhập mã vận chuyển.
@@ -227,13 +248,13 @@ const About = () => {
 
         <Typography>
           Đăng ký tài khoản tại:{" "}
-          <Link href="https://shoplands.store/register">
+          <Link target="_blank" href="https://shoplands.store/register">
             https://shoplands.store/register
           </Link>
         </Typography>
         <Typography>
           Hoặc đăng nhập tại:{" "}
-          <Link href="https://shoplands.store/login">
+          <Link target="_blank" href="https://shoplands.store/login">
             https://shoplands.store/login
           </Link>
         </Typography>
@@ -293,13 +314,13 @@ const About = () => {
 
         <Typography>
           Đăng ký tài khoản tại:{" "}
-          <Link href="https://shoplands.store/register-seller">
+          <Link target="_blank" href="https://shoplands.store/register-seller">
             https://shoplands.store/register-seller
           </Link>
         </Typography>
         <Typography>
           Hoặc đăng nhập tại:{" "}
-          <Link href="https://shoplands.store/login">
+          <Link target="_blank" href="https://shoplands.store/login">
             https://shoplands.store/login
           </Link>
         </Typography>
@@ -372,7 +393,7 @@ const About = () => {
 
         <Typography>
           Hoặc đăng nhập tại:{" "}
-          <Link href="https://shoplands.store/login">
+          <Link target="_blank" href="https://shoplands.store/login">
             https://shoplands.store/login
           </Link>
         </Typography>
@@ -451,7 +472,13 @@ const About = () => {
             2. Phương pháp bảo mật
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             a. Mã hóa dữ liệu nhạy cảm
           </Typography>
 
@@ -468,7 +495,13 @@ const About = () => {
             này.
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             b. Xác thực người dùng
           </Typography>
 
@@ -484,7 +517,13 @@ const About = () => {
             và lưu lại vào redux.
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             c. Xác thực SMS
           </Typography>
 
@@ -495,11 +534,23 @@ const About = () => {
             khi đăng nhập lại 1 trình duyệt khác cũng sẽ yêu cầu nhập mã OTP.
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             d. Chống tấn công CSRF
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             e. Ghi dữ liệu
           </Typography>
 
@@ -509,7 +560,13 @@ const About = () => {
             đáng ngờ.
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             f. Cấu hình CORS
           </Typography>
 
@@ -519,7 +576,13 @@ const About = () => {
             từ các tấn công cross-origin.
           </Typography>
 
-          <Typography variant="subtitle1" component="h4" fontWeight={"bold"} mt={2} gutterBottom>
+          <Typography
+            variant="subtitle1"
+            component="h4"
+            fontWeight={"bold"}
+            mt={2}
+            gutterBottom
+          >
             g. Chống SQL Injection
           </Typography>
 
