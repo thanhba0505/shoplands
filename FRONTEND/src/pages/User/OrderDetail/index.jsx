@@ -227,7 +227,7 @@ const OrderDetail = () => {
   }, [location.search, enqueueSnackbar, params.orderId, navigate]);
 
   // fetch order
-  const [order, setOrder] = useState({});
+  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchApi = useCallback(async () => {
@@ -259,265 +259,325 @@ const OrderDetail = () => {
       {loading ? (
         <>Loading...</>
       ) : (
-        <Grid2 container spacing={3}>
-          <Grid2 size={12}>
-            <PaperCustom
-              sx={{
-                px: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography variant="h6" textAlign={"start"}>
-                Chi tiết đơn hàng #{order.order_id}
-              </Typography>
-              {order.ghn_order_code && (
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                  <Typography
-                    variant="body2"
-                    sx={{ borderRight: "2px solid #ccc", pr: 1 }}
+        <>
+          {order && (
+            <>
+              <Grid2 container spacing={3}>
+                <Grid2 size={12}>
+                  <PaperCustom
+                    sx={{
+                      px: 3,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
                   >
-                    Mã vận chuyển: {order.ghn_order_code}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    textAlign={"end"}
-                    color="primary"
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => window.open(order.tracking_url, "_blank")}
-                  >
-                    Xem chi tiết vận chuyển
-                  </Typography>
-                </Box>
-              )}
-            </PaperCustom>
-          </Grid2>
-
-          <Grid2 size={8}>
-            <PaperCustom sx={{ px: 3, height: "100%" }}>
-              <Grid2 container columnSpacing={4} rowSpacing={3} sx={{ py: 2 }}>
-                <Grid2
-                  container
-                  size={12}
-                  spacing={1}
-                  sx={{ borderBottom: "1px solid #ccc", pb: 3 }}
-                >
-                  <Grid2 size={12}>
-                    <span style={{ fontWeight: "bold" }}>
-                      Thời gian đặt hàng:
-                    </span>{" "}
-                    {Format.formatDateTime(order.created_at)}
-                  </Grid2>
-                  <Grid2 size={12}>
-                    <span style={{ fontWeight: "bold" }}>
-                      Trạng thái hiện tại:
-                    </span>{" "}
-                    {order.current_status_name}
-                  </Grid2>
+                    <Typography variant="h6" textAlign={"start"}>
+                      Chi tiết đơn hàng #{order.order_id}
+                    </Typography>
+                    {order.ghn_order_code && (
+                      <Box
+                        sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{ borderRight: "2px solid #ccc", pr: 1 }}
+                        >
+                          Mã vận chuyển: {order.ghn_order_code}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          textAlign={"end"}
+                          color="primary"
+                          sx={{ cursor: "pointer" }}
+                          onClick={() =>
+                            window.open(order.tracking_url, "_blank")
+                          }
+                        >
+                          Xem chi tiết vận chuyển
+                        </Typography>
+                      </Box>
+                    )}
+                  </PaperCustom>
                 </Grid2>
 
-                <Grid2 container spacing={1} size={6} alignItems={"start"}>
-                  <Typography
-                    variant="body"
-                    sx={{ fontWeight: "bold", width: "100%" }}
-                  >
-                    THÔNG TIN NGƯỜI MUA
-                  </Typography>
-
-                  <Grid2 size={12}>
-                    <Typography variant="body" sx={{ fontWeight: "bold" }}>
-                      Tên:
-                    </Typography>{" "}
-                    {order.user.name}
-                  </Grid2>
-
-                  <Grid2 size={12}>
-                    <Typography variant="body" sx={{ fontWeight: "bold" }}>
-                      Địa chỉ:
-                    </Typography>{" "}
-                    {order.from_address.from_address_line},{" "}
-                    {order.from_address.from_province_name}
-                  </Grid2>
-                </Grid2>
-
-                <Grid2 container spacing={1} size={6} alignItems={"start"}>
-                  <Typography
-                    variant="body"
-                    sx={{ fontWeight: "bold", width: "100%" }}
-                  >
-                    THÔNG TIN NGƯỜI BÁN
-                  </Typography>
-
-                  <Grid2 size={12}>
-                    <Typography variant="body" sx={{ fontWeight: "bold" }}>
-                      Tên:
-                    </Typography>{" "}
-                    {order.seller.store_name}
-                  </Grid2>
-
-                  <Grid2 size={12}>
-                    <Typography variant="body" sx={{ fontWeight: "bold" }}>
-                      Địa chỉ:
-                    </Typography>{" "}
-                    {order.to_address.to_address_line},{" "}
-                    {order.to_address.to_province_name}
-                  </Grid2>
-                </Grid2>
-              </Grid2>
-            </PaperCustom>
-          </Grid2>
-
-          <Grid2 size={4}>
-            <PaperCustom sx={{ px: 3, height: "100%" }}>
-              <Grid2
-                container
-                alignItems={"center"}
-                spacing={2}
-                sx={{ fontSize: "h6.fontSize", py: 2 }}
-                fontSize={"body2.fontSize"}
-              >
-                <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
-                  Tổng tiền sản phẩm:
-                </Grid2>
-                <Grid2 fontSize={"body2.fontSize"} size={6}>
-                  {Format.formatCurrency(order.subtotal_price)}
-                </Grid2>
-
-                <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
-                  Phí vận chuyển:
-                </Grid2>
-                <Grid2 fontSize={"body2.fontSize"} size={6}>
-                  {Format.formatCurrency(order.shipping_fee)}
-                </Grid2>
-
-                <Grid2 fontSize={"body2.fontSize"} size={6} fontWeight={"bold"}>
-                  Giảm giá:
-                </Grid2>
-                <Grid2 fontSize={"body2.fontSize"} size={6}>
-                  {Format.formatCurrency(order.discount)}
-                </Grid2>
-
-                <Grid2 fontSize={"body2.fontSize"} size={12}>
-                  <Divider color="#ccc" />
-                </Grid2>
-
-                <Grid2
-                  fontSize={"body2.fontSize"}
-                  size={6}
-                  sx={{ fontWeight: "bold" }}
-                >
-                  Thành tiền:
-                </Grid2>
-                <Grid2
-                  size={6}
-                  sx={{
-                    fontWeight: "bold",
-                    color: "red",
-                    fontSize: "h6.fontSize",
-                  }}
-                >
-                  {Format.formatCurrency(order.final_price)}
-                </Grid2>
-
-                {/* {order.paid === 0 && (
-                  <Grid2 fontSize={"body2.fontSize"} size={12}>
-                    <ButtonLoading
-                      size="small"
-                      variant="outlined"
-                      sx={{ px: 3 }}
-                      onClick={handlePayment}
-                      loading={paymentLoading}
+                <Grid2 size={8}>
+                  <PaperCustom sx={{ px: 3, height: "100%" }}>
+                    <Grid2
+                      container
+                      columnSpacing={4}
+                      rowSpacing={3}
+                      sx={{ py: 2 }}
                     >
-                      Thanh toán
-                    </ButtonLoading>
-                  </Grid2>
-                )} */}
+                      <Grid2
+                        container
+                        size={12}
+                        spacing={1}
+                        sx={{ borderBottom: "1px solid #ccc", pb: 3 }}
+                      >
+                        <Grid2 size={12}>
+                          <span style={{ fontWeight: "bold" }}>
+                            Thời gian đặt hàng:
+                          </span>{" "}
+                          {Format.formatDateTime(order.created_at)}
+                        </Grid2>
+                        <Grid2 size={12}>
+                          <span style={{ fontWeight: "bold" }}>
+                            Trạng thái hiện tại:
+                          </span>{" "}
+                          {order.current_status_name}
+                        </Grid2>
+                      </Grid2>
+
+                      <Grid2
+                        container
+                        spacing={1}
+                        size={6}
+                        alignItems={"start"}
+                      >
+                        <Typography
+                          variant="body"
+                          sx={{ fontWeight: "bold", width: "100%" }}
+                        >
+                          THÔNG TIN NGƯỜI MUA
+                        </Typography>
+
+                        <Grid2 size={12}>
+                          <Typography
+                            variant="body"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            Tên:
+                          </Typography>{" "}
+                          {order.user.name}
+                        </Grid2>
+
+                        <Grid2 size={12}>
+                          <Typography
+                            variant="body"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            Địa chỉ:
+                          </Typography>{" "}
+                          {order.from_address.from_address_line},{" "}
+                          {order.from_address.from_province_name}
+                        </Grid2>
+                      </Grid2>
+
+                      <Grid2
+                        container
+                        spacing={1}
+                        size={6}
+                        alignItems={"start"}
+                      >
+                        <Typography
+                          variant="body"
+                          sx={{ fontWeight: "bold", width: "100%" }}
+                        >
+                          THÔNG TIN NGƯỜI BÁN
+                        </Typography>
+
+                        <Grid2 size={12}>
+                          <Typography
+                            variant="body"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            Tên:
+                          </Typography>{" "}
+                          {order.seller.store_name}
+                        </Grid2>
+
+                        <Grid2 size={12}>
+                          <Typography
+                            variant="body"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            Địa chỉ:
+                          </Typography>{" "}
+                          {order.to_address.to_address_line},{" "}
+                          {order.to_address.to_province_name}
+                        </Grid2>
+                      </Grid2>
+                    </Grid2>
+                  </PaperCustom>
+                </Grid2>
+
+                <Grid2 size={4}>
+                  <PaperCustom sx={{ px: 3, height: "100%" }}>
+                    <Grid2
+                      container
+                      alignItems={"center"}
+                      spacing={2}
+                      sx={{ fontSize: "h6.fontSize", py: 2 }}
+                      fontSize={"body2.fontSize"}
+                    >
+                      <Grid2
+                        fontSize={"body2.fontSize"}
+                        size={6}
+                        fontWeight={"bold"}
+                      >
+                        Tổng tiền sản phẩm:
+                      </Grid2>
+                      <Grid2 fontSize={"body2.fontSize"} size={6}>
+                        {Format.formatCurrency(order.subtotal_price)}
+                      </Grid2>
+
+                      <Grid2
+                        fontSize={"body2.fontSize"}
+                        size={6}
+                        fontWeight={"bold"}
+                      >
+                        Phí vận chuyển:
+                      </Grid2>
+                      <Grid2 fontSize={"body2.fontSize"} size={6}>
+                        {Format.formatCurrency(order.shipping_fee)}
+                      </Grid2>
+
+                      <Grid2
+                        fontSize={"body2.fontSize"}
+                        size={6}
+                        fontWeight={"bold"}
+                      >
+                        Giảm giá:
+                      </Grid2>
+                      <Grid2 fontSize={"body2.fontSize"} size={6}>
+                        {Format.formatCurrency(order.discount)}
+                      </Grid2>
+
+                      <Grid2 fontSize={"body2.fontSize"} size={12}>
+                        <Divider color="#ccc" />
+                      </Grid2>
+
+                      <Grid2
+                        fontSize={"body2.fontSize"}
+                        size={6}
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        Thành tiền:
+                      </Grid2>
+                      <Grid2
+                        size={6}
+                        sx={{
+                          fontWeight: "bold",
+                          color: "red",
+                          fontSize: "h6.fontSize",
+                        }}
+                      >
+                        {Format.formatCurrency(order.final_price)}
+                      </Grid2>
+
+                      {/* {order.paid === 0 && (
+                <Grid2 fontSize={"body2.fontSize"} size={12}>
+                  <ButtonLoading
+                    size="small"
+                    variant="outlined"
+                    sx={{ px: 3 }}
+                    onClick={handlePayment}
+                    loading={paymentLoading}
+                  >
+                    Thanh toán
+                  </ButtonLoading>
+                </Grid2>
+              )} */}
+
+                      <Grid2 size={12}>
+                        <HandleRender
+                          // setOrders={setOrders}
+                          orderId={order.order_id}
+                          url={order?.vnp_url}
+                          status={order.current_status}
+                          createdAt={order.vnp_created_at}
+                        />
+                      </Grid2>
+                    </Grid2>
+                  </PaperCustom>
+                </Grid2>
 
                 <Grid2 size={12}>
-                  <HandleRender
-                    // setOrders={setOrders}
-                    orderId={order.order_id}
-                    url={order?.vnp_url}
-                    status={order.current_status}
-                    createdAt={order.vnp_created_at}
-                  />
-                </Grid2>
-              </Grid2>
-            </PaperCustom>
-          </Grid2>
-
-          <Grid2 size={12}>
-            <PaperCustom sx={{ px: 3 }}>
-              <TableContainer sx={{ py: 2 }}>
-                <Table sx={{ borderCollapse: "collapse", border: "none" }}>
-                  <TableHead>
-                    <TableRow
-                      sx={{ backgroundColor: theme.custom?.primary.light }}
-                    >
-                      <TableCell sx={{ textAlign: "center" }} width={"40%"}>
-                        Sản phẩm
-                      </TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
-                        Phân loại
-                      </TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>Giá</TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
-                        Số lượng
-                      </TableCell>
-                      <TableCell sx={{ textAlign: "center" }}>
-                        Thành tiền
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {order?.order_items?.map((item) => (
-                      <TableRow key={item.product_variant_id}>
-                        <TableCell>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "20px",
+                  <PaperCustom sx={{ px: 3 }}>
+                    <TableContainer sx={{ py: 2 }}>
+                      <Table
+                        sx={{ borderCollapse: "collapse", border: "none" }}
+                      >
+                        <TableHead>
+                          <TableRow
+                            sx={{
+                              backgroundColor: theme.custom?.primary.light,
                             }}
                           >
-                            <img
-                              src={Path.publicProduct(item.image)}
-                              alt={item.product_name}
-                              width="50"
-                            />
-                            <Typography
-                              variant="body2"
-                              className="line-clamp-2"
+                            <TableCell
+                              sx={{ textAlign: "center" }}
+                              width={"40%"}
                             >
-                              {item.product_name}
-                            </Typography>
-                          </div>
-                        </TableCell>
-                        <TableCell sx={{ textAlign: "center" }}>
-                          {item.attributes.map((attr) => (
-                            <div key={attr.name}>
-                              {attr.name}: {attr.value}
-                            </div>
+                              Sản phẩm
+                            </TableCell>
+                            <TableCell sx={{ textAlign: "center" }}>
+                              Phân loại
+                            </TableCell>
+                            <TableCell sx={{ textAlign: "center" }}>
+                              Giá
+                            </TableCell>
+                            <TableCell sx={{ textAlign: "center" }}>
+                              Số lượng
+                            </TableCell>
+                            <TableCell sx={{ textAlign: "center" }}>
+                              Thành tiền
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {order?.order_items?.map((item) => (
+                            <TableRow key={item.product_variant_id}>
+                              <TableCell>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "20px",
+                                  }}
+                                >
+                                  <img
+                                    src={Path.publicProduct(item.image)}
+                                    alt={item.product_name}
+                                    width="50"
+                                  />
+                                  <Typography
+                                    variant="body2"
+                                    className="line-clamp-2"
+                                  >
+                                    {item.product_name}
+                                  </Typography>
+                                </div>
+                              </TableCell>
+                              <TableCell sx={{ textAlign: "center" }}>
+                                {item.attributes.map((attr) => (
+                                  <div key={attr.name}>
+                                    {attr.name}: {attr.value}
+                                  </div>
+                                ))}
+                              </TableCell>
+                              <TableCell sx={{ textAlign: "center" }}>
+                                {Format.formatCurrency(item.price)}
+                              </TableCell>
+                              <TableCell sx={{ textAlign: "center" }}>
+                                {item.quantity}
+                              </TableCell>
+                              <TableCell sx={{ textAlign: "center" }}>
+                                {Format.formatCurrency(
+                                  item.price * item.quantity
+                                )}
+                              </TableCell>
+                            </TableRow>
                           ))}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: "center" }}>
-                          {Format.formatCurrency(item.price)}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: "center" }}>
-                          {item.quantity}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: "center" }}>
-                          {Format.formatCurrency(item.price * item.quantity)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </PaperCustom>
-          </Grid2>
-        </Grid2>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </PaperCustom>
+                </Grid2>
+              </Grid2>
+            </>
+          )}
+        </>
       )}
     </Container>
   );
