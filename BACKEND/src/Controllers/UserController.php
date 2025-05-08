@@ -7,6 +7,7 @@ use App\Helpers\FileSave;
 use App\Helpers\Response;
 use App\Helpers\Log;
 use App\Helpers\Request;
+use App\Helpers\Validator;
 use App\Models\UserModel;
 
 class UserController {
@@ -68,6 +69,30 @@ class UserController {
             ], 200);
         } catch (\Throwable $th) {
             Log::throwable("UserController -> uploadAvatar: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Cập nhật tên tài khoản
+    public function updateName() {
+        try {
+            $user = Auth::user();
+
+            $name = Request::json('name');
+            
+            $nameCheck = Validator::isText($name, 'Tên tài khoản', 3, 20);
+            if ($nameCheck !== true) {
+                Response::json(['message' => $nameCheck], 400);
+            }
+
+            UserModel::updateName($user['user_id'], $name);
+
+            Response::json([
+                'message' => 'Cập nhật tên tài khoản thành công',
+                'name' => $name
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("UserController -> updateName: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

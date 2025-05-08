@@ -179,4 +179,17 @@ class UserModel {
 
         return $query->query($sql, ['user_id' => $user_id, 'avatar' => $avatar]);
     }
+
+    // Cập nhật tên tài khoản
+    public static function updateName($user_id, $name) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE users
+            SET name = :name
+            WHERE id = :user_id
+        ";
+
+        return $query->query($sql, ['user_id' => $user_id, 'name' => $name]);
+    }
 }
