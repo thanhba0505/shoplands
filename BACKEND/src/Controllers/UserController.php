@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Helpers\Auth;
+use App\Helpers\FileSave;
 use App\Helpers\Response;
 use App\Helpers\Log;
 use App\Helpers\Request;
@@ -39,6 +40,34 @@ class UserController {
             Response::json($user);
         } catch (\Throwable $th) {
             Log::throwable("UserController -> userFind: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Tải ảnh avatar
+    public function uploadAvatar() {
+        try {
+            $user = Auth::user();
+
+            $avatarFile = Request::file('avatar');
+
+            if (!$avatarFile) {
+                Response::json(['message' => 'Không tìm thấy ảnh'], 400);
+            }
+
+            $logoUpload = FileSave::avatarImage($avatarFile);
+            if ($logoUpload['success'] == false) {
+                Response::json(['message' => $logoUpload['message']], 400);
+            }
+
+            UserModel::updateAvatar($user['user_id'], $logoUpload['file_name']);
+
+            Response::json([
+                'message' => 'Tải avatar lên thành công',
+                'avatar' => $logoUpload['file_name']
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("UserController -> uploadAvatar: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

@@ -166,4 +166,17 @@ class UserModel {
 
         return $result;
     }
+
+    // Cập nhật avatar
+    public static function updateAvatar($user_id, $avatar) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE users
+            SET avatar = :avatar
+            WHERE id = :user_id
+        ";
+
+        return $query->query($sql, ['user_id' => $user_id, 'avatar' => $avatar]);
+    }
 }
