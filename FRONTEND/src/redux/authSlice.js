@@ -23,8 +23,22 @@ const authSlice = createSlice({
       state.refreshToken = action.payload.refresh_token;
       state.account = action.payload.account;
     },
+
+    updateUserAvatar: (state, action) => {
+      state.account.avatar = action.payload;
+    },
+
+    updateUserName: (state, action) => {
+      state.account.name = action.payload;
+    },
   },
 });
 
-export const { loginSuccess, logout, refreshTokenSuccess } = authSlice.actions;
+export const {
+  loginSuccess,
+  logout,
+  refreshTokenSuccess,
+  updateUserAvatar,
+  updateUserName,
+} = authSlice.actions;
 export default authSlice.reducer;
