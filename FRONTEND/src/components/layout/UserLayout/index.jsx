@@ -8,6 +8,7 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
 import AllInboxRoundedIcon from "@mui/icons-material/AllInboxRounded";
+import FiberSmartRecordRoundedIcon from "@mui/icons-material/FiberSmartRecordRounded";
 import SidebarTab from "../SidebarTab";
 import Header from "../Header";
 
@@ -46,32 +47,33 @@ const NAVIGATION = [
   {
     name: "Chờ giao hàng",
     tooltip: "Chờ giao hàng",
-    path: "/user/orders/waiting",
+    path: "/seller/orders/waiting",
     icon: <CardTravelRoundedIcon />,
   },
   {
     name: "Đang giao hàng",
     tooltip: "Đang giao hàng",
-    path: "/user/orders/shipping",
+    path: "/seller/orders/shipping",
     icon: <LocalShippingOutlinedIcon />,
   },
   {
     name: "Đã hoàn thành",
     tooltip: "Đã hoàn thành",
-    path: "/user/orders/completed",
-    icon: <LocalShippingOutlinedIcon />,
+    path: "/seller/orders/completed",
+    icon: <FactCheckOutlinedIcon />,
   },
   {
     name: "Đơn hoàn trả",
     tooltip: "Đơn hoàn trả",
-    path: "/user/orders/return",
+    path: "/seller/orders/return",
     icon: <AllInboxRoundedIcon />,
   },
   {
     name: "Đơn hàng khác",
     tooltip: "Đơn hàng khác",
-    path: "/user/orders/other",
-    icon: <FactCheckOutlinedIcon />,
+    path: "/seller/orders/other",
+    icon: <FiberSmartRecordRoundedIcon />,
+    divider: true,
   },
 ];
 

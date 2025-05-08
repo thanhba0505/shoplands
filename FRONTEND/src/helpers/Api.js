@@ -95,6 +95,11 @@ class Api {
   }
 
   // User
+
+  static user(endpoint = "") {
+    return this.buildPath("user", endpoint);
+  }
+
   static userAddress(endpoint = "") {
     return this.buildPath("user/address", endpoint);
   }

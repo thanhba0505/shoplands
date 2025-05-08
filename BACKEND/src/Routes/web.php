@@ -68,7 +68,7 @@ $router->post('api/sellers/code-register', 'SellerController@getCodeRegister');
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
 
 // API USER
-$router->get('api/users', 'UserController@userFind', ['App\Middlewares\UserMiddleware']);
+$router->get('api/user', 'UserController@userFind', ['App\Middlewares\UserMiddleware']);
 $router->get('api/admin/users', 'UserController@adminGet', ['App\Middlewares\AdminMiddleware']);
 
 // API OTHER
