@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Auth;
 use App\Helpers\Response;
 use App\Helpers\Log;
 use App\Helpers\Request;
@@ -26,6 +27,18 @@ class UserController {
             Response::json($result);
         } catch (\Throwable $th) {
             Log::throwable("UserController -> adminGet: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy thông tin người mua
+    public function userFind() {
+        try {
+            $user = Auth::user();
+
+            Response::json($user);
+        } catch (\Throwable $th) {
+            Log::throwable("UserController -> userFind: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
