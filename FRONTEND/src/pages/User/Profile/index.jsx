@@ -222,6 +222,24 @@ const Profile = () => {
 
           <Grid2 size={12}>
             <Typography variant="body1">
+              <b>Mật khẩu:</b>{" "}
+              <span
+                style={{
+                  borderRight: "2px solid #ccc",
+                  paddingRight: "8px",
+                  marginRight: "8px",
+                }}
+              >
+                ********
+              </span>
+              <span style={{ cursor: "pointer", color: "blue" }} onClick={() => navigate(Path.resetPassword())}>
+                Đổi mật khẩu
+              </span>
+            </Typography>
+          </Grid2>
+
+          <Grid2 size={12}>
+            <Typography variant="body1">
               <b>Tham gia vào:</b> {Format.formatDate(user?.created_at)}
             </Typography>
           </Grid2>

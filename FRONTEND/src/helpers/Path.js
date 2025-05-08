@@ -89,6 +89,10 @@ class Path {
     return this.buildPath("/forgot-password", subPath);
   }
 
+  static resetPassword(subPath = "") {
+    return this.buildPath("/reset-password", subPath);
+  }
+
   static products(subPath = "") {
     return this.buildPath("/products", subPath);
   }
