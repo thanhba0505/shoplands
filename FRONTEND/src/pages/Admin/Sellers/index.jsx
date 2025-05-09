@@ -551,12 +551,7 @@ const ListSellers = ({ status, loading, setLoading }) => {
                   sellers.map((seller) => (
                     <TableRow
                       hover
-                      sx={{ cursor: "pointer" }}
                       key={seller.seller_id}
-                      // onClick={() =>
-                      //   // navigate(Path.sellerProductDetail(product.product_id))
-                      //   console.log("clickf sadfasd")
-                      // }
                     >
                       <TableCell>
                         <Box

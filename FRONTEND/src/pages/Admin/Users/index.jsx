@@ -245,11 +245,7 @@ const ListUsers = ({ status, loading, setLoading }) => {
                   users.map((users) => (
                     <TableRow
                       hover
-                      sx={{ cursor: "pointer" }}
                       key={users.user_id}
-                      // onClick={() =>
-                      //   navigate(Path.sellerProductDetail(product.product_id))
-                      // }
                     >
                       <TableCell>
                         <Box
@@ -261,8 +257,7 @@ const ListUsers = ({ status, loading, setLoading }) => {
                             src={Path.publicAvatar(users?.avatar)}
                             sx={{ width: 50, height: 50 }}
                           >
-                            {" "}
-                            {}
+                            {users.name.charAt(0).toUpperCase()}
                           </Avatar>
                           <Typography className="line-clamp-2" variant="body2">
                             {users.name}
