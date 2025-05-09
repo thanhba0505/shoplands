@@ -235,12 +235,10 @@ const OrdersTable = ({ orders, setOrders }) => {
                   </TableCell>
                   <TableCell align="center">
                     Mã giao hàng: <br />
-                    {order.ghn_order_code}
+                    {order.ghn_order_code || "---"}
                   </TableCell>
                   <TableCell align="center">
                     {order.current_status_name}
-                    <br />
-                    {Format.formatDateTime(order.created_at)}
                   </TableCell>
                 </TableRow>
               </TableHead>

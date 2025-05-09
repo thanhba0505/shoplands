@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   Grid2,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -257,7 +258,46 @@ const OrderDetail = () => {
   return (
     <Container maxWidth="lg">
       {loading ? (
-        <>Loading...</>
+        <>
+          <Grid2 container spacing={3}>
+            <Grid2 size={12} height={68}>
+              <PaperCustom sx={{ height: "100%" }}>
+                <Skeleton variant="text" />
+              </PaperCustom>
+            </Grid2>
+
+            <Grid2 size={8} height={280}>
+              <PaperCustom sx={{ height: "100%" }}>
+                <Skeleton variant="text" sx={{ mt: 1 }} />
+                <Skeleton variant="text" sx={{ mt: 1 }} />
+                <Divider sx={{ mt: 2, mb: 2 }} />
+                <Skeleton variant="text" sx={{ mt: 1, width: "30%" }} />
+                <Skeleton variant="text" sx={{ mt: 1, width: "70%" }} />
+                <Skeleton variant="text" sx={{ mt: 1, width: "40%" }} />
+                <Skeleton variant="text" sx={{ mt: 1, width: "60%" }} />
+              </PaperCustom>
+            </Grid2>
+
+            <Grid2 size={4} height={280}>
+              <PaperCustom sx={{ height: "100%" }}>
+                <Skeleton variant="text" sx={{ mt: 1 }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "30%" }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "70%" }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "40%" }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "60%" }} />
+              </PaperCustom>
+            </Grid2>
+
+            <Grid2 size={12} height={205}>
+              <PaperCustom sx={{ height: "100%" }}>
+                <Skeleton variant="text" sx={{ mt: 1 }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "30%" }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "70%" }} />
+                <Skeleton variant="text" sx={{ mt: 2, width: "40%" }} />
+              </PaperCustom>
+            </Grid2>
+          </Grid2>
+        </>
       ) : (
         <>
           {order && (
