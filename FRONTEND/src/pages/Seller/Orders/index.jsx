@@ -60,13 +60,11 @@ const OrdersTable = ({ orders }) => {
                     {order.to_address.to_province_name}
                   </TableCell>
                   <TableCell align="center">
-                    Phương thức giao hàng: <br />
-                    Giao hàng nhanh
+                    Mã giao hàng: <br />
+                    {order.ghn_order_code || "---"}
                   </TableCell>
                   <TableCell align="center">
                     {order.current_status_name}
-                    <br />
-                    {Format.formatDateTime(order.created_at)}
                   </TableCell>
                 </TableRow>
               </TableHead>

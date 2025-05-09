@@ -15,6 +15,10 @@ class OrderModel {
 
         $offset = ($page) * $limit;
 
+        $status = array_filter($status, function ($value) {
+            return $value !== "unpaid";
+        });
+
         // Base SQL for counting total records
         $countSql = "
             SELECT
@@ -111,6 +115,9 @@ class OrderModel {
             foreach ($status as $key => $value) {
                 $params["status" . $key] = $value;
             }
+        } else {
+            $sql .= " AND o.current_status != 'unpaid'";
+            $countSql .= " AND o.current_status != 'unpaid'";
         }
 
         // Get total count before pagination
