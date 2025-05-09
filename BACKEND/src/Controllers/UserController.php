@@ -7,7 +7,9 @@ use App\Helpers\FileSave;
 use App\Helpers\Response;
 use App\Helpers\Log;
 use App\Helpers\Request;
+use App\Helpers\SendMessage;
 use App\Helpers\Validator;
+use App\Models\AccountModel;
 use App\Models\UserModel;
 
 class UserController {
@@ -93,6 +95,62 @@ class UserController {
             ], 200);
         } catch (\Throwable $th) {
             Log::throwable("UserController -> updateName: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Admin khóa người mua
+    public function adminLocked() {
+        try {
+            $user_id = Request::json('user_id');
+            $locked = Request::json('locked');
+            $reason = Request::json('reason');
+
+            $user = UserModel::findByUserId($user_id);
+
+            if (!$user) {
+                Response::json(['message' => 'Không tìm thấy tài khoản'], 400);
+            }
+
+            if ($user['status'] === 'inactive') {
+                Response::json(['message' => 'Tài khoản chưa hoạt động'], 400);
+            }
+
+            if ($user['status'] === 'unverified') {
+                Response::json(['message' => 'Tài khoản chưa xác thực'], 400);
+            }
+
+            if ($locked) {
+                AccountModel::lockedAccount($user['account_id']);
+
+                // Send sms
+                $mess = "Tài khoản '$user[name]' đã bị khóa";
+
+                SendMessage::send(
+                    $user['phone'],
+                    $reason ? $reason : $mess
+                );
+
+                Response::json([
+                    'message' => "Đã khóa tài khoản '$user[name]'",
+                ]);
+            } else {
+                AccountModel::unlockAccount($user['account_id']);
+
+                // Send sms
+                $mess = "Tài khoản '$user[name]' đã được mở khóa";
+
+                SendMessage::send(
+                    $user['phone'],
+                    $reason ? $reason : $mess
+                );
+
+                Response::json([
+                    'message' => "Đã mở khóa tài khoản '$user[name]'",
+                ]);
+            }
+        } catch (\Throwable $th) {
+            Log::throwable("UserController -> adminLocked: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
