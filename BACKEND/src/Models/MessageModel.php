@@ -7,10 +7,8 @@ use App\Helpers\Hash;
 use App\Helpers\Log;
 use App\Models\ConnectDatabase;
 
-class MessageModel
-{
-  public static function addMessage($content, $code, $account_id)
-  {
+class MessageModel {
+  public static function addMessage($content, $code, $account_id) {
     $conn = new ConnectDatabase();
 
     $created_at = Carbon::now();
@@ -35,8 +33,7 @@ class MessageModel
   }
 
   // Tìm kiếm tin nhắn mới nhất theo account_id
-  public static function getLastMessage($account_id)
-  {
+  public static function getLastMessage($account_id) {
     $conn = new ConnectDatabase();
 
     $sql = "
@@ -63,8 +60,7 @@ class MessageModel
   }
 
   // Xóa tin nhắn theo message_id
-  public static function deleteMessage($message_id)
-  {
+  public static function deleteMessage($message_id) {
     $conn = new ConnectDatabase();
 
     $sql = "
@@ -79,6 +75,24 @@ class MessageModel
     $result = $conn->query($sql, [
       ':deleted_at' => Carbon::now(),
       ':message_id' => $message_id
+    ]);
+
+    return $result;
+  }
+
+  // Xóa tất cả tin trheo account_id
+  public static function deleteAllMessage($account_id) {
+    $conn = new ConnectDatabase();
+
+    $sql = "
+        DELETE FROM 
+            messages 
+        WHERE 
+            account_id = :account_id
+    ";
+
+    $result = $conn->query($sql, [
+      ':account_id' => $account_id
     ]);
 
     return $result;

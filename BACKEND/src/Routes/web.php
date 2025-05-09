@@ -72,6 +72,7 @@ $router->get('api/user', 'UserController@userFind', ['App\Middlewares\UserMiddle
 $router->post('api/user/avatar', 'UserController@uploadAvatar', ['App\Middlewares\UserMiddleware']);
 $router->put('api/user/name', 'UserController@updateName', ['App\Middlewares\UserMiddleware']);
 $router->get('api/admin/users', 'UserController@adminGet', ['App\Middlewares\AdminMiddleware']);
+$router->put('api/admin/users/locked', 'UserController@adminLocked', ['App\Middlewares\AdminMiddleware']);
 
 // API OTHER
 $router->get('api/banks', 'Controller@getBanks');

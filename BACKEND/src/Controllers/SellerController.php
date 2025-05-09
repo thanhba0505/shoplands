@@ -275,9 +275,10 @@ class SellerController {
                     'message' => "Đã duyệt người bán '$seller[store_name]'",
                 ]);
             }
-
+            
+            AddressModel::deleteAll($seller['account_id']);
             SellerModel::delete($seller_id);
-            AddressModel::delete($seller['account_id']);
+            MessageModel::deleteAllMessage($seller['account_id']);
             AccountModel::delete($seller['account_id']);
 
             // Send sms

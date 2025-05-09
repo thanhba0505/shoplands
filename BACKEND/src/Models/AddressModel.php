@@ -82,7 +82,7 @@ class AddressModel {
             FROM
                 addresses a
             WHERE
-                a.account_id, = :account_id,
+                a.account_id = :account_id
                 AND a.default = :default
         ";
 
@@ -312,5 +312,21 @@ class AddressModel {
         $result = $query->query($sql, ['account_id' => $account_id, 'address_id' => $address_id]);
 
         return $result->rowCount() > 0 ? true : false;
+    }
+
+    // Xóa địa chỉ theo account_id
+    public static function deleteAll($account_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            DELETE FROM
+                addresses
+            WHERE
+                account_id = :account_id
+        ";
+
+        $result = $query->query($sql, ['account_id' => $account_id]);
+
+        return $result;
     }
 }
