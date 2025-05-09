@@ -3,6 +3,7 @@ import { TabContext, TabList } from "@mui/lab";
 import {
   Avatar,
   Box,
+  Button,
   Skeleton,
   Tab,
   Table,
@@ -115,11 +116,10 @@ const ListUsers = ({ status, loading, setLoading }) => {
               <TableCell align="left" width={300}>
                 Người mua
               </TableCell>
-              <TableCell align="center">
-                Số điện thoại
-              </TableCell>
+              <TableCell align="center">Số điện thoại</TableCell>
               <TableCell align="center">Trạng thái</TableCell>
               <TableCell align="center">Ngày tham gia</TableCell>
+              <TableCell align="center">Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -243,10 +243,7 @@ const ListUsers = ({ status, loading, setLoading }) => {
               <>
                 {users && users.length > 0 ? (
                   users.map((users) => (
-                    <TableRow
-                      hover
-                      key={users.user_id}
-                    >
+                    <TableRow hover key={users.user_id}>
                       <TableCell>
                         <Box
                           sx={{ display: "flex", alignItems: "center", gap: 2 }}
@@ -270,6 +267,9 @@ const ListUsers = ({ status, loading, setLoading }) => {
                       </TableCell>
                       <TableCell align="center">
                         {Format.formatDate(users.created_at)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button variant="contained">Khóa</Button>
                       </TableCell>
                     </TableRow>
                   ))
