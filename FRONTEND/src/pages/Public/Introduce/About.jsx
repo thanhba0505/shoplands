@@ -21,7 +21,7 @@ const About = () => {
     <Container maxWidth="md" sx={{ py: 4 }}>
       {/* Project Logo */}
       <Box sx={{ textAlign: "center", mb: 4 }}>
-        <Link target="_blank" href="https://shoplands.store/" underline="none">
+        <Link target="_blank" href="https://shoplands.vercel.app/" underline="none">
           <Box
             sx={{
               display: "inline-block",
@@ -57,7 +57,7 @@ const About = () => {
 
         <Link
           target="_blank"
-          href="https://shoplands.store/"
+          href="https://shoplands.vercel.app/"
           variant="body1"
           color="primary"
         >
@@ -248,14 +248,14 @@ const About = () => {
 
         <Typography>
           Đăng ký tài khoản tại:{" "}
-          <Link target="_blank" href="https://shoplands.store/register">
-            https://shoplands.store/register
+          <Link target="_blank" href="https://shoplands.vercel.app/register">
+            https://shoplands.vercel.app/register
           </Link>
         </Typography>
         <Typography>
           Hoặc đăng nhập tại:{" "}
-          <Link target="_blank" href="https://shoplands.store/login">
-            https://shoplands.store/login
+          <Link target="_blank" href="https://shoplands.vercel.app/login">
+            https://shoplands.vercel.app/login
           </Link>
         </Typography>
 
@@ -314,14 +314,14 @@ const About = () => {
 
         <Typography>
           Đăng ký tài khoản tại:{" "}
-          <Link target="_blank" href="https://shoplands.store/register-seller">
-            https://shoplands.store/register-seller
+          <Link target="_blank" href="https://shoplands.vercel.app/register-seller">
+            https://shoplands.vercel.app/register-seller
           </Link>
         </Typography>
         <Typography>
           Hoặc đăng nhập tại:{" "}
-          <Link target="_blank" href="https://shoplands.store/login">
-            https://shoplands.store/login
+          <Link target="_blank" href="https://shoplands.vercel.app/login">
+            https://shoplands.vercel.app/login
           </Link>
         </Typography>
 
@@ -393,8 +393,8 @@ const About = () => {
 
         <Typography>
           Hoặc đăng nhập tại:{" "}
-          <Link target="_blank" href="https://shoplands.store/login">
-            https://shoplands.store/login
+          <Link target="_blank" href="https://shoplands.vercel.app/login">
+            https://shoplands.vercel.app/login
           </Link>
         </Typography>
 
