@@ -5,7 +5,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://shoplands.store/">
+  <a href="https://shoplands.vercel.app/">
     <img src="https://backend.shoplands.store/src/Storage/public/app/logo-1.png" alt="Logo" width="200" style="object-fit: cover;">
   </a>
 
@@ -17,7 +17,7 @@
     <!-- <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
     <br /> -->
     <br />
-    <a href="https://shoplands.store/">Truy cập website</a>
+    <a href="https://shoplands.vercel.app/">Truy cập website</a>
   </p>
 </div>
 
@@ -99,9 +99,9 @@ Dự án được phát triển với mục tiêu mô phỏng quy trình kinh do
 
 <h3 id="doi-voi-nguoi-mua">1. Đối với người mua</h3>
 
-Đăng ký tài khoản tại: <a href="https://shoplands.store/register">https://shoplands.store/register</a>
+Đăng ký tài khoản tại: <a href="https://shoplands.vercel.app/register">https://shoplands.vercel.app/register</a>
 
-Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shoplands.store/login</a>
+Hoặc đăng nhập tại: <a href="https://shoplands.vercel.app/login">https://shoplands.vercel.app/login</a>
 
 Một số tài khoản người mua:
 
@@ -118,9 +118,9 @@ Một số tài khoản người mua:
 
 <h3 id="doi-voi-nguoi-ban">2. Đối với người bán</h3>
 
-Đăng ký tài khoản tại: <a href="https://shoplands.store/register-seller">https://shoplands.store/register-seller</a>
+Đăng ký tài khoản tại: <a href="https://shoplands.vercel.app/register-seller">https://shoplands.vercel.app/register-seller</a>
 
-Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shoplands.store/login</a>
+Hoặc đăng nhập tại: <a href="https://shoplands.vercel.app/login">https://shoplands.vercel.app/login</a>
 
 Một số tài khoản người bán:
 
@@ -139,7 +139,7 @@ Một số tài khoản người bán:
 
 > ℹ️ **Ghi chú:** Tài khoản quản trị viên chỉ có 1 nên không thể đăng ký.
 
-Hoặc đăng nhập tại: <a href="https://shoplands.store/login">https://shoplands.store/login</a>
+Hoặc đăng nhập tại: <a href="https://shoplands.vercel.app/login">https://shoplands.vercel.app/login</a>
 
 Tài khoản quản trị viên:
 
