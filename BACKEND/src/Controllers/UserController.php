@@ -81,7 +81,7 @@ class UserController {
             $user = Auth::user();
 
             $name = Request::json('name');
-            
+
             $nameCheck = Validator::isText($name, 'Tên tài khoản', 3, 20);
             if ($nameCheck !== true) {
                 Response::json(['message' => $nameCheck], 400);
@@ -133,6 +133,7 @@ class UserController {
 
                 Response::json([
                     'message' => "Đã khóa tài khoản '$user[name]'",
+                    'status' => 'locked'
                 ]);
             } else {
                 AccountModel::unlockAccount($user['account_id']);
@@ -147,6 +148,7 @@ class UserController {
 
                 Response::json([
                     'message' => "Đã mở khóa tài khoản '$user[name]'",
+                    'status' => 'active'
                 ]);
             }
         } catch (\Throwable $th) {

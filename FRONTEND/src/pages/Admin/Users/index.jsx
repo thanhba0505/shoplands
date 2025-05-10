@@ -16,8 +16,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ButtonLoading from "~/components/ButtonLoading";
+import ModalCustom from "~/components/ModalCustom";
 import NoContent from "~/components/NoContent";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
@@ -25,6 +28,123 @@ import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosWithAuth from "~/utils/axiosWithAuth";
+
+const ActionLocked = ({ userId, name, status, updateStatus }) => {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (name) {
+      if (status === "locked") {
+        setMessage(
+          "Tài khoản '" +
+            name +
+            "' đã được mở khóa. Vui lòng đăng nhập tại trang web " +
+            import.meta.env.VITE_DOMAIN
+        );
+      } else {
+        setMessage("Tài khoản '" + name + "' đã bị khóa. Lý do: ");
+      }
+    }
+  }, [name, status]);
+
+  const handleLocked = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosWithAuth.put(
+        Api.adminUsers("locked"),
+        {
+          user_id: userId,
+          locked: status === "locked" ? 0 : 1,
+          reason: message,
+        },
+        {
+          navigate,
+        }
+      );
+
+      enqueueSnackbar(response.data.message, {
+        variant: "success",
+      });
+      updateStatus(userId, status === "locked" ? "active" : "locked");
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  }, [navigate, enqueueSnackbar, userId, status, updateStatus, message]);
+
+  return (
+    <>
+      <Button
+        sx={{ ml: 1 }}
+        variant="outlined"
+        color={status === "locked" ? "primary" : "error"}
+        size="small"
+        onClick={() => setOpen(true)}
+      >
+        {status === "locked" ? "Mở khóa" : "Khóa tài khoản"}
+      </Button>
+
+      <ModalCustom
+        open={open}
+        handleClose={() => setOpen(false)}
+        title={status === "locked" ? "Mở khóa tài khoản" : "Khóa tài khoản"}
+        subtitle={name}
+      >
+        <TextField
+          sx={{ width: "100%", mt: 1 }}
+          fullWidth
+          label={
+            status === "locked"
+              ? "Tin nhắn mở khóa tài khoản"
+              : "Lý do khóa tài khoản"
+          }
+          multiline
+          rows={3}
+          variant="outlined"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mt: 3,
+          }}
+        >
+          <Button
+            size="large"
+            variant="outlined"
+            color="error"
+            sx={{ width: "50%" }}
+            onClick={() => setOpen(false)}
+          >
+            Hủy
+          </Button>
+          <ButtonLoading
+            size="large"
+            variant="contained"
+            sx={{ width: "50%" }}
+            onClick={() => {
+              handleLocked();
+            }}
+            loading={loading}
+          >
+            {status === "locked" ? "Mở khóa" : "Khóa tài khoản"}
+          </ButtonLoading>
+        </Box>
+      </ModalCustom>
+    </>
+  );
+};
 
 const ListUsers = ({ status, loading, setLoading }) => {
   const navigate = useNavigate();
@@ -74,6 +194,14 @@ const ListUsers = ({ status, loading, setLoading }) => {
   useEffect(() => {
     fetchApi(page, rowsPerPage);
   }, [page, rowsPerPage, fetchApi]);
+
+  const updateStatus = (userId, status) => {
+    setUsers((prev) =>
+      prev.map((item) =>
+        item.user_id === userId ? { ...item, status: status } : item
+      )
+    );
+  };
 
   return (
     <>
@@ -242,34 +370,39 @@ const ListUsers = ({ status, loading, setLoading }) => {
             ) : (
               <>
                 {users && users.length > 0 ? (
-                  users.map((users) => (
-                    <TableRow hover key={users.user_id}>
+                  users.map((user) => (
+                    <TableRow hover key={user.user_id}>
                       <TableCell>
                         <Box
                           sx={{ display: "flex", alignItems: "center", gap: 2 }}
                         >
                           <Avatar
-                            alt={users.name}
+                            alt={user.name}
                             variant="square"
-                            src={Path.publicAvatar(users?.avatar)}
+                            src={Path.publicAvatar(user?.avatar)}
                             sx={{ width: 50, height: 50 }}
                           >
-                            {users.name.charAt(0).toUpperCase()}
+                            {user.name.charAt(0).toUpperCase()}
                           </Avatar>
                           <Typography className="line-clamp-2" variant="body2">
-                            {users.name}
+                            {user.name}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell align="center">{users.phone}</TableCell>
+                      <TableCell align="center">{user.phone}</TableCell>
                       <TableCell align="center">
-                        {Format.formatStatus(users.status)}
+                        {Format.formatStatus(user.status)}
                       </TableCell>
                       <TableCell align="center">
-                        {Format.formatDate(users.created_at)}
+                        {Format.formatDate(user.created_at)}
                       </TableCell>
                       <TableCell align="center">
-                        <Button variant="contained">Khóa</Button>
+                        <ActionLocked
+                          status={user.status}
+                          userId={user.user_id}
+                          name={user.name}
+                          updateStatus={updateStatus}
+                        />
                       </TableCell>
                     </TableRow>
                   ))
