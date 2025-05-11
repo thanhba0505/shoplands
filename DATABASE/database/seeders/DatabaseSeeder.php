@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // $this->call([ProductAttributeSeeder::class]); // product
         // $this->call([ProductAttributeValueSeeder::class]); // product
         // $this->call([ProductVariantValueSeeder::class]); // product
-        $this->call([ReviewSeeder::class]);  // user
+        // $this->call([ReviewSeeder::class]);  // user
         // $this->call([CartSeeder::class]); // user
         // $this->call([OrderSeeder::class]); // user
 

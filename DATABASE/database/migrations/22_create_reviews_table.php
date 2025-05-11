@@ -14,10 +14,12 @@ return new class extends Migration
             $table->text('comment');
             $table->unsignedBigInteger('user_id'); // Foreign key
             $table->unsignedBigInteger('product_variant_id');  // Foreign key
+            $table->unsignedBigInteger('order_id');  // Foreign key
             $table->dateTime('created_at');
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('product_variant_id')->references('id')->on('product_variants');
+            $table->foreign('order_id')->references('id')->on('orders');
         });
     }
 
@@ -26,6 +28,7 @@ return new class extends Migration
         Schema::table('reviews', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropForeign(['product_variant_id']);
+            $table->dropForeign(['order_id']);
         });
 
         Schema::dropIfExists('reviews');

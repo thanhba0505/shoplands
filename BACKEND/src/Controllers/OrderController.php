@@ -165,7 +165,11 @@ class OrderController {
             // Cộng tiền cho seller
             AccountModel::sellerIncreaseCoin($order["seller_id"], $order["revenue"]);
 
-            Response::json(['message' => 'Đã hoàn tất đơn hàng'], 200);
+            Response::json([
+                'message' => 'Đã hoàn tất đơn hàng',
+                "current_status" => "completed",
+                "curent_status_name" => Format::getOrderStatusInVie($order["current_status"])
+            ], 200);
         } catch (\Throwable $th) {
             Log::throwable("OrderController -> userComplete: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -416,7 +420,7 @@ class OrderController {
             }
 
             OrderPaymentModel::insertOrUpdate($vnp_TxnRef, $result['code'], $result['message'], json_encode($result['json']));
-            
+
             $fromAddress = AddressModel::findFromAddress($order["from_address_id"]);
             $toAddress = AddressModel::findToAddress($order["to_address_id"], $order["user_id"]);
 
@@ -428,7 +432,7 @@ class OrderController {
 
             $toAddress["name"] = $user["name"];
             $toAddress["phone"] = $user["phone"];
-            
+
             $ghnOrder = GHN::createOrder(
                 $fromAddress,
                 $toAddress

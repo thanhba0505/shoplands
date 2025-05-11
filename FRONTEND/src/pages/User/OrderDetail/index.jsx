@@ -51,7 +51,7 @@ const AcctionButton = ({
   );
 };
 
-const HandleRender = ({ status, orderId, url, createdAt }) => {
+const HandleRender = ({ status, orderId, url, createdAt, setOrder }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -107,7 +107,12 @@ const HandleRender = ({ status, orderId, url, createdAt }) => {
         }
       );
 
-      navigate(Path.userOrders("detail/" + orderId));
+      setOrder((prevOrder) => ({
+        ...prevOrder,
+        current_status: response.data.current_status,
+        current_status_name: response.data.current_status_name,
+      }));
+
       enqueueSnackbar(response.data.message, { variant: "success" });
     } catch (error) {
       Log.error(error.response?.data?.message);
@@ -399,8 +404,8 @@ const OrderDetail = () => {
                           >
                             Địa chỉ:
                           </Typography>{" "}
-                          {order.from_address.from_address_line},{" "}
-                          {order.from_address.from_province_name}
+                          {order.to_address.to_address_line},{" "}
+                          {order.to_address.to_province_name}
                         </Grid2>
                       </Grid2>
 
@@ -434,8 +439,8 @@ const OrderDetail = () => {
                           >
                             Địa chỉ:
                           </Typography>{" "}
-                          {order.to_address.to_address_line},{" "}
-                          {order.to_address.to_province_name}
+                          {order.from_address.from_address_line},{" "}
+                          {order.from_address.from_province_name}
                         </Grid2>
                       </Grid2>
                     </Grid2>
@@ -506,20 +511,6 @@ const OrderDetail = () => {
                         {Format.formatCurrency(order.final_price)}
                       </Grid2>
 
-                      {/* {order.paid === 0 && (
-                <Grid2 fontSize={"body2.fontSize"} size={12}>
-                  <ButtonLoading
-                    size="small"
-                    variant="outlined"
-                    sx={{ px: 3 }}
-                    onClick={handlePayment}
-                    loading={paymentLoading}
-                  >
-                    Thanh toán
-                  </ButtonLoading>
-                </Grid2>
-              )} */}
-
                       <Grid2 size={12}>
                         <HandleRender
                           // setOrders={setOrders}
@@ -527,6 +518,7 @@ const OrderDetail = () => {
                           url={order?.vnp_url}
                           status={order.current_status}
                           createdAt={order.vnp_created_at}
+                          setOrder={setOrder}
                         />
                       </Grid2>
                     </Grid2>

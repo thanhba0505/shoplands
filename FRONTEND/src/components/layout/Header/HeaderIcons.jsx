@@ -51,8 +51,8 @@ const NotificationsMenu = () => {
 const UserAccountMenu = () => {
   const user = Auth.getUser();
   const seller = Auth.getSeller();
-  const avatar = useSelector((state) => state.auth.account.avatar);
-  const logo = useSelector((state) => state.auth.account.logo);
+  const avatar = useSelector((state) => state?.auth?.account?.avatar);
+  const logo = useSelector((state) => state?.auth?.account?.logo);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
