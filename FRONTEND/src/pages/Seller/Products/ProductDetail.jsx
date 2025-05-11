@@ -371,6 +371,8 @@ const ProductDetail = () => {
     ));
   };
 
+  console.log(product?.attributes);
+
   return (
     <PaperCustom>
       {loading ? (
@@ -554,7 +556,7 @@ const ProductDetail = () => {
                   <TableRow>
                     <TableCell>Thuộc tính</TableCell>
                     <TableCell>
-                      {product?.attributes?.length > 0 ? (
+                      {product?.attributes ? (
                         formatAttributes(product.attributes)
                       ) : (
                         <>Không có thuộc tính</>

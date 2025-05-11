@@ -254,13 +254,13 @@ class ProductController {
     // Kiểm tra thông tin thêm sản phẩm
     private function checkAddProduct($name, $description, $category_id, $images, $product_details, $product_variants) {
         // Check product name
-        $checkName = Validator::isText($name, 'Tên sản phẩm', 3, 100);
+        $checkName = Validator::isName($name, 'Tên sản phẩm', 3, 100);
         if ($checkName !== true) {
             Response::json(['message' => $checkName], 400);
         }
 
         // Check description
-        $checkDescription = Validator::isText($description, 'Mota', 0, 5000, true);
+        $checkDescription = Validator::isText($description, 'Mô tả', 0, 5000, true);
         if ($checkDescription !== true) {
             Response::json(['message' => $checkDescription], 400);
         }
@@ -280,7 +280,7 @@ class ProductController {
 
         // Check product details
         foreach ($product_details as $product_detail) {
-            $checkName = Validator::isText($product_detail['name'], 'Tên sản phẩm', 3, 300);
+            $checkName = Validator::isName($product_detail['name'], 'Từ khóa chi tiết sản phẩm', 3, 300);
             if ($checkName !== true) {
                 Response::json(['message' => $checkName], 400);
             }
@@ -297,7 +297,7 @@ class ProductController {
         }
 
         foreach ($product_variants as $variant) {
-            $checkPrice = Validator::isNumber($variant['price'], 'Giá sản phẩm', 1, null);
+            $checkPrice = Validator::isNumber($variant['price'], 'Giá sản phẩm', 1, MAX_PRICE_PRODUCT);
             if ($checkPrice !== true) {
                 Response::json(['message' => $checkPrice], 400);
             }
@@ -307,11 +307,11 @@ class ProductController {
                 Response::json(['message' => $checkQuantity], 400);
             }
 
-            if ($variant['promotion_price'] && $variant['promotion_price'] >= $variant['price']) {
+            if (isset($variant['promotion_price']) && $variant['promotion_price'] >= $variant['price']) {
                 Response::json(['message' => "Giá khuyến mãi phải nhỏ hơn giá bán"], 400);
             }
 
-            if (isset($variant['promotion_price']) && $variant['promotion_price'] <= 0) {
+            if (isset($variant['promotion_price']) && $variant['promotion_price'] < 0) {
                 Response::json(['message' => "Giá khuyến mãi phải lớn hơn 0"], 400);
             }
         }
@@ -357,7 +357,7 @@ class ProductController {
                         Response::json(['message' => 'Thuộc tính không thuộc sản phẩm này'], 400);
                     }
 
-                    $checkPrice = Validator::isNumber($variant['price'], 'Giá', 1, 5000000);
+                    $checkPrice = Validator::isNumber($variant['price'], 'Giá', 1, MAX_PRICE_PRODUCT);
                     $checkPromotionPrice = Validator::isNumber($variant['promotion_price'], 'Giá khuyến mãi', 0, 5000000);
                     $checkQuantity = Validator::isNumber($variant['quantity'], 'Số lượng', 1, 10000);
 

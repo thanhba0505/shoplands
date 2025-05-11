@@ -5,32 +5,29 @@ namespace App\Helpers;
 class Validator {
     // Kiểm tra nội dung hợp lệ
     public static function isText($text, $label = "Nội dung", $min = 3, $max = 20, $allowNewLine = false) {
-        // Kiểm tra chuỗi rỗng khi min = 0
         if ($min == 0 && empty($text)) {
-            return true;  // Nếu min = 0 và chuỗi rỗng, coi như hợp lệ
+            return true;
         }
 
-        // Đảm bảo độ dài nằm trong khoảng min-max
-        $length = strlen($text);
+        $length = mb_strlen($text, 'UTF-8');
         if ($length < $min || $length > $max) {
             return "$label phải có từ $min đến $max ký tự.";
         }
 
-        // Biểu thức chính quy cho phép chữ cái, số, dấu cách, và ký tự đặc biệt
-        $regex = '/^[\p{L}\p{N}\s\.,!?&=_\-]+$/u';
+        // Cho phép nhiều loại ký tự đặc biệt hơn
+        $regex = '/^[\p{L}\p{N}\s\p{P}\p{S}]+$/u';
 
-        // Nếu cho phép dấu xuống dòng, bổ sung ký tự \n vào regex
         if ($allowNewLine) {
-            $regex = '/^[\p{L}\p{N}\s\.,!?&=_\-\\n]+$/u';
+            $regex = '/^[\p{L}\p{N}\s\p{P}\p{S}\n]+$/u';
         }
 
-        // Kiểm tra chuỗi với biểu thức chính quy
         if (!preg_match($regex, $text)) {
             return "$label không hợp lệ.";
         }
 
         return true;
     }
+
 
     // Kiểm tra họ tên hợp lệ
     public static function isName($text, $label = "Họ tên", $min = 1, $max = 50) {
