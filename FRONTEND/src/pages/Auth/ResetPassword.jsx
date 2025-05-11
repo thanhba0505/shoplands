@@ -225,7 +225,7 @@ const ResetPassword = () => {
             }}
             onClick={reset}
           >
-            Làm mới quên mật khẩu
+            Làm mới biểu mẩu
           </Typography>
         )}
       </PaperCustom>

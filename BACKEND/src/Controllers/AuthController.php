@@ -433,10 +433,16 @@ class AuthController {
     public function getCodeForgotPassword() {
         try {
             $phone = Request::json('phone');
+            $passwordNew = Request::json('password');
 
             $account = AccountModel::findByPhone($phone);
             if (!$account) {
                 Response::json(['message' => 'Tài khoản không tồn tại'], 400);
+            }
+
+            $passwordCheck = Validator::isPasswordStrength($passwordNew);
+            if ($passwordCheck !== true) {
+                Response::json(['message' => $passwordCheck], 400);
             }
 
             $result = SendMessage::sendMessageCode($account['phone'], $account['account_id']);
