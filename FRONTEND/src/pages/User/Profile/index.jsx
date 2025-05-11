@@ -134,10 +134,6 @@ const Profile = () => {
 
   const handleUpdateName = async () => {
     setLoadingUpdateName(true);
-    if (!editedName || editedName === user?.name) {
-      setEditingName(false);
-      return;
-    }
 
     try {
       const res = await axiosWithAuth.put(Api.user("name"), {
@@ -151,7 +147,7 @@ const Profile = () => {
       setEditingName(false);
     } catch (err) {
       Log.error(err.response?.data?.message);
-      setEditingName(false);
+      // setEditingName(false);
     } finally {
       setLoadingUpdateName(false);
     }

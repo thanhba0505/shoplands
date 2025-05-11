@@ -370,27 +370,27 @@ class SellerController {
             Response::json(['message' => $checkPassword], 400);
         }
 
-        $checkStoreName = Validator::isText($store_name, 'Tên cửa hàng', 3, 100);
+        $checkStoreName = Validator::isName($store_name, 'Tên cửa hàng', 3, 100);
         if ($checkStoreName !== true) {
             Response::json(['message' => $checkStoreName], 400);
         }
 
-        $checkOwnerName = Validator::isText($owner_name, 'Tên chủ chửa hàng', 3, 100);
+        $checkOwnerName = Validator::isName($owner_name, 'Tên chủ chửa hàng', 3, 100);
         if ($checkOwnerName !== true) {
             Response::json(['message' => $checkOwnerName], 400);
         }
 
-        $checkDescription = Validator::isText($description, 'Mô tả', 3, 10000, true);
+        $checkDescription = Validator::isName($description, 'Mô tả', 3, 10000, true);
         if ($checkDescription !== true) {
             Response::json(['message' => $checkDescription], 400);
         }
 
-        $checkBankNumber = Validator::isText($bank_number, 'Số tài khoản', 6, 30);
+        $checkBankNumber = Validator::isBankAccountNumber($bank_number, 'Số tài khoản', 6, 30);
         if ($checkBankNumber !== true) {
             Response::json(['message' => $checkBankNumber], 400);
         }
 
-        $checkBankName = Validator::isText($bank_name, 'Tên ngân hàng', 1, 100);
+        $checkBankName = Validator::isName($bank_name, 'Tên ngân hàng', 1, 100);
         if ($checkBankName !== true) {
             Response::json(['message' => $checkBankName], 400);
         }

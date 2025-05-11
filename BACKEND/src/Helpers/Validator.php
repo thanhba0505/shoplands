@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 class Validator {
+    // Kiểm tra nội dung hợp lệ
     public static function isText($text, $label = "Nội dung", $min = 3, $max = 20, $allowNewLine = false) {
         // Kiểm tra chuỗi rỗng khi min = 0
         if ($min == 0 && empty($text)) {
@@ -31,6 +32,7 @@ class Validator {
         return true;
     }
 
+    // Kiểm tra họ tên hợp lệ
     public static function isName($text, $label = "Họ tên", $min = 1, $max = 50) {
         // Kiểm tra chuỗi rỗng khi min = 0
         if ($min == 0 && empty($text)) {
@@ -54,6 +56,26 @@ class Validator {
         return true;
     }
 
+    // Kiểm tra số tài khoản hợp lệ
+    public static function isBankAccountNumber($accountNumber, $label = "Số tài khoản", $min = 8, $max = 16) {
+        // Kiểm tra rỗng
+        if (empty($accountNumber)) {
+            return "$label không được để trống.";
+        }
+
+        // Kiểm tra độ dài
+        $length = strlen($accountNumber);
+        if ($length < $min || $length > $max) {
+            return "$label phải có từ $min đến $max chữ số.";
+        }
+
+        // Kiểm tra chỉ chứa số
+        if (!ctype_digit($accountNumber)) {
+            return "$label chỉ được chứa chữ số.";
+        }
+
+        return true;
+    }
 
 
     // Kiểm tra số điện thoại hợp lệ (Trả về true nếu hợp lệ, hoặc chuỗi lỗi nếu không hợp lệ)
