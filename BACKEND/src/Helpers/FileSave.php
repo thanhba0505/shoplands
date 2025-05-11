@@ -6,7 +6,7 @@ use Exception;
 
 class FileSave {
   // Đường dẫn cơ sở lưu trữ (thư mục)
-  private static $basePath = 'src/storage/';
+  private static $basePath = 'src/Storage/';
 
   // Lưu ảnh vào thư mục và trả về tên file
   public static function image($file, $subName = 'image', $subPath = '', $maxSize = 10485760) {
