@@ -5,7 +5,7 @@ import {
   AccountCircle,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "~/redux/authSlice";
 import Path from "~/helpers/Path";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
@@ -51,6 +51,8 @@ const NotificationsMenu = () => {
 const UserAccountMenu = () => {
   const user = Auth.getUser();
   const seller = Auth.getSeller();
+  const avatar = useSelector((state) => state.auth.account.avatar);
+  const logo = useSelector((state) => state.auth.account.logo);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -102,11 +104,6 @@ const UserAccountMenu = () => {
     { label: "Đăng xuất", onClick: handleLogout },
   ];
 
-  // Xử lý avatar của người dùng và người bán
-  const avatarSrc =
-    (user?.avatar && Path.publicAvatar(user?.avatar)) ||
-    (seller?.logo && Path.publicAvatar(seller?.logo));
-
   const avatarInitials =
     user?.name?.charAt(0) || seller?.store_name?.charAt(0) || "";
 
@@ -121,7 +118,7 @@ const UserAccountMenu = () => {
     <MenuIcon
       icon={
         <Avatar
-          src={avatarSrc} // Dùng ảnh đại diện nếu có
+          src={Path.publicAvatar(avatar || logo)} // Dùng ảnh đại diện nếu có
         >
           {avatarInitials ? avatarInitials : <AccountCircle fontSize="large" />}
         </Avatar>
