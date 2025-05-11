@@ -31,6 +31,30 @@ class Validator {
         return true;
     }
 
+    public static function isName($text, $label = "Họ tên", $min = 1, $max = 50) {
+        // Kiểm tra chuỗi rỗng khi min = 0
+        if ($min == 0 && empty($text)) {
+            return true; // Hợp lệ nếu được phép rỗng
+        }
+
+        // Đảm bảo độ dài nằm trong khoảng min-max
+        $length = mb_strlen($text, 'UTF-8');
+        if ($length < $min || $length > $max) {
+            return "$label phải có từ $min đến $max ký tự.";
+        }
+
+        // Biểu thức chính quy: chỉ cho phép chữ cái (có dấu tiếng Việt) và khoảng trắng
+        $regex = '/^[\p{L}\s]+$/u';
+
+        // Kiểm tra chuỗi
+        if (!preg_match($regex, $text)) {
+            return "$label chỉ được chứa chữ cái và khoảng trắng, không có ký tự đặc biệt hay số.";
+        }
+
+        return true;
+    }
+
+
 
     // Kiểm tra số điện thoại hợp lệ (Trả về true nếu hợp lệ, hoặc chuỗi lỗi nếu không hợp lệ)
     public static function isPhone($phone) {

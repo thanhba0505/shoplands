@@ -364,7 +364,7 @@ class AuthController {
     // Kiểm tra đăng ký
     private function checkInfoRegister($name, $phone, $password) {
         // Kiểm tra tên tài khoản
-        $nameCheck = Validator::isText($name, 'Tên tài khoản', 3, 20);
+        $nameCheck = Validator::isName($name, 'Tên tài khoản', 3, 20);
         if ($nameCheck !== true) {
             Response::json(['message' => $nameCheck], 400);
         }
