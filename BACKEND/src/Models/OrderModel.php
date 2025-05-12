@@ -1089,31 +1089,36 @@ class OrderModel {
         return $result;
     }
 
-    public static function findByUserIdOrderIdAndProductVariantId($user_id, $order_id, $product_variant_id) {
+    public static function findByUserIdOrderIdAndOrderItemId(
+        $user_id,
+        $order_id,
+        $order_item_id
+    ) {
         $conn = new ConnectDatabase();
 
         $sql = "
             SELECT
                 o.id AS order_id,
                 u.id AS user_id,
-                oi.product_variant_id AS product_variant_id,
+                pv.id AS product_variant_id,
                 r.id AS review_id
             FROM
                 orders o
                 JOIN order_items oi ON o.id = oi.order_id
                 JOIN users u ON o.user_id = u.id
-                LEFT JOIN reviews r ON o.id = r.order_id
+                JOIN product_variants pv ON oi.product_variant_id = pv.id
+                LEFT JOIN reviews r ON pv.id = r.product_variant_id
             WHERE
                 o.id = :order_id
                 AND u.id = :user_id
-                AND oi.product_variant_id = :product_variant_id
+                AND oi.id = :order_item_id
                 AND o.current_status = 'completed'
         ";
 
         $result = $conn->query($sql, [
             'order_id' => $order_id,
             'user_id' => $user_id,
-            'product_variant_id' => $product_variant_id
+            'order_item_id' => $order_item_id
         ])->fetch();
 
         return $result;

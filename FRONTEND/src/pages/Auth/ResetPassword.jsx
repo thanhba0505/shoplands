@@ -82,7 +82,7 @@ const ResetPassword = () => {
       dispatch(loginSuccess({ access_token, refresh_token, account }));
       setOpen(false);
       enqueueSnackbar("Đặt lại mật khẩu thành công!", { variant: "success" });
-      navigate(Path.home());
+      navigate(Path.userProfile());
     } catch (error) {
       if (error.response?.status === 409) {
         setOpen(true);

@@ -41,7 +41,7 @@ class FileSave {
     }
 
     // Kiểm tra loại file (chỉ cho phép ảnh)
-    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     if (!in_array($fileType, $allowedTypes)) {
       return [
         'success' => false,

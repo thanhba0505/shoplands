@@ -96,4 +96,26 @@ class ReviewModel {
 
         return $result;
     }
+
+    // Lấy danh sách đánh giá theo order_id
+    public static function getByOrderId($orderId) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                r.*,
+                GROUP_CONCAT(ri.image_path) AS image_paths
+            FROM
+                reviews r
+                LEFT JOIN review_images ri ON r.id = ri.review_id
+            WHERE
+                r.order_id = :order_id
+            GROUP BY
+                r.id
+        ";
+
+        $result = $conn->query($sql, ['order_id' => $orderId])->fetchAll();
+
+        return $result;
+    }
 }

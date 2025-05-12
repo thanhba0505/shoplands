@@ -19,10 +19,10 @@ class ReviewController {
             $rating = Request::json("rating") ?? Request::post("rating");
             $comment = Request::json("comment") ?? Request::post("comment");
             $orderId = Request::json("order_id") ?? Request::post("order_id");
-            $productVariantId = Request::json("product_variant_id") ?? Request::post("product_variant_id");
+            $orderItemId = Request::json("order_item_id") ?? Request::post("order_item_id");
             $images = Request::files('images');
 
-            if (!$rating || !$orderId || !$productVariantId) {
+            if (!$rating || !$orderId || !$orderItemId) {
                 Response::json([
                     "message" => "Thông tin không đủ"
                 ], 400);
@@ -43,10 +43,10 @@ class ReviewController {
 
             $rating = (int) $rating;
 
-            $order = OrderModel::findByUserIdOrderIdAndProductVariantId(
+            $order = OrderModel::findByUserIdOrderIdAndOrderItemId(
                 $user["user_id"],
                 $orderId,
-                $productVariantId
+                $orderItemId
             );
 
             if (!$order) {
@@ -57,17 +57,23 @@ class ReviewController {
 
             if ($order["review_id"]) {
                 Response::json([
-                    "message" => "Đã đánh giá sản phẩm này"
+                    "message" => "Đã đánh giá sản phẩm này",
                 ], 400);
             }
 
-            $reviewId = ReviewModel::add($user["user_id"], $orderId, $productVariantId, $rating, $comment);
+            $reviewId = ReviewModel::add(
+                $user["user_id"],
+                $orderId,
+                $order["product_variant_id"],
+                $rating,
+                $comment
+            );
+
             if ($images) {
                 $this->addReviewImages($reviewId, $images);
             }
 
             Response::json(['message' => 'Thêm đánh giá thành công'], 200);
-            Response::json([$order], 200);
         } catch (\Throwable $th) {
             Log::throwable("CartController -> userGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
@@ -85,5 +91,18 @@ class ReviewController {
         }
 
         ReviewModel::addListImages($review_id, $fileNames);
+    }
+
+    // Lấy danh sách đánh giá theo order_id
+    public function userGet($order_id) {
+        try {
+            $reviews = ReviewModel::getByOrderId($order_id);
+
+
+            Response::json($reviews, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("ReviewController -> getByOrderId: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
     }
 }
