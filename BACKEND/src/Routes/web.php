@@ -75,8 +75,8 @@ $router->get('api/admin/users', 'UserController@adminGet', ['App\Middlewares\Adm
 $router->put('api/admin/users/locked', 'UserController@adminLocked', ['App\Middlewares\AdminMiddleware']);
 
 // API REVIEW
-$router->post('api/reviews', 'ReviewController@add', ['App\Middlewares\UserMiddleware']);
-$router->get('api/reviews/{order_id}', 'ReviewController@userGet', ['App\Middlewares\UserMiddleware']);
+$router->post('api/user/reviews', 'ReviewController@add', ['App\Middlewares\UserMiddleware']);
+$router->get('api/user/reviews/{order_id}', 'ReviewController@userGet', ['App\Middlewares\UserMiddleware']);
 
 // API OTHER
 $router->get('api/banks', 'Controller@getBanks');

@@ -31,14 +31,6 @@ class Path {
     return this.buildPath(this.public() + "/app", subPath);
   }
 
-  static publicLogoRectangle() {
-    return this.buildPath(this.public() + "/app/logo-rectangle.svg");
-  }
-
-  static publicLogoSquare() {
-    return this.buildPath(this.public() + "/app/logo-square.svg");
-  }
-
   static publicLogo1() {
     return this.buildPath(this.public() + "/app/logo-1.png");
   }
@@ -53,6 +45,10 @@ class Path {
 
   static publicLogo4() {
     return this.buildPath(this.public() + "/app/logo-4.png");
+  }
+
+  static publicReview(subPath) {
+    return this.buildPath(this.public() + "/uploaded/review", subPath);
   }
 
   static publicAvatar(subPath = "") {

@@ -104,6 +104,10 @@ class Api {
     return this.buildPath("user/address", endpoint);
   }
 
+  static userReviews(endpoint = "") {
+    return this.buildPath("user/reviews", endpoint);
+  }
+
   // Seller
   static sellerOrders(endpoint = "") {
     return this.buildPath("seller/orders", endpoint);

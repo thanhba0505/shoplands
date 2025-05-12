@@ -67,7 +67,10 @@ class ReviewModel {
             'createdAt' => $createdAt
         ]);
 
-        return $conn->getConnection()->lastInsertId();
+        return [
+            'review_id' => $conn->getConnection()->lastInsertId(),
+            'created_at' => $createdAt
+        ];
     }
 
     // Thêm 1 danh sách ảnh

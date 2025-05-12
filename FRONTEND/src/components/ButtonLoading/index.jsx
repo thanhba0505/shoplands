@@ -3,7 +3,7 @@ import { Button } from "@mui/material";
 
 const MIN_LOADING_TIME = 500; // 🔥 Thời gian tối thiểu (ms)
 
-const ButtonLoading = ({ loading, children, sx, variant, color, ...props }) => {
+const ButtonLoading = ({ loading, children, sx, variant, color, disabled, ...props }) => {
   const [internalLoading, setInternalLoading] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const ButtonLoading = ({ loading, children, sx, variant, color, ...props }) => {
   }, [loading]);
 
   return (
-    <Button sx={sx} color={color} variant={variant} {...props} loading={internalLoading}>
+    <Button sx={sx} color={color} variant={variant} disabled={disabled} {...props} loading={internalLoading}>
       {children}
     </Button>
   );

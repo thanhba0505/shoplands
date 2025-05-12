@@ -1,9 +1,12 @@
 import { useTheme } from "@emotion/react";
 import {
+  Avatar,
   Box,
+  Button,
   Container,
   Divider,
   Grid2,
+  Rating,
   Skeleton,
   Table,
   TableBody,
@@ -11,12 +14,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ButtonLoading from "~/components/ButtonLoading";
+import CircularProgressLoading from "~/components/CircularProgressLoading";
 import ConfirmModal from "~/components/ConfirmModal";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
@@ -50,7 +55,6 @@ const AcctionButton = ({
     </ButtonLoading>
   );
 };
-
 const HandleRender = ({ status, orderId, url, createdAt, setOrder }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -207,12 +211,268 @@ const HandleRender = ({ status, orderId, url, createdAt, setOrder }) => {
   }
 };
 
+const OrderItem = ({ item, review, order_id, setReviews, loadingReviews }) => {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (review) {
+      setRating(review.rating);
+    }
+  }, [review]);
+
+  useEffect(() => {
+    if (review) {
+      setComment(review.comment);
+    }
+  }, [review]);
+
+  const fetchReview = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosWithAuth.post(
+        Api.userReviews(),
+        {
+          order_id: order_id,
+          rating: rating,
+          comment: comment,
+          order_item_id: item.order_item_id,
+          images: [],
+        },
+        {
+          navigate,
+        }
+      );
+
+      setReviews((prevReviews) => [...prevReviews, response.data.data]);
+
+      enqueueSnackbar(response.data.message, { variant: "success" });
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <TableRow>
+        <TableCell sx={{ border: "none" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "20px",
+            }}
+          >
+            <img
+              src={Path.publicProduct(item.image)}
+              alt={item.product_name}
+              width="50"
+            />
+            <Typography variant="body2" className="line-clamp-2">
+              {item.product_name}
+            </Typography>
+          </div>
+        </TableCell>
+        <TableCell sx={{ textAlign: "center", border: "none" }}>
+          {item.attributes.map((attr) => (
+            <div key={attr.name}>
+              {attr.name}: {attr.value}
+            </div>
+          ))}
+        </TableCell>
+        <TableCell sx={{ textAlign: "center", border: "none" }}>
+          {Format.formatCurrency(item.price)}
+        </TableCell>
+        <TableCell sx={{ textAlign: "center", border: "none" }}>
+          {item.quantity}
+        </TableCell>
+        <TableCell sx={{ textAlign: "center", border: "none" }}>
+          {Format.formatCurrency(item.price * item.quantity)}
+        </TableCell>
+      </TableRow>
+
+      {loadingReviews ? (
+        <TableRow>
+          <TableCell colSpan={6}>
+            <CircularProgressLoading height={150} sx={{ pb: 4 }} />
+          </TableCell>
+        </TableRow>
+      ) : (
+        <TableRow>
+          <TableCell colSpan={6} sx={{ pt: 0, pb: 4 }}>
+            <Grid2 container sx={{ pl: "70px" }} spacing={2}>
+              <Grid2 container size={5} spacing={2} flexDirection={"column"}>
+                <Grid2 size={12}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    placeholder="Đánh giá sản phẩm"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    disabled={review ? true : false}
+                  />
+                </Grid2>
+                <Grid2>
+                  {review ? (
+                    <Typography
+                      variant="body2"
+                      fontStyle={"italic"}
+                      color="#BDBDBD"
+                    >
+                      Đã đánh giá
+                    </Typography>
+                  ) : (
+                    <>
+                      <ButtonLoading
+                        onClick={fetchReview}
+                        loading={false}
+                        variant="contained"
+                        size="small"
+                        disabled={comment === "" || rating === 0}
+                      >
+                        Gửi đánh giá
+                      </ButtonLoading>
+
+                      <ButtonLoading
+                        loading={loading}
+                        variant="outlined"
+                        color={"error"}
+                        size="small"
+                        onClick={() => {
+                          setComment("");
+                          setRating(0);
+                        }}
+                        sx={{ ml: 2 }}
+                      >
+                        Hủy
+                      </ButtonLoading>
+                    </>
+                  )}
+                </Grid2>
+              </Grid2>
+              <Grid2
+                container
+                spacing={2}
+                size={7}
+                justifyContent={"start"}
+                flexDirection={"column"}
+              >
+                <Grid2 size={12}>
+                  <Rating
+                    name="simple-controlled"
+                    value={rating}
+                    onChange={(event, newValue) => {
+                      setRating(newValue);
+                    }}
+                    readOnly={review ? true : false}
+                  />
+                </Grid2>
+
+                <Grid2 size={12} sx={{ display: "flex", gap: 2 }}>
+                  {review &&
+                    review.image_paths &&
+                    review.image_paths.map((image, key) => (
+                      <React.Fragment key={image.image_path + key}>
+                        {image.image_path && (
+                          <Avatar
+                            src={Path.publicReview(image.image_path)}
+                            sx={{ width: 80, height: 80, display: "block" }}
+                            variant="rounded"
+                          />
+                        )}
+                      </React.Fragment>
+                    ))}
+
+                  {!review && <Button variant="outlined">Thêm ảnh</Button>}
+                </Grid2>
+              </Grid2>
+            </Grid2>
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+};
+
+const OrderItems = ({ order_items, order_id }) => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const [reviews, setReviews] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const fetchReviews = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosWithAuth.get(Api.userReviews(order_id), {
+        navigate,
+      });
+      setReviews(response.data);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate, order_id]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  return (
+    <PaperCustom sx={{ px: 3 }}>
+      <TableContainer sx={{ py: 2 }}>
+        <Table sx={{ borderCollapse: "collapse", border: "none" }}>
+          <TableHead>
+            <TableRow
+              sx={{
+                backgroundColor: theme.custom?.primary.light,
+              }}
+            >
+              <TableCell sx={{ textAlign: "center" }} width={"40%"}>
+                Sản phẩm
+              </TableCell>
+              <TableCell sx={{ textAlign: "center" }}>Phân loại</TableCell>
+              <TableCell sx={{ textAlign: "center" }}>Giá</TableCell>
+              <TableCell sx={{ textAlign: "center" }}>Số lượng</TableCell>
+              <TableCell sx={{ textAlign: "center" }}>Thành tiền</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {order_items?.map((item) => (
+              <React.Fragment key={item.product_variant_id}>
+                <OrderItem
+                  item={item}
+                  review={reviews.find(
+                    (review) =>
+                      review.product_variant_id === item.product_variant_id
+                  )}
+                  order_id={order_id}
+                  setReviews={setReviews}
+                  loadingReviews={loading}
+                />
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </PaperCustom>
+  );
+};
+
 const OrderDetail = () => {
   const location = useLocation();
   const params = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const theme = useTheme();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -526,85 +786,10 @@ const OrderDetail = () => {
                 </Grid2>
 
                 <Grid2 size={12}>
-                  <PaperCustom sx={{ px: 3 }}>
-                    <TableContainer sx={{ py: 2 }}>
-                      <Table
-                        sx={{ borderCollapse: "collapse", border: "none" }}
-                      >
-                        <TableHead>
-                          <TableRow
-                            sx={{
-                              backgroundColor: theme.custom?.primary.light,
-                            }}
-                          >
-                            <TableCell
-                              sx={{ textAlign: "center" }}
-                              width={"40%"}
-                            >
-                              Sản phẩm
-                            </TableCell>
-                            <TableCell sx={{ textAlign: "center" }}>
-                              Phân loại
-                            </TableCell>
-                            <TableCell sx={{ textAlign: "center" }}>
-                              Giá
-                            </TableCell>
-                            <TableCell sx={{ textAlign: "center" }}>
-                              Số lượng
-                            </TableCell>
-                            <TableCell sx={{ textAlign: "center" }}>
-                              Thành tiền
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {order?.order_items?.map((item) => (
-                            <TableRow key={item.product_variant_id}>
-                              <TableCell>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "20px",
-                                  }}
-                                >
-                                  <img
-                                    src={Path.publicProduct(item.image)}
-                                    alt={item.product_name}
-                                    width="50"
-                                  />
-                                  <Typography
-                                    variant="body2"
-                                    className="line-clamp-2"
-                                  >
-                                    {item.product_name}
-                                  </Typography>
-                                </div>
-                              </TableCell>
-                              <TableCell sx={{ textAlign: "center" }}>
-                                {item.attributes.map((attr) => (
-                                  <div key={attr.name}>
-                                    {attr.name}: {attr.value}
-                                  </div>
-                                ))}
-                              </TableCell>
-                              <TableCell sx={{ textAlign: "center" }}>
-                                {Format.formatCurrency(item.price)}
-                              </TableCell>
-                              <TableCell sx={{ textAlign: "center" }}>
-                                {item.quantity}
-                              </TableCell>
-                              <TableCell sx={{ textAlign: "center" }}>
-                                {Format.formatCurrency(
-                                  item.price * item.quantity
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </PaperCustom>
+                  <OrderItems
+                    order_items={order.order_items}
+                    order_id={order.order_id}
+                  />
                 </Grid2>
               </Grid2>
             </>

@@ -61,7 +61,7 @@ class ReviewController {
                 ], 400);
             }
 
-            $reviewId = ReviewModel::add(
+            $review = ReviewModel::add(
                 $user["user_id"],
                 $orderId,
                 $order["product_variant_id"],
@@ -70,10 +70,22 @@ class ReviewController {
             );
 
             if ($images) {
-                $this->addReviewImages($reviewId, $images);
+                $this->addReviewImages($review["review_id"], $images);
             }
 
-            Response::json(['message' => 'Thêm đánh giá thành công'], 200);
+            Response::json([
+                'message' => 'Thêm đánh giá thành công',
+                'data' => [
+                    'review_id' => $review["review_id"],
+                    'order_id' => $orderId,
+                    'comment' => $comment,
+                    'created_at' => $review["created_at"],
+                    'order_item_id' => $orderItemId,
+                    'product_variant_id' => $order["product_variant_id"],
+                    'rating' => $rating,
+                    'user_id' => $user["user_id"]
+                ]
+            ], 200);
         } catch (\Throwable $th) {
             Log::throwable("CartController -> userGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
