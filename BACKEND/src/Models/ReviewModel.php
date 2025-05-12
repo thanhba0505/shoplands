@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Carbon;
+use App\Helpers\DataHelper;
 use App\Models\ConnectDatabase;
 
 class ReviewModel {
@@ -103,18 +104,38 @@ class ReviewModel {
 
         $sql = "
             SELECT
-                r.*,
-                GROUP_CONCAT(ri.image_path) AS image_paths
+                r.id AS review_id,
+                r.rating,
+                r.comment,
+                r.created_at,
+                r.product_variant_id,
+                r.user_id,
+                r.order_id,
+                ri.image_path
             FROM
                 reviews r
                 LEFT JOIN review_images ri ON r.id = ri.review_id
             WHERE
                 r.order_id = :order_id
-            GROUP BY
-                r.id
         ";
-
         $result = $conn->query($sql, ['order_id' => $orderId])->fetchAll();
+
+        $config = [
+            'keep_columns' => [
+                'review_id',
+                'rating',
+                'comment',
+                'created_at',
+                'product_variant_id',
+                'user_id',
+                'order_id'
+            ],
+            'group_columns' => [
+                'image_paths' => ['image_path']
+            ]
+        ];
+
+        $result = DataHelper::groupData($result, $config);
 
         return $result;
     }
