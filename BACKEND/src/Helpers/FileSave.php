@@ -92,4 +92,9 @@ class FileSave {
   public static function backgroundImage($file) {
     return self::image($file, 'background', 'public/uploaded/background/', 5242880); // 5MB
   }
+
+  // Thêm ảnh review
+  public static function reviewImage($file) {
+    return self::image($file, 'review', 'public/uploaded/review/', 5242880); // 5MB
+  }
 }

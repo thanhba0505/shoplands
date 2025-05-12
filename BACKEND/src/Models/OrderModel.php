@@ -653,23 +653,6 @@ class OrderModel {
         return $data;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Tạo đơn hàng
     public static function add($seller_id, $user_id, $from_address_id, $to_address_id, $shipping_fee, $subtotal_price, $discount, $final_price, $revenue, $coupon_id = null) {
         $query = new ConnectDatabase();
@@ -1102,6 +1085,36 @@ class OrderModel {
         ";
 
         $result = $query->query($sql, [])->fetchAll();
+
+        return $result;
+    }
+
+    public static function findByUserIdOrderIdAndProductVariantId($user_id, $order_id, $product_variant_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                o.id AS order_id,
+                u.id AS user_id,
+                oi.product_variant_id AS product_variant_id,
+                r.id AS review_id
+            FROM
+                orders o
+                JOIN order_items oi ON o.id = oi.order_id
+                JOIN users u ON o.user_id = u.id
+                LEFT JOIN reviews r ON o.id = r.order_id
+            WHERE
+                o.id = :order_id
+                AND u.id = :user_id
+                AND oi.product_variant_id = :product_variant_id
+                AND o.current_status = 'completed'
+        ";
+
+        $result = $conn->query($sql, [
+            'order_id' => $order_id,
+            'user_id' => $user_id,
+            'product_variant_id' => $product_variant_id
+        ])->fetch();
 
         return $result;
     }

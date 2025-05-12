@@ -74,6 +74,9 @@ $router->put('api/user/name', 'UserController@updateName', ['App\Middlewares\Use
 $router->get('api/admin/users', 'UserController@adminGet', ['App\Middlewares\AdminMiddleware']);
 $router->put('api/admin/users/locked', 'UserController@adminLocked', ['App\Middlewares\AdminMiddleware']);
 
+// API REVIEW
+$router->post('api/reviews', 'ReviewController@add', ['App\Middlewares\UserMiddleware']);
+
 // API OTHER
 $router->get('api/banks', 'Controller@getBanks');
 $router->get('view/message', 'Controller@getMessage');
