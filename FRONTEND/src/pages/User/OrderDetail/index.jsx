@@ -6,6 +6,7 @@ import {
   Container,
   Divider,
   Grid2,
+  IconButton,
   Rating,
   Skeleton,
   Table,
@@ -18,7 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ButtonLoading from "~/components/ButtonLoading";
 import CircularProgressLoading from "~/components/CircularProgressLoading";
@@ -28,6 +29,7 @@ import Api from "~/helpers/Api";
 import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
+import CloseIcon from "@mui/icons-material/Close";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 
 const AcctionButton = ({
@@ -55,6 +57,7 @@ const AcctionButton = ({
     </ButtonLoading>
   );
 };
+
 const HandleRender = ({ status, orderId, url, createdAt, setOrder }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -211,12 +214,22 @@ const HandleRender = ({ status, orderId, url, createdAt, setOrder }) => {
   }
 };
 
-const OrderItem = ({ item, review, order_id, setReviews, loadingReviews }) => {
+const OrderItem = ({
+  item,
+  review,
+  order_id,
+  setReviews,
+  loadingReviews,
+  status,
+}) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(null);
   const [comment, setComment] = useState("");
+  const [images, setImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+  const fileInputRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -232,36 +245,97 @@ const OrderItem = ({ item, review, order_id, setReviews, loadingReviews }) => {
     }
   }, [review]);
 
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+
+    // Giới hạn số lượng ảnh (có thể điều chỉnh)
+    const maxFiles = 5;
+    if (files.length + images.length > maxFiles) {
+      enqueueSnackbar(`Bạn chỉ có thể tải lên tối đa ${maxFiles} ảnh`, {
+        variant: "warning",
+      });
+      return;
+    }
+
+    // Thêm files vào state để gửi lên server
+    setImages([...images, ...files]);
+
+    // Tạo preview cho ảnh
+    const newPreviewImages = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setPreviewImages([...previewImages, ...newPreviewImages]);
+  };
+
+  const removeImage = (index) => {
+    const newImages = [...images];
+    newImages.splice(index, 1);
+    setImages(newImages);
+
+    const newPreviewImages = [...previewImages];
+
+    // Xóa object URL để tránh memory leak
+    URL.revokeObjectURL(newPreviewImages[index].preview);
+
+    newPreviewImages.splice(index, 1);
+    setPreviewImages(newPreviewImages);
+  };
+
+  // Xóa object URLs khi component unmount để tránh memory leak
+  useEffect(() => {
+    return () => {
+      previewImages.forEach((image) => URL.revokeObjectURL(image.preview));
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const fetchReview = async () => {
     setLoading(true);
+
     try {
-      const response = await axiosWithAuth.post(
-        Api.userReviews(),
-        {
-          order_id: order_id,
-          rating: rating,
-          comment: comment,
-          order_item_id: item.order_item_id,
-          images: [],
+      // Tạo FormData nếu có ảnh cần upload
+      const formData = new FormData();
+      formData.append("order_id", order_id);
+      formData.append("rating", rating);
+      formData.append("comment", comment);
+      formData.append("order_item_id", item.order_item_id);
+
+      // Thêm tất cả ảnh vào formData
+      images.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
+      });
+
+      // Gửi request với FormData
+      const response = await axiosWithAuth.post(Api.userReviews(), formData, {
+        navigate,
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          navigate,
-        }
-      );
+      });
 
       setReviews((prevReviews) => [...prevReviews, response.data.data]);
-
       enqueueSnackbar(response.data.message, { variant: "success" });
+
+      // Reset form sau khi gửi thành công
+      if (!review) {
+        setComment("");
+        setRating(null);
+        setImages([]);
+        setPreviewImages([]);
+      }
     } catch (error) {
       Log.error(error.response?.data?.message);
     }
+
     setLoading(false);
   };
-
+  
   return (
     <>
       <TableRow>
-        <TableCell sx={{ border: "none" }}>
+        <TableCell sx={{ border: status === "completed" ? "none" : "" }}>
           <div
             style={{
               display: "flex",
@@ -279,130 +353,218 @@ const OrderItem = ({ item, review, order_id, setReviews, loadingReviews }) => {
             </Typography>
           </div>
         </TableCell>
-        <TableCell sx={{ textAlign: "center", border: "none" }}>
+        <TableCell
+          sx={{
+            textAlign: "center",
+            border: status === "completed" ? "none" : "",
+          }}
+        >
           {item.attributes.map((attr) => (
             <div key={attr.name}>
               {attr.name}: {attr.value}
             </div>
           ))}
         </TableCell>
-        <TableCell sx={{ textAlign: "center", border: "none" }}>
+        <TableCell
+          sx={{
+            textAlign: "center",
+            border: status === "completed" ? "none" : "",
+          }}
+        >
           {Format.formatCurrency(item.price)}
         </TableCell>
-        <TableCell sx={{ textAlign: "center", border: "none" }}>
+        <TableCell
+          sx={{
+            textAlign: "center",
+            border: status === "completed" ? "none" : "",
+          }}
+        >
           {item.quantity}
         </TableCell>
-        <TableCell sx={{ textAlign: "center", border: "none" }}>
+        <TableCell
+          sx={{
+            textAlign: "center",
+            border: status === "completed" ? "none" : "",
+          }}
+        >
           {Format.formatCurrency(item.price * item.quantity)}
         </TableCell>
       </TableRow>
 
-      {loadingReviews ? (
-        <TableRow>
-          <TableCell colSpan={6}>
-            <CircularProgressLoading height={150} sx={{ pb: 4 }} />
-          </TableCell>
-        </TableRow>
-      ) : (
-        <TableRow>
-          <TableCell colSpan={6} sx={{ pt: 0, pb: 4 }}>
-            <Grid2 container sx={{ pl: "70px" }} spacing={2}>
-              <Grid2 container size={5} spacing={2} flexDirection={"column"}>
-                <Grid2 size={12}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                    placeholder="Đánh giá sản phẩm"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    disabled={review ? true : false}
-                  />
-                </Grid2>
-                <Grid2>
-                  {review ? (
-                    <Typography
-                      variant="body2"
-                      fontStyle={"italic"}
-                      color="#BDBDBD"
-                    >
-                      Đã đánh giá
-                    </Typography>
-                  ) : (
-                    <>
-                      <ButtonLoading
-                        onClick={fetchReview}
-                        loading={false}
-                        variant="contained"
-                        size="small"
-                        disabled={comment === "" || rating === 0}
-                      >
-                        Gửi đánh giá
-                      </ButtonLoading>
-
-                      <ButtonLoading
-                        loading={loading}
+      {status === "completed" && (
+        <>
+          {loadingReviews ? (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <CircularProgressLoading height={150} sx={{ pb: 4 }} />
+              </TableCell>
+            </TableRow>
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} sx={{ pt: 0, pb: 4 }}>
+                <Grid2 container sx={{ pl: "70px" }} spacing={2}>
+                  <Grid2
+                    container
+                    size={5}
+                    spacing={2}
+                    flexDirection={"column"}
+                  >
+                    <Grid2 size={12}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
                         variant="outlined"
-                        color={"error"}
-                        size="small"
-                        onClick={() => {
-                          setComment("");
-                          setRating(0);
+                        placeholder={
+                          review ? "Không có nội dung" : "Đánh giá sản phẩm"
+                        }
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        disabled={review ? true : false}
+                      />
+                    </Grid2>
+                    <Grid2>
+                      {review ? (
+                        <Typography
+                          variant="body2"
+                          fontStyle={"italic"}
+                          color="#BDBDBD"
+                        >
+                          Đã đánh giá
+                        </Typography>
+                      ) : (
+                        <>
+                          <ButtonLoading
+                            onClick={fetchReview}
+                            loading={loading}
+                            variant="contained"
+                            size="small"
+                            disabled={rating === null}
+                          >
+                            Gửi đánh giá
+                          </ButtonLoading>
+
+                          <Button
+                            variant="outlined"
+                            color={"error"}
+                            size="small"
+                            onClick={() => {
+                              setComment("");
+                              setRating(null);
+                              setImages([]);
+                              setPreviewImages([]);
+                            }}
+                            sx={{ ml: 2 }}
+                          >
+                            Hủy
+                          </Button>
+                        </>
+                      )}
+                    </Grid2>
+                  </Grid2>
+                  <Grid2
+                    container
+                    spacing={2}
+                    size={7}
+                    justifyContent={"start"}
+                    flexDirection={"column"}
+                  >
+                    <Grid2 size={12}>
+                      <Rating
+                        name="simple-controlled"
+                        value={rating}
+                        onChange={(event, newValue) => {
+                          setRating(newValue);
                         }}
-                        sx={{ ml: 2 }}
-                      >
-                        Hủy
-                      </ButtonLoading>
-                    </>
-                  )}
-                </Grid2>
-              </Grid2>
-              <Grid2
-                container
-                spacing={2}
-                size={7}
-                justifyContent={"start"}
-                flexDirection={"column"}
-              >
-                <Grid2 size={12}>
-                  <Rating
-                    name="simple-controlled"
-                    value={rating}
-                    onChange={(event, newValue) => {
-                      setRating(newValue);
-                    }}
-                    readOnly={review ? true : false}
-                  />
-                </Grid2>
+                        readOnly={review ? true : false}
+                      />
+                    </Grid2>
 
-                <Grid2 size={12} sx={{ display: "flex", gap: 2 }}>
-                  {review &&
-                    review.image_paths &&
-                    review.image_paths.map((image, key) => (
-                      <React.Fragment key={image.image_path + key}>
-                        {image.image_path && (
-                          <Avatar
-                            src={Path.publicReview(image.image_path)}
-                            sx={{ width: 80, height: 80, display: "block" }}
-                            variant="rounded"
+                    <Grid2
+                      size={12}
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        flexWrap: "wrap",
+                        alignItems: "end",
+                      }}
+                    >
+                      {/* Hiển thị ảnh đã đánh giá */}
+                      {review &&
+                        review.image_paths &&
+                        review.image_paths.map((image, key) => (
+                          <React.Fragment key={image.image_path + key}>
+                            {image.image_path && (
+                              <Avatar
+                                src={Path.publicReview(image.image_path)}
+                                sx={{ width: 80, height: 80, display: "block" }}
+                                variant="rounded"
+                              />
+                            )}
+                          </React.Fragment>
+                        ))}
+
+                      {/* Hiển thị preview ảnh người dùng chọn */}
+                      {!review &&
+                        previewImages.map((image, index) => (
+                          <Box key={index} sx={{ position: "relative" }}>
+                            <Avatar
+                              src={image.preview}
+                              sx={{ width: 80, height: 80 }}
+                              variant="rounded"
+                            />
+                            <IconButton
+                              sx={{
+                                position: "absolute",
+                                width: 24,
+                                height: 24,
+                                top: -8,
+                                right: -8,
+                                bgcolor: "background.paper",
+                                border: 1,
+                                boxShadow: 1,
+                                "&:hover": { bgcolor: "background.paper" },
+                              }}
+                              onClick={() => removeImage(index)}
+                            >
+                              <CloseIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ))}
+
+                      {/* Nút thêm ảnh */}
+                      {!review && (
+                        <>
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            style={{ display: "none" }}
+                            ref={fileInputRef}
                           />
-                        )}
-                      </React.Fragment>
-                    ))}
-
-                  {!review && <Button variant="outlined">Thêm ảnh</Button>}
+                          <Button
+                            variant="outlined"
+                            onClick={() => fileInputRef.current.click()}
+                            // startIcon={<AddPhotoAlternateIcon />}
+                          >
+                            Thêm ảnh
+                          </Button>
+                        </>
+                      )}
+                    </Grid2>
+                  </Grid2>
                 </Grid2>
-              </Grid2>
-            </Grid2>
-          </TableCell>
-        </TableRow>
+              </TableCell>
+            </TableRow>
+          )}
+        </>
       )}
     </>
   );
 };
 
-const OrderItems = ({ order_items, order_id }) => {
+const OrderItems = ({ order_items, order_id, status }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
@@ -410,18 +572,20 @@ const OrderItems = ({ order_items, order_id }) => {
   const [loading, setLoading] = useState(false);
 
   const fetchReviews = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await axiosWithAuth.get(Api.userReviews(order_id), {
-        navigate,
-      });
-      setReviews(response.data);
-    } catch (error) {
-      Log.error(error.response?.data?.message);
-    } finally {
-      setLoading(false);
+    if (status === "completed") {
+      setLoading(true);
+      try {
+        const response = await axiosWithAuth.get(Api.userReviews(order_id), {
+          navigate,
+        });
+        setReviews(response.data);
+      } catch (error) {
+        Log.error(error.response?.data?.message);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [navigate, order_id]);
+  }, [navigate, order_id, status]);
 
   useEffect(() => {
     fetchReviews();
@@ -458,6 +622,7 @@ const OrderItems = ({ order_items, order_id }) => {
                   order_id={order_id}
                   setReviews={setReviews}
                   loadingReviews={loading}
+                  status={status}
                 />
               </React.Fragment>
             ))}
@@ -789,6 +954,7 @@ const OrderDetail = () => {
                   <OrderItems
                     order_items={order.order_items}
                     order_id={order.order_id}
+                    status={order.current_status}
                   />
                 </Grid2>
               </Grid2>

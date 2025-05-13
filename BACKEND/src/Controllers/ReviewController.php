@@ -69,8 +69,16 @@ class ReviewController {
                 $comment
             );
 
+            $fileNames = [];
+
             if ($images) {
-                $this->addReviewImages($review["review_id"], $images);
+                $this->addReviewImages($review["review_id"], $images, $fileNames);
+            }
+
+            $image_paths = [];
+
+            foreach ($fileNames as $key => $fileName) {
+                $image_paths[$key]["image_path"] = $fileName;
             }
 
             Response::json([
@@ -83,7 +91,8 @@ class ReviewController {
                     'order_item_id' => $orderItemId,
                     'product_variant_id' => $order["product_variant_id"],
                     'rating' => $rating,
-                    'user_id' => $user["user_id"]
+                    'user_id' => $user["user_id"],
+                    'image_paths' => $image_paths ? $image_paths : ['image_path' => null]
                 ]
             ], 200);
         } catch (\Throwable $th) {
@@ -92,8 +101,7 @@ class ReviewController {
         }
     }
 
-    private function addReviewImages($review_id, $images) {
-        $fileNames = [];
+    private function addReviewImages($review_id, $images, &$fileNames) {
 
         foreach ($images as $image) {
             $fileSave = FileSave::reviewImage($image);
