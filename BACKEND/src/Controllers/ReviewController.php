@@ -125,4 +125,17 @@ class ReviewController {
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
+
+    // Lấy danh sách đánh giá theo product_id
+    public function userGetByProductId($product_id) {
+        try {
+            $reviews = ReviewModel::getByProductId($product_id);
+
+
+            Response::json($reviews, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("ReviewController -> getByProductId: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
 }

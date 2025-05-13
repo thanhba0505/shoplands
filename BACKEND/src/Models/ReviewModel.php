@@ -142,4 +142,59 @@ class ReviewModel {
 
         return $result;
     }
+
+    // Lấy danh sách đánh giá theo product_id
+    public static function getByProductId($product_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                r.id AS review_id,
+                r.rating,
+                r.comment,
+                r.created_at,
+                r.product_variant_id,
+                r.user_id,
+                r.order_id,
+                ri.image_path,
+                pa.name AS attribute_name,
+                pav.value AS attribute_value
+            FROM
+                reviews r
+                LEFT JOIN review_images ri ON r.id = ri.review_id
+                JOIN product_variants pv ON pv.id = r.product_variant_id
+                LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
+                LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
+                LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+            WHERE
+                pv.product_id = :product_id
+        ";
+        $result = $conn->query($sql, ['product_id' => $product_id])->fetchAll();
+
+        $config = [
+            'keep_columns' => [
+                'review_id',
+                'rating',
+                'comment',
+                'created_at',
+                'product_variant_id',
+                'user_id',
+                'order_id',
+            ],
+            'group_columns' => [
+                'image_paths' => ['image_path'],
+                'attributes' => ['attribute_name', 'attribute_value']
+            ]
+        ];
+
+        $result = DataHelper::groupData($result, $config);
+
+        foreach ($result as $key => $item) {
+            if ($item['attributes'][0]['attribute_name'] === null) {
+                $result[$key]['attributes'] = [];
+            }
+        }
+
+        return $result;
+    }
 }
