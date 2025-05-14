@@ -144,32 +144,44 @@ class ReviewModel {
     }
 
     // Lấy danh sách đánh giá theo product_id
-    public static function getByProductId($product_id) {
+    public static function getByProductId($product_id, $limit = 3, $page = 0) {
         $conn = new ConnectDatabase();
 
+        $offset = $limit * $page;
+
         $sql = "
-            SELECT
-                r.id AS review_id,
-                r.rating,
-                r.comment,
-                r.created_at,
-                r.product_variant_id,
-                r.user_id,
-                r.order_id,
-                ri.image_path,
-                pa.name AS attribute_name,
-                pav.value AS attribute_value
-            FROM
-                reviews r
-                LEFT JOIN review_images ri ON r.id = ri.review_id
-                JOIN product_variants pv ON pv.id = r.product_variant_id
-                LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
-                LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
-                LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
-            WHERE
-                pv.product_id = :product_id
+           SELECT
+            r.id AS review_id,
+            r.rating,
+            r.comment,
+            r.created_at,
+            r.product_variant_id,
+            r.user_id,
+            r.order_id,
+            ri.image_path,
+            pa.name AS attribute_name,
+            pav.value AS attribute_value
+        FROM (
+            SELECT *
+            FROM reviews
+            WHERE product_variant_id IN (
+                SELECT id FROM product_variants WHERE product_id = :product_id
+            )
+            ORDER BY id DESC
+            LIMIT :limit OFFSET :offset
+        ) AS r
+        LEFT JOIN review_images ri ON r.id = ri.review_id
+        LEFT JOIN product_variants pv ON pv.id = r.product_variant_id
+        LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
+        LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
+        LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
         ";
-        $result = $conn->query($sql, ['product_id' => $product_id])->fetchAll();
+
+        $result = $conn->query($sql, [
+            'product_id' => $product_id,
+            'limit' => $limit,
+            'offset' => $offset
+        ])->fetchAll();
 
         $config = [
             'keep_columns' => [

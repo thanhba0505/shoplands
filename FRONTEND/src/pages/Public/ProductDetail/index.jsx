@@ -10,6 +10,7 @@ import SellerProduct from "./SellerProduct";
 import ProductDetails from "./ProductDetails";
 import SellerProducts from "./SellerProducts";
 import SuggestProducts from "./SuggestProducts";
+import ReviewsProduct from "./ReviewsProduct";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -43,7 +44,14 @@ const ProductDetail = () => {
         <SimilarProducts />
       </Container>
       <Container>
-        <ProductDetails productDetails={product?.details} description={product?.description} loading={loading} />
+        <ProductDetails
+          productDetails={product?.details}
+          description={product?.description}
+          loading={loading}
+        />
+      </Container>
+      <Container>
+        <ReviewsProduct />
       </Container>
       <Container>
         <SellerProduct sellerId={product?.seller_id} />

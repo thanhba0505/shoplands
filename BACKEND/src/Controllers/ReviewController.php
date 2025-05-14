@@ -129,7 +129,10 @@ class ReviewController {
     // Lấy danh sách đánh giá theo product_id
     public function userGetByProductId($product_id) {
         try {
-            $reviews = ReviewModel::getByProductId($product_id);
+            $limit =  Request::get('limit', 12);
+            $page = Request::get('page', 0);
+
+            $reviews = ReviewModel::getByProductId($product_id, $limit, $page);
 
 
             Response::json($reviews, 200);
