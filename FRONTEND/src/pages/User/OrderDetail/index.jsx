@@ -492,6 +492,7 @@ const OrderItem = ({
                       {/* Hiển thị ảnh đã đánh giá */}
                       {review &&
                         review.image_paths &&
+                        review.image_paths.length > 0 &&
                         review.image_paths.map((image, key) => (
                           <React.Fragment key={image.image_path + key}>
                             {image.image_path && (
