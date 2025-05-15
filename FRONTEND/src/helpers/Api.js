@@ -94,6 +94,10 @@ class Api {
     return this.buildPath("banks", endpoint);
   }
 
+  static reviews(endpoint = "") {
+    return this.buildPath("reviews", endpoint);
+  }
+
   // User
 
   static user(endpoint = "") {

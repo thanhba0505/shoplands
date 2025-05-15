@@ -51,7 +51,7 @@ const ProductDetail = () => {
         />
       </Container>
       <Container>
-        <ReviewsProduct />
+        <ReviewsProduct productId={product?.product_id} />
       </Container>
       <Container>
         <SellerProduct sellerId={product?.seller_id} />

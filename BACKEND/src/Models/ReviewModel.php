@@ -160,7 +160,9 @@ class ReviewModel {
             r.order_id,
             ri.image_path,
             pa.name AS attribute_name,
-            pav.value AS attribute_value
+            pav.value AS attribute_value,
+            u.avatar,
+            u.name
         FROM (
             SELECT *
             FROM reviews
@@ -175,6 +177,7 @@ class ReviewModel {
         LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
         LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
         LEFT JOIN product_attributes pa ON pa.id = pav.product_attribute_id
+        JOIN users u ON u.id = r.user_id
         ";
 
         $result = $conn->query($sql, [
@@ -191,6 +194,8 @@ class ReviewModel {
                 'created_at',
                 'product_variant_id',
                 'user_id',
+                'avatar',
+                'name',
                 'order_id',
             ],
             'group_columns' => [
