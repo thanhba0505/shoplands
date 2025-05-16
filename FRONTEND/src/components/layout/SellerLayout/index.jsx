@@ -26,6 +26,8 @@ import { useSnackbar } from "notistack";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { logout } from "~/redux/authSlice";
+import QueryBuilderRoundedIcon from '@mui/icons-material/QueryBuilderRounded';
+import AddToQueueRoundedIcon from '@mui/icons-material/AddToQueueRounded';
 import Format from "~/helpers/Format";
 
 const NAVIGATION = [
@@ -118,6 +120,18 @@ const NAVIGATION = [
     tooltip: "Mã giảm giá",
     path: "/seller/promotions/coupon",
     icon: <LocalAtmOutlinedIcon />,
+  },
+  {
+    name: "Mã hết hạn",
+    tooltip: "Mã hết hạn",
+    path: "/seller/promotions/expired",
+    icon: <QueryBuilderRoundedIcon />,
+  },
+  {
+    name: "Thêm mã mới",
+    tooltip: "Thêm mã mới",
+    path: "/seller/promotions/new",
+    icon: <AddToQueueRoundedIcon />,
     divider: true,
   },
   // {

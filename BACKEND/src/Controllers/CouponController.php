@@ -35,19 +35,15 @@ class CouponController {
             $discount_type = Request::json('discount_type');
             $discount_value = Request::json('discount_value');
             $maximum_discount = Request::json('maximum_discount');
-            $minimum_order_value = Request::json('minimum_order_value');
+            $minimum_order_value = Request::json('minimum_order_value') ?? 0;
             $usage_limit = Request::json('usage_limit');
             $start_date = Request::json('start_date');
             $end_date = Request::json('end_date');
 
             if (
                 !$code ||
-                !$description ||
                 !$discount_type ||
                 !$discount_value ||
-                !$maximum_discount ||
-                !$minimum_order_value ||
-                !$usage_limit ||
                 !$start_date ||
                 !$end_date
             ) {
@@ -69,12 +65,12 @@ class CouponController {
                 Response::json(['message' => $checkDescription], 400);
             }
 
-            $checkDisountValue = Validator::isNumber($discount_value, 'Giá giảm', 0, MAX_PRICE_ORDER);
+            $checkDisountValue = Validator::isNumber($discount_value, 'Giá trị giảm', 1, MAX_PRICE_ORDER);
             if ($checkDisountValue !== true) {
                 Response::json(['message' => $checkDisountValue], 400);
             }
 
-            $checkMaximumDiscount = Validator::isNumber($maximum_discount, 'Giá giảm tối đa', 0, MAX_PRICE_ORDER);
+            $checkMaximumDiscount = Validator::isNumber($maximum_discount, 'Giá trị giảm tối đa', 0, MAX_PRICE_ORDER);
             if ($checkMaximumDiscount !== true) {
                 Response::json(['message' => $checkMaximumDiscount], 400);
             }

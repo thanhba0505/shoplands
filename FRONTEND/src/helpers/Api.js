@@ -121,6 +121,10 @@ class Api {
     return this.buildPath("seller/products", endpoint);
   }
 
+  static sellerCoupons(endpoint = "") {
+    return this.buildPath("seller/coupons", endpoint);
+  }
+
   // Admin
   static adminSellers(endpoint = "") {
     return this.buildPath("admin/sellers", endpoint);

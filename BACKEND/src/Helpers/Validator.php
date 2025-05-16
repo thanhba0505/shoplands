@@ -151,6 +151,11 @@ class Validator {
     }
 
     public static function isNumber($number, $label = "Số", $min = null, $max = null) {
+        if (!$number) {
+            $number = 0;
+        }
+
+
         if (!is_numeric($number)) {
             return "$label phải là số.";
         }

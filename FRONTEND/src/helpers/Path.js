@@ -147,6 +147,10 @@ class Path {
     return this.buildPath("/seller/orders", subPath);
   }
 
+  static sellerPromotions(subPath = "all") {
+    return this.buildPath("/seller/promotions", subPath);
+  }
+
   static sellerProducts(subPath = "") {
     return this.buildPath("/seller/products", subPath);
   }

@@ -98,9 +98,8 @@ const sellerRoutes = [
   },
 
   // Khuyến mãi
-  { path: "/seller/promotions", component: Promotions, layout: SellerLayout },
   {
-    path: "/seller/promotions/coupon",
+    path: "/seller/promotions/:page",
     component: Promotions,
     layout: SellerLayout,
   },
