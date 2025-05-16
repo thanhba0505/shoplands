@@ -19,10 +19,10 @@ class ReviewController {
             $rating = Request::json("rating") ?? Request::post("rating");
             $comment = Request::json("comment") ?? Request::post("comment");
             $orderId = Request::json("order_id") ?? Request::post("order_id");
-            $orderItemId = Request::json("order_item_id") ?? Request::post("order_item_id");
+            $productVariantId = Request::json("product_variant_id") ?? Request::post("product_variant_id");
             $images = Request::files('images');
 
-            if (!$rating || !$orderId || !$orderItemId) {
+            if (!$rating || !$orderId || !$productVariantId) {
                 Response::json([
                     "message" => "Thông tin không đủ"
                 ], 400);
@@ -46,7 +46,7 @@ class ReviewController {
             $order = OrderModel::findByUserIdOrderIdAndOrderItemId(
                 $user["user_id"],
                 $orderId,
-                $orderItemId
+                $productVariantId
             );
 
             if (!$order) {
@@ -88,7 +88,6 @@ class ReviewController {
                     'order_id' => $orderId,
                     'comment' => $comment,
                     'created_at' => $review["created_at"],
-                    'order_item_id' => $orderItemId,
                     'product_variant_id' => $order["product_variant_id"],
                     'rating' => $rating,
                     'user_id' => $user["user_id"],
@@ -138,6 +137,22 @@ class ReviewController {
             Response::json($reviews, 200);
         } catch (\Throwable $th) {
             Log::throwable("ReviewController -> getByProductId: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy danh sách đánh giá theo seller id
+    public function sellerGet() {
+        try {
+            $seller = Auth::seller();
+            $limit =  Request::get('limit', 12);
+            $page = Request::get('page', 0);
+
+            $reviews = ReviewModel::getBySellerId($seller["seller_id"], $limit, $page);
+
+            Response::json($reviews, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("ReviewController -> sellerGet: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

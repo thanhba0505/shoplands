@@ -1,6 +1,5 @@
 import { AppBar, Toolbar, Container, Box, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import CardTravelRoundedIcon from "@mui/icons-material/CardTravelRounded";
@@ -10,7 +9,6 @@ import BallotOutlinedIcon from "@mui/icons-material/BallotOutlined";
 import AllInboxRoundedIcon from "@mui/icons-material/AllInboxRounded";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
-import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
 import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
 import FiberSmartRecordRoundedIcon from "@mui/icons-material/FiberSmartRecordRounded";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -104,14 +102,14 @@ const NAVIGATION = [
     tooltip: "Thêm sản phẩm",
     path: "/seller/products/new",
     icon: <AddShoppingCartRoundedIcon />,
+      divider: true,
   },
-  {
-    name: "Đánh giá sản phẩm",
-    tooltip: "Đánh giá sản phẩm",
-    path: "/seller/products/reviews",
-    icon: <RateReviewOutlinedIcon />,
-    divider: true,
-  },
+  // {
+  //   name: "Đánh giá sản phẩm",
+  //   tooltip: "Đánh giá sản phẩm",
+  //   path: "/seller/products/reviews",
+  //   icon: <RateReviewOutlinedIcon />,
+  // },
   {
     group: "Quản lý khuyến mãi",
   },
@@ -133,14 +131,14 @@ const NAVIGATION = [
     tooltip: "Thông tin cửa hàng",
     path: "/seller/settings/shop",
     icon: <StorefrontOutlinedIcon />,
+      divider: true,
   },
-  {
-    name: "Thông tin thanh toán",
-    tooltip: "Thông tin thanh toán",
-    path: "/seller/settings/payment",
-    icon: <PaymentOutlinedIcon />,
-    divider: true,
-  },
+  // {
+  //   name: "Thông tin thanh toán",
+  //   tooltip: "Thông tin thanh toán",
+  //   path: "/seller/settings/payment",
+  //   icon: <PaymentOutlinedIcon />,
+  // },
 ];
 
 const SellerLayout = ({ children }) => {

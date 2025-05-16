@@ -1092,35 +1092,56 @@ class OrderModel {
     public static function findByUserIdOrderIdAndOrderItemId(
         $user_id,
         $order_id,
-        $order_item_id
+        $product_variant_id
     ) {
         $conn = new ConnectDatabase();
 
         $sql = "
             SELECT
                 o.id AS order_id,
-                u.id AS user_id,
-                pv.id AS product_variant_id,
-                r.id AS review_id
+                oi.product_variant_id AS product_variant_id,
+                o.user_id AS user_id
             FROM
                 orders o
                 JOIN order_items oi ON o.id = oi.order_id
-                JOIN users u ON o.user_id = u.id
-                JOIN product_variants pv ON oi.product_variant_id = pv.id
-                LEFT JOIN reviews r ON pv.id = r.product_variant_id
             WHERE
                 o.id = :order_id
-                AND u.id = :user_id
-                AND oi.id = :order_item_id
+                AND oi.product_variant_id = :product_variant_id
+                AND o.user_id = :user_id
                 AND o.current_status = 'completed'
         ";
 
         $result = $conn->query($sql, [
             'order_id' => $order_id,
-            'user_id' => $user_id,
-            'order_item_id' => $order_item_id
+            'product_variant_id' => $product_variant_id,
+            'user_id' => $user_id
         ])->fetch();
 
+        if ($result) {
+
+            $sql = "
+                SELECT
+                    r.id AS review_id
+                FROM
+                    reviews r
+                WHERE
+                    r.order_id = :order_id
+                    AND r.product_variant_id = :product_variant_id
+                    AND r.user_id = :user_id
+            ";
+
+            $result = $conn->query($sql, [
+                'order_id' => $order_id,
+                'product_variant_id' => $product_variant_id,
+                'user_id' => $user_id
+            ])->fetch();
+
+            $result['review_id'] = $result['review_id'] ?? null;
+            $result['order_id'] = $order_id;
+            $result['product_variant_id'] = $product_variant_id;
+            $result['user_id'] = $user_id;
+        }
+        
         return $result;
     }
 }

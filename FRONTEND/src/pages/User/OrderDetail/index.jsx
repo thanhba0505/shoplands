@@ -300,7 +300,7 @@ const OrderItem = ({
       formData.append("order_id", order_id);
       formData.append("rating", rating);
       formData.append("comment", comment);
-      formData.append("order_item_id", item.order_item_id);
+      formData.append("product_variant_id", item.product_variant_id);
 
       // Thêm tất cả ảnh vào formData
       images.forEach((image, index) => {
@@ -569,7 +569,6 @@ const OrderItems = ({ order_items, order_id, status }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
-
   const [loading, setLoading] = useState(false);
 
   const fetchReviews = useCallback(async () => {
@@ -618,7 +617,7 @@ const OrderItems = ({ order_items, order_id, status }) => {
                   item={item}
                   review={reviews.find(
                     (review) =>
-                      review.product_variant_id === item.product_variant_id
+                      review.product_variant_id == item.product_variant_id
                   )}
                   order_id={order_id}
                   setReviews={setReviews}
