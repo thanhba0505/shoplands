@@ -4,11 +4,9 @@ namespace App\Models;
 
 use App\Models\ConnectDatabase;
 
-class CouponModel
-{
+class CouponModel {
     // Lấy danh sách giảm giá
-    public static function getAll($seller_id)
-    {
+    public static function getAll($seller_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -41,8 +39,7 @@ class CouponModel
     }
 
     // Tìm kiếm giảm giá
-    public static function find($coupon_id, $seller_id)
-    {
+    public static function find($coupon_id, $seller_id) {
         $query = new ConnectDatabase();
 
         $sql =  "
@@ -69,6 +66,60 @@ class CouponModel
         ";
 
         $result = $query->query($sql, ['coupon_id' => $coupon_id, 'seller_id' => $seller_id])->fetch();
+
+        return $result;
+    }
+
+    // Thêm giảm giá
+    public static function add(
+        $code,
+        $description,
+        $discount_type,
+        $discount_value,
+        $maximum_discount,
+        $minimum_order_value,
+        $usage_limit,
+        $start_date,
+        $end_date,
+        $seller_id
+    ) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO coupons (code, description, discount_type, discount_value, maximum_discount, minimum_order_value, usage_limit, start_date, end_date, seller_id)
+            VALUES (:code, :description, :discount_type, :discount_value, :maximum_discount, :minimum_order_value, :usage_limit, :start_date, :end_date, :seller_id)
+        ";
+
+        $conn->query($sql, [
+            'code' => $code,
+            'description' => $description,
+            'discount_type' => $discount_type,
+            'discount_value' => $discount_value,
+            'maximum_discount' => $maximum_discount,
+            'minimum_order_value' => $minimum_order_value,
+            'usage_limit' => $usage_limit,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'seller_id' => $seller_id
+        ]);
+
+        return $conn->getConnection()->lastInsertId();
+    }
+
+    // Kiểm tra code trùng
+    public static function checkCode($code) {
+        $query = new ConnectDatabase();
+
+        $sql =  "
+            SELECT
+                *
+            FROM
+                coupons
+            WHERE
+                code = :code
+        ";
+
+        $result = $query->query($sql, ['code' => $code])->fetch();
 
         return $result;
     }

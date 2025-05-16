@@ -15,7 +15,7 @@ const Products = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const value = params.page || "all";
 
   useEffect(() => {
@@ -69,11 +69,6 @@ const Products = () => {
               <Tab disabled={loading} label="Còn hoạt động" value="active" />
               <Tab disabled={loading} label="Đã bị khóa" value="locked" />
               <Tab disabled={loading} label="Thêm sản phẩm" value="new" />
-              <Tab
-                disabled={loading}
-                label="Đánh giá sản phẩm"
-                value="reviews"
-              />
             </TabList>
           </Box>
         </TabContext>

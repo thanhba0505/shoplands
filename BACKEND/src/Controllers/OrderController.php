@@ -291,6 +291,10 @@ class OrderController {
             // Tính giá cuối cùng
             $finalPrice = $subtotalPrice + $shippingPrice - $discount;
 
+            if ($finalPrice > MAX_PRICE_ORDER) {
+                Response::json(['message' => 'Giá trị đơn hàng không được vượt quá ' . MAX_PRICE_ORDER], 400);
+            }
+
             // Tính doanh thu cho người bán
             $revenue = Format::number(
                 ($subtotalPrice - $discount) * (1 - $_ENV["REVENUE_PROPORTION"]) + $shippingPrice,

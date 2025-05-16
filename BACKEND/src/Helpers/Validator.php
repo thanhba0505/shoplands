@@ -27,7 +27,20 @@ class Validator {
 
         return true;
     }
+    // Kiểm tra định dạng ngày hợp lệ (YYYY-MM-DD hoặc định dạng khác nếu cần)
+    public static function isDate($date, $label = "Ngày", $format = 'Y-m-d') {
+        if (empty($date)) {
+            return "$label không được để trống.";
+        }
 
+        $d = \DateTime::createFromFormat($format, $date);
+
+        if (!$d || $d->format($format) !== $date) {
+            return "$label không hợp lệ. Định dạng đúng là $format.";
+        }
+
+        return true;
+    }
 
 
     // Kiểm tra họ tên hợp lệ
