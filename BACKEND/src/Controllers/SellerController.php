@@ -380,7 +380,7 @@ class SellerController {
             Response::json(['message' => $checkOwnerName], 400);
         }
 
-        $checkDescription = Validator::isName($description, 'Mô tả', 3, 10000, true);
+        $checkDescription = Validator::isText($description, 'Mô tả', 3, 10000, true);
         if ($checkDescription !== true) {
             Response::json(['message' => $checkDescription], 400);
         }

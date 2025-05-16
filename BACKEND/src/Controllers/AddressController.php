@@ -9,6 +9,7 @@ use App\Helpers\CallApi;
 use App\Helpers\GHN;
 use App\Helpers\Log;
 use App\Helpers\Request;
+use App\Helpers\Validator;
 
 class AddressController {
     // Người mua lay danh sach dia chi
@@ -40,6 +41,12 @@ class AddressController {
 
             if (!$address_line || !$ward_id || !$district_id || !$province_id || !$province_name || !$district_name || !$ward_name) {
                 Response::json(['message' => 'Không đủ thông tin địa chỉ'], 400);
+            }
+
+            $check_address_line = Validator::isText($address_line, 'Địa chỉ', 3, 1000, true);
+
+            if ($check_address_line !== true) {
+                Response::json(['message' => $check_address_line], 400);
             }
 
             $address = AddressModel::getAllByAccountId($user['account_id']);

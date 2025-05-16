@@ -14,19 +14,20 @@ class Validator {
             return "$label phải có từ $min đến $max ký tự.";
         }
 
-        // Cho phép nhiều loại ký tự đặc biệt hơn
-        $regex = '/^[\p{L}\p{N}\s\p{P}\p{S}]+$/u';
+        // Chỉ cho phép chữ cái, số, khoảng trắng, và các ký tự , . - / #
+        $regex = '/^[\p{L}\p{N} \,\.\-\/\#]+$/u';
 
         if ($allowNewLine) {
-            $regex = '/^[\p{L}\p{N}\s\p{P}\p{S}\n]+$/u';
+            $regex = '/^[\p{L}\p{N} \,\.\-\/\#\n]+$/u';
         }
 
         if (!preg_match($regex, $text)) {
-            return "$label không hợp lệ.";
+            return "$label chỉ được chúa chữ cái, số, khoảng trắng, và các ký tự , . - / #.";
         }
 
         return true;
     }
+
 
 
     // Kiểm tra họ tên hợp lệ
