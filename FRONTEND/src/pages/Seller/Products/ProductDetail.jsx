@@ -26,6 +26,7 @@ import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import HideImageRoundedIcon from "@mui/icons-material/HideImageRounded";
+import ReviewsProduct from "~/pages/Public/ProductDetail/ReviewsProduct";
 
 const ModalUpdateProduct = ({
   open,
@@ -371,100 +372,10 @@ const ProductDetail = () => {
     ));
   };
 
-  console.log(product?.attributes);
-
   return (
-    <PaperCustom>
-      {loading ? (
-        <Box sx={{ width: "100%", mb: 2 }}>
-          <Typography
-            variant="h6"
-            fontWeight={"bold"}
-            sx={{ borderBottom: 1, pb: 2 }}
-            textAlign={"center"}
-          >
-            <Skeleton width="70%" sx={{ mx: "auto", height: 40 }} />
-          </Typography>
-
-          <TableContainer>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell width={"120px"}>
-                    <Skeleton width="80%" sx={{ height: 32 }} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton width="40%" sx={{ height: 32 }} />
-                  </TableCell>
-                  <TableCell
-                    rowSpan={4}
-                    width={"30%"}
-                    sx={{ verticalAlign: "top" }}
-                  >
-                    <Box
-                      sx={{
-                        width: "100%",
-                        display: "flex",
-                        py: 1,
-                        flexDirection: "column",
-                        justifyContent: "start",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Skeleton
-                        variant="rectangular"
-                        width={200}
-                        height={200}
-                        sx={{ mb: 1 }}
-                      />
-                      <Skeleton width="50%" sx={{ height: 32 }} />
-                    </Box>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>
-                    <Skeleton width="80%" sx={{ height: 32 }} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton width="60%" sx={{ height: 32 }} />
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>
-                    <Skeleton width="80%" sx={{ height: 32 }} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton width="80%" sx={{ height: 32 }} />
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>
-                    <Skeleton width="80%" sx={{ height: 32 }} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton width="70%" sx={{ height: 32 }} />
-                    <Skeleton width="50%" sx={{ height: 32 }} />
-                    <Skeleton width="90%" sx={{ height: 32 }} />
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>
-                    <Skeleton width="80%" sx={{ height: 32 }} />
-                  </TableCell>
-                  <TableCell colSpan={2}>
-                    <Skeleton height={100} />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      ) : (
-        <>
+    <>
+      <PaperCustom sx={{ mb: 3, px: 3 }}>
+        {loading ? (
           <Box sx={{ width: "100%", mb: 2 }}>
             <Typography
               variant="h6"
@@ -472,20 +383,18 @@ const ProductDetail = () => {
               sx={{ borderBottom: 1, pb: 2 }}
               textAlign={"center"}
             >
-              {product?.name}
+              <Skeleton width="70%" sx={{ mx: "auto", height: 40 }} />
             </Typography>
 
             <TableContainer>
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell width={"120px"}>Giá</TableCell>
+                    <TableCell width={"120px"}>
+                      <Skeleton width="80%" sx={{ height: 32 }} />
+                    </TableCell>
                     <TableCell>
-                      {product?.min_price === product?.max_price
-                        ? Format.formatCurrency(product?.min_price)
-                        : `${Format.formatCurrency(
-                            product?.min_price
-                          )} - ${Format.formatCurrency(product?.max_price)}`}
+                      <Skeleton width="40%" sx={{ height: 32 }} />
                     </TableCell>
                     <TableCell
                       rowSpan={4}
@@ -502,155 +411,255 @@ const ProductDetail = () => {
                           alignItems: "center",
                         }}
                       >
-                        {product && product.images && (
-                          <>
-                            <Avatar
-                              src={Path.publicProduct(defaultImage?.image_path)}
-                              alt="Product Image"
-                              variant="rounded"
-                              sx={{
-                                width: 200,
-                                height: 200,
-                              }}
-                            >
-                              <HideImageRoundedIcon fontSize="large" />
-                            </Avatar>
-                            <Box
-                              sx={{
-                                padding: 2,
-                                display: "flex",
-                                gap: 2,
-                                flexWrap: "wrap",
-                                justifyContent: "center",
-                              }}
-                            >
-                              {product?.images?.length > 1 &&
-                                product.images.map((image, key) => (
-                                  <img
-                                    onClick={() => setDefaultImage(image)}
-                                    key={key}
-                                    src={Path.publicProduct(image.image_path)}
-                                    alt="Product Image"
-                                    style={{
-                                      border: "1px solid #ccc",
-                                      borderRadius: "4px",
-                                      cursor: "pointer",
-                                      width: "50px",
-                                      maxWidth: "400px",
-                                      objectFit: "contain",
-                                    }}
-                                  />
-                                ))}
-                            </Box>
-                          </>
-                        )}
+                        <Skeleton
+                          variant="rectangular"
+                          width={200}
+                          height={200}
+                          sx={{ mb: 1 }}
+                        />
+                        <Skeleton width="50%" sx={{ height: 32 }} />
                       </Box>
                     </TableCell>
                   </TableRow>
 
                   <TableRow>
-                    <TableCell>Danh mục</TableCell>
-                    <TableCell>{product?.category_name}</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell>Thuộc tính</TableCell>
                     <TableCell>
-                      {product?.attributes ? (
-                        formatAttributes(product.attributes)
-                      ) : (
-                        <>Không có thuộc tính</>
-                      )}
+                      <Skeleton width="80%" sx={{ height: 32 }} />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton width="60%" sx={{ height: 32 }} />
                     </TableCell>
                   </TableRow>
 
-                  {/* {product?.attributes?.length > 0 && ( */}
                   <TableRow>
-                    <TableCell>Chi tiết thuộc tính</TableCell>
-                    <TableCell sx={{ pr: 0 }}>
-                      <Grid2
-                        container
-                        spacing={1}
-                        columns={product.attributes ? 5 : 4}
-                        textAlign={"center"}
-                        overflow={"hidden"}
-                      >
-                        {product.attributes && <Grid2 size={1}></Grid2>}
-                        <Grid2 size={1}>Tồn kho</Grid2>
-                        <Grid2 size={1}>Đã bán</Grid2>
-                        <Grid2 size={1}>Giá</Grid2>
-                        <Grid2 size={1}>Giảm giá</Grid2>
-
-                        <Grid2 size={5}>
-                          <Divider />
-                        </Grid2>
-
-                        {product?.variants &&
-                          product.variants.map((variant) => {
-                            return (
-                              <React.Fragment key={variant.product_variant_id}>
-                                {product.attributes && (
-                                  <Grid2 size={1}>
-                                    {variant.values
-                                      .map((value) => value.value)
-                                      .join(", ")}
-                                  </Grid2>
-                                )}
-                                <Grid2 size={1}>{variant.quantity}</Grid2>
-                                <Grid2 size={1}>{variant.sold_quantity}</Grid2>
-                                <Grid2 size={1}>
-                                  {Format.formatCurrency(variant.price)}
-                                </Grid2>
-                                <Grid2 size={1}>
-                                  {Format.formatCurrency(
-                                    variant.promotion_price
-                                  )}
-                                </Grid2>
-
-                                <Grid2 size={5}>
-                                  <Divider />
-                                </Grid2>
-                              </React.Fragment>
-                            );
-                          })}
-                      </Grid2>
-
-                      <Button
-                        variant="contained"
-                        size="small"
-                        sx={{ mt: 2, px: 2 }}
-                        onClick={() => setOpenModal(true)}
-                      >
-                        Chỉnh sửa
-                      </Button>
-                      <ModalUpdateProduct
-                        open={openModal}
-                        setOpen={setOpenModal}
-                        variants={product?.variants}
-                        setProduct={setProduct}
-                        productId={product?.product_id}
-                      />
+                    <TableCell>
+                      <Skeleton width="80%" sx={{ height: 32 }} />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton width="80%" sx={{ height: 32 }} />
                     </TableCell>
                   </TableRow>
-                  {/* )} */}
 
                   <TableRow>
-                    <TableCell>Mô tả</TableCell>
+                    <TableCell>
+                      <Skeleton width="80%" sx={{ height: 32 }} />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton width="70%" sx={{ height: 32 }} />
+                      <Skeleton width="50%" sx={{ height: 32 }} />
+                      <Skeleton width="90%" sx={{ height: 32 }} />
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton width="80%" sx={{ height: 32 }} />
+                    </TableCell>
                     <TableCell colSpan={2}>
-                      <Description
-                        description={product?.description}
-                        productId={product?.product_id}
-                        setProduct={setProduct}
-                      />
+                      <Skeleton height={100} />
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
           </Box>
-        </>
-      )}
-    </PaperCustom>
+        ) : (
+          <>
+            <Box sx={{ width: "100%", mb: 2 }}>
+              <Typography
+                variant="h6"
+                fontWeight={"bold"}
+                sx={{ borderBottom: 1, pb: 2 }}
+                textAlign={"center"}
+              >
+                {product?.name}
+              </Typography>
+
+              <TableContainer>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell width={"120px"}>Giá</TableCell>
+                      <TableCell>
+                        {product?.min_price === product?.max_price
+                          ? Format.formatCurrency(product?.min_price)
+                          : `${Format.formatCurrency(
+                              product?.min_price
+                            )} - ${Format.formatCurrency(product?.max_price)}`}
+                      </TableCell>
+                      <TableCell
+                        rowSpan={4}
+                        width={"30%"}
+                        sx={{ verticalAlign: "top" }}
+                      >
+                        <Box
+                          sx={{
+                            width: "100%",
+                            display: "flex",
+                            py: 1,
+                            flexDirection: "column",
+                            justifyContent: "start",
+                            alignItems: "center",
+                          }}
+                        >
+                          {product && product.images && (
+                            <>
+                              <Avatar
+                                src={Path.publicProduct(
+                                  defaultImage?.image_path
+                                )}
+                                alt="Product Image"
+                                variant="rounded"
+                                sx={{
+                                  width: 200,
+                                  height: 200,
+                                }}
+                              >
+                                <HideImageRoundedIcon fontSize="large" />
+                              </Avatar>
+                              <Box
+                                sx={{
+                                  padding: 2,
+                                  display: "flex",
+                                  gap: 2,
+                                  flexWrap: "wrap",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                {product?.images?.length > 1 &&
+                                  product.images.map((image, key) => (
+                                    <img
+                                      onClick={() => setDefaultImage(image)}
+                                      key={key}
+                                      src={Path.publicProduct(image.image_path)}
+                                      alt="Product Image"
+                                      style={{
+                                        border: "1px solid #ccc",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        width: "50px",
+                                        maxWidth: "400px",
+                                        objectFit: "contain",
+                                      }}
+                                    />
+                                  ))}
+                              </Box>
+                            </>
+                          )}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Danh mục</TableCell>
+                      <TableCell>{product?.category_name}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Thuộc tính</TableCell>
+                      <TableCell>
+                        {product?.attributes ? (
+                          formatAttributes(product.attributes)
+                        ) : (
+                          <>Không có thuộc tính</>
+                        )}
+                      </TableCell>
+                    </TableRow>
+
+                    {/* {product?.attributes?.length > 0 && ( */}
+                    <TableRow>
+                      <TableCell>Chi tiết thuộc tính</TableCell>
+                      <TableCell sx={{ pr: 0 }}>
+                        <Grid2
+                          container
+                          spacing={1}
+                          columns={product.attributes ? 5 : 4}
+                          textAlign={"center"}
+                          overflow={"hidden"}
+                        >
+                          {product.attributes && <Grid2 size={1}></Grid2>}
+                          <Grid2 size={1}>Tồn kho</Grid2>
+                          <Grid2 size={1}>Đã bán</Grid2>
+                          <Grid2 size={1}>Giá</Grid2>
+                          <Grid2 size={1}>Giảm giá</Grid2>
+
+                          <Grid2 size={5}>
+                            <Divider />
+                          </Grid2>
+
+                          {product?.variants &&
+                            product.variants.map((variant) => {
+                              return (
+                                <React.Fragment
+                                  key={variant.product_variant_id}
+                                >
+                                  {product.attributes && (
+                                    <Grid2 size={1}>
+                                      {variant.values
+                                        .map((value) => value.value)
+                                        .join(", ")}
+                                    </Grid2>
+                                  )}
+                                  <Grid2 size={1}>{variant.quantity}</Grid2>
+                                  <Grid2 size={1}>
+                                    {variant.sold_quantity}
+                                  </Grid2>
+                                  <Grid2 size={1}>
+                                    {Format.formatCurrency(variant.price)}
+                                  </Grid2>
+                                  <Grid2 size={1}>
+                                    {Format.formatCurrency(
+                                      variant.promotion_price
+                                    )}
+                                  </Grid2>
+
+                                  <Grid2 size={5}>
+                                    <Divider />
+                                  </Grid2>
+                                </React.Fragment>
+                              );
+                            })}
+                        </Grid2>
+
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{ mt: 2, px: 2 }}
+                          onClick={() => setOpenModal(true)}
+                        >
+                          Chỉnh sửa
+                        </Button>
+                        <ModalUpdateProduct
+                          open={openModal}
+                          setOpen={setOpenModal}
+                          variants={product?.variants}
+                          setProduct={setProduct}
+                          productId={product?.product_id}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    {/* )} */}
+
+                    <TableRow>
+                      <TableCell>Mô tả</TableCell>
+                      <TableCell colSpan={2}>
+                        <Description
+                          description={product?.description}
+                          productId={product?.product_id}
+                          setProduct={setProduct}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </>
+        )}
+      </PaperCustom>
+
+      <ReviewsProduct productId={params.productId} />
+    </>
   );
 };
 
