@@ -199,7 +199,7 @@ const NewCoupon = () => {
                 Giảm:{" "}
                 {form.discount_type === "percentage"
                   ? Format.formatPercentage(form.discount_value / 100)
-                  : Format.formatCurrency(form.discount_value)}
+                  : Format.formatCurrency(form.discount_value ? form.discount_value : 0)}
               </Typography>
               {form.maximum_discount && (
                 <Typography variant="body2" color="text.secondary">
@@ -211,6 +211,9 @@ const NewCoupon = () => {
                 {form.minimum_order_value
                   ? Format.formatCurrency(form.minimum_order_value)
                   : "0đ"}
+              </Typography>{" "}
+              <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
+                Đã sử dụng: {"0"}/{form.usage_limit ? form.usage_limit : "0"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Hạn sử dụng:{" "}
@@ -218,7 +221,9 @@ const NewCoupon = () => {
                   ? form.start_date.toISOString().slice(0, 10)
                   : "yyyy-mm-dd"}{" "}
                 -{" "}
-                {form.end_date ? form.end_date.toISOString().slice(0, 10) : "yyyy-mm-dd"}
+                {form.end_date
+                  ? form.end_date.toISOString().slice(0, 10)
+                  : "yyyy-mm-dd"}
               </Typography>
             </CardContent>
           </Card>

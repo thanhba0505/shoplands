@@ -5,12 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
 import Path from "~/helpers/Path";
 import NewCoupon from "./NewCoupon";
+import Coupons from "./Coupons";
 
 const Promotions = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const value = params.page || "coupon";
 
   useEffect(() => {
@@ -28,17 +29,11 @@ const Promotions = () => {
   const renderComponent = () => {
     switch (value) {
       case "coupon":
-        return (
-          <></>
-        );
+        return <Coupons setLoading={setLoading} loading={loading} />;
       case "expired":
-        return (
-          <></>
-        );
+        return <Coupons setLoading={setLoading} loading={loading} expired={true} />;
       case "new":
-        return (
-          <NewCoupon />
-        );
+        return <NewCoupon />;
     }
   };
   return (

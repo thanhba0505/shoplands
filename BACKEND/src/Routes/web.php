@@ -12,6 +12,7 @@ $router->post('api/auth/code-forgot-password', 'AuthController@getCodeForgotPass
 // API COUPON
 $router->get('api/coupons/{seller_id}', 'CouponController@get');
 $router->post('api/seller/coupons', 'CouponController@sellerAdd', ['App\Middlewares\SellerMiddleware']);
+$router->get('api/seller/coupons', 'CouponController@sellerGet', ['App\Middlewares\SellerMiddleware']);
 
 // API CATEGORY
 $router->get('api/categories', 'CategoryController@get');

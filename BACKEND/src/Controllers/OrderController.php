@@ -120,6 +120,10 @@ class OrderController {
                 Response::json(['message' => 'Chỉ có thể xóa đơn hàng chưa thanh toán'], 400);
             }
 
+            if ($order['coupon_id']) {
+                CouponModel::cancelCoupon($order['coupon_id']);
+            }
+
             OrderModel::delete($order_id);
 
             $order_items = OrderItemModel::getByOrderId($order_id);
@@ -263,6 +267,21 @@ class OrderController {
                 if (!$coupon) {
                     Response::json(['message' => 'Không tìm thấy thông tin giảm giá của người bán này'], 400);
                 }
+
+                // Kiểm tra ngày bắt đầu
+                if (strtotime($coupon['start_date']) > time()) {
+                    Response::json(['message' => 'Mã giảm giá chưa bắt đầu có hiệu lực'], 400);
+                }
+
+                // Kiểm tra ngày kết thúc
+                if (strtotime($coupon['end_date']) < time()) {
+                    Response::json(['message' => 'Mã giảm giá đã hết hạn'], 400);
+                }
+
+                // Kiểm tra số lượt sử dụng
+                if ((int)$coupon['usage_count'] >= (int)$coupon['usage_limit']) {
+                    Response::json(['message' => 'Mã giảm giá đã hết lượt sử dụng'], 400);
+                }
             }
 
             $discount = 0;
@@ -302,6 +321,7 @@ class OrderController {
             );
 
             // Tạo đơn hàng
+            CouponModel::useCoupon($couponId);
             $orderId = OrderModel::add($seller["seller_id"], $userId, $fromAddressId, $toAddressId, $shippingPrice, $subtotalPrice, $discount, $finalPrice, $revenue, $couponId);
 
             if (!$orderId) {

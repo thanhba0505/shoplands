@@ -16,8 +16,26 @@ class CouponController {
                 Response::json(['message' => "Mã người bán rỗng"]);
             }
 
-            $result = CouponModel::getAll($seller_id);
+            $result = CouponModel::getActiveCoupons($seller_id);
 
+            Response::json($result);
+        } catch (\Throwable $th) {
+            Log::throwable("CouponController -> get: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    public function sellerGet() {
+        try {
+            $seller = Auth::seller();
+            $expired = Request::get('expired') ? Request::get('expired') : false;
+
+            if ($expired) {
+                $result = CouponModel::getExpiredCoupons($seller["seller_id"]);
+                Response::json($result);
+            }
+
+            $result = CouponModel::getUpcomingCoupons($seller["seller_id"]);
             Response::json($result);
         } catch (\Throwable $th) {
             Log::throwable("CouponController -> get: " . $th->getMessage());
@@ -35,7 +53,7 @@ class CouponController {
             $discount_type = Request::json('discount_type');
             $discount_value = Request::json('discount_value');
             $maximum_discount = Request::json('maximum_discount');
-            $minimum_order_value = Request::json('minimum_order_value') ?? 0;
+            $minimum_order_value = Request::json('minimum_order_value');
             $usage_limit = Request::json('usage_limit');
             $start_date = Request::json('start_date');
             $end_date = Request::json('end_date');
