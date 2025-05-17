@@ -117,6 +117,14 @@ class Api {
     return this.buildPath("seller/orders", endpoint);
   }
 
+  static sellerLogo(endpoint = "") {
+    return this.buildPath("seller/logo", endpoint);
+  }
+
+  static sellerBackground(endpoint = "") {
+    return this.buildPath("seller/background", endpoint);
+  }
+
   static sellerProducts(endpoint = "") {
     return this.buildPath("seller/products", endpoint);
   }

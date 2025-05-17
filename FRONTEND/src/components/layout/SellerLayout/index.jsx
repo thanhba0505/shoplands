@@ -18,7 +18,7 @@ import Path from "~/helpers/Path";
 import MenuIcon from "~/components/MenuIcon";
 import { AccountCircle } from "@mui/icons-material";
 import Auth from "~/helpers/Auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { startLoading, stopLoading } from "~/redux/loadingSlice";
 import Log from "~/helpers/Log";
@@ -26,8 +26,8 @@ import { useSnackbar } from "notistack";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { logout } from "~/redux/authSlice";
-import QueryBuilderRoundedIcon from '@mui/icons-material/QueryBuilderRounded';
-import AddToQueueRoundedIcon from '@mui/icons-material/AddToQueueRounded';
+import QueryBuilderRoundedIcon from "@mui/icons-material/QueryBuilderRounded";
+import AddToQueueRoundedIcon from "@mui/icons-material/AddToQueueRounded";
 import Format from "~/helpers/Format";
 
 const NAVIGATION = [
@@ -104,7 +104,7 @@ const NAVIGATION = [
     tooltip: "Thêm sản phẩm",
     path: "/seller/products/new",
     icon: <AddShoppingCartRoundedIcon />,
-      divider: true,
+    divider: true,
   },
   // {
   //   name: "Đánh giá sản phẩm",
@@ -143,9 +143,9 @@ const NAVIGATION = [
   {
     name: "Thông tin cửa hàng",
     tooltip: "Thông tin cửa hàng",
-    path: "/seller/settings/shop",
+    path: "/seller/settings",
     icon: <StorefrontOutlinedIcon />,
-      divider: true,
+    divider: true,
   },
   // {
   //   name: "Thông tin thanh toán",
@@ -158,6 +158,7 @@ const NAVIGATION = [
 const SellerLayout = ({ children }) => {
   const theme = useTheme();
   const seller = Auth.getSeller();
+  const logo = useSelector((state) => state?.auth?.account?.logo);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -230,11 +231,7 @@ const SellerLayout = ({ children }) => {
               <MenuIcon
                 icon={
                   <Avatar
-                    src={
-                      Path.publicAvatar(seller.logo)
-                        ? Path.publicAvatar(seller.logo)
-                        : ""
-                    }
+                    src={Path.publicAvatar(logo) ? Path.publicAvatar(logo) : ""}
                   >
                     <AccountCircle fontSize="large" />
                   </Avatar>

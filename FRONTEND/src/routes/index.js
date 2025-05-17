@@ -106,12 +106,6 @@ const sellerRoutes = [
 
   // Cài đặt
   { path: "/seller/settings", component: Settings, layout: SellerLayout },
-  { path: "/seller/settings/shop", component: Settings, layout: SellerLayout },
-  {
-    path: "/seller/settings/payment",
-    component: Settings,
-    layout: SellerLayout,
-  },
 ];
 
 // ADMIN ROUTES

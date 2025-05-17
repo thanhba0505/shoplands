@@ -68,6 +68,8 @@ $router->put('api/admin/sellers/locked', 'SellerController@adminHandleLocked', [
 $router->post('api/sellers/register', 'SellerController@register');
 $router->post('api/sellers/code-register', 'SellerController@getCodeRegister');
 $router->get('api/sellers/{seller_id}', 'SellerController@find');
+$router->post('api/seller/logo', 'SellerController@uploadAvatar', ['App\Middlewares\SellerMiddleware']);
+$router->post('api/seller/background', 'SellerController@uploadBackground', ['App\Middlewares\SellerMiddleware']);
 
 // API USER
 $router->get('api/user', 'UserController@userFind', ['App\Middlewares\UserMiddleware']);

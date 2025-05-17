@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Auth;
 use App\Helpers\FileSave;
 use App\Helpers\Hash;
 use App\Helpers\Response;
@@ -275,7 +276,7 @@ class SellerController {
                     'message' => "Đã duyệt người bán '$seller[store_name]'",
                 ]);
             }
-            
+
             AddressModel::deleteAll($seller['account_id']);
             SellerModel::delete($seller_id);
             MessageModel::deleteAllMessage($seller['account_id']);
@@ -415,6 +416,62 @@ class SellerController {
     ) {
         if (!$address_line || !$ward_id || !$district_id || !$province_id || !$province_name || !$district_name || !$ward_name) {
             Response::json(['message' => 'Không đủ thông tin địa chỉ'], 400);
+        }
+    }
+
+    // Cập nhật avatar
+    public function uploadAvatar() {
+        try {
+            $seller = Auth::seller();
+
+            $logo = Request::file('logo');
+
+            if (!$logo) {
+                Response::json(['message' => 'Không tìm thấy ảnh'], 400);
+            }
+
+            $logoUpload = FileSave::avatarImage($logo);
+            if ($logoUpload['success'] == false) {
+                Response::json(['message' => $logoUpload['message']], 400);
+            }
+
+            SellerModel::updateLogo($seller['seller_id'], $logoUpload['file_name']);
+
+            Response::json([
+                'message' => 'Cập nhật logo thành công',
+                'logo' => $logoUpload['file_name']
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> uploadAvatar: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Cập nhật background
+    public function uploadBackground() {
+        try {
+            $seller = Auth::seller();
+
+            $background = Request::file('background');
+
+            if (!$background) {
+                Response::json(['message' => 'Không tìm thấy ảnh'], 400);
+            }
+
+            $backgroundUpload = FileSave::backgroundImage($background);
+            if ($backgroundUpload['success'] == false) {
+                Response::json(['message' => $backgroundUpload['message']], 400);
+            }
+
+            SellerModel::updateBackground($seller['seller_id'], $backgroundUpload['file_name']);
+
+            Response::json([
+                'message' => 'Cập nhật background thành công',
+                'background' => $backgroundUpload['file_name']
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> uploadBackground: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
 }

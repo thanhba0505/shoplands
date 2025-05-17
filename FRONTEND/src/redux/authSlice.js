@@ -31,6 +31,14 @@ const authSlice = createSlice({
     updateUserName: (state, action) => {
       state.account.name = action.payload;
     },
+
+    updateSellerLogo: (state, action) => {
+      state.account.logo = action.payload;
+    },
+
+    updateSellerBackground: (state, action) => {
+      state.account.background = action.payload;
+    },
   },
 });
 
@@ -40,5 +48,7 @@ export const {
   refreshTokenSuccess,
   updateUserAvatar,
   updateUserName,
+  updateSellerLogo,
+  updateSellerBackground,
 } = authSlice.actions;
 export default authSlice.reducer;

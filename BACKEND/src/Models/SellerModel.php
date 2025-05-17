@@ -286,4 +286,30 @@ class SellerModel {
 
         return $result;
     }
+
+    // Cập nhật logo
+    public static function updateLogo($seller_id, $logo) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE sellers SET logo = :logo WHERE id = :seller_id
+        ";
+
+        $result = $conn->query($sql, ['logo' => $logo, 'seller_id' => $seller_id]);
+
+        return $result;
+    }
+
+    // Cập nhật background
+    public static function updateBackground($seller_id, $background) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE sellers SET background = :background WHERE id = :seller_id
+        ";
+
+        $result = $conn->query($sql, ['background' => $background, 'seller_id' => $seller_id]);
+
+        return $result;
+    }
 }
