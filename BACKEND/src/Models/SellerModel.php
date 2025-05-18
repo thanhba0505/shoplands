@@ -312,4 +312,27 @@ class SellerModel {
 
         return $result;
     }
+
+    // Cập nhật bank
+    public static function updateOwnerAndDescription($seller_id, $owner_name, $description) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE 
+                sellers 
+            SET 
+                owner_name = :owner_name,
+                description = :description
+            WHERE 
+                id = :seller_id
+        ";
+
+        $result = $conn->query($sql, [
+            'owner_name' => $owner_name,
+            'description' => $description,
+            'seller_id' => $seller_id
+        ]);
+
+        return $result;
+    }
 }

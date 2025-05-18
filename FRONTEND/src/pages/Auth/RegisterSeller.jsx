@@ -335,8 +335,6 @@ const RegisterSeller = () => {
     fetchBanks();
   }, []);
 
-  console.log(bankName);
-
   return (
     <Container
       maxWidth="xl"

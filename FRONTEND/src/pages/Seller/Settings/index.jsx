@@ -1,16 +1,17 @@
 import {
+  Autocomplete,
   Box,
   Button,
   Divider,
   Grid2,
   Skeleton,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
-import Auth from "~/helpers/Auth";
 import Format from "~/helpers/Format";
 import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
@@ -26,14 +27,13 @@ import { useDispatch } from "react-redux";
 import { updateSellerBackground, updateSellerLogo } from "~/redux/authSlice";
 import ButtonLoading from "~/components/ButtonLoading";
 
-const SellerBanner = ({ seller, setSeller, sellerId }) => {
+const SellerBanner = ({ seller, setSeller, loading, setLoading }) => {
   const navigate = useNavigate();
   const backgroundInputRef = useRef(null);
   const logoInputRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(true);
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [selectedBackground, setSelectedBackground] = useState(null);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState(null);
@@ -46,7 +46,7 @@ const SellerBanner = ({ seller, setSeller, sellerId }) => {
   const fetchSeller = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axiosDefault.get(Api.sellers(sellerId));
+      const response = await axiosWithAuth.get(Api.seller());
       setSeller(response.data);
     } catch (error) {
       Log.error(error.response?.data?.message);
@@ -54,7 +54,7 @@ const SellerBanner = ({ seller, setSeller, sellerId }) => {
     } finally {
       setLoading(false);
     }
-  }, [sellerId, navigate, setSeller]);
+  }, [navigate, setSeller, setLoading]);
 
   // call api
   useEffect(() => {
@@ -522,17 +522,249 @@ const SellerBanner = ({ seller, setSeller, sellerId }) => {
 };
 
 const Settings = () => {
-  const sellerAuth = Auth.getSeller();
+  const navigate = useNavigate();
   const [seller, setSeller] = useState(null);
+  const [updateLoading, setUpdateLoading] = useState(false);
+
+  const [edit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [banks, setBanks] = useState([]);
+
+  const [editOwnerName, setEditOwnerName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editBankNumber, setEditBankNumber] = useState("");
+  const [editBankName, setEditBankName] = useState("");
+
+  const resetForm = () => {
+    setEditOwnerName(seller.owner_name);
+    setEditDescription(seller.description);
+    setEditBankNumber(seller.bank_number);
+    setEditBankName(seller.bank_name);
+    setEdit(false);
+  };
+
+  useEffect(() => {
+    if (seller) {
+      setEditOwnerName(seller.owner_name);
+      setEditDescription(seller.description);
+      setEditBankNumber(seller.bank_number);
+      setEditBankName(seller.bank_name);
+    }
+  }, [seller]);
+
+  const fetchBanks = async () => {
+    try {
+      const response = await axiosDefault.get(Api.banks());
+
+      const options = response.data.map((bank) => ({
+        value: bank.id,
+        label: bank.shortName,
+      }));
+
+      setBanks(options);
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchBanks();
+  }, []);
+
+  const fetchUpdate = async () => {
+    setUpdateLoading(true);
+    try {
+      await axiosWithAuth.put(
+        Api.seller(),
+        {
+          owner_name: editOwnerName,
+          description: editDescription,
+          bank_number: editBankNumber,
+          bank_name: editBankName,
+        },
+        {
+          navigate,
+        }
+      );
+      setSeller((prevSeller) => ({
+        ...prevSeller,
+        owner_name: editOwnerName,
+        description: editDescription,
+        bank_number: editBankNumber,
+        bank_name: editBankName,
+      }));
+      resetForm();
+    } catch (error) {
+      Log.error(error.response?.data?.message);
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
   return (
     <>
       <SellerBanner
         seller={seller}
         setSeller={setSeller}
-        sellerId={sellerAuth?.seller_id}
+        loading={loading}
+        setLoading={setLoading}
       />
 
-      <PaperCustom sx={{ px: 3, mt: 3 }}></PaperCustom>
+      <PaperCustom sx={{ px: 3, mt: 3 }}>
+        {loading ? (
+          <>
+            <Skeleton variant="text" height={40} width={400} />
+            <Skeleton variant="text" width={200} />
+            <Skeleton variant="text" width={350} />
+            <Skeleton variant="text" width={520} />
+            <Skeleton variant="text" width={370} />
+            <Skeleton variant="text" width={240} />
+            <Skeleton variant="text" width={330} />
+            <Skeleton variant="text" width={240} />
+          </>
+        ) : (
+          <>
+            <Typography variant="h6" fontWeight={"bold"} sx={{ pb: 2 }}>
+              Thông tin cửa hàng
+            </Typography>
+
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body1" component="span">
+                <b>Số điện thoại:</b> {seller?.phone}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body1" component="span">
+                <b>Tên cửa hàng:</b> {seller?.store_name}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 1, display: "flex", alignItems: "start" }}>
+              <Typography variant="body1" component="span">
+                <b>Chủ cửa hàng:</b>
+              </Typography>
+              {edit ? (
+                <TextField
+                  sx={{ width: "500px", ml: 1 }}
+                  value={editOwnerName}
+                  onChange={(e) => setEditOwnerName(e.target.value)}
+                  size="small"
+                />
+              ) : (
+                <Typography variant="body1" component="span" sx={{ ml: 1 }}>
+                  {seller?.owner_name}
+                </Typography>
+              )}
+            </Box>
+
+            <Box sx={{ mb: 1, mt: 1.5, display: "flex", alignItems: "start" }}>
+              <Typography variant="body1" component="span">
+                <b>Mô tả:</b>
+              </Typography>
+              {edit ? (
+                <TextField
+                  sx={{ width: "600px", ml: 1 }}
+                  value={editDescription}
+                  multiline
+                  rows={4}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  size="small"
+                />
+              ) : (
+                <Typography variant="body1" component="span" sx={{ ml: 1 }}>
+                  {seller?.description}
+                </Typography>
+              )}
+            </Box>
+
+            <Box sx={{ mb: 1, mt: 1.5, display: "flex", alignItems: "start" }}>
+              <Typography variant="body1" component="span">
+                <b>Tên ngân hàng:</b>
+              </Typography>
+              {edit ? (
+                <Box sx={{ ml: 1, width: "500px" }}>
+                  <Autocomplete
+                    disablePortal
+                    options={banks}
+                    value={banks.find((bank) => bank.label === editBankName)}
+                    fullWidth
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        size="small"
+                        placeholder="Chọn ngân hàng"
+                      />
+                    )}
+                    onChange={(e, value) => {
+                      setEditBankName(value?.label || "");
+                    }}
+                    disabled={!banks}
+                  />
+                </Box>
+              ) : (
+                <Typography variant="body1" component="span" sx={{ ml: 1 }}>
+                  {seller?.bank_name ?? <i>Chưa thiết lập</i>}
+                </Typography>
+              )}
+            </Box>
+
+            <Box sx={{ mb: 1, mt: 1.5, display: "flex", alignItems: "start" }}>
+              <Typography variant="body1" component="span">
+                <b>Số tài khoản:</b>
+              </Typography>
+              {edit ? (
+                <TextField
+                  sx={{ width: "500px", ml: 1 }}
+                  placeholder="Số tài khoản ngân hàng"
+                  value={editBankNumber}
+                  onChange={(e) => setEditBankNumber(e.target.value)}
+                  size="small"
+                />
+              ) : (
+                <Typography variant="body1" component="span" sx={{ ml: 1 }}>
+                  {seller?.bank_number ?? <i>Chưa thiết lập</i>}
+                </Typography>
+              )}
+            </Box>
+
+            {edit ? (
+              <Box sx={{ my: 2 }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => resetForm()}
+                  disabled={updateLoading ? true : false}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => fetchUpdate()}
+                  disabled={
+                    !editOwnerName ||
+                    !editDescription ||
+                    !editBankName ||
+                    !editBankNumber
+                  }
+                  sx={{ ml: 2 }}
+                  loading={updateLoading}
+                >
+                  Lưu
+                </Button>
+              </Box>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{ my: 2 }}
+                onClick={() => setEdit(true)}
+              >
+                Chỉnh sửa
+              </Button>
+            )}
+          </>
+        )}
+      </PaperCustom>
     </>
   );
 };

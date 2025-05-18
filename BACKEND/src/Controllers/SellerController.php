@@ -36,6 +36,23 @@ class SellerController {
         }
     }
 
+    // Tìm kiếm người bán
+    public function sellerFind() {
+        try {
+            $seller = Auth::seller();
+            $seller = SellerModel::findBySellerId($seller['seller_id']);
+
+            if (!$seller || !$seller['seller_id']) {
+                Response::json(['message' => 'Không tìm thấy thông tin'], 400);
+            }
+
+            Response::json($seller);
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> find: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
     // Admin lấy danh sách người bán
     public function adminGet() {
         try {
@@ -471,6 +488,61 @@ class SellerController {
             ], 200);
         } catch (\Throwable $th) {
             Log::throwable("SellerController -> uploadBackground: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Cập nhật 
+    public function sellerUpdate() {
+        try {
+            $seller = Auth::seller();
+
+            $bank_number = Request::json('bank_number');
+            $bank_name = Request::json('bank_name');
+            $owner_name = Request::json('owner_name');
+            $description = Request::json('description');
+
+            $checkOwnerName = Validator::isName($owner_name, 'Tên chủ cửa hàng', 1, 100);
+            if ($checkOwnerName !== true) {
+                Response::json(['message' => $checkOwnerName], 400);
+            }
+
+            $checkDescription = Validator::isText($description, 'Mô tả', 3, 10000, true);
+            if ($checkDescription !== true) {
+                Response::json(['message' => $checkDescription], 400);
+            }
+
+            $checkBankNumber = Validator::isBankAccountNumber($bank_number, 'Số tài khoản', 6, 30);
+            if ($checkBankNumber !== true) {
+                Response::json(['message' => $checkBankNumber], 400);
+            }
+
+            $checkBankName = Validator::isName($bank_name, 'Tên ngân hàng', 1, 100);
+            if ($checkBankName !== true) {
+                Response::json(['message' => $checkBankName], 400);
+            }
+
+            if ($owner_name || $description) {
+                SellerModel::updateOwnerAndDescription(
+                    $seller['seller_id'],
+                    $owner_name,
+                    $description
+                );
+            }
+
+            if ($bank_number || $bank_name) {
+                AccountModel::updateBank(
+                    $seller['account_id'],
+                    $bank_name,
+                    $bank_number
+                );
+            }
+
+            Response::json([
+                'message' => 'Cập nhật tài khoản ngân hàng thành công'
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("SellerController -> sellerUpdate: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

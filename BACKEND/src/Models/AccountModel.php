@@ -379,4 +379,30 @@ class AccountModel {
 
         return $result;
     }
+
+    // Cập nhật ngân hàng
+    public static function updateBank($account_id, $bank_name, $bank_number) {
+        $query = new ConnectDatabase();
+
+        $bank_name = Hash::encodeAes($bank_name);
+        $bank_number = Hash::encodeAes($bank_number);
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                bank_name = :bank_name,
+                bank_number = :bank_number
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, [
+            'bank_name' => $bank_name,
+            'bank_number' => $bank_number,
+            'account_id' => $account_id
+        ]);
+
+        return $result;
+    }
 }
