@@ -98,6 +98,10 @@ class Api {
     return this.buildPath("reviews", endpoint);
   }
 
+  static contact(endpoint = "") {
+    return this.buildPath("contact", endpoint);
+  }
+
   // User
 
   static user(endpoint = "") {

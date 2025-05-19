@@ -86,9 +86,12 @@ $router->post('api/user/reviews', 'ReviewController@add', ['App\Middlewares\User
 $router->get('api/user/reviews/{order_id}', 'ReviewController@userGet', ['App\Middlewares\UserMiddleware']);
 $router->get('api/seller/reviews', 'ReviewController@sellerGet', ['App\Middlewares\SellerMiddleware']);
 
+// API ADMIN
+$router->get('api/admin/dashboard', 'AdminController@adminDashboard', ['App\Middlewares\AdminMiddleware']);
+
+// API CONTACT
+$router->post('api/contact', 'ContactController@create');
+
 // API OTHER
 $router->get('api/banks', 'Controller@getBanks');
 $router->get('view/message', 'Controller@getMessage');
-
-// API ADMIN
-$router->get('api/admin/dashboard', 'AdminController@adminDashboard', ['App\Middlewares\AdminMiddleware']);

@@ -96,7 +96,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
       >
         <TextField
           size="small"
-          label="Tìm kiếm đơn hàng"
+          label="Tìm kiếm sản phẩm"
           autoComplete="off"
           variant="outlined"
           value={search}
