@@ -141,6 +141,10 @@ class Api {
   static adminSellers(endpoint = "") {
     return this.buildPath("admin/sellers", endpoint);
   }
+  
+  static adminDashboard(endpoint = "") {
+    return this.buildPath("admin/dashboard", endpoint);
+  }
 
   static adminUsers(endpoint = "") {
     return this.buildPath("admin/users", endpoint);

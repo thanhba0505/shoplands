@@ -89,3 +89,6 @@ $router->get('api/seller/reviews', 'ReviewController@sellerGet', ['App\Middlewar
 // API OTHER
 $router->get('api/banks', 'Controller@getBanks');
 $router->get('view/message', 'Controller@getMessage');
+
+// API ADMIN
+$router->get('api/admin/dashboard', 'AdminController@adminDashboard', ['App\Middlewares\AdminMiddleware']);

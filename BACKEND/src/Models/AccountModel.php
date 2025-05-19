@@ -425,4 +425,25 @@ class AccountModel {
 
         return $result;
     }
+
+    // getAdminDashboard
+    public static function getAdminDashboard() {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                SUM(a.coin) as total_coin,
+                (SELECT SUM(a.coin) FROM accounts a WHERE a.role = 'admin') AS total_coin_admin,
+                (SELECT SUM(a.coin) FROM accounts a WHERE a.role = 'seller') AS total_coin_seller,
+                (SELECT COUNT(a.id) FROM accounts a WHERE a.role = 'seller') AS count_seller,
+                (SELECT COUNT(a.id) FROM accounts a WHERE a.role = 'user') AS count_user,
+                (SELECT COUNT(a.id) FROM products a) AS count_product
+            FROM
+                accounts a
+        ";
+
+        $result = $query->query($sql)->fetch();
+
+        return $result;
+    }
 }
