@@ -7,6 +7,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PaperCustom from "~/components/PaperCustom";
 import Api from "~/helpers/Api";
 import Log from "~/helpers/Log";
@@ -14,6 +15,7 @@ import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
 const CategoryList = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -113,7 +115,6 @@ const CategoryList = () => {
               size={2}
               alignItems={"center"}
               flexDirection={"column"}
-              
             >
               <Skeleton variant="circular" height={120} width={120} />
               <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
@@ -124,7 +125,6 @@ const CategoryList = () => {
               size={2}
               alignItems={"center"}
               flexDirection={"column"}
-              
             >
               <Skeleton variant="circular" height={120} width={120} />
               <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
@@ -135,7 +135,6 @@ const CategoryList = () => {
               size={2}
               alignItems={"center"}
               flexDirection={"column"}
-              
             >
               <Skeleton variant="circular" height={120} width={120} />
               <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
@@ -146,7 +145,6 @@ const CategoryList = () => {
               size={2}
               alignItems={"center"}
               flexDirection={"column"}
-              
             >
               <Skeleton variant="circular" height={120} width={120} />
               <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
@@ -157,7 +155,6 @@ const CategoryList = () => {
               size={2}
               alignItems={"center"}
               flexDirection={"column"}
-              
             >
               <Skeleton variant="circular" height={120} width={120} />
               <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
@@ -168,7 +165,6 @@ const CategoryList = () => {
               size={2}
               alignItems={"center"}
               flexDirection={"column"}
-              
             >
               <Skeleton variant="circular" height={120} width={120} />
               <Skeleton variant="rounded" width={"100%"} sx={{ pt: 2 }} />
@@ -204,7 +200,7 @@ const CategoryList = () => {
                       cursor: "pointer",
                     }}
                     onClick={() => {
-                      // navigate(Path.category(category.slug));
+                      navigate(Path.products() + `?category=${category.id}`);
                     }}
                   />
                   <Typography variant="body2">{category.name}</Typography>
