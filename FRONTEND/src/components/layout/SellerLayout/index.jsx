@@ -227,7 +227,7 @@ const SellerLayout = ({ children }) => {
                 gap: 2,
               }}
             >
-              Ví Shoplands: {Format.formatCurrency(seller.coin)}
+              Ví Shoplands: {Format.formatCurrency(seller?.coin)}
               <MenuIcon
                 icon={
                   <Avatar

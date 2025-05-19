@@ -168,6 +168,7 @@ class OrderController {
 
             // Cộng tiền cho seller
             AccountModel::sellerIncreaseCoin($order["seller_id"], $order["revenue"]);
+            AccountModel::adminIncreaseCoin($order["final_price"] - $order["revenue"]);
 
             Response::json([
                 'message' => 'Đã hoàn tất đơn hàng',

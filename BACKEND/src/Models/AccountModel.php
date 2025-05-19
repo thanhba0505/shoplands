@@ -380,6 +380,26 @@ class AccountModel {
         return $result;
     }
 
+    // Cộng tiền cho admin
+    public static function adminIncreaseCoin($coin) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                accounts a
+            SET
+                coin = coin + :coin
+            WHERE
+                a.id = 1
+        ";
+
+        $result = $query->query($sql, [
+            'coin' => $coin,
+        ]);
+
+        return $result;
+    }
+
     // Cập nhật ngân hàng
     public static function updateBank($account_id, $bank_name, $bank_number) {
         $query = new ConnectDatabase();

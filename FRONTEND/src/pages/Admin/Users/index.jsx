@@ -443,7 +443,7 @@ const Users = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (event, newValue) => {
-    navigate(Path.adminSellers(newValue));
+    navigate(Path.adminUsers(newValue));
   };
 
   const renderComponent = () => {
