@@ -31,10 +31,11 @@ class OrderController {
             $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : [];
             $limit = Request::get('limit', 12);
             $page = Request::get('page', 0);
+            $search = Request::get('search', '');
 
             $status = Other::groupStatus($status);
 
-            $result = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page);
+            $result = OrderModel::getBySellerId($seller["seller_id"], $status, $limit, $page, $search);
 
             Response::json($result, 200);
         } catch (\Throwable $th) {

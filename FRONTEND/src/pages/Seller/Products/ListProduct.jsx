@@ -2,6 +2,7 @@ import { useTheme } from "@emotion/react";
 import {
   Avatar,
   Box,
+  Button,
   Rating,
   Skeleton,
   Table,
@@ -14,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoContent from "~/components/NoContent";
@@ -29,6 +30,9 @@ const ListProduct = ({ status, loading, setLoading }) => {
   const seller_id = useSelector((state) => state.auth?.account?.seller_id);
   const navigate = useNavigate();
   const theme = useTheme();
+
+  const searchRef = useRef("");
+  const [search, setSearch] = useState("");
 
   const [products, setProducts] = useState([]);
   const [count, setCount] = useState(0);
@@ -58,6 +62,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
               page: page,
               status: status,
               seller_id: seller_id,
+              search: searchRef.current,
             },
             navigate,
           });
@@ -83,7 +88,7 @@ const ListProduct = ({ status, loading, setLoading }) => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "start",
           gap: 2,
           alignItems: "center",
           py: 2,
@@ -91,11 +96,26 @@ const ListProduct = ({ status, loading, setLoading }) => {
       >
         <TextField
           size="small"
-          label="Tìm kiếm sản phẩm"
+          label="Tìm kiếm đơn hàng"
           autoComplete="off"
           variant="outlined"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            searchRef.current = e.target.value; // 🔥 cập nhật vào ref
+          }}
+          onKeyDown={(e) => e.key === "Enter" && fetchApi(page, rowsPerPage)}
           sx={{ width: 500 }}
         />
+
+        <Box sx={{ mr: "auto" }}>
+          <Button
+            variant="contained"
+            onClick={async () => await fetchApi(page, rowsPerPage)}
+          >
+            Tìm kiếm
+          </Button>
+        </Box>
 
         <TablePagination
           disabled={loading}

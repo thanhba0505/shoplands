@@ -10,7 +10,7 @@ use App\Models\ConnectDatabase;
 
 class OrderModel {
     // Lấy danh sach đơn hang theo seller id
-    public static function getBySellerId($seller_id, $status = [], $limit = 12, $page = 0) {
+    public static function getBySellerId($seller_id, $status = [], $limit = 12, $page = 0, $search = null) {
         $query = new ConnectDatabase();
 
         $offset = ($page) * $limit;
@@ -101,6 +101,13 @@ class OrderModel {
         $params = [
             'seller_id' => $seller_id
         ];
+
+        if ($search) {
+            $sql .= " AND (o.id LIKE :search1 OR u.name LIKE :search2)";
+            $countSql .= " AND (o.id LIKE :search1 OR u.name LIKE :search2)";
+            $params['search1'] = '%' . $search . '%';
+            $params['search2'] = '%' . $search . '%';
+        }
 
         // Nếu có mảng trạng thái, thêm điều kiện AND với IN vào câu lệnh SQL
         if (!empty($status)) {
@@ -1141,7 +1148,7 @@ class OrderModel {
             $result['product_variant_id'] = $product_variant_id;
             $result['user_id'] = $user_id;
         }
-        
+
         return $result;
     }
 }

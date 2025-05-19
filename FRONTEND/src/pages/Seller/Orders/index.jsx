@@ -13,8 +13,9 @@ import {
   TablePagination,
   TextField,
   Skeleton,
+  Button,
 } from "@mui/material";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
@@ -190,6 +191,9 @@ const Orders = () => {
 
   const value = params.status ?? "all";
 
+  const searchRef = useRef("");
+  const [search, setSearch] = useState("");
+
   const [orders, setOrders] = useState([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -239,6 +243,7 @@ const Orders = () => {
               status: status,
               limit: limit,
               page: page,
+              search: searchRef.current,
             },
             navigate,
           });
@@ -251,6 +256,7 @@ const Orders = () => {
         setLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [seller_id, navigate]
   );
 
@@ -278,7 +284,7 @@ const Orders = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "start",
           gap: 2,
           alignItems: "center",
           py: 2,
@@ -289,8 +295,25 @@ const Orders = () => {
           label="Tìm kiếm đơn hàng"
           autoComplete="off"
           variant="outlined"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            searchRef.current = e.target.value; // 🔥 cập nhật vào ref
+          }}
+          onKeyDown={(e) =>
+            e.key === "Enter" && fetchApi(value, page, rowsPerPage)
+          }
           sx={{ width: 500 }}
         />
+
+        <Box sx={{ mr: "auto" }}>
+          <Button
+            variant="contained"
+            onClick={async () => await fetchApi(value, page, rowsPerPage)}
+          >
+            Tìm kiếm
+          </Button>
+        </Box>
 
         <TablePagination
           disabled={loading}
