@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ButtonLoading from "~/components/ButtonLoading";
 import ModalCustom from "~/components/ModalCustom";
@@ -326,6 +326,9 @@ const ListSellers = ({ status, loading, setLoading }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const searchRef = useRef("");
+  const [search, setSearch] = useState("");
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
     fetchApi(newPage, rowsPerPage);
@@ -347,6 +350,7 @@ const ListSellers = ({ status, loading, setLoading }) => {
             limit: limit,
             page: page,
             status: status,
+            search: searchRef.current,
           },
           navigate,
         });
@@ -383,7 +387,7 @@ const ListSellers = ({ status, loading, setLoading }) => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "start",
           gap: 2,
           alignItems: "center",
           py: 2,
@@ -394,8 +398,23 @@ const ListSellers = ({ status, loading, setLoading }) => {
           label="Tìm kiếm người bán"
           autoComplete="off"
           variant="outlined"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            searchRef.current = e.target.value;
+          }}
+          onKeyDown={(e) => e.key === "Enter" && fetchApi(page, rowsPerPage)}
           sx={{ width: 500 }}
         />
+
+        <Box sx={{ mr: "auto" }}>
+          <Button
+            variant="contained"
+            onClick={async () => await fetchApi(page, rowsPerPage)}
+          >
+            Tìm kiếm
+          </Button>
+        </Box>
 
         <TablePagination
           disabled={loading}
@@ -549,10 +568,7 @@ const ListSellers = ({ status, loading, setLoading }) => {
               <>
                 {sellers && sellers.length > 0 ? (
                   sellers.map((seller) => (
-                    <TableRow
-                      hover
-                      key={seller.seller_id}
-                    >
+                    <TableRow hover key={seller.seller_id}>
                       <TableCell>
                         <Box
                           sx={{ display: "flex", alignItems: "center", gap: 2 }}

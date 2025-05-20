@@ -89,7 +89,7 @@ class UserModel {
     }
 
     // Lấy tổng số người mua theo trang thai
-    public static function countByStatus($status) {
+    public static function countByStatus($status, $search = '') {
         $query = new ConnectDatabase();
 
         $status = empty($status) ? "all" : $status;
@@ -109,11 +109,16 @@ class UserModel {
             $sql .= " WHERE a.status = :status";
         }
 
+        if ($search) {
+            $params['search'] = '%' . $search . '%';
+            $sql .= " AND u.name LIKE :search";
+        }
+
         return $query->query($sql, $params)->fetch()['total'];
     }
 
     // Lấy danh sách người mua
-    public static function getAll($status = null, $limit = 12, $page = 0) {
+    public static function getAll($status = null, $limit = 12, $page = 0, $search = '') {
         $query = new ConnectDatabase();
 
         $status = empty($status) ? "all" : $status;
@@ -146,6 +151,11 @@ class UserModel {
         if ($status !== "all") {
             $sql .= " WHERE a.status = :status";
             $params['status'] = $status;
+        }
+
+        if ($search) {
+            $sql .= " AND u.name LIKE :search";
+            $params['search'] = '%' . $search . '%';
         }
 
         // Thêm LIMIT và OFFSET cho phân trang

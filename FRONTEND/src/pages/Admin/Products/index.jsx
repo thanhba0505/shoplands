@@ -51,7 +51,7 @@ const Products = () => {
   };
 
   return (
-    <PaperCustom>
+    <PaperCustom sx={{ px: 3 }}>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={value}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

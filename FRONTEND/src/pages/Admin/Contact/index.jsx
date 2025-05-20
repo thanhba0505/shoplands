@@ -15,7 +15,8 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useSnackbar } from "notistack";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ButtonLoading from "~/components/ButtonLoading";
 import ModalCustom from "~/components/ModalCustom";
@@ -30,6 +31,8 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 const ResponseContact = ({ contact, setContacts }) => {
   const navigate = useNavigate();
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
@@ -37,7 +40,7 @@ const ResponseContact = ({ contact, setContacts }) => {
   const fetchApi = async () => {
     setLoading(true);
     try {
-      await axiosWithAuth.post(
+      const response = await axiosWithAuth.post(
         Api.contact("reply"),
         {
           id: contact.id,
@@ -54,6 +57,8 @@ const ResponseContact = ({ contact, setContacts }) => {
           item.id === contact.id ? { ...item, response: content } : item
         )
       );
+
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } catch (error) {
       Log.error(error.response?.data?.message);
     } finally {
@@ -129,6 +134,9 @@ const Contact = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const searchRef = useRef("");
+  const [search, setSearch] = useState("");
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
     fetchApi(newPage, rowsPerPage);
@@ -150,6 +158,7 @@ const Contact = () => {
             limit: limit,
             page: page,
             type: pageName,
+            search: searchRef.current,
           },
           navigate,
         });
@@ -198,11 +207,26 @@ const Contact = () => {
       >
         <TextField
           size="small"
-          label="Tìm kiếm người bán"
+          label="Tìm kiếm người liên hệ"
           autoComplete="off"
           variant="outlined"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            searchRef.current = e.target.value;
+          }}
+          onKeyDown={(e) => e.key === "Enter" && fetchApi(page, rowsPerPage)}
           sx={{ width: 500 }}
         />
+
+        <Box sx={{ mr: "auto" }}>
+          <Button
+            variant="contained"
+            onClick={async () => await fetchApi(page, rowsPerPage)}
+          >
+            Tìm kiếm
+          </Button>
+        </Box>
 
         <TablePagination
           disabled={loading}

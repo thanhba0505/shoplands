@@ -59,9 +59,10 @@ class SellerController {
             $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : "";
             $limit = Request::get('limit', 12);
             $page = Request::get('page', 0);
+            $search = Request::get('search', '');
 
-            $count = SellerModel::countByStatus($status == "all" ? null : $status);
-            $sellers = SellerModel::getAll($status, $limit, $page);
+            $count = SellerModel::countByStatus($status == "all" ? null : $status, $search);
+            $sellers = SellerModel::getAll($status, $limit, $page, $search);
 
             $result = [
                 "count" => $count,

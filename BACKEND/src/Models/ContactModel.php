@@ -43,7 +43,7 @@ class ContactModel {
         return $conn->getConnection()->lastInsertId();
     }
 
-    public static function getAll($limit = 10, $page = 0) {
+    public static function getAll($limit = 10, $page = 0, $search = '') {
         $conn = new ConnectDatabase();
 
         $limit = (int) $limit;
@@ -54,6 +54,11 @@ class ContactModel {
         $countSql = "SELECT COUNT(*) as total FROM contact";
         $countResult = $conn->query($countSql)->fetch();
         $totalCount = $countResult['total'];
+
+        $params = [
+            'limit' => $limit,
+            'offset' => $offset
+        ];
 
         // Lấy contact theo trang
         $dataSql = "
@@ -66,13 +71,18 @@ class ContactModel {
                 response,
                 created_at
             FROM contact
+        ";
+
+        if ($search) {
+            $dataSql .= " WHERE name LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $dataSql .= "
             LIMIT :limit OFFSET :offset
         ";
 
-        $contacts = $conn->query($dataSql, [
-            'limit' => $limit,
-            'offset' => $offset
-        ])->fetchAll();
+        $contacts = $conn->query($dataSql, $params)->fetchAll();
 
         // Giải mã số điện thoại
         foreach ($contacts as $key => $value) {
@@ -85,7 +95,7 @@ class ContactModel {
         ];
     }
 
-    public static function getUnreplied($limit = 10, $page = 0) {
+    public static function getUnreplied($limit = 10, $page = 0, $search = '') {
         $conn = new ConnectDatabase();
 
         $limit = (int) $limit;
@@ -96,6 +106,11 @@ class ContactModel {
         $countSql = "SELECT COUNT(*) as total FROM contact WHERE response IS NULL";
         $countResult = $conn->query($countSql)->fetch();
         $totalCount = $countResult['total'];
+
+        $params = [
+            'limit' => $limit,
+            'offset' => $offset
+        ];
 
         // Lấy contact theo trang
         $dataSql = "
@@ -109,13 +124,18 @@ class ContactModel {
                 created_at
             FROM contact
             WHERE response IS NULL
+        ";
+
+        if ($search) {
+            $dataSql .= " AND name LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $dataSql .= "
             LIMIT :limit OFFSET :offset
         ";
 
-        $contacts = $conn->query($dataSql, [
-            'limit' => $limit,
-            'offset' => $offset
-        ])->fetchAll();
+        $contacts = $conn->query($dataSql, $params)->fetchAll();
 
         // Giải mã số điện thoại
         foreach ($contacts as $key => $value) {
@@ -128,7 +148,7 @@ class ContactModel {
         ];
     }
 
-    public static function getReplied($limit = 10, $page = 0) {
+    public static function getReplied($limit = 10, $page = 0, $search = '') {
         $conn = new ConnectDatabase();
 
         $limit = (int) $limit;
@@ -139,6 +159,11 @@ class ContactModel {
         $countSql = "SELECT COUNT(*) as total FROM contact WHERE response IS NOT NULL";
         $countResult = $conn->query($countSql)->fetch();
         $totalCount = $countResult['total'];
+
+        $params = [
+            'limit' => $limit,
+            'offset' => $offset
+        ];
 
         // Lấy contact theo trang
         $dataSql = "
@@ -152,14 +177,19 @@ class ContactModel {
                 created_at
             FROM contact
             WHERE response IS NOT NULL
+        ";
+
+        if ($search) {
+            $dataSql .= " AND name LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $dataSql .= "
             LIMIT :limit OFFSET :offset
             
         ";
 
-        $contacts = $conn->query($dataSql, [
-            'limit' => $limit,
-            'offset' => $offset
-        ])->fetchAll();
+        $contacts = $conn->query($dataSql, $params)->fetchAll();
 
         // Giải mã số điện thoại
         foreach ($contacts as $key => $value) {
@@ -183,6 +213,29 @@ class ContactModel {
             'id' => $id,
             'content' => $content
         ]);
+
+        return $result;
+    }
+
+    public static function getById($id) {
+        $conn = new ConnectDatabase();
+        $sql = "
+            SELECT
+                id,
+                name,
+                phone,
+                topic,
+                content,
+                response,
+                created_at
+            FROM contact
+            WHERE id = :id
+        ";
+        $result = $conn->query($sql, ['id' => $id])->fetch();
+
+        if ($result) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
 
         return $result;
     }

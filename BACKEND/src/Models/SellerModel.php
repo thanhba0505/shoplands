@@ -172,7 +172,7 @@ class SellerModel {
     }
 
     // Lấy danh sách seller
-    public static function getAll($status = null, $limit = 12, $page = 0) {
+    public static function getAll($status = null, $limit = 12, $page = 0, $search = '') {
         $query = new ConnectDatabase();
 
         $status = empty($status) ? "all" : $status;
@@ -210,6 +210,11 @@ class SellerModel {
             $params['status'] = $status;
         }
 
+        if ($search) {
+            $sql .= " AND s.store_name LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
         // Thêm LIMIT và OFFSET cho phân trang
         $sql .= " LIMIT :limit OFFSET :offset";
 
@@ -230,7 +235,7 @@ class SellerModel {
     }
 
     // Lấy tổng số người bán theo trang thai
-    public static function countByStatus($status) {
+    public static function countByStatus($status, $search = '') {
         $query = new ConnectDatabase();
 
         $status = empty($status) ? "all" : $status;
@@ -248,6 +253,11 @@ class SellerModel {
         if ($status !== "all") {
             $params['status'] = $status;
             $sql .= " WHERE a.status = :status";
+        }
+
+        if ($search) {
+            $params['search'] = '%' . $search . '%';
+            $sql .= " AND s.store_name LIKE :search";
         }
 
         return $query->query($sql, $params)->fetch()['total'];

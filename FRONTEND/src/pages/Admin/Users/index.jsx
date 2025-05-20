@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ButtonLoading from "~/components/ButtonLoading";
 import ModalCustom from "~/components/ModalCustom";
@@ -150,6 +150,9 @@ const ListUsers = ({ status, loading, setLoading }) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
+  const searchRef = useRef("");
+  const [search, setSearch] = useState("");
+
   const [users, setUsers] = useState([]);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -176,6 +179,7 @@ const ListUsers = ({ status, loading, setLoading }) => {
             limit: limit,
             page: page,
             status: status,
+            search: searchRef.current,
           },
           navigate,
         });
@@ -208,7 +212,7 @@ const ListUsers = ({ status, loading, setLoading }) => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "start",
           gap: 2,
           alignItems: "center",
           py: 2,
@@ -216,11 +220,26 @@ const ListUsers = ({ status, loading, setLoading }) => {
       >
         <TextField
           size="small"
-          label="Tìm kiếm người bán"
+          label="Tìm kiếm người mua"
           autoComplete="off"
           variant="outlined"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            searchRef.current = e.target.value;
+          }}
+          onKeyDown={(e) => e.key === "Enter" && fetchApi(page, rowsPerPage)}
           sx={{ width: 500 }}
         />
+
+        <Box sx={{ mr: "auto" }}>
+          <Button
+            variant="contained"
+            onClick={async () => await fetchApi(page, rowsPerPage)}
+          >
+            Tìm kiếm
+          </Button>
+        </Box>
 
         <TablePagination
           disabled={loading}

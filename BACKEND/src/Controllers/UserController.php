@@ -19,9 +19,10 @@ class UserController {
             $status = Request::get('status') && Request::get('status') != "all" ? Request::get('status') : "";
             $limit = Request::get('limit', 12);
             $page = Request::get('page', 0);
+            $search = Request::get('search', '');
 
-            $count = UserModel::countByStatus($status == "all" ? null : $status);
-            $users = UserModel::getAll($status, $limit, $page);
+            $count = UserModel::countByStatus($status == "all" ? null : $status, $search);
+            $users = UserModel::getAll($status, $limit, $page, $search);
 
             $result = [
                 "count" => $count,
