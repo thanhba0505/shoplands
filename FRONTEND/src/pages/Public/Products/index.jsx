@@ -165,11 +165,12 @@ const Products = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const category = parseInt(params.get("category"));
+  const searchParam = params.get("search");
 
   const [price, setPrice] = useState([null, null]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParam || "");
   const [checkedCategories, setCheckedCategories] = useState(
     category ? [category] : []
   );
@@ -271,7 +272,7 @@ const Products = () => {
 
   return (
     <Container maxWidth="xl">
-      <Grid2 container spacing={2} columns={10}>
+      <Grid2 container spacing={3} columns={10}>
         <Grid2 size={2}>
           <PaperCustom
             sx={{
