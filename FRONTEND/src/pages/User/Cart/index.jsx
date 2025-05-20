@@ -142,34 +142,43 @@ const Cart = () => {
             </Grid2>
           </PaperCustom>
         </Container>
-      ) : carts.length === 0 ? (
-        <>
-          <Container maxWidth="xl">
-            <PaperCustom
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                py: 30,
-              }}
-            >
-              <Typography variant="body1">Giỏ hàng trống</Typography>
-              <Button
-                sx={{ px: 2, mt: 1 }}
-                onClick={() => navigate(Path.products())}
-              >
-                Mua ngay
-              </Button>
-            </PaperCustom>
-          </Container>
-        </>
       ) : (
-        carts?.map((cart, index) => (
-          <Container maxWidth="xl" key={index}>
-            <CartBox cart={cart} handleDeleteCartSeller={handleDeleteCartSeller} />
-          </Container>
-        ))
+        <>
+          {carts && carts.length === 0 ? (
+            <>
+              <Container maxWidth="xl">
+                <PaperCustom
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    py: 30,
+                  }}
+                >
+                  <Typography variant="body1">Giỏ hàng trống</Typography>
+                  <Button
+                    sx={{ px: 2, mt: 1 }}
+                    onClick={() => navigate(Path.products())}
+                  >
+                    Mua ngay
+                  </Button>
+                </PaperCustom>
+              </Container>
+            </>
+          ) : (
+            carts &&
+            carts.length > 0 &&
+            carts?.map((cart, index) => (
+              <Container maxWidth="xl" key={index}>
+                <CartBox
+                  cart={cart}
+                  handleDeleteCartSeller={handleDeleteCartSeller}
+                />
+              </Container>
+            ))
+          )}
+        </>
       )}
     </>
   );

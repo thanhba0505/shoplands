@@ -180,8 +180,10 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
             sx={{ marginBottom: 2, mt: 1, cursor: "pointer" }}
             onClick={() => navigate(Path.shop(cart.seller_id))}
           >
-            {cart.store_name}
+            {cart.store_name}{" "}
+            {cart.account_status === "locked" && <>(Cửa hàng đã bị khóa)</>}
           </Typography>
+
           <TableContainer>
             <Table sx={{ borderCollapse: "collapse", border: "none" }}>
               <TableHead>
@@ -206,7 +208,12 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
                         onChange={(event) =>
                           handleChangeCheckbox(event, cartDetail.cart_id)
                         }
-                        disabled={cartDetail.status === "active" ? false : true}
+                        disabled={
+                          cartDetail.status === "active" &&
+                          cart.account_status === "active"
+                            ? false
+                            : true
+                        }
                       />
                     </TableCell>
 
@@ -283,43 +290,56 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
                       )}
                     </TableCell>
 
-                    {cartDetail.status === "active" ? (
-                      <>
-                        {/* Số lượng */}
-                        <TableCell align="center">
-                          <QuantityInput
-                            min={1}
-                            max={cartDetail.product_quantity}
-                            value={cartDetail.quantity}
-                            onChange={(newQuantity) =>
-                              handleChangeQuantity(
-                                cartDetail.cart_id,
-                                newQuantity
-                              )
-                            }
-                          />
-                        </TableCell>
-
-                        {/* Thành tiền */}
-                        <TableCell align="center">
-                          {selectedItems.includes(cartDetail.cart_id)
-                            ? Format.formatCurrency(
-                                (parseFloat(
-                                  cartDetail.promotion_price || cartDetail.price
-                                ) || 0) * cartDetail.quantity
-                              )
-                            : "0"}
-                        </TableCell>
-                      </>
-                    ) : (
+                    {cart.account_status === "locked" ? (
                       <TableCell colSpan={2} align="center">
                         <Typography variant="body2" color="error">
-                          {cartDetail.status === "locked" &&
-                            "Sản phẩm đã bị khóa"}
-                          {cartDetail.status === "deleted" &&
-                            "Sản phẩm đã bị xóa"}
+                          Cửa hàng đã bị khóa
                         </Typography>
                       </TableCell>
+                    ) : (
+                      <>
+                        {cartDetail.status === "active" ? (
+                          <>
+                            {/* Số lượng */}
+                            <TableCell align="center">
+                              <QuantityInput
+                                min={1}
+                                max={cartDetail.product_quantity}
+                                value={cartDetail.quantity}
+                                onChange={(newQuantity) =>
+                                  handleChangeQuantity(
+                                    cartDetail.cart_id,
+                                    newQuantity
+                                  )
+                                }
+                              />
+                            </TableCell>
+
+                            {/* Thành tiền */}
+                            <TableCell align="center">
+                              {selectedItems.includes(cartDetail.cart_id)
+                                ? Format.formatCurrency(
+                                    (parseFloat(
+                                      cartDetail.promotion_price ||
+                                        cartDetail.price
+                                    ) || 0) * cartDetail.quantity
+                                  )
+                                : "0"}
+                            </TableCell>
+                          </>
+                        ) : (
+                          <TableCell colSpan={2} align="center">
+                            <Typography variant="body2" color="error">
+                              <>
+                                {cartDetail.status === "locked" &&
+                                  "Sản phẩm đã bị khóa"}
+                                {cartDetail.status === "deleted" &&
+                                  "Sản phẩm đã bị xóa"}
+                              </>
+                            </Typography>
+                          </TableCell>
+                        )}
+                      </>
                     )}
 
                     {/* Xóa */}
@@ -358,7 +378,12 @@ const CartBox = ({ cart, handleUpdateCartSeller }) => {
             >
               Tổng tiền: {Format.formatCurrency(totalAmount)}
             </Typography>
-            <Button variant="contained" sx={{ px: 4 }} onClick={handleCheckout}>
+            <Button
+              disabled={cart.account_status === "locked"}
+              variant="contained"
+              sx={{ px: 4 }}
+              onClick={handleCheckout}
+            >
               Mua hàng
             </Button>
           </Box>

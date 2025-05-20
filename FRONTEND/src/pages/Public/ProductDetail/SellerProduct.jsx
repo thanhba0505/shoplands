@@ -7,10 +7,9 @@ import Log from "~/helpers/Log";
 import Path from "~/helpers/Path";
 import axiosDefault from "~/utils/axiosDefault";
 
-const SellerProduct = ({ sellerId }) => {
+const SellerProduct = ({ sellerId, seller, setSeller }) => {
   const navigate = useNavigate();
 
-  const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchApi = useCallback(async () => {
@@ -25,7 +24,7 @@ const SellerProduct = ({ sellerId }) => {
     } finally {
       setLoading(false);
     }
-  }, [sellerId]);
+  }, [sellerId, setSeller]);
 
   useEffect(() => {
     fetchApi();
@@ -75,7 +74,12 @@ const SellerProduct = ({ sellerId }) => {
             </>
           ) : (
             <>
-              <Typography variant="h6" fontWeight={"bold"} sx={{ cursor: "pointer"}} onClick={() => navigate(Path.shop(seller?.seller_id))}>
+              <Typography
+                variant="h6"
+                fontWeight={"bold"}
+                sx={{ cursor: "pointer" }}
+                onClick={() => navigate(Path.shop(seller?.seller_id))}
+              >
                 {seller?.store_name}
               </Typography>
               <Typography variant="body1">

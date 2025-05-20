@@ -18,6 +18,8 @@ const ProductDetail = () => {
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [seller, setSeller] = useState(null);
+
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -38,7 +40,11 @@ const ProductDetail = () => {
   return (
     <>
       <Container>
-        <ProductInfo product={product} loading={loading} />
+        <ProductInfo
+          product={product}
+          loading={loading}
+          sellerStatus={seller?.status}
+        />
       </Container>
       <Container>
         <SimilarProducts />
@@ -54,7 +60,11 @@ const ProductDetail = () => {
         <ReviewsProduct productId={product?.product_id} />
       </Container>
       <Container>
-        <SellerProduct sellerId={product?.seller_id} />
+        <SellerProduct
+          sellerId={product?.seller_id}
+          seller={seller}
+          setSeller={setSeller}
+        />
       </Container>
       <Container>
         <SellerProducts />

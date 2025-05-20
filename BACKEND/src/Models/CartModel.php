@@ -28,6 +28,7 @@ class CartModel {
 
                 s.id AS seller_id,
                 s.store_name,
+                a.status AS account_status,
 
                 pi.image_path AS image,
 
@@ -39,6 +40,7 @@ class CartModel {
                 JOIN product_variants pv ON pv.id = c.product_variant_id
                 JOIN products p ON p.id = pv.product_id
                 JOIN sellers s ON s.id = p.seller_id
+                JOIN accounts a ON a.id = s.account_id
                 LEFT JOIN product_images pi ON pi.product_id = p.id
                 LEFT JOIN product_variant_values pvv ON pvv.product_variant_id = pv.id
                 LEFT JOIN product_attribute_values pav ON pav.id = pvv.product_attribute_value_id
@@ -55,6 +57,7 @@ class CartModel {
                 'user_id',
                 'seller_id',
                 'store_name',
+                'account_status',
             ],
             'group_columns' => [
                 'cart_details' => [

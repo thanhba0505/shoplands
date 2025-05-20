@@ -62,6 +62,10 @@ class ProductModel {
             $params['seller_id'] = $seller_id;
         }
 
+        $whereClauses[] = "a.status = :a_status";
+        $params['a_status'] = 'active';
+
+
         $whereSQL = implode(' AND ', $whereClauses);
 
         // Truy vấn đếm tổng số bản ghi
@@ -73,6 +77,8 @@ class ProductModel {
                 LEFT JOIN product_images pi ON pi.product_id = p.id
                 LEFT JOIN reviews r ON r.product_variant_id = pv.id
                 LEFT JOIN categories c ON c.id = p.category_id
+                JOIN sellers s ON s.id = p.seller_id
+                JOIN accounts a ON a.id = s.account_id
                 WHERE $whereSQL
                 GROUP BY p.id
         ";
@@ -147,6 +153,8 @@ class ProductModel {
                 LEFT JOIN product_images pi ON pi.product_id = p.id
                 LEFT JOIN reviews r ON r.product_variant_id = pv.id
                 LEFT JOIN categories c ON c.id = p.category_id
+                JOIN sellers s ON s.id = p.seller_id
+                JOIN accounts a ON a.id = s.account_id
             WHERE 
                 $whereSQL
             GROUP BY

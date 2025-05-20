@@ -137,7 +137,7 @@ const ImageProduct = ({ images, loading }) => {
 };
 
 // Thống tin sản phẩm
-const InfoProduct = ({ product, loading }) => {
+const InfoProduct = ({ product, loading, sellerStatus }) => {
   const [selectedValues, setSelectedValues] = useState({});
   const [quantity, setQuantity] = useState(1);
   const variants = product?.variants;
@@ -555,39 +555,47 @@ const InfoProduct = ({ product, loading }) => {
           </Box>
 
           {/* Nút xử lý */}
-          {product.status === "active" ? (
+          {sellerStatus === "active" ? (
             <>
-              {Auth.checkUser() ? (
-                <BtnHandle
-                  selectedVariant={selectedVariant}
-                  quantity={quantity}
-                  attributes={product?.attributes}
-                  product={product}
-                />
+              {product.status === "active" ? (
+                <>
+                  {Auth.checkUser() ? (
+                    <BtnHandle
+                      selectedVariant={selectedVariant}
+                      quantity={quantity}
+                      attributes={product?.attributes}
+                      product={product}
+                    />
+                  ) : (
+                    <ButtonLoading
+                      size="large"
+                      variant="contained"
+                      sx={{ width: "100%" }}
+                      onClick={() => navigate(Path.login())}
+                    >
+                      Đăng nhập để mua sản phẩm
+                    </ButtonLoading>
+                  )}
+                </>
               ) : (
-                <ButtonLoading
-                  size="large"
-                  variant="contained"
-                  sx={{ width: "100%" }}
-                  onClick={() => navigate(Path.login())}
-                >
-                  Đăng nhập để mua sản phẩm
-                </ButtonLoading>
+                <>
+                  {product.status === "locked" && (
+                    <Button fullWidth size="large" variant="contained" disabled>
+                      Sản phẩm đã bị khóa
+                    </Button>
+                  )}
+                  {product.status === "deleted" && (
+                    <Button fullWidth size="large" variant="contained" disabled>
+                      Sản phẩm đã bị xóa
+                    </Button>
+                  )}
+                </>
               )}
             </>
           ) : (
-            <>
-              {product.status === "locked" && (
-                <Button fullWidth size="large" variant="contained" disabled>
-                  Sản phẩm đã bị khóa
-                </Button>
-              )}
-              {product.status === "deleted" && (
-                <Button fullWidth size="large" variant="contained" disabled>
-                  Sản phẩm đã bị xóa
-                </Button>
-              )}
-            </>
+            <Button fullWidth size="large" variant="contained" disabled>
+              Cửa hàng đã bị khóa
+            </Button>
           )}
         </Box>
       )}
@@ -662,11 +670,15 @@ const BtnHandle = ({ selectedVariant, quantity, attributes, product }) => {
   );
 };
 
-const ProductInfo = ({ product, loading }) => {
+const ProductInfo = ({ product, loading, sellerStatus }) => {
   return (
     <PaperCustom sx={{ display: "flex", gap: 3, px: 3, pt: 4 }}>
       <ImageProduct images={product?.images} loading={loading} />
-      <InfoProduct product={product} loading={loading} />
+      <InfoProduct
+        product={product}
+        loading={loading}
+        sellerStatus={sellerStatus}
+      />
     </PaperCustom>
   );
 };
