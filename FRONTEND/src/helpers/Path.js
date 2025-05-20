@@ -168,6 +168,10 @@ class Path {
     return this.buildPath("/admin/users", subPath);
   }
 
+  static adminContact(subPath = "") {
+    return this.buildPath("/admin/contact", subPath);
+  }
+
   static adminSellers(subPath = "") {
     return this.buildPath("/admin/sellers", subPath);
   }

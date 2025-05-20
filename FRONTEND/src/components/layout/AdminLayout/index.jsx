@@ -1,7 +1,19 @@
 import { AppBar, Toolbar, Container, Box, Avatar } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import BallotOutlinedIcon from "@mui/icons-material/BallotOutlined";
+import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
+import ContactEmergencyOutlinedIcon from '@mui/icons-material/ContactEmergencyOutlined';
+import RecentActorsOutlinedIcon from '@mui/icons-material/RecentActorsOutlined';
+import ContactlessOutlinedIcon from '@mui/icons-material/ContactlessOutlined';
+import PeopleOutlineOutlinedIcon from "@mui/icons-material/PeopleOutlineOutlined";
+import LockPersonOutlinedIcon from "@mui/icons-material/LockPersonOutlined";
+import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
+import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
+import Diversity2OutlinedIcon from '@mui/icons-material/Diversity2Outlined';
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import BrowseGalleryOutlinedIcon from '@mui/icons-material/BrowseGalleryOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import SidebarTab from "../SidebarTab";
 import Path from "~/helpers/Path";
 import MenuIcon from "~/components/MenuIcon";
@@ -23,31 +35,53 @@ const NAVIGATION = [
     divider: true,
   },
   {
+    group: "Liên hệ",
+  },
+  {
+    name: "Tất cả",
+    tooltip: "Tất cả",
+    path: "/admin/contact/all",
+    icon: <ContactEmergencyOutlinedIcon />,
+  },
+  {
+    name: "Chưa phản hồi",
+    tooltip: "Chưa phản hồi",
+    path: "/admin/contact/unreplied",
+    icon: <RecentActorsOutlinedIcon />,
+  },
+  {
+    name: "Đã phản hồi",
+    tooltip: "Đã phản hồi",
+    path: "/admin/contact/replied",
+    icon: <ContactlessOutlinedIcon />,
+    divider: true,
+  },
+  {
     group: "Quản lý người bán",
   },
   {
     name: "Tất cả người bán",
     tooltip: "Tất cả người bán",
     path: "/admin/sellers/all",
-    icon: <BallotOutlinedIcon />,
+    icon: <PeopleOutlineOutlinedIcon />,
   },
   {
     name: "Đang hoạt động",
     tooltip: "Đang hoạt động",
     path: "/admin/sellers/active",
-    icon: <BallotOutlinedIcon />,
+    icon: <PermIdentityOutlinedIcon />,
   },
   {
     name: "Đã khóa",
     tooltip: "Đã khóa",
     path: "/admin/sellers/locked",
-    icon: <BallotOutlinedIcon />,
+    icon: <LockPersonOutlinedIcon />,
   },
   {
     name: "Chờ duyệt người bán",
     tooltip: "Chờ duyệt người bán",
     path: "/admin/sellers/inactive",
-    icon: <BallotOutlinedIcon />,
+    icon: <HowToRegOutlinedIcon />,
     divider: true,
   },
   {
@@ -57,19 +91,19 @@ const NAVIGATION = [
     name: "Tất cả người mua",
     tooltip: "Tất cả người mua",
     path: "/admin/users/all",
-    icon: <BallotOutlinedIcon />,
+    icon: <Groups2OutlinedIcon />,
   },
   {
     name: "Đang hoạt động",
     tooltip: "Đang hoạt động",
     path: "/admin/users/active",
-    icon: <BallotOutlinedIcon />,
+    icon: <Diversity2OutlinedIcon />,
   },
   {
     name: "Đã khóa",
     tooltip: "Đã khóa",
     path: "/admin/users/locked",
-    icon: <BallotOutlinedIcon />,
+    icon: <VpnKeyOutlinedIcon />,
     divider: true,
   },
   {
@@ -79,19 +113,19 @@ const NAVIGATION = [
     name: "Tất cả sản phẩm",
     tooltip: "Tất cả sản phẩm",
     path: "/admin/products/all",
-    icon: <BallotOutlinedIcon />,
+    icon: <CategoryOutlinedIcon />,
   },
   {
     name: "Còn hoạt động",
     tooltip: "Còn hoạt động",
     path: "/admin/products/active",
-    icon: <BallotOutlinedIcon />,
+    icon: <BrowseGalleryOutlinedIcon />,
   },
   {
     name: "Đã khóa",
     tooltip: "Đã khóa",
     path: "/admin/products/locked",
-    icon: <BallotOutlinedIcon />,
+    icon: <BlockOutlinedIcon />,
   },
 ];
 

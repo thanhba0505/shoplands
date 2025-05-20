@@ -37,6 +37,7 @@ import SellerProductDetail from "~/pages/Seller/Products/ProductDetail";
 
 // Admin
 import DashboardAdmin from "~/pages/Admin/Dashboard";
+import ContactAdmin from "~/pages/Admin/Contact";
 import Users from "~/pages/Admin/Users";
 import Sellers from "~/pages/Admin/Sellers";
 import ProductsAdmin from "~/pages/Admin/Products";
@@ -111,6 +112,7 @@ const sellerRoutes = [
 // ADMIN ROUTES
 const adminRoutes = [
   { path: "/admin/dashboard", component: DashboardAdmin, layout: AdminLayout },
+  { path: "/admin/contact/:pageName", component: ContactAdmin, layout: AdminLayout },
   { path: "/admin/sellers/:pageName", component: Sellers, layout: AdminLayout },
   { path: "/admin/users/:pageName", component: Users, layout: AdminLayout },
   {

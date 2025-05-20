@@ -90,6 +90,8 @@ $router->get('api/seller/reviews', 'ReviewController@sellerGet', ['App\Middlewar
 $router->get('api/admin/dashboard', 'AdminController@adminDashboard', ['App\Middlewares\AdminMiddleware']);
 
 // API CONTACT
+$router->get('api/contact', 'ContactController@adminGet', ['App\Middlewares\AdminMiddleware']);
+$router->post('api/contact/reply', 'ContactController@adminReply', ['App\Middlewares\AdminMiddleware']);
 $router->post('api/contact', 'ContactController@create');
 
 // API OTHER

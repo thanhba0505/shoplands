@@ -42,4 +42,148 @@ class ContactModel {
 
         return $conn->getConnection()->lastInsertId();
     }
+
+    public static function getAll($limit = 10, $page = 0) {
+        $conn = new ConnectDatabase();
+
+        $limit = (int) $limit;
+        $page = (int) $page;
+        $offset = $limit * $page;
+
+        // Lấy tổng số contact
+        $countSql = "SELECT COUNT(*) as total FROM contact";
+        $countResult = $conn->query($countSql)->fetch();
+        $totalCount = $countResult['total'];
+
+        // Lấy contact theo trang
+        $dataSql = "
+            SELECT 
+                id,
+                name,
+                phone,
+                topic,
+                content,
+                response,
+                created_at
+            FROM contact
+            LIMIT :limit OFFSET :offset
+        ";
+
+        $contacts = $conn->query($dataSql, [
+            'limit' => $limit,
+            'offset' => $offset
+        ])->fetchAll();
+
+        // Giải mã số điện thoại
+        foreach ($contacts as $key => $value) {
+            $contacts[$key]['phone'] = Hash::decodeAes($value['phone']);
+        }
+
+        return [
+            'count' => $totalCount,
+            'contacts' => $contacts
+        ];
+    }
+
+    public static function getUnreplied($limit = 10, $page = 0) {
+        $conn = new ConnectDatabase();
+
+        $limit = (int) $limit;
+        $page = (int) $page;
+        $offset = $limit * $page;
+
+        // Lấy tổng số contact
+        $countSql = "SELECT COUNT(*) as total FROM contact WHERE response IS NULL";
+        $countResult = $conn->query($countSql)->fetch();
+        $totalCount = $countResult['total'];
+
+        // Lấy contact theo trang
+        $dataSql = "
+            SELECT 
+                id,
+                name,
+                phone,
+                topic,
+                content,
+                response,
+                created_at
+            FROM contact
+            WHERE response IS NULL
+            LIMIT :limit OFFSET :offset
+        ";
+
+        $contacts = $conn->query($dataSql, [
+            'limit' => $limit,
+            'offset' => $offset
+        ])->fetchAll();
+
+        // Giải mã số điện thoại
+        foreach ($contacts as $key => $value) {
+            $contacts[$key]['phone'] = Hash::decodeAes($value['phone']);
+        }
+
+        return [
+            'count' => $totalCount,
+            'contacts' => $contacts
+        ];
+    }
+
+    public static function getReplied($limit = 10, $page = 0) {
+        $conn = new ConnectDatabase();
+
+        $limit = (int) $limit;
+        $page = (int) $page;
+        $offset = $limit * $page;
+
+        // Lấy tổng số contact
+        $countSql = "SELECT COUNT(*) as total FROM contact WHERE response IS NOT NULL";
+        $countResult = $conn->query($countSql)->fetch();
+        $totalCount = $countResult['total'];
+
+        // Lấy contact theo trang
+        $dataSql = "
+            SELECT 
+                id,
+                name,
+                phone,
+                topic,
+                content,
+                response,
+                created_at
+            FROM contact
+            WHERE response IS NOT NULL
+            LIMIT :limit OFFSET :offset
+            
+        ";
+
+        $contacts = $conn->query($dataSql, [
+            'limit' => $limit,
+            'offset' => $offset
+        ])->fetchAll();
+
+        // Giải mã số điện thoại
+        foreach ($contacts as $key => $value) {
+            $contacts[$key]['phone'] = Hash::decodeAes($value['phone']);
+        }
+
+        return [
+            'count' => $totalCount,
+            'contacts' => $contacts
+        ];
+    }
+
+    public static function adminReply($id, $content) {
+        $conn = new ConnectDatabase();
+        $sql = "
+            UPDATE contact
+            SET response = :content
+            WHERE id = :id
+        ";
+        $result = $conn->query($sql, [
+            'id' => $id,
+            'content' => $content
+        ]);
+
+        return $result;
+    }
 }

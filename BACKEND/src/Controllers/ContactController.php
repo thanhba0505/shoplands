@@ -44,4 +44,58 @@ class ContactController {
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }
+
+    // Lấy danh sách liên hệ
+    public function adminGet() {
+        try {
+            $type = Request::get('type') ? Request::get('type') : "all";
+            $limit = Request::get('limit') ? Request::get('limit') : 10;
+            $page = Request::get('page') ? Request::get('page') : 0;
+
+            if (!in_array($type, ["all", "unreplied", "replied"])) {
+                Response::json(['message' => 'Vui lòng nhập đúng loại liên hệ'], 400);
+            }
+
+            if ($type === "all") {
+                $contacts = ContactModel::getAll($limit, $page);
+            } else if ($type === "unreplied") {
+                $contacts = ContactModel::getUnreplied($limit, $page);
+            } else if ($type === "replied") {
+                $contacts = ContactModel::getReplied($limit, $page);
+            }
+
+            Response::json($contacts);
+        } catch (\Throwable $th) {
+            Log::throwable("Controller -> contact: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Trả lời liên hệ
+    public function adminReply() {
+        try {
+            $id = Request::json('id');
+            $content = Request::json('content');
+
+            if (!$id || !$content) {
+                Response::json(['message' => 'Vui lòng nhập đầy đủ thông tin'], 400);
+            }
+
+            $checkContent = Validator::isText($content, 'Nội dung', 3, 500, true);
+            if ($checkContent !== true) {
+                Response::json(['message' => $checkContent], 400);
+            }
+
+            $result =  ContactModel::adminReply($id, $content);
+            
+            if (!$result) {
+                Response::json(['message' => 'Không tìm thấy liên hệ'], 400);
+            }
+
+            Response::json(['message' => 'Đã gửi phản hồi thành công'], 200);
+        } catch (\Throwable $th) {
+            Log::throwable("Controller -> contact: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
 }
