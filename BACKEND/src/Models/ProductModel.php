@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\DataHelper;
+use App\Helpers\Hash;
 use App\Helpers\Response;
 use App\Models\ConnectDatabase;
 
@@ -650,6 +651,36 @@ class ProductModel {
         return $result ?? null;
     }
 
+    // Lấy thông tin sản phẩm theo product_id và người bán
+    public static function getByProductId2($product_id) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name,
+                p.description,
+                p.status,
+                p.seller_id,
+                a.phone,
+                s.store_name
+            FROM
+                products p
+                JOIN sellers s ON s.id = p.seller_id
+                JOIN accounts a ON a.id = s.account_id
+            WHERE
+                p.id = :product_id
+        ";
+
+        $result = $query->query($sql, ['product_id' => $product_id])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+        }
+
+        return $result ?? null;
+    }
+
     // Lấy thông tin sản phẩm theo cart_id
     public static function getByCartId($cart_id) {
         $query = new ConnectDatabase();
@@ -711,6 +742,49 @@ class ProductModel {
 
         $result = $conn->query($sql, [
             'description' => $description ?? null,
+            'product_id' => $product_id
+        ]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
+
+    // Khóa sản phảm
+    public static function locked($product_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                products
+            SET
+                status = :status
+            WHERE    
+                id = :product_id
+        ";
+
+        $result = $conn->query($sql, [
+            'status' => 'locked',
+            'product_id' => $product_id
+        ]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
+
+    // Mo khóa sản phảm
+    public static function unlocked($product_id) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                products
+            SET
+                status = :status
+            WHERE    
+                id = :product_id
+                AND status = 'locked'
+        ";
+
+        $result = $conn->query($sql, [
+            'status' => 'active',
             'product_id' => $product_id
         ]);
 

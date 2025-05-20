@@ -24,6 +24,9 @@ $router->get('api/products/{id}', 'ProductController@find');
 $router->post('api/seller/products', 'ProductController@sellerAdd', ['App\Middlewares\SellerMiddleware']);
 $router->put('api/seller/products/{product_id}', 'ProductController@sellerUpdate', ['App\Middlewares\SellerMiddleware']);
 
+$router->get('api/admin/products', 'ProductController@adminGet', ['App\Middlewares\AdminMiddleware']);
+$router->put('api/admin/products/locked', 'ProductController@adminLocked', ['App\Middlewares\AdminMiddleware']);
+
 // API CART
 $router->get('api/user/cart', 'CartController@userGet', ['App\Middlewares\UserMiddleware']);
 $router->post('api/user/cart', 'CartController@userAdd', ['App\Middlewares\UserMiddleware']);

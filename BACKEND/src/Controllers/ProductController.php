@@ -8,6 +8,7 @@ use App\Helpers\FileSave;
 use App\Helpers\Log;
 use App\Helpers\Request;
 use App\Helpers\Response;
+use App\Helpers\SendMessage;
 use App\Helpers\Validator;
 use App\Models\CategoryModel;
 use App\Models\ProductAttributeModel;
@@ -345,7 +346,7 @@ class ProductController {
             }
 
             ProductModel::updateDescription($product_id, $description);
-            
+
             // Cập nhật giá và tồn kho
             $variants = Request::json("variants", []);
 
@@ -388,6 +389,57 @@ class ProductController {
             Response::json($product, 200);
         } catch (\Throwable $th) {
             $this->logAndRespond("AddressController -> sellerUpdate", $th);
+        }
+    }
+
+    // Admin lấy danh sách sản phẩm
+    public function adminGet() {
+        try {
+            $products = ProductModel::getListProducts();
+
+            Response::json($products, 200);
+        } catch (\Throwable $th) {
+            $this->logAndRespond("ProductController -> adminGet", $th);
+        }
+    }
+
+    // Admin khóa sản phẩm
+    public function adminLocked() {
+        try {
+            $product_id = Request::json("product_id");
+            $locked = Request::json("locked") ? true : false;
+            $message = Request::json("message");
+
+            $product = ProductModel::getByProductId2($product_id);
+
+            if (!$product) {
+                Response::json(['message' => 'Không tìm thấy sản phẩm'], 400);
+            }
+
+            if (!$locked) {
+                if ($product['status'] !== 'locked') {
+                    Response::json(['message' => 'Sản phẩm đã bị khóa'], 400);
+                }
+                ProductModel::unlocked($product_id);
+
+                SendMessage::send(
+                    $product['phone'],
+                    $message
+                );
+                Response::json(['message' => 'Đã mở khóa sản phẩm'], 200);
+            } else {
+                if ($product['status'] !== 'active') {
+                    Response::json(['message' => 'Chỉ có thể khóa sản phẩm đang hoạt động'], 400);
+                }
+                ProductModel::locked($product_id);
+                SendMessage::send(
+                    $product['phone'],
+                    $message
+                );
+                Response::json(['message' => 'Đã khóa sản phẩm'], 200);
+            }
+        } catch (\Throwable $th) {
+            $this->logAndRespond("ProductController -> adminLocked", $th);
         }
     }
 }
