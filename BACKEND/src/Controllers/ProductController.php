@@ -3,10 +3,9 @@
 namespace App\Controllers;
 
 use App\Helpers\Auth;
-use App\Helpers\DataHelper;
 use App\Helpers\FileSave;
 use App\Helpers\Log;
-use App\Helpers\QRCode;
+use App\Helpers\QrCode;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\SendMessage;
@@ -454,7 +453,7 @@ class ProductController {
             }
 
             if ($product['qrcode'] === null) {
-                $pathQR = QRCode::createProduct($_ENV['FRONTEND_URL'] . '/product-detail/' . $id);
+                $pathQR = QrCode::createProduct($_ENV['FRONTEND_URL'] . '/product-detail/' . $id);
                 ProductModel::updateQrCode($id, $pathQR);
                 Response::json($pathQR, 200);
             }

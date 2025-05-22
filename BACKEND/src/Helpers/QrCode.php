@@ -8,8 +8,8 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 
-class QRCode {
-  private static $basePath = 'src/storage/public/qrcode/';
+class QrCode {
+  private static $basePath = 'src/Storage/public/qrcode/';
 
   private static function createQRCode($data, $outputPath, $size = 300, $logoPath = "", $logoSize = 50) {
 
