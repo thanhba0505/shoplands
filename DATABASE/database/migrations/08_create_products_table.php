@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'locked', 'deleted']);
+            $table->text('qrcode')->nullable();
             $table->unsignedBigInteger('seller_id'); // Foreign key
             $table->unsignedBigInteger('category_id')->nullable(); // Foreign key
 
