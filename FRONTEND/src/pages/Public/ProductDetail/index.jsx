@@ -41,6 +41,7 @@ const ProductDetail = () => {
     <>
       <Container>
         <ProductInfo
+          setProduct={setProduct}
           product={product}
           loading={loading}
           sellerStatus={seller?.status}

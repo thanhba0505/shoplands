@@ -114,7 +114,7 @@ class AuthController {
                 Response::json(['message' => 'Số điện thoại đã được đăng ký'], 400);
             }
         } catch (\Throwable $th) {
-            Log::throwable("AuthController -> register: " . $th->getMessage());
+            Log::throwable("AuthController -> getCodeRegister: " . $th->getMessage());
             Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
         }
     }

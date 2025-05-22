@@ -20,6 +20,7 @@ $router->get('api/categories', 'CategoryController@get');
 // API PRODUCT
 $router->get('api/products', 'ProductController@get');
 $router->get('api/products/{id}', 'ProductController@find');
+$router->get('api/products/{id}/qrcode', 'ProductController@getQrCode');
 
 $router->post('api/seller/products', 'ProductController@sellerAdd', ['App\Middlewares\SellerMiddleware']);
 $router->put('api/seller/products/{product_id}', 'ProductController@sellerUpdate', ['App\Middlewares\SellerMiddleware']);

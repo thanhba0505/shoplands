@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -10,6 +10,9 @@ import {
   TableRow,
   TableCell,
   Skeleton,
+  IconButton,
+  Avatar,
+  Popover,
 } from "@mui/material";
 import PaperCustom from "~/components/PaperCustom";
 import Path from "~/helpers/Path";
@@ -20,7 +23,152 @@ import axiosWithAuth from "~/utils/axiosWithAuth";
 import Api from "~/helpers/Api";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import QrCodeRoundedIcon from "@mui/icons-material/QrCodeRounded";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import FacebookIcon from "@mui/icons-material/Facebook";
 import Auth from "~/helpers/Auth";
+import Log from "~/helpers/Log";
+import axiosDefault from "~/utils/axiosDefault";
+
+const IconQRCode = ({ product, setProduct }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCopyUrl = (url) => {
+    navigator.clipboard.writeText(url).then(() => {
+      enqueueSnackbar("Sao chép thành công", { variant: "success" });
+    });
+  };
+
+  const handleShareFb = (url) => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      url
+    )}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const fetchQRCode = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosDefault.get(
+        Api.products(product.product_id) + "/qrcode"
+      );
+
+      setProduct({
+        ...product,
+        qrcode: response.data,
+      });
+    } catch (error) {
+      Log.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [product, setProduct]);
+
+  // Gọi API khi mở và chưa có mã QR
+  useEffect(() => {
+    if (open && !product.qrcode) {
+      fetchQRCode();
+    }
+  }, [fetchQRCode, open, product.qrcode]);
+
+  return (
+    <Box>
+      <IconButton
+        sx={{
+          border: "1px solid #42a5f5",
+          mt: 1,
+          backgroundColor: open ? "#42a5f5" : "",
+          color: open ? "white" : "#42a5f5",
+        }}
+        onClick={handleClick}
+      >
+        <QrCodeRoundedIcon size="small" />
+      </IconButton>
+
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+            py: 3,
+            width: 350,
+          }}
+        >
+          {loading ? (
+            <>
+              <Skeleton variant="rectangular" width={"100%"} height={200} />
+              <Skeleton variant="rectangular" width={"100%"} height={36} />
+              <Skeleton variant="rectangular" width={"100%"} height={36} />
+            </>
+          ) : (
+            <>
+              <Avatar
+                variant="rounded"
+                src={Path.publicQR(product.qrcode)}
+                sx={{ width: 200, height: 200 }}
+              >
+                Error
+              </Avatar>
+
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<ContentCopyRoundedIcon />}
+                onClick={() =>
+                  handleCopyUrl(
+                    import.meta.env.VITE_BASE_URL +
+                      Path.productDetail(product.product_id)
+                  )
+                }
+              >
+                Sao chép đường dẫn sản phẩm
+              </Button>
+
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<FacebookIcon />}
+                onClick={() =>
+                  handleShareFb(
+                    import.meta.env.VITE_BASE_URL +
+                      Path.productDetail(product.product_id)
+                  )
+                }
+              >
+                Chia sẻ với Facebook
+              </Button>
+            </>
+          )}
+        </Box>
+      </Popover>
+    </Box>
+  );
+};
 
 // Hình ảnh
 const ImageProduct = ({ images, loading }) => {
@@ -137,7 +285,7 @@ const ImageProduct = ({ images, loading }) => {
 };
 
 // Thống tin sản phẩm
-const InfoProduct = ({ product, loading, sellerStatus }) => {
+const InfoProduct = ({ product, loading, sellerStatus, setProduct }) => {
   const [selectedValues, setSelectedValues] = useState({});
   const [quantity, setQuantity] = useState(1);
   const variants = product?.variants;
@@ -299,13 +447,17 @@ const InfoProduct = ({ product, loading, sellerStatus }) => {
               flexWrap: "wrap",
             }}
           >
-            <Typography
-              sx={{ width: "100%" }}
-              className="line-clamp-3"
-              variant="h5"
-            >
-              {product.name}
-            </Typography>
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Typography
+                sx={{ width: "80%" }}
+                className="line-clamp-3"
+                variant="h5"
+              >
+                {product.name}
+              </Typography>
+
+              <IconQRCode product={product} setProduct={setProduct} />
+            </Box>
 
             <Typography
               variant="body2"
@@ -670,11 +822,12 @@ const BtnHandle = ({ selectedVariant, quantity, attributes, product }) => {
   );
 };
 
-const ProductInfo = ({ product, loading, sellerStatus }) => {
+const ProductInfo = ({ product, loading, sellerStatus, setProduct }) => {
   return (
     <PaperCustom sx={{ display: "flex", gap: 3, px: 3, pt: 4 }}>
       <ImageProduct images={product?.images} loading={loading} />
       <InfoProduct
+        setProduct={setProduct}
         product={product}
         loading={loading}
         sellerStatus={sellerStatus}

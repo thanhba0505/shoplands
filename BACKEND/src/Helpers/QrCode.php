@@ -9,7 +9,7 @@ use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 
 class QRCode {
-  private static $basePath = 'src/storage/public/';
+  private static $basePath = 'src/storage/public/qrcode/';
 
   private static function createQRCode($data, $outputPath, $size = 300, $logoPath = "", $logoSize = 50) {
 
@@ -43,10 +43,10 @@ class QRCode {
     return $outputPath;
   }
 
-  public static function createPayment($paymentLink) {
-    $fileName = Other::generateFileName('payment', 'png');
+  public static function createProduct($product_link) {
+    $fileName = Other::generateFileName('product', 'png');
 
-    $outputPath = 'qrcode/' . $fileName;
-    return self::createQRCode($paymentLink, $outputPath);
+    $outputPath = 'prducts/' . $fileName;
+    return self::createQRCode($product_link, $outputPath);
   }
 }

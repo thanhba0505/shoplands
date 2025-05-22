@@ -6,6 +6,7 @@ use App\Helpers\Auth;
 use App\Helpers\DataHelper;
 use App\Helpers\FileSave;
 use App\Helpers\Log;
+use App\Helpers\QRCode;
 use App\Helpers\Request;
 use App\Helpers\Response;
 use App\Helpers\SendMessage;
@@ -440,6 +441,27 @@ class ProductController {
             }
         } catch (\Throwable $th) {
             $this->logAndRespond("ProductController -> adminLocked", $th);
+        }
+    }
+
+    // Lấy qrcode 
+    public function getQrCode($id) {
+        try {
+            $product = ProductModel::search($id);
+
+            if (!$product) {
+                Response::json(['message' => 'Không tìm thấy sản phẩm'], 400);
+            }
+
+            if ($product['qrcode'] === null) {
+                $pathQR = QRCode::createProduct($_ENV['FRONTEND_URL'] . '/product-detail/' . $id);
+                ProductModel::updateQrCode($id, $pathQR);
+                Response::json($pathQR, 200);
+            }
+
+            Response::json($product['qrcode'], 200);
+        } catch (\Throwable $th) {
+            $this->logAndRespond("ProductController -> getQrCode", $th);
         }
     }
 }

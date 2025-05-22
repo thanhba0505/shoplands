@@ -219,6 +219,7 @@ class ProductModel {
                 p.name,
                 p.status,
                 p.seller_id,
+                p.qrcode,
                 p.description,
                 LEAST(MIN(pv.price), IFNULL(MIN(pv.promotion_price), $max_price_product)) AS min_price,
                 GREATEST(MAX(pv.price), IFNULL(MAX(pv.promotion_price), 0)) AS max_price,
@@ -272,6 +273,7 @@ class ProductModel {
                 'product_id',
                 'name',
                 'description',
+                'qrcode',
                 'status',
                 'seller_id',
                 'min_price',
@@ -379,8 +381,26 @@ class ProductModel {
         return $conn->getConnection()->lastInsertId();
     }
 
+    // Tìm kiếm sản phẩm đơn giản
+    public static function search($id) {
+        $conn = new ConnectDatabase();
 
+        $sql = "
+            SELECT
+                p.id AS product_id,
+                p.name,
+                p.description,
+                p.status,
+                p.qrcode,
+                p.seller_id
+            FROM
+                products p
+            WHERE
+                p.id = :id
+        ";
 
+        return $conn->query($sql, ['id' => $id])->fetch() ?? null;
+    }
 
 
     // Lấy danh sách sản phẩm
@@ -793,6 +813,27 @@ class ProductModel {
 
         $result = $conn->query($sql, [
             'status' => 'active',
+            'product_id' => $product_id
+        ]);
+
+        return $result->rowCount() > 0 ? true : false;
+    }
+
+    // Cập nhật QR code
+    public static function updateQrCode($product_id, $qrcode) {
+        $conn = new ConnectDatabase();
+
+        $sql = "
+            UPDATE
+                products
+            SET
+                qrcode = :qrcode
+            WHERE    
+                id = :product_id
+        ";
+
+        $result = $conn->query($sql, [
+            'qrcode' => $qrcode ?? null,
             'product_id' => $product_id
         ]);
 

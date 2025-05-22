@@ -63,6 +63,14 @@ class Path {
     return this.buildPath(this.public() + "/uploaded/product", subPath);
   }
 
+  static publicQR(subPath = "") {
+    return this.buildPath(this.public() + "/qrcode", subPath);
+  }
+
+  static publicQRProduct(subPath = "") {
+    return this.buildPath(this.public() + "/qrcode/products", subPath);
+  }
+
   // BASE PATH
   static base(subPath) {
     return this.buildPath("", subPath);
