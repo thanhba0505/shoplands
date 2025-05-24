@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Helpers\CallApi;
+use App\Helpers\FileSave;
 use App\Helpers\Hash;
 use App\Helpers\Request;
 use App\Helpers\Response;
@@ -13,8 +15,190 @@ use App\Models\AccountModel;
 use App\Models\MessageModel;
 use App\Models\SellerModel;
 use App\Models\UserModel;
+use Google_Client;
 
 class AuthController {
+    // Đăng nhập bằng google
+    public function loginGoogle() {
+        try {
+            $access_token = Request::json('access_token');
+            $payload = null;
+
+            try {
+                $payload = CallApi::get(
+                    'https://www.googleapis.com/oauth2/v2/userinfo',
+                    ['Authorization: Bearer ' . $access_token]
+                );
+            } catch (\Throwable $th) {
+                Response::json(['message' => 'Access token không hợp lệ'], 401);
+            }
+
+            if (!$payload) {
+                Response::json(['message' => 'Access token không hợp lệ'], 401);
+            }
+
+            if ($payload) {
+                // Lấy thông tin user
+                $email = $payload['email'];
+                $name = $payload['name'];
+                $googleId = $payload['id'];
+                $avatar = $payload['picture'];
+
+                $account = AccountModel::findByGoogleId($googleId);
+
+                if (!$account) {
+                    $account_id = AccountModel::addWithGoogle($email, $googleId, 'user', 'unverified');
+                    $file_save = FileSave::avatarImageFromUrl($avatar);
+                    if ($file_save && $file_save['success']) {
+                        UserModel::addUser2($name, $account_id, $file_save['file_name']);
+                    } else {
+                        UserModel::addUser($name, $account_id);
+                    }
+                    Response::json([
+                        'message' => 'Vui lòng thêm số điện thoại để hoàn thành tạo tài khoản',
+                        'account_id' => Hash::encodeAes($account_id)
+                    ], 409);
+                }
+
+                if ($account['status'] === 'active') {
+                    $this->handleLogin($account);
+                }
+
+                Response::json([
+                    'message' => 'Vui lòng thêm số điện thoại để hoàn thành tạo tài khoản',
+                    'account_id' =>  Hash::encodeAes($account['account_id'])
+                ], 409);
+
+                if ($account['status'] == 'inactive') {
+                    Response::json(['message' => 'Tài khoản chưa hoạt động'], 400);
+                }
+
+                if ($account['status'] == 'locked') {
+                    Response::json(['message' => 'Tài khoản đã bị khóa'], 400);
+                }
+            } else {
+                Response::json(['message' => 'Không tìm thấy thông tin người dùng'], 404);
+            }
+            Response::json($_POST, 200);
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> loginGoogle: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Lấy mã xác nhận số điện thoại đăng nhập bằng google
+    public function loginGoogleCode() {
+        try {
+            $phone = Request::json('phone');
+            $account_id = Request::json('account_id');
+            $account_id = Hash::decodeAes($account_id);
+
+            $checkPhone = Validator::isPhone($phone);
+            if ($checkPhone !== true) {
+                Response::json(['message' => $checkPhone], 400);
+            }
+
+            $account = AccountModel::findByPhone($phone);
+
+            if ($account) {
+                Response::json(['message' => 'Số điện thoại đã được sử dụng'], 409);
+            }
+
+            $account = AccountModel::findById($account_id);
+            if (!$account) {
+                Response::json(['message' => 'Tài khoản không tìm thấy'], 404);
+            }
+
+            if ($account['status'] == 'active') {
+                Response::json(['message' => 'Tài khoản đã hoạt động'], 400);
+            }
+
+            if ($account['status'] == 'inactive') {
+                Response::json(['message' => 'Tài khoản chưa hoạt động'], 400);
+            }
+
+            if ($account['status'] == 'locked') {
+                Response::json(['message' => 'Tài khoản được bị khóa'], 400);
+            }
+
+            if ($account['status'] == 'unverified') {
+                $send = SendMessage::sendMessageCode(
+                    $phone,
+                    $account_id
+                );
+
+                if ($send) {
+                    AccountModel::updatePhone($account_id, $phone);
+                    Response::json(['message' => 'Mã xác nhận đã được gửi về điện thoại'], 201);
+                } else {
+                    throw new \Throwable();
+                }
+            }
+
+            throw new \Throwable();
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> loginGoogleCode: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
+    // Xác thực số điện thoại dăng nhập bằng google
+    public function loginGoogleVerify() {
+        try {
+            $account_id = Request::json('account_id');
+            $account_id = Hash::decodeAes($account_id);
+            $phone = Request::json('phone');
+            $code = Request::json('code');
+
+            if (!$account_id || !$code) {
+                Response::json(['message' => 'Thông tin không đủ'], 409);
+            }
+
+            $account = AccountModel::findByPhone($phone);
+
+            if (!$account) {
+                Response::json(['message' => 'Số điện thoại không đúng'], 404);
+            }
+
+            if ($account['status'] == 'active') {
+                Response::json(['message' => 'Tài khoản đã hoạt động'], 400);
+            }
+
+            if ($account['status'] == 'inactive') {
+                Response::json(['message' => 'Tài khoản chưa hoạt động'], 400);
+            }
+
+            if ($account['status'] == 'locked') {
+                Response::json(['message' => 'Tài khoản được bị khóa'], 400);
+            }
+
+            $message = MessageModel::getLastMessage($account_id);
+
+            if (!$message) {
+                Response::json(['message' => 'Vui lòng lấy mã xác nhận'], 409);
+            }
+
+            if (!$code) {
+                Response::json(['message' => 'Vui lòng nhập mã xác nhận'], 409);
+            }
+
+            if (!Hash::verifyArgon2i($code, $message['code'])) {
+                Response::json(['message' => 'Mã xác nhận không khớp'], 400);
+            }
+
+            if (!SendMessage::checkMessageCodeExpired($message['created_at'])) {
+                Response::json(['message' => 'Mã xác nhận hết hạn'], 400);
+            }
+
+            AccountModel::updateStatus($account_id, 'active');
+
+            $this->handleLogin($account);
+        } catch (\Throwable $th) {
+            Log::throwable("AuthController -> loginGoogleVerify: " . $th->getMessage());
+            Response::json(['message' => 'Đã có lỗi xảy ra'], 500);
+        }
+    }
+
     // Đăng ký
     public function register() {
         try {

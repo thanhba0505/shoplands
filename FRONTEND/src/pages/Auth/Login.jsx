@@ -13,6 +13,8 @@ import PaperCustom from "~/components/PaperCustom";
 import { useTheme } from "@emotion/react";
 import Log from "~/helpers/Log";
 import axiosDefaultNoEnq from "~/utils/axiosDefaultNoEnq";
+import { useGoogleLogin } from "@react-oauth/google";
+import GoogleIcon from "@mui/icons-material/Google";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -131,6 +133,52 @@ const Login = () => {
     setOpen(false);
   };
 
+  // Xử lý đăng nhập với google
+
+  const handleLoginWithGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      dispatch(startLoading());
+      setIsLoading(true);
+      try {
+        const response = await axiosDefaultNoEnq.post(Api.login("google"), {
+          access_token: tokenResponse.access_token,
+        });
+
+        const { access_token, refresh_token, account } = response.data;
+        dispatch(loginSuccess({ access_token, refresh_token, account }));
+        handleClose();
+        enqueueSnackbar("Đăng nhập thành công!", { variant: "success" });
+
+        if (account.role === "user") {
+          navigate(Path.home());
+        } else if (account.role === "seller") {
+          navigate(Path.sellerDashboard());
+        } else if (account.role === "admin") {
+          navigate(Path.adminDashboard());
+        }
+      } catch (error) {
+        if (error.response?.status === 409) {
+          navigate(
+            Path.loginWithGoogle() +
+              "?account_id=" +
+              error.response?.data?.account_id
+          );
+          enqueueSnackbar(error.response.data.message, { variant: "info" });
+        }
+        if (error.response?.status === 401 || error.response?.status === 400) {
+          enqueueSnackbar(error.response.data.message, { variant: "error" });
+        }
+        Log.error(error.response?.data?.message);
+      } finally {
+        setIsLoading(false);
+        dispatch(stopLoading());
+      }
+    },
+    onError: () => {
+      console.error("Login Failed");
+    },
+  });
+
   return (
     <Box
       sx={{
@@ -218,6 +266,19 @@ const Login = () => {
           disabled={disabled}
         >
           Đăng nhập
+        </ButtonLoading>
+
+        <ButtonLoading
+          fullWidth
+          sx={{ mt: 3, height: 56 }}
+          variant="outlined"
+          color="primary"
+          onClick={handleLoginWithGoogle}
+          // loading={isLoading}
+          // disabled={disabled}
+          startIcon={<GoogleIcon />}
+        >
+          Đăng nhập với Google
         </ButtonLoading>
 
         {open && (

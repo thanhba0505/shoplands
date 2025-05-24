@@ -19,6 +19,7 @@ class UserModel {
                 a.phone,
                 a.role,
                 a.coin,
+                a.email,
                 a.bank_number,
                 a.bank_name,
                 a.status,
@@ -36,6 +37,7 @@ class UserModel {
             $result['phone'] = Hash::decodeAes($result['phone']);
             $result['bank_number'] = Hash::decodeAes($result['bank_number']);
             $result['bank_name'] = Hash::decodeAes($result['bank_name']);
+            $result['email'] = Hash::decodeAes($result['email']);
         }
 
         return $result;
@@ -51,6 +53,22 @@ class UserModel {
         ";
 
         return $query->query($sql, ['name' => $name, 'account_id' => $account_id]);
+    }
+
+    // Thêm 1 user
+    public static function addUser2($name, $account_id, $avatar) {
+        $query = new ConnectDatabase();
+
+        $sql = "
+            INSERT INTO users (name, account_id, avatar)
+            VALUES (:name, :account_id, :avatar)
+        ";
+
+        return $query->query($sql, [
+            'name' => $name,
+            'account_id' => $account_id,
+            'avatar' => $avatar
+        ]);
     }
 
     // Tìm kiếm user theo user_id

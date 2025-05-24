@@ -85,6 +85,10 @@ class Path {
     return this.buildPath("/login", subPath);
   }
 
+  static loginWithGoogle(subPath = "") {
+    return this.buildPath("/login-google", subPath);
+  }
+
   static register(subPath = "") {
     return this.buildPath("/register", subPath);
   }

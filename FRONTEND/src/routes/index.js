@@ -10,6 +10,7 @@ import Register from "~/pages/Auth/Register";
 import ForgotPassword from "~/pages/Auth/ForgotPassword";
 import ResetPassword from "~/pages/Auth/ResetPassword";
 import RegisterSeller from "~/pages/Auth/RegisterSeller";
+import LoginGoogle from "~/pages/Auth/LoginGoogle";
 
 // Public
 import Home from "~/pages/Public/Home";
@@ -46,6 +47,7 @@ import ProductsAdmin from "~/pages/Admin/Products";
 // PUBLIC ROUTES
 const publicRoutes = [
   // Auth
+  { path: "/login-google", component: LoginGoogle },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
   { path: "/register-seller", component: RegisterSeller },
@@ -112,7 +114,11 @@ const sellerRoutes = [
 // ADMIN ROUTES
 const adminRoutes = [
   { path: "/admin/dashboard", component: DashboardAdmin, layout: AdminLayout },
-  { path: "/admin/contact/:pageName", component: ContactAdmin, layout: AdminLayout },
+  {
+    path: "/admin/contact/:pageName",
+    component: ContactAdmin,
+    layout: AdminLayout,
+  },
   { path: "/admin/sellers/:pageName", component: Sellers, layout: AdminLayout },
   { path: "/admin/users/:pageName", component: Users, layout: AdminLayout },
   {

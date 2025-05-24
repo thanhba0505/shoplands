@@ -1,6 +1,9 @@
 <?php
 // API AUTH
 $router->post('api/auth/login', 'AuthController@login');
+$router->post('api/auth/login/google', 'AuthController@loginGoogle');
+$router->post('api/auth/login/google/code', 'AuthController@loginGoogleCode');
+$router->post('api/auth/login/google/verify', 'AuthController@loginGoogleVerify');
 $router->post('api/auth/code-login', 'AuthController@getCodeLogin');
 $router->post('api/auth/refresh-token', 'AuthController@refreshToken');
 $router->post('api/auth/logout', 'AuthController@logout');

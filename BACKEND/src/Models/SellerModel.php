@@ -21,6 +21,7 @@ class SellerModel {
                 s.background,
                 a.id AS account_id,
                 a.phone,
+                a.email,
                 a.role,
                 a.coin,
                 a.bank_number,
@@ -40,6 +41,7 @@ class SellerModel {
             $result['phone'] = Hash::decodeAes($result['phone']);
             $result['bank_number'] = Hash::decodeAes($result['bank_number']);
             $result['bank_name'] = Hash::decodeAes($result['bank_name']);
+            $result['email'] = Hash::decodeAes($result['email']);
         }
 
         return $result;

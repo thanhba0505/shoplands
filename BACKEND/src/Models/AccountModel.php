@@ -269,6 +269,32 @@ class AccountModel {
         return $result;
     }
 
+    // Câp nhật số điện thoại
+    public static function updatePhone($account_id, $phone) {
+        $query = new ConnectDatabase();
+
+        $phoneHash = Hash::encodeSha256($phone);
+        $phone = Hash::encodeAes($phone);
+
+        $sql = "
+            UPDATE
+                accounts
+            SET
+                phone = :phone,
+                phoneHash = :phoneHash
+            WHERE
+                id = :account_id
+        ";
+
+        $result = $query->query($sql, [
+            'account_id' => $account_id,
+            'phoneHash' => $phoneHash,
+            'phone' => $phone
+        ]);
+
+        return $result;
+    }
+
     // Cập nhật device_token
     public static function updateDeviceToken($account_id, $ip_address, $user_agent) {
         $query = new ConnectDatabase();
@@ -445,5 +471,72 @@ class AccountModel {
         $result = $query->query($sql)->fetch();
 
         return $result;
+    }
+
+    // Tìm kiếm theo googleid
+    public static function findByGoogleId($google_id) {
+        $query = new ConnectDatabase();
+
+        $google_id = Hash::encodeSha256($google_id);
+
+        $sql = "
+            SELECT
+                a.id as account_id,
+                a.phone,
+                a.password,
+                a.role,
+                a.bank_number,
+                a.bank_name,
+                a.status,
+                a.coin,
+                a.created_at,
+                a.google_id,
+                a.email,
+                a.device_token,
+                a.access_token,
+                a.refresh_token
+            FROM
+                accounts a
+            WHERE
+                google_id = :google_id
+        ";
+
+        $result = $query->query($sql, ['google_id' => $google_id])->fetch();
+
+        if ($result && isset($result['phone'])) {
+            $result['phone'] = Hash::decodeAes($result['phone']);
+            $result['bank_number'] = Hash::decodeAes($result['bank_number']);
+            $result['bank_name'] = Hash::decodeAes($result['bank_name']);
+            $result['email'] = Hash::decodeAes($result['email']);
+        }
+
+        return $result;
+    }
+
+
+    // Thêm account theo googleid
+    public static function addWithGoogle($email, $google_id, $role = 'user', $status = 'unverified') {
+        $conn = new ConnectDatabase();
+
+        $created_at = Carbon::now();
+        $email = Hash::encodeAes($email);
+        $google_id = Hash::encodeSha256($google_id);
+
+        $sql =  "
+            INSERT INTO
+                accounts (email, google_id, role, created_at, status)
+            VALUES
+                (:email, :google_id, :role, :created_at, :status)
+        ";
+
+        $conn->query($sql, [
+            'email' => $email,
+            'google_id' => $google_id,
+            'role' => $role,
+            'created_at' => $created_at,
+            'status' => $status
+        ]);
+
+        return $conn->getConnection()->lastInsertId();
     }
 }
